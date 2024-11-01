@@ -2,7 +2,6 @@
 
 {% import "macros/command.html" as commands %}
 
-
 {%- block head -%}
 {% set upper_slug = page.slug | upper %}
 
@@ -94,3 +93,10 @@
 {% endif %}
 
 {% endblock main_content %}
+
+{% block related_content %}
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/commands/{{ page.slug }}.md">Update this Page on Github!</a>
+</div>
+{% endblock related_content %}
