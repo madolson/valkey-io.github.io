@@ -6,8 +6,16 @@
     <meta name="MSSmartTagsPreventParsing" content="true" />
     <meta name="Copyright" content="" />
     <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="/img/valkey-logo-og.png" />
+    {% if page and page.extra and page.extra.custom_meta%}
+    {{ page.extra.custom_meta | safe }}
+    {% endif %}
+    {% if section and section.extra and section.extra.custom_meta%}
+    {{ section.extra.custom_meta | safe }}
+    {% endif %}
+
     {% if page and page.description %}<meta name="description" content="{{ page.description}}" />
-    {% elif section and section.description %}<meta name="description" content="{{ page.description}}" />{% endif %}
+    {% elif section and section.description %}<meta name="description" content="{{ section.description}}" />{% endif %}
 
     <!-- Favicons -->
     <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
@@ -34,14 +42,38 @@
     Valkey
     {%- endif -%}
     </title>
+    <meta name="title" property="og:title" content="{%- if command_title -%}
+    Valkey Command: {{ command_title }}
+    {%- elif frontmatter_title -%}
+    Valkey Documentation: {{ frontmatter_title }}
+    {%- elif page.title -%}
+    Valkey: {{ page.title }}
+    {%- elif section.title -%}
+    Valkey: {{ section.title }}
+    {%- else -%}
+    Valkey
+    {%- endif -%}">
 
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="alternate" type="application/atom+xml" title="Atom feed" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" />
 
+    <!-- Nav JS -->
+    <script src="/assets/js/nav.js"></script>
 
-    <!-- Fathom - beautiful, simple website analytics -->
-    <script src="https://cdn.usefathom.com/script.js" data-site="FRZJYDAH" defer></script>
-    <!-- / Fathom -->
+    <!-- Carousel JS -->
+    <script src="/assets/js/carousel.js"></script>
+
+    <!-- cookie banner, LF standard -->
+    <script src="https://cmp.osano.com/16A0DbT9yDNIaQkvZ/31b1b91a-e0b6-47ea-bde2-7f2bd13dbe5c/osano.js?variant=one"></script>
+
+    <!-- google analytics, LF standard -->
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MFFCB7SR');</script>
+    <!-- End Google Tag Manager -->
 
     {% if page and page.extra and page.extra.head_extra %}{{ page.extra.head_extra }}{% endif %}
 </head>

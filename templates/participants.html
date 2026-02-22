@@ -1,24 +1,27 @@
-{% extends "right-aside.html" %}
+{% extends "fullwidth.html" %}
+
 {% block subhead_content%}
+{{ page.content | safe }}
+{% include "includes/participants-buttons.html" %}
 {% endblock subhead_content%}
 
 {% block main_content %}
-{{ page.content | safe }}
 
-{% include "includes/participants-buttons.html" %}
-
-{% set participants = load_data(path="/_data/participants.yml") %}
+{% set participants = load_data(path="/_data/participants.yml") | sort(attribute="name" ) %}
 <div class="participant-list">
   {% for participant in participants %}
     <div class="participant-{{participant.name | lower() }}">
-      <a href="{{participant.link}}" class="logo">
+      <a href="{{participant.link}}" class="participant-brand">
         <img src="{{participant.image.path}}" alt="{{participant.image.alt}}" />
       </a>
-      <h3>Valkey offering:</h3>
-      {{ participant.offering | markdown | safe }}
-      <h3>About the company:</h3>
-      {{ participant.company | markdown | safe }}
-      
+      <div class="participant-info">
+        {% if participant.offering %}
+          <h3>Valkey offering:</h3>
+          {{ participant.offering | markdown | safe }}
+        {% endif %}
+        <h3>About the organization:</h3>
+        {{ participant.company | markdown | safe }}
+      </div>
     </div>
   {% endfor %}
 </div>

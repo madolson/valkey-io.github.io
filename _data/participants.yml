@@ -13,6 +13,13 @@
     From day-to-day operational support to hands-on assistance for complex projects, Percona can meet your Valkey database needs. 
     We’ll soon be offering support, managed services, and project-based consulting, so together, we can tackle any challenge and continue to keep open source, open.
 
+- name: Alibaba Cloud
+  link: https://www.alibabacloud.com/
+  image:
+    path: /img/alibaba.png
+    alt: Alibaba Cloud Logo
+  company: >
+    Established in 2009, Alibaba Cloud offers a complete suite of cloud services to customers worldwide, including elastic computing, database, storage, machine learning and artificial intelligence (AI) services, etc. Alibaba has been recognized as the leading public cloud IaaS provider in Asia-Pacific (Gartner) and globally (IDC) since 2018.
 
 - name: Aiven
   link: https://aiven.io/valkey
@@ -62,6 +69,104 @@
   offering: >
     [Google Cloud Memorystore](https://cloud.google.com/memorystore) is a versatile, fully-managed, in-memory database service for Valkey, offering sub-millisecond data access, scalability, and high availability.
 
+- name: Ericsson
+  link: https://www.ericsson.com/
+  image:
+    path: /img/ericsson.svg
+    alt: Ericsson logo
+  company: >
+    Founded in 1876, Ericsson is a Swedish communication technology and services provider. The company offers software, services, and infrastructure for information and communications technology used by telecommunications operators, including traditional telecommunications, Internet Protocol networking equipment and business support solutions. Ericsson is headquartered in Stockholm, Sweden.
+
+- name: Oracle Cloud Infrastructure
+  link: https://www.oracle.com/cloud/
+  image:
+    path: /img/Oracle.svg
+    alt: Oracle logo
+  company: >
+    Oracle Cloud Infrastructure (OCI) is a deep and broad platform of public cloud services that enables customers to build and run a wide range of applications in a scalable, secure, highly available, fault-tolerant, and high-performance environment.
+  offering: >
+    Achieve sub-millisecond latency with [Oracle Cloud Infrastructure (OCI) Cache](https://www.oracle.com/cloud/cache/).
+
+- name: NetApp Instaclustr
+  link: https://www.instaclustr.com/platform/
+  image:
+    path: /img/netapp_instaclustr.svg
+    alt: NetApp Instaclustr logo
+  company: >
+    The [Instaclustr Platform](https://www.instaclustr.com/platform/) offers a unified approach to optimizing every facet of your data infrastructure, streamlining the process and enhancing your data ecosystem using open source software.
+  offering: >
+    [NetApp® Instaclustr for Valkey™](https://www.instaclustr.com/platform/managed-valkey/) gives you a powerful combination of automated features within our platform, 24x7 expert support, and enterprise-grade processes that can handle the most demanding customer requirements.
+
+- name: ByteDance
+  link: https://www.bytedance.com
+  image:
+    path: /img/bytedance.svg
+    alt: ByteDance logo
+  company: >
+    Founded in 2012, ByteDance's mission is to inspire creativity and enrich life. With a suite of more than a dozen products, including TikTok, CapCut, Lark, and Pico, as well as platforms specific to the China market, including Toutiao, Douyin, Fanqie Novel and Xigua Video, ByteDance has made it easier and more fun for people to connect with, consume, and create content.
+
+- name: k0rdent
+  link: https://k0rdent.io
+  company: > 
+    k0rdent provides a way to manage distributed infrastructure at massive scale leveraging kubernetes.
+    The goal of the k0rdent project is to provide platform engineers with the means to deliver a distributed container management environment (DCME) and enable them to compose unique internal developer platforms (IDP) to support a diverse range of complex modern application workloads.
+  offering: >
+    Valkey is now available as a [service template on the k0rdent application catalog](https://catalog.k0rdent.io/latest/apps/valkey/).
+    The application catalog features a selection of best-in-class solutions designed to enhance k0rdent managed clusters.
+    These services have been validated on k0rdents clusters and have existing templates for easy deployment.
+  image:
+    path: /img/k0rdent.svg
+    alt: K0rdent Logo
+
+- name: Momento
+  link:  https://www.gomomento.com/platform/cache/
+  company: > 
+    Momento is relied on for mission-critical products by global leaders including Snap Inc, FOX, and Coinbase to serve millions of users.
+    We provide caching and a low-latency pub/sub event bus at web scale.
+    Momento eliminates operational overhead and delivers enterprise-grade reliability, liberating developers to focus on innovation, not maintenance.
+  offering: >
+    Momento expertly tunes the Valkey storage engine for performance and compatibility without the operational burden.
+    Momento Cache is a globally resilient, zero-operations service built for real-time applications at any scale.
+    It ensures enterprises can instantly handle unpredictable load spikes and distributed workloads with high-throughput, guaranteed low latency, and the complete freedom to focus on innovation, not cluster maintenance.
+  image:
+    path: /img/momento.svg
+    alt: Momento Logo
+
+- name: Heroku - Salesforce
+  link: https://www.heroku.com/key-value-store/
+  company: >
+    Heroku, Salesforce's AI PaaS, helps IT leaders and app teams conquer AI delivery challenges. It offers a delightful developer experience with automated CI/CD, broad language support, and intelligent autoscaling. Deploy AI apps rapidly and securely, focusing on innovation, not infrastructure, all within the Salesforce Trust Boundary.
+  offering: >
+    Heroku Key-Value Store delivers a robust, scalable, and developer-friendly in-memory datastore, powered by Valkey and compatible with Redis® OSS. It brings enhanced performance and greater efficiency to supercharge your applications. Heroku Key-Value Store lets you gain greater visibility into performance and better manage your instances with a powerful CLI.
+  image:
+    path: /img/heroku.svg
+    alt: Heroku Logo
+
+- name: DigitalOcean
+  link: https://www.digitalocean.com/products/managed-databases-valkey/
+  image:
+    path: /img/digitalocean.svg
+    alt: DigitalOcean Logo
+  company: >
+    DigitalOcean is a cloud platform that helps you build, deploy, and scale applications. It offers virtual machines, managed containers, serverless functions, object and block storage, managed databases, Gradient AI platform and networking services. DigitalOcean provides APIs, CLIs, and SDKs for programmatic resource management, making cloud infrastructure accessible for developers.
+  offering: >
+    DigitalOcean offers a managed database service for Valkey, known as DigitalOcean Managed Caching for Valkey. This service provides a fully managed, high-performance, in-memory key-value datastore.
+
+- name: BetterDB
+  link: https://betterdb.com
+  company: >
+    BetterDB provides Valkey-native observability and monitoring tools. Backed by Open Core Ventures under an Open Charter, BetterDB is committed to maintaining an open source platform for the benefit of the public,
+    BetterDB helps teams migrating from Redis gain deep visibility into their Valkey
+    deployments with enterprise-grade analytics and compliance features.
+  offering: >
+    BetterDB is the first monitoring platform built specifically for Valkey, leveraging
+    Valkey-exclusive features like COMMANDLOG, per-slot metrics, and async I/O threading
+    visibility. It provides real-time dashboards, slowlog analysis, client analytics,
+    ACL audit trails, and Prometheus integration - capabilities existing Redis tools cannot offer.
+  image:
+    path: /img/betterdb.svg
+    alt: BetterDB Logo
+
 - name: anynines
   link:  https://anynines.com/products/a9s-keyvalue/
   image:
@@ -71,3 +176,4 @@
     anynines provides [managed data services](https://anynines.com/products/data-services/) that automate provisioning, operations, and lifecycle management across Cloud Foundry and Kubernetes. Teams get on-demand, self-service databases and data services with consistent automation, infrastructure flexibility, and built-in reliability without tying applications to specific platforms or vendors.
   offering: >
     [a9s KeyValue](https://anynines.com/products/a9s-keyvalue/) is a managed in-memory NoSQL database that delivers high-performance data storage with minimal overhead. Delivered by [anynines](https://anynines.com/), it is built on open-source Valkey and fully compatible with legacy Redis® OSS.
+

@@ -3,6 +3,9 @@ title= "Storing more with less: Memory Efficiency in Valkey 8"
 date= 2024-09-04 01:01:01
 description= "Learn about the new memory efficiency improvements in Valkey 8 which reduces memory overhead, which allows more data to be stored in the same amount of memory."
 authors= [ "hpatro"]
+[extra]
+featured = true
+featured_image = "/assets/media/featured/random-05.webp"
 +++
 
 Valkey 8.0 GA is around the corner and one of the themes is increasing overall memory efficiency. Memory overhead reduction has the obvious effect of better resource utilization, but also impacts performance. By minimizing unnecessary memory consumption, you can store more data with the same hardware resources and improve overall system responsiveness. This post is going to give an overview into how Valkey internally manages the data and its memory overhead. Additionally, it talks about the two major improvements for Valkey 8.0 that improves the overall memory efficiency.
@@ -137,4 +140,4 @@ So, the drop in percentage is approximately **20.63% in overall memory usage on 
 ## Conclusion
 
 Through the memory efficiency achieved by introducing dictionary per slot and key embedding into dictionary entry, users should have additional capacity to store more keys per node in Valkey 8.0 (up to 20%, but it will vary based on the workload). For users, upgrading from Valkey 7.2 to Valkey 8.0, the improvement should be observed automatically and no configuration changes are required. 
-Give it a try by spinning up a [Valkey cluster](https://valkey.io/download/) and join us in the [community](https://github.com/valkey-io/valkey/) to provide feedback. Further, there is an ongoing discussion around overhauling the main dictionary with a more compact memory layout and introduce an open addressing scheme which will significantly improve memory efficiency. More details can be found [here](https://github.com/valkey-io/valkey/issues/169).
+Give it a try by spinning up a [Valkey cluster](https://valkey.io/download/) and join us in the [community](https://github.com/valkey-io/valkey/) to provide feedback. Further, there is an ongoing discussion around overhauling the main dictionary with a more compact memory layout and introduce an open addressing scheme which will significantly improve memory efficiency. More details can be found in [Issue 169: Re-thinking the main hash table](https://github.com/valkey-io/valkey/issues/169).

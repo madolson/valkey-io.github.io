@@ -29,6 +29,9 @@
         | regex_replace(pattern=`\]\(\.\./commands/(?P<fname>\w.*?)(.md)?#(?P<hash>.*?)\)`, rep=`](/commands/$fname#$hash)`) 
         | regex_replace(pattern=`\]\(\.\./commands/(?P<fname>\w.*?)(.md)?\)`, rep=`](/commands/$fname)`)
         | regex_replace(pattern=`\]\(\.\./commands/#(?P<hash>\w.*?)\)`, rep=`](/commands/#$hash)`) 
+        | regex_replace(pattern=`\]\(\.\./topics/\)`, rep=`](/topics/)`)
+        | regex_replace(pattern=`\]\(\./\)`, rep=`](/topics/)`)
+        | regex_replace(pattern=`\]\(index\.md\)`, rep=`](/topics/)`) 
         | regex_replace(pattern=`\]\((?P<fname>\w.*?)(.md)\)`, rep=`](/topics/$fname)`)
         | regex_replace(pattern=`\]\((?P<fname>\w.*?)(.md)?#(?P<hash>.*?)\)`, rep=`](/topics/$fname#$hash)`)
         | regex_replace(pattern=`\]\((?P<fname>.*?).png\)`, rep=`](/topics/$fname.png)`)
@@ -49,3 +52,25 @@
         | regex_replace(pattern=`\[(?<id>.*)\}\s*(?P<url>.*)`, rep=`[$id]: $url`)
 }}
 {%- endmacro fix_links -%}
+
+
+{%- macro client_json_path(client_path) -%}
+{{config.extra.client_json_path }}{{ client_path }}
+{%- endmacro client_json_path -%}
+
+
+{%- macro boolean_to_checkmark(value) -%}
+    {% if value == true %}
+        <span class="checkmark-true">✓</span>
+    {% else %}
+        <span class="checkmark-false">✗</span>
+    {% endif %}
+{%- endmacro %}
+
+{% macro format_language(language) %}
+    {% if language == "php" %}
+        {{ language | upper }}
+    {% else %}
+        {{ language | title }}
+    {% endif %}
+{% endmacro %}

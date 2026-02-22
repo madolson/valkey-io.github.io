@@ -48,16 +48,30 @@
 {{ command_obj_name }}
 {%- endmacro command_obj_name -%}
 
+{%- macro command_search_json_path(slug) -%}
+{{config.extra.command_search_json_path }}{{ slug }}.json
+{%- endmacro command_search_json_path -%}
+
 {%- macro command_json_path(slug) -%}
 {{config.extra.command_json_path }}{{ slug }}.json
-{%- endmacro load_command_json -%}
+{%- endmacro command_json_path -%}
+
+{%- macro command_bloom_json_path(slug) -%}
+{{config.extra.command_bloom_json_path }}{{ slug }}.json
+{%- endmacro command_bloom_json_path -%}
+
+{%- macro command_json_json_path(slug) -%}
+{{config.extra.command_json_json_path }}{{ slug }}.json
+{%- endmacro command_json_json_path -%}
 
 {%- macro fix_links(content) -%}
 {{ content
     | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md#(?P<hash>.*?)\)`, rep=`](/topics/$fname#$hash)`)
     | regex_replace(pattern=`\]\(\.\./topics/(?P<fname>.*?).md\)`, rep=`](/topics/$fname)`)
     | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+\.\./topics/(?P<fname>.*?).md`, rep=`[$token]: /topics/$fname`)
-    | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+(?P<fname>.*?).md`, rep=`[$token]: $fname`)
+    | regex_replace(pattern=`\]\((?P<fname>[\w\.-]*?)\.md#(?P<hash>.*?)\)`, rep=`](/commands/$fname#$hash)`)
+    | regex_replace(pattern=`\]\((?P<fname>[\w\.-]*?)\.md\)`, rep=`](/commands/$fname)`)
+    | regex_replace(pattern=`\[(?P<token>.*?)\]:\s+(?P<fname>[\w\.-]*?).md`, rep=`[$token]: /commands/$fname`)
     | safe
     }}
 {%- endmacro fix_links -%}

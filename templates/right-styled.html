@@ -1,0 +1,16 @@
+{% extends "default.html" %}
+
+{% block content %}
+<div class="styled-title">
+    {% block subhead_content %}{% endblock subhead_content %}
+</div>
+
+<div class="right-styled">
+    <main class="container">
+        {% block main_content %}{% endblock main_content %}
+    </main>
+    <aside>
+        {% block related_content %}{% endblock related_content %}
+    </aside>
+</div>
+{% endblock content %}

@@ -1,8 +1,13 @@
 .DS_Store
 public
+package-lock.json
+build-bloom-command-json
 build-command-docs
 build-command-json
+build-json-command-json
+build-search-command-json
 build-topics
+build-clients
 content/commands/*
 !content/commands/_index.md
 content/topics/*
@@ -11,3 +16,8 @@ _site
 _data/groups.json
 _data/resp2_replies.json
 _data/resp3_replies.json
+_data/modules.json
+.vscode/*
+.idea/*
+tmp/*
+static/debug

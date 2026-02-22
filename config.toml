@@ -7,8 +7,8 @@ build_search_index = true
 
 generate_feeds = true
 
-[markdown]
-highlight_code = true
+[markdown.highlighting]
+theme = "github-dark-default"
 
 # Needed to stop certain command topics from being destroyed by the slugifier
 [slugify]
@@ -19,8 +19,13 @@ highlight_code = true
 "valkey-conf" = "valkey.conf"
 
 [extra]
+banner = "**What's new in Valkey 9.0?** Discover new features and improvements. [Read the announcement](/blog/introducing-valkey-9/)."
 command_description_path = "../build-command-docs/"
 command_json_path = "../build-command-json/"
+command_bloom_json_path = "../build-bloom-command-json/"
+command_json_json_path = "../build-json-command-json/"
+command_search_json_path = "../build-search-command-json/"
+client_json_path = "../build-clients/"
 doc_topic_path = "../build-topics/"
 
 review_list = [
@@ -47,3 +52,4 @@ publish_hold = [
     "/topics/internals/",
     "/topics/rdd/"
 ]
+
