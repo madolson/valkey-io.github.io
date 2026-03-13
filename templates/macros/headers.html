@@ -1,0 +1,32 @@
+{%- macro header_with_anchor(level, text, id="") -%}
+{%- if id == "" -%}
+    {%- set anchor_id = text | lower | replace(from=" ", to="-") | replace(from=".", to="-") | replace(from="(", to="") | replace(from=")", to="") | replace(from=":", to="") | replace(from="/", to="-") | replace(from="&", to="and") -%}
+{%- else -%}
+    {%- set anchor_id = id -%}
+{%- endif -%}
+<h{{ level }} id="{{ anchor_id }}"><a href="#{{ anchor_id }}" class="header-anchor">{{ text }}</a></h{{ level }}>
+{%- endmacro header_with_anchor -%}
+
+{%- macro h1(text, id="") -%}
+{{ self::header_with_anchor(level=1, text=text, id=id) }}
+{%- endmacro h1 -%}
+
+{%- macro h2(text, id="") -%}
+{{ self::header_with_anchor(level=2, text=text, id=id) }}
+{%- endmacro h2 -%}
+
+{%- macro h3(text, id="") -%}
+{{ self::header_with_anchor(level=3, text=text, id=id) }}
+{%- endmacro h3 -%}
+
+{%- macro h4(text, id="") -%}
+{{ self::header_with_anchor(level=4, text=text, id=id) }}
+{%- endmacro h4 -%}
+
+{%- macro h5(text, id="") -%}
+{{ self::header_with_anchor(level=5, text=text, id=id) }}
+{%- endmacro h5 -%}
+
+{%- macro h6(text, id="") -%}
+{{ self::header_with_anchor(level=6, text=text, id=id) }}
+{%- endmacro h6 -%}
