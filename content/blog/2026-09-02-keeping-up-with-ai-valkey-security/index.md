@@ -1,5 +1,5 @@
 +++
-title = "Bugs got cheaper to find: Valkey security in 2026"
+title = "Keeping up with AI: Valkey security in 2026"
 description = "Valkey published more security advisories in the first eight months of 2026 than in its first twenty-one. AI made bugs cheaper to find. This post covers how the Valkey community is keeping up."
 date = 2026-09-02
 authors = ["madolson", "murphyjacob4", "hpatro"]
@@ -9,7 +9,7 @@ blog_type = ["Technical Deep Dive"]
 
 [extra]
 featured = false
-featured_image = "/assets/media/featured/random-07.webp"
+featured_image = "/blog/keeping-up-with-ai-valkey-security/images/hero.webp"
 +++
 
 We published five security advisories in Valkey's first 21 months, from the March 2024 fork through the end of 2025.
@@ -22,7 +22,7 @@ Jeremy Stanley of OpenStack's vulnerability management team calls it a ["seeming
 
 The Valkey project relies on a handful of maintainers to reproduce each report, judge severity, write the fix, coordinate the embargo, and ship it across every supported version.
 It's easy to see this increase as a hopeless fight against a rising tide, but we think there is hope.
-In this blog we'll discuss three changes that are helping us keep up: what we count as a vulnerability, how we look for bugs ourselves, and how we ship the fixes faster.
+In this post we'll discuss three changes that are helping us keep up: what we count as a vulnerability, how we look for bugs ourselves, and how we ship the fixes faster.
 
 ## Updating what counts as a vulnerability
 
@@ -48,7 +48,7 @@ One example we found was a straightforward TLS bug that was easy for a human to 
 
 With TLS enabled, Valkey may decrypt more data from the TLS stream than a single command.
 Valkey keeps a list of connections holding unread data and walks it once per event loop pass.
-Walking means holding a pointer to the next connection while processing the current one, and processing a connection runs whatever command it sent.
+Walking the list means holding a pointer to the next connection while processing the current one, and processing a connection runs whatever command it sent.
 If that command is `CLIENT KILL` aimed at the next connection on the list, the server frees that connection immediately, and the saved pointer now points at freed memory.
 The next iteration follows that pointer, and the server crashes.
 
@@ -64,14 +64,18 @@ Candidate bugs typically die at that verification stage, either because the code
 Across Valkey and the JSON, search, and bloom modules, that pipeline has so far produced 34 real bugs.
 We run these audits periodically across several frontier models, and we're hopeful that running them before each release will reduce the number of security bugs that end up in production.
 
-## Automating the backport
+## Shipping the fixes faster
 
 The last piece of the puzzle is being able to quickly and consistently deliver fixes to all of our supported versions.
 The TLS bug above affected every version of Valkey, and a year ago a maintainer would have manually cherry-picked the fix into each supported branch.
 Over the last few months, the Valkey project has invested heavily in automating our release process, using AI to generate backport pull requests and resolve conflicts.
-If we wake up one morning to a zero-day in Valkey, we can get fixes out the door quickly.
+We've also codified our security triage and release process into prompts, so whoever is shepherding a release has the steps in front of them.
+
+That has cut the time it takes to get a security fix to our users.
+If we wake up one morning to a zero-day in Valkey, we now feel confident we can get fixes out the door the same day.
+
 AI agents drive all of this, but a human is responsible for making sure the merges are correct.
-We still believe it's important to keep humans in the loop for verifying AI software.
+Keeping people in the loop matters more in a security release, not less.
 
 ## What you should do next
 
