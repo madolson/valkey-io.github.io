@@ -1820,7 +1820,9 @@ html.banner-hidden .banner {
 .documentation-card {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  // Spaces title from description, and keeps the button off the description
+  // even when `margin-top: auto` has no slack left to push it down.
+  gap: 1.5rem;
   padding: 4rem;
   border-radius: 20px;
   color: white;

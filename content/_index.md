@@ -38,7 +38,7 @@ button_url = "/clients"
 
 [[extra.documentation_cards]]
 title = "Performance"
-description = "Throughput trends across every Valkey version."
+description = "Deep dive into Valkey performance numbers across versions."
 button_text = "Explore"
 button_url = "/performance/"
 
