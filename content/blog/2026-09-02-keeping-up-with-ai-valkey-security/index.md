@@ -8,7 +8,7 @@ authors = ["madolson", "murphyjacob4", "hpatro"]
 blog_type = ["Technical Deep Dive"]
 
 [extra]
-featured = false
+featured = true
 featured_image = "/blog/keeping-up-with-ai-valkey-security/images/hero.webp"
 +++
 
