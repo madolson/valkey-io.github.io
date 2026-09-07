@@ -9,7 +9,8 @@ blog_type = ["Technical Deep Dive"]
 
 [extra]
 featured = true
-featured_image = "/blog/keeping-up-with-ai-valkey-security/images/hero.webp"
+featured_image = "/assets/media/featured/security-shield-clean.webp"
+og_image = "/blog/keeping-up-with-ai-valkey-security/images/og.webp"
 +++
 
 We published five security advisories in Valkey's first 21 months, from the March 2024 fork through the end of 2025.
