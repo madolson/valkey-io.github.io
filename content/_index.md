@@ -36,6 +36,12 @@ description = "Official Valkey client libraries for Python, Java, Go, Node.js, P
 button_text = "Learn More"
 button_url = "/clients"
 
+[[extra.documentation_cards]]
+title = "Performance"
+description = "Throughput trends across every Valkey version."
+button_text = "Explore"
+button_url = "/performance/"
+
 [[extra.download_ctas]]
 text= "Get Valkey"
 url=  "/download/"
@@ -48,7 +54,7 @@ title= "Read the docs"
 
 +++
 
-## Documentation
+## Learn more
 
 Valkey can run as either a **standalone** daemon or in a **cluster**, with options for **replication** and **high availability**. Valkey natively supports a rich collection of datatypes, including **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, **hyperloglogs** and more.
 You can operate on data structures in-place with an expressive collection of commands.

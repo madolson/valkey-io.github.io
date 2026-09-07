@@ -128,16 +128,6 @@
             </div>
             {% endfor %}
         {% endif %}
-        {% set perf = load_data(path="_data/perf.toml") %}
-        {% for perf_dashboard in perf.dashboards %}
-        <div class="col col-3">
-            <div class="documentation-card">
-                <h3>{{ perf_dashboard.title | markdown(inline=true) | safe }}</h3>
-                <p>{{ perf_dashboard.description | markdown(inline=true) | safe }}</p>
-                <a class="btn" href="{{ perf_dashboard.link }}">{{ perf_dashboard.button_text }}</a>
-            </div>
-        </div>
-        {% endfor %}
     </div>
 </div>
 
