@@ -40,8 +40,11 @@
     <tbody>
         {% for line_release in release_lines %}
             {% set line = line_release.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+            {# get_page fails the build if a release ships without its line page. #}
+            {% set line_slug = line | replace(from=".", to="-") %}
+            {% set line_page = get_page(path="download/versions/" ~ line_slug ~ ".md") %}
             <tr>
-                <td><a href="/download/{{ line }}/">Valkey {{ line }}</a></td>
+                <td><a href="{{ line_page.permalink }}">Valkey {{ line }}</a></td>
                 <td><a href="{{ line_release.permalink }}">{{ line_release.extra.tag }}</a></td>
                 <td>{{ line_release.date | date(format="%B %-d, %Y") }}</td>
             </tr>

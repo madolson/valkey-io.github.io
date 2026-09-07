@@ -35,23 +35,22 @@
             {% set latest = release_lines | first %}
             {% set latest_line = latest.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
 
+            {# Highlights and the line URL both come from the /download/<line>/ page.
+               get_page fails the build if a release ships without its line page. #}
+            {% set latest_slug = latest_line | replace(from=".", to="-") %}
+            {% set latest_line_page = get_page(path="download/versions/" ~ latest_slug ~ ".md") %}
+
             <h3>Latest release</h3>
             <div class="inner-card">
                 <p class="release-headline">
-                    <a href="/download/{{ latest_line }}/">Valkey {{ latest.extra.tag }}</a>
+                    <a href="{{ latest_line_page.permalink }}">Valkey {{ latest.extra.tag }}</a>
                     <small>Released {{ latest.date | date(format="%B %-d, %Y") }}</small>
                 </p>
 
-                {# Highlights live in the /download/<line>/ page for the line. #}
-                {% set version_section = get_section(path="download/versions/_index.md") %}
-                {% for version_page in version_section.pages %}
-                    {% if version_page.extra.version == latest_line %}
-                        <div class="release-highlights">{{ version_page.content | safe }}</div>
-                        {% if version_page.extra.blog_url %}
-                            <a href="{{ version_page.extra.blog_url }}" class="link-readmore">{{ version_page.extra.blog_text }}</a>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
+                <div class="release-highlights">{{ latest_line_page.content | safe }}</div>
+                {% if latest_line_page.extra.blog_url %}
+                    <a href="{{ latest_line_page.extra.blog_url }}" class="link-readmore">{{ latest_line_page.extra.blog_text }}</a>
+                {% endif %}
             </div>
 
             <h3>Latest supported version of past releases</h3>
@@ -59,8 +58,10 @@
                 <ul class="list-links-small release-links">
                     {% for older_release in release_lines | slice(start=1) %}
                         {% set older_line = older_release.extra.tag | split(pat=".") | slice(end=2) | join(sep=".") %}
+                        {% set older_slug = older_line | replace(from=".", to="-") %}
+                        {% set older_line_page = get_page(path="download/versions/" ~ older_slug ~ ".md") %}
                         <li>
-                            <a href="/download/{{ older_line }}/">Valkey {{ older_release.extra.tag }}</a>
+                            <a href="{{ older_line_page.permalink }}">Valkey {{ older_release.extra.tag }}</a>
                             <small>Released {{ older_release.date | date(format="%B %-d, %Y") }}</small>
                         </li>
                     {% endfor %}
