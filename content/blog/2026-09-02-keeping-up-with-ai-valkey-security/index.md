@@ -37,10 +37,13 @@ Excluding the minor issues from the CVE process recovers maintainer time for the
 
 Here is how the updated policy works in practice:
 
-- A malformed request that crashes the server before authentication gets an advisory. [CVE-2026-27623](https://github.com/valkey-io/valkey/security/advisories/GHSA-93p9-5vc7-8wgr) is this year's example.
-- An out-of-bounds read reachable by an authenticated client gets an advisory. The bytes it returns may belong to another client's keys or session, which ACLs should have kept from that client.
+- A malformed request that crashes the server before authentication gets an advisory.
+  [CVE-2026-27623](https://github.com/valkey-io/valkey/security/advisories/GHSA-93p9-5vc7-8wgr) is this year's example.
+- An out-of-bounds read reachable by an authenticated client gets an advisory.
+  The bytes it returns may belong to another client's keys or session, which ACLs should have kept from that client.
 - Memory corruption with a credible path to code execution, or any action beyond granted permissions, gets an advisory.
-- A crash or hang triggered by a client that holds `EVAL` permissions does not. That client can write a Lua loop that pins a core indefinitely, so a bug that hangs the server doesn't give it anything it couldn't already do.
+- A crash or hang triggered by a client that holds `EVAL` permissions does not.
+  That client can write a Lua loop that pins a core indefinitely, so a bug that hangs the server doesn't give it anything it couldn't already do.
 
 ## Using adversarial testing to find bugs
 
