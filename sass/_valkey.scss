@@ -2344,9 +2344,36 @@ blockquote {
   overflow: hidden;
 }
 
+// Sits on the heading row rather than under the cards, so the column ends on a
+// card edge instead of a stray link.
+.homepage-blog-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2rem;
+
+  h3 {
+    width: auto;
+  }
+}
+
 .homepage-blog-more {
-  align-self: flex-start;
-  color: white;
+  @include sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.8);
+
+  &:after {
+    content: ' ›';
+    font-size: 1.2em;
+  }
+
+  &:hover {
+    color: white;
+  }
 }
 
 // Responsive adjustments for homepage blog cards
