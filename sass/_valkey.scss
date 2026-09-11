@@ -2357,14 +2357,21 @@ blockquote {
   }
 }
 
+// `&:visited` is not redundant: the global `a:visited` is more specific than a
+// bare class, so without it the link falls back to the blue link colour.
 .homepage-blog-more {
+  &,
+  &:visited,
+  &:hover {
+    color: white;
+  }
+
   @include sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
   text-transform: uppercase;
   text-decoration: none;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.9);
 
   &:after {
     content: ' ›';
@@ -2372,7 +2379,7 @@ blockquote {
   }
 
   &:hover {
-    color: white;
+    text-decoration: underline;
   }
 }
 
