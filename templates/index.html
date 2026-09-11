@@ -75,20 +75,16 @@
                 {% set blog_post_section = get_section(path="blog/_index.md") %}
                 {% set blog_posts = blog_post_section.pages | slice(end=section.extra.latest_blog_posts) %}
                 {% for post in blog_posts %}
-                    {# The whole card is the link, so there is no separate call to action. #}
+                    {# The whole card is the link, so there is no separate call to action.
+                       Featured images are 16:9 decoration; a thumbnail this narrow could only
+                       show a crop of one, so the card is text with a colour accent instead. #}
                     <a class="homepage-blog-card" href="{{ post.permalink }}">
-                        {% if post.extra.featured_image %}
-                            {# Decorative: the card link is already named by the title and description. #}
-                            <img src="{{ post.extra.featured_image }}" alt="" class="homepage-blog-card-image" />
-                        {% else %}
-                            <div class="homepage-blog-card-image-placeholder"></div>
-                        {% endif %}
-                        <div class="homepage-blog-card-content">
-                            <h4 class="homepage-blog-card-title">{{ post.title }}</h4>
-                            <p class="homepage-blog-card-description">{{ post.description }}</p>
-                        </div>
+                        <h4 class="homepage-blog-card-title">{{ post.title }}</h4>
+                        <p class="homepage-blog-card-meta">{{ post.date | date(format="%B %-d, %Y") }}</p>
+                        <p class="homepage-blog-card-description">{{ post.description }}</p>
                     </a>
                 {% endfor %}
+                <a href="/blog/" class="link-readmore homepage-blog-more">All blog posts</a>
             </div>
 
             {% if section.extra and section.extra.sidebar %}

@@ -7,7 +7,7 @@ github_org= "https://github.com/valkey-io"
 github_org_text= "All repos in the Valkey GitHub organization"
 
 # Number of blog posts shown in the "Latest Blog Posts" panel.
-latest_blog_posts= 3
+latest_blog_posts= 4
 
 headline= "Valkey: an open source, in-memory data store"
 long_description= ""
