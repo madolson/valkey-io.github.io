@@ -1,0 +1,80 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+#
+# The blog path instruction used to read "follow the best practices as described in
+# CONTRIBUTING-BLOG-POST.md". `path_instructions` is literal prompt text with no mechanism to
+# dereference another file, and CONTRIBUTING-BLOG-POST.md is not one of CodeRabbit's default
+# code-guidelines patterns, so the rules were never loaded and never enforced.
+#
+# The fix is `knowledge_base.code_guidelines.filePatterns` below, which is the documented way to
+# register a standards document. The guide stays the single source of truth: it is not restated
+# here, because a hand-written restatement drifts from it and silently turns its permissions into
+# requirements. `path_instructions` carries only what a reference cannot: how to review markdown
+# prose, one mechanical check, and two conventions the guide does not mention.
+reviews:
+  # `chill` (the default) suppresses style and convention findings, which is exactly the class of
+  # finding the blog guide is meant to produce.
+  profile: assertive
+  high_level_summary: false
+  sequence_diagrams: false
+  estimate_code_review_effort: false
+  suggested_labels: false
+  in_progress_fortune: false
+  path_instructions:
+    - path: content/blog/**/*.md
+      instructions: |-
+        These files are blog posts for valkey.io. Review them as prose, not as code, and do not
+        summarize the post back to the author.
+
+        CONTRIBUTING-BLOG-POST.md in the repository root is the style guide. Its "What to write
+        about" and "How to write it" sections are the review criteria. Read it and apply it as
+        written, with two constraints on how you read it:
+
+        - Honor its permissions and exceptions. Where it says "feel free", "you can", or "unless",
+          it is allowing something, not requiring it. A post that declines the option is not in
+          violation.
+        - Do not extend it. If a concern is not in the guide, either leave it out or raise it as an
+          open question rather than as a violation.
+
+        One rule in the guide is mechanically checkable rather than a judgment call: "put one
+        sentence per line in the markdown source". Run `grep -nE '[.!?] +[A-Z]'` against the file
+        and report the line numbers it returns. Comment on the line breaks only, never on sentence
+        length, which the guide explicitly leaves to the author.
+
+        Two conventions the guide does not cover, so that you do not raise them as defects:
+
+        - Frontmatter is TOML between `+++` fences. House style is `title=`, `date=`, and
+          `authors=` with no space before the `=`, and `description = ` with spaces. Do not flag
+          the spacing either way.
+        - Do not flag the character length of `title` or `description`. Posts on this site
+          routinely run past the generic 60/160 targets, and changing that is a site-wide decision
+          rather than a per-post one.
+  finishing_touches:
+    docstrings:
+      enabled: false
+    unit_tests:
+      enabled: false
+  pre_merge_checks:
+    docstrings:
+      mode: off
+    title:
+      mode: off
+    description:
+      mode: off
+    issue_assessment:
+      mode: off
+  tools:
+    presidio:
+      enabled: false
+
+knowledge_base:
+  # This is what actually loads the blog style guide. CONTRIBUTING-BLOG-POST.md is not one of
+  # CodeRabbit's default patterns (those are **/AGENTS.md, **/CLAUDE.md, **/.cursorrules,
+  # **/GEMINI.md, **/REVIEW.md, and .github/copilot-instructions.md), so it has to be named.
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - CONTRIBUTING-BLOG-POST.md
+      - CONTRIBUTING.md
+
+chat:
+  art: false
