@@ -9,7 +9,8 @@
 # register a standards document. The guide stays the single source of truth: it is not restated
 # here, because a hand-written restatement drifts from it and silently turns its permissions into
 # requirements. `path_instructions` carries only what a reference cannot: how to review markdown
-# prose, one mechanical check, and two conventions the guide does not mention.
+# prose, the editorial standard a reviewer applies on top of the guide, and two conventions the
+# guide does not mention.
 reviews:
   # `chill` (the default) suppresses style and convention findings, which is exactly the class of
   # finding the blog guide is meant to produce.
@@ -33,12 +34,57 @@ reviews:
           it is allowing something, not requiring it. A post that declines the option is not in
           violation.
         - Do not extend it. If a concern is not in the guide, either leave it out or raise it as an
-          open question rather than as a violation.
+          open question rather than as a violation. The editorial checks below are the one
+          exception: report them as readability findings, never as guide violations.
 
-        One rule in the guide is mechanically checkable rather than a judgment call: "put one
-        sentence per line in the markdown source". Run `grep -nE '[.!?] +[A-Z]'` against the file
-        and report the line numbers it returns. Comment on the line breaks only, never on sentence
-        length, which the guide explicitly leaves to the author.
+        Do not comment on the one-sentence-per-line rule.
+
+        Review in this order, and stop early when step 1 fails.
+
+        1. Structure and density. Judge the post as a reader who does not already care about the
+           topic, and quote the text you are judging. Check that:
+           - the first one or two sentences give a concrete reason to keep reading: a problem, a
+             number, a stake. Background and "we are pleased to announce" are not a hook.
+           - the thesis can be stated in one sentence, and every section advances it. Name any
+             section that does not, and say whether to cut it, compress it, or link it out.
+           - the ending resolves what the intro opened. A recap, a future-work list, or a new idea
+             is not a resolution.
+           - there is one concrete call to action, not several.
+           - every paragraph is dense. Test each prose paragraph: try to rewrite it at half its
+             length without losing a fact, number, or step of reasoning. If that works, it fails.
+           - the prose stays within the guide's word limit. Exclude frontmatter, code blocks,
+             tables, and references from the count.
+
+           Give a narrative score out of 5. If it is 3 or lower (a structural failure, more than
+           two paragraphs failing the density test, or prose past 1.5x the word limit), post only
+           the score, the failing paragraphs by line range with a one-line cause, and what to fix
+           first. Do not leave line-level comments: the rewrite will invalidate them.
+
+        2. Claims and links. Every number needs units and the setup that produced it. Every
+           behavior claim needs a link to a pull request or the docs. The post must name the
+           Valkey version a behavior applies to. Flag any claim you cannot verify, and any link
+           that does not resolve.
+
+        3. Editorial patterns. Flag these:
+           - hedges that do not say where the uncertainty comes from ("roughly", "nearly",
+             "should", "usually", "probably").
+           - contrast framing ("rather than", "not X, it is Y").
+           - em dashes.
+           - parenthetical disclaimers and asides.
+           - sentences that carry more than one idea.
+           - pre-emptive disclaimers that defend against an objection nobody raised.
+           - signposting that announces a point instead of making it ("The surprise is").
+           - aphorisms standing in for a plain statement.
+           - over-explaining what a reader would infer.
+           - restating a point already made earlier in the post.
+
+           A pattern that recurs is one comment that lists every line, not one comment per
+           instance. Show one before/after cut from the post for each pattern so the author sees
+           the target density. Do not rewrite the post beyond that.
+
+        Label each comment blocker, major, minor, or nit. A pattern that runs through the whole
+        post is major. Keep comments short: do not summarize the post, rate it, or list what you
+        checked.
 
         Two conventions the guide does not cover, so that you do not raise them as defects:
 
