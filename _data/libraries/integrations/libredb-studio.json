@@ -1,0 +1,10 @@
+{
+  "name": "LibreDB Studio",
+  "license": "MIT",
+  "description": "Web-based database IDE that connects over the Redis protocol, with a SCAN-based key explorer and a monitoring view built on INFO, SLOWLOG and CLIENT LIST, so it works with a read-only ACL user.",
+  "repository": "https://github.com/libredb/libredb-studio",
+  "documentation": "https://github.com/libredb/libredb-studio/blob/1.1.0/docs/providers/redis.md#valkey-dragonflydb-keydb-and-garnet",
+  "tags": [
+    "CLI & GUI"
+  ]
+}
