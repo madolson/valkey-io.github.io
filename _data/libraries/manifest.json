@@ -19,6 +19,7 @@
   "integrations": [
     "integrations/valkey-admin.json",
     "integrations/valkey-cli.json",
+    "integrations/libredb-studio.json",
     "integrations/valkey-operator.json",
     "integrations/valkey-helm.json",
     "integrations/valkey-container.json",
