@@ -125,27 +125,14 @@ build/unconverted-doc-links.sh public
 
 ## Blog hero title cards
 
-A blog post can open with a title card instead of its featured image: the post title, as text, in white Open Sans over the Valkey particle-wave background.
-It is opt-in, with two keys under `[extra]` in the post's [front matter](CONTRIBUTING-BLOG-POST.md#step-4-put-everything-together):
+Blog posts can opt in to a title card in place of their featured image; see [Title cards](CONTRIBUTING-BLOG-POST.md#title-cards) for the front matter and the line rules.
 
-- `hero_card = true` shows the card in place of `featured_image`, and makes the card's background the link preview unless `og_image` is set.
-- `hero_title` (optional) is the card's title when it should differ from `title`, usually to choose the line breaks. Each `\n` in it starts a new line. The page's own title is unchanged.
-
-CSS can't wrap text by these rules, so the template, `templates/macros/blog-hero.html`, sets the lines itself:
-
-- A title with a colon becomes a heading and a smaller subheading, split at its first `": "` with the colon dropped, unless the whole title fits on one line at full size. In `hero_title`, a `:` followed by `\n` always splits.
-- The heading and the subheading each take one line if they fit, otherwise two, with the first line at least as long as the second and at least two words on the second. Never three. Lines stop short of the wave on the right, and text shrinks to fit, down to 10px on a 390px-wide phone.
-- If the heading or the subheading can't fit in two lines at that size, the build fails with an error naming the post. Shorten the title, or set `hero_title` with your own breaks.
-
-The template measures lines with Open Sans's advance widths, in `_data/blog-hero/open-sans-400.json`.
-The background is `static/assets/media/blog-hero/default-bg.webp`, and `default-og.webp` beside it is the link preview.
-The styles are in `sass/_blog-hero.scss`.
-
-`build/blog-hero.py` regenerates the width table, which only changes with the Open Sans font files.
-Given the background as a 16:9 PNG, it also re-encodes both images:
+The card is `templates/macros/blog-hero.html` and `sass/_blog-hero.scss`, over `static/assets/media/blog-hero/default-bg.webp`.
+The template sets the lines by adding up Open Sans's advance widths from `_data/blog-hero/open-sans-400.json`, against right edges measured from that background (`blog_hero.edge`), so a new background needs new edges.
+`build/blog-hero.py` regenerates the width table when the Open Sans font files change:
 
 ```shell
-./build/blog-hero.py [background.png]
+./build/blog-hero.py
 ```
 
 It runs with [uv](https://docs.astral.sh/uv/), or with `python3` once Pillow is installed.
