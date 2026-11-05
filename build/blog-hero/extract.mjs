@@ -12,8 +12,8 @@
 //
 // Nothing is copied out of the generator's drawing code. Its lib/core.mjs and theme
 // modules are imported and called, so the ground, the lockup and the palette are the
-// generator's own. The one exception is the shield's outline, drawn here (`heaterShield`)
-// because valkey-svgs only has a flat-topped one. Everything is deterministic, so rerunning
+// generator's own. The one exception is the shield's outline (`pointedShieldPath`), which
+// comes to a sharper point at the bottom than valkey-svgs' does. Everything is deterministic, so rerunning
 // against the same valkey-svgs commit is a no-op diff.
 //
 // The card itself is composed in templates/macros/blog-hero.html and sass/_blog-hero.scss.
@@ -42,9 +42,9 @@ const load = (...p) => import(pathToFileURL(join(SVGS, ...p)).href);
 const G = await load('lib', 'core.mjs');
 
 // The front matter value (`extra.hero_motif`) maps to a generator theme, which supplies the
-// og:image framing, and to the art drawn for the card. `box` is the tile cut out of the
+// art and the og:image framing, and to the change made to that art for the card. `box` is the tile cut out of the
 // 1920x1080 drawing grid, centred on the subject with room for its glow.
-const MOTIFS = [{ key: 'security', theme: 'security-shield-clean', art: heaterShield, box: [575, 95, 770, 900] }];
+const MOTIFS = [{ key: 'security', theme: 'security-shield-clean', art: pointedShield, box: [575, 155, 770, 780] }];
 
 const rev = (() => {
   try {
@@ -73,81 +73,42 @@ async function theme(name) {
   return t;
 }
 
-// The security shield. A heater shield, after a reference madolson chose: a peaked top that
-// sags between the point and the corners, shoulders flaring a little wider than the body,
-// sides curving in to a point, about 1.26 times as tall as it is wide. Outlined twice with a
-// few short highlight strokes inside, and otherwise the generator's `security-shield-clean`
-// treatment: its lattice, glow passes, mint halo and the mark at the centre.
-//
-// The outline is kept as segments so the highlights can be traced along parts of it.
-function heater(cx, top, w, h) {
+// The security shield: valkey-svgs' `security-shield-clean` art, lattice, glow, halo and mark
+// as the generator draws them, with one change. madolson wanted a sharper point at the
+// bottom, so the generator's `shieldPath()` outline is swapped, in all five places the art
+// uses it, for `pointedShieldPath()`. That is the same construction, flat top and all, except
+// that the sides start curving at 45% of the height rather than 56% and meet at the bottom
+// at 35 degrees below horizontal rather than 18, 5 units lower, so the point is definite.
+// Both control points of each side stay outside the chord to the tip, which keeps the side
+// convex; moving only the second one inward gives an S-bend into a cusp.
+function pointedShieldPath(cx, cy, w, h, shoulder = 0.45) {
+  const n = G.n;
   const hw = w / 2;
-  const corner = top + 0.045 * h; // the corners sit a little below the peak
-  const dip = top + 0.085 * h; // and the top edge sags between them
-  const shoulder = top + 0.17 * h; // the short near-vertical side under each corner
-  const inset = 0.022 * w; // the body is narrower than the flared corners
-  const right = [
-    ['C', [cx, top], [cx + hw * 0.3, top + (dip - top) * 0.75], [cx + hw * 0.75, dip], [cx + hw, corner]],
-    ['L', [cx + hw, corner], [cx + hw - inset, shoulder]],
-    ['C', [cx + hw - inset, shoulder], [cx + hw - inset, top + 0.55 * h], [cx + hw * 0.42, top + 0.86 * h], [cx, top + h]],
-  ];
-  const mirror = ([type, ...pts]) => [type, ...pts.reverse().map(([x, y]) => [2 * cx - x, y])];
-  return [...right, ...right.slice().reverse().map(mirror)];
+  const top = cy - h / 2;
+  const bottom = cy + h / 2 + 5;
+  const sh = bottom - top;
+  const sy = top + sh * shoulder;
+  const tipX = hw * 0.5; // the side's last control point, on a 35 degree line into the tip
+  const tipY = bottom - tipX * 0.7;
+  return (
+    `M ${n(cx - hw)} ${n(top)} L ${n(cx + hw)} ${n(top)} L ${n(cx + hw)} ${n(sy)} ` +
+    `C ${n(cx + hw)} ${n(sy + sh * 0.15)} ${n(cx + tipX)} ${n(tipY)} ${n(cx)} ${n(bottom)} ` +
+    `C ${n(cx - tipX)} ${n(tipY)} ${n(cx - hw)} ${n(sy + sh * 0.15)} ${n(cx - hw)} ${n(sy)} Z`
+  );
 }
 
-const pt = ([x, y]) => `${G.n(x)} ${G.n(y)}`;
-const outline = (segs) => `M ${pt(segs[0][1])} ${segs.map(([type, , ...p]) => `${type} ${p.map(pt).join(' ')}`).join(' ')} Z`;
-
-function along([type, ...p], t) {
-  if (type === 'L') return [0, 1].map((i) => p[0][i] + (p[1][i] - p[0][i]) * t);
-  const u = 1 - t;
-  const k = [u * u * u, 3 * u * u * t, 3 * u * t * t, t * t * t];
-  return [0, 1].map((i) => p.reduce((sum, q, j) => sum + k[j] * q[i], 0));
-}
-
-const trace = (seg, t0, t1) => `M ${Array.from({ length: 11 }, (_, i) => pt(along(seg, t0 + ((t1 - t0) * i) / 10))).join(' L ')}`;
-
-function heaterShield() {
-  const { C } = G;
-  const cx = 960;
-  const top = 205;
-  const w = 540;
-  const h = 680;
-  const gap = 22; // between the two outlines
-  const outer = heater(cx, top, w, h);
-  const inner = heater(cx, top + gap, w - 2 * gap, h - 2.6 * gap);
-  const track = heater(cx, top + gap + 15, w - 2 * (gap + 15), h - 2.6 * (gap + 15));
-  // Segments run peak, top right, right shoulder, right side, left side, left shoulder, top left.
-  const highlights = [[0, 0.55, 0.86], [2, 0.03, 0.15], [5, 0.2, 0.42], [3, 0.88, 0.95], [2, 0.86, 0.94], [3, 0.07, 0.12]]
-    .map(([i, t0, t1]) => trace(track[i], t0, t1))
-    .join(' ');
-  const lattice = [];
-  for (let k = -30; k <= 30; k++) {
-    const off = cx + k * 46;
-    lattice.push(
-      `<line x1="${G.n(off - 340)}" y1="${top}" x2="${G.n(off + 340)}" y2="${top + h}" stroke="${C.cyanLt}" stroke-width="2"/>`,
-      `<line x1="${G.n(off + 340)}" y1="${top}" x2="${G.n(off - 340)}" y2="${top + h}" stroke="${C.cyanLt}" stroke-width="2"/>`
-    );
-  }
-  const markY = top + 0.46 * h; // the optical centre: the shield is wide at the top
-  return [
-    `  <clipPath id="shieldInner"><path d="${outline(inner)}"/></clipPath>`,
-    `  <g clip-path="url(#shieldInner)" opacity="0.32">${lattice.join('')}</g>`,
-    `  <path d="${outline(outer)}" fill="none" stroke="${C.cyanLt}" stroke-width="40" opacity="0.3" filter="url(#blur40)"/>`,
-    `  <path d="${outline(outer)}" fill="none" stroke="${C.cyanLt}" stroke-width="18" opacity="0.45" filter="url(#blur18)"/>`,
-    `  <path d="${outline(outer)}" fill="none" stroke="${C.ice}" stroke-width="11" stroke-linejoin="round" opacity="0.95"/>`,
-    `  <path d="${outline(inner)}" fill="none" stroke="${C.ice}" stroke-width="4" stroke-linejoin="round" opacity="0.85"/>`,
-    `  <path d="${highlights}" fill="none" stroke="${C.ice}" stroke-width="3" stroke-linecap="round" opacity="0.75"/>`,
-    `  <circle cx="${cx}" cy="${G.n(markY)}" r="240" fill="url(#h-mint)" opacity="0.4"/>`,
-    `  <g filter="url(#blur18)" opacity="0.5">${G.mark(cx, markY, 270)}</g>`,
-    `  <g>${G.mark(cx, markY, 270)}</g>`,
-  ].join('\n');
+function pointedShield(t) {
+  const art = t.art(G.rng(t.seed), { text: t.text }, t);
+  const flat = /<clipPath id="shieldClean"><path d="([^"]+)"\/>/.exec(art)?.[1];
+  const uses = flat ? art.split(`d="${flat}"`).length - 1 : 0;
+  if (uses !== 5) throw new Error(`Expected security-shield-clean to draw its outline 5 times, found ${uses}`);
+  return art.split(`d="${flat}"`).join(`d="${pointedShieldPath(960, 545, 570, 580)}"`);
 }
 
 function motifSvg(m, t, art) {
   const [x, y, w, h] = m.box;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="${x} ${y} ${w} ${h}">
-${notice(`The "${t.name}" treatment around a heater-shield outline drawn by extract.mjs, which\n     diverges from valkey-svgs' flat-topped shieldPath(), framed for the blog hero card.`)}
+${notice(`The "${t.name}" art, framed for the blog hero card, with its outline's silhouette\n     changed by extract.mjs: a sharper point at the bottom than valkey-svgs' shieldPath(),\n     whose sides round off into a soft one.`)}
 ${G.defs()}
 ${art}
 </svg>
@@ -223,7 +184,7 @@ try {
   rasterise(chrome, scratch, 'plain', ogSvg(null, ''));
   for (const m of MOTIFS) {
     const t = await theme(m.theme);
-    const art = m.art();
+    const art = m.art(t);
     writeFileSync(join(OUT, `motif-${m.key}.svg`), motifSvg(m, t, art));
     rasterise(chrome, scratch, m.key, ogSvg(t, art));
     console.log(`${m.key.padEnd(14)} <- ${m.theme}`);
