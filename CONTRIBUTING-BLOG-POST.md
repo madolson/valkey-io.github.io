@@ -168,13 +168,13 @@ draft = true
     # "/assets/media/featured/random-06.webp"
     # "/assets/media/featured/random-07.webp"
     featured_image = "/assets/media/featured/random-01.webp"
-    # 'hero_motif' (optional) replaces the featured image with a title card that carries your
+    # 'hero_card' (optional) replaces the featured image with a title card that carries your
     # title and the Valkey logo, and is also the link preview. Leave it out to keep the image.
-    # "none" gives the default card: the title in white over the Valkey particle-wave background.
-    # There a title with a colon is set as a heading and a subheading, split at its first ": ",
+    # The card sets the title in white over the Valkey particle-wave background.
+    # A title with a colon is set as a heading and a subheading, split at its first ": ",
     # unless the whole title fits on one line. Each takes at most two lines, and the build fails
     # if either would need more: shorten the title, or set 'hero_title'.
-    hero_motif = "none"
+    hero_card = true
     # 'hero_title' (optional) is the title on the card when it should differ from 'title',
     # usually to choose the line breaks: each "\n" starts a new line. The page title is unchanged.
     hero_title = "Using Valkey for\nmind control experiments"
