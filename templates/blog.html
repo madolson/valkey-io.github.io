@@ -3,14 +3,14 @@
 {% block content %}
 {# No banner or visible title: the page opens on the /community/ canvas with
    a big lead card, then the type pills and every post as a row in one list
-   card. The heading stays for screen readers, and the
-   section description is still the page's meta description. The styles are
-   in the blog section of _cards.scss, the pieces in macros/blog.html. #}
+   card. The heading stays for screen readers, and the section description is
+   still the page's meta description. The styles are in the blog section of
+   _cards.scss, the pieces in macros/blog.html. #}
 <h1 class="sr-only">{{ section.title }}</h1>
 <div class="community-home-canvas">
 <div class="blog-landing">
-  {# The lead is the newest post with extra.featured, the flag the old
-     Featured sidebar used, or the newest post if none is featured. #}
+  {# The lead is the newest post with extra.featured, or the newest post if
+     none is featured. #}
   {% set featured = [p for p in section.pages if p.extra?.featured == true] %}
   {% if featured %}{% set lead = featured | first %}{% else %}{% set lead = section.pages | first %}{% endif %}
   {% set lead_types = lead.taxonomies.blog_type | default(value=[]) %}
@@ -70,7 +70,7 @@
 
 <script>
 // Type pills, and more rows as the end of the list nears the viewport. The
-// chosen type is kept in the URL hash (/blog/#How-to), as the old select did.
+// chosen type is kept in the URL hash (/blog/#How-to).
 document.addEventListener('DOMContentLoaded', function() {
   var filter = document.querySelector('.blog-filter');
   var chips = filter ? filter.querySelectorAll('button') : [];

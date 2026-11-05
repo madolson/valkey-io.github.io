@@ -226,8 +226,8 @@ $community-ink: #072150;
 
 // Blog landing page (templates/blog.html, macros/blog.html) ------------------
 
-// No banner: the newest post as a big lead card, then the type pills and one
-// list card with a row per post. Labels are sentence case.
+// No banner: a big lead card for the newest featured post, then the type
+// pills and one list card with a row per post.
 .blog-landing {
   display: grid;
   gap: 4rem;
@@ -602,7 +602,7 @@ $community-ink: #072150;
 // Blog posts (templates/blog-single.html) ------------------------------------
 
 // The article and the sidebar are white cards on .community-home-canvas.
-// The article itself is unchanged; its type rules are in _valkey.scss.
+// The article's type rules are in _valkey.scss.
 .blog-single {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -619,7 +619,6 @@ $community-ink: #072150;
   > main,
   > aside {
     width: auto;
-    max-width: none;
     padding: 0;
     background: none;
   }
@@ -633,9 +632,4 @@ $community-ink: #072150;
       padding: 2.7rem 3.4rem;
     }
   }
-
-  > aside > :last-child {
-    margin-bottom: 0;
-  }
-
 }
