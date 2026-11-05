@@ -168,21 +168,17 @@ draft = true
     # "/assets/media/featured/random-06.webp"
     # "/assets/media/featured/random-07.webp"
     featured_image = "/assets/media/featured/random-01.webp"
-    # 'hero_card' (optional) replaces the featured image with a title card: your title in white
-    # over the Valkey background. Leave it out to keep the featured image.
-    # If your title can't fit the card, the build fails naming your post: shorten the title or
-    # set 'hero_title'.
-    hero_card = true
-    # 'hero_title' (optional) is the title on the card when it should differ from 'title',
-    # usually to choose the line breaks: each "\n" starts a new line.
-    hero_title = "Using Valkey for\nmind control experiments"
-    # 'hero_motif' (optional) picks another style of card. "security" sets your title over the
-    # Valkey security shield; set 'og_image' with it, for the link preview.
+    # 'hero_card' (optional) shows a title card, your title over the Valkey background, in
+    # place of the featured image on the post page. Keep 'featured_image': the blog index and
+    # link previews still use it. See "Title cards" below.
+    # hero_card = true
+    # 'hero_title' (optional) is the card's title when it should differ from 'title'.
+    # Each "\n" starts a new line; this one keeps "mind control" together.
+    # hero_title = "Using Valkey for\nmind control experiments"
+    # 'hero_motif' (optional) picks another style of card; see "Title cards" below.
     # hero_motif = "security"
 +++
 ```
-
-The title card's layout rules are under [Blog hero title cards](README.md#blog-hero-title-cards) in the README.
 
 You combine frontmatter with your writing into a single markdown file.
 The frontmatter must start at the first character on the first line of the file and your markdown goes below it.
@@ -257,3 +253,25 @@ A job runs daily at 15:00 UTC (07:00 PST / 08:00 PDT) and publishes any draft wh
 Dates are UTC, and the time of day is ignored, so use a date with no time.
 A post dated `2026-08-15` goes live that morning, Pacific time.
 Publish by hand if you need an exact time.
+
+## Title cards
+
+A post can open with a title card in place of its featured image: the post title, as text, over Valkey art.
+Set `hero_card = true` under `[extra]`.
+The card replaces the featured image on the post page only, so keep `featured_image`: the blog index and link previews still use it.
+
+The default card sets the title in white over the Valkey particle-wave background, and sets its lines itself:
+
+- A title with a colon becomes a heading and a smaller subheading, split at its first `": "` with the colon dropped, unless the whole title fits on one line.
+- The heading and the subheading each take one line if they fit, otherwise two, with the first line at least as long as the second and at least two words on the second. Never three.
+- Lines stop short of the wave on the right, and text shrinks to fit, down to 10px on a 390px-wide phone.
+
+To set the lines yourself, put the card's text in `hero_title` with a `\n` at each break.
+Your breaks are kept as written, and a `:` right before a `\n` is where the heading ends and the subheading starts.
+The page's own title doesn't change.
+
+If a heading or subheading can't fit, the build fails with an error naming your post and the rule it broke.
+Shorten the title, or set the breaks yourself in `hero_title`.
+
+For a post about Valkey security, `hero_motif = "security"` swaps in the security card: the title on light blocks over the security shield.
+The browser wraps its lines, so the rules above don't apply; set the breaks with `hero_title`.
