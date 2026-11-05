@@ -2165,15 +2165,11 @@ html.banner-hidden .banner {
 }
 
 .community-header, .leadership-header {
+  // A plain page title. Padding rather than margin keeps the section
+  // background behind the gap above it.
   h1 {
-    text-align: center;
-    background-image: linear-gradient(#382270, #4e51bf);
-    padding: 80px;
-    margin: 0 0 5rem;
-    font-size: 4rem;
-    font-weight: 700;
-    line-height: 1;
-    color: #fff;
+    padding: 3rem 2rem 0;
+    margin: 0 0 2rem;
   }
 
   h2 {
