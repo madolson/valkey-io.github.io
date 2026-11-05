@@ -6,7 +6,8 @@
   the layout is in sass/_blog-hero.scss.
 
   Setting `hero_motif` at all opts in. "security" adds the shield;
-  "none", or any other value, gets the card with no motif.
+  "none", or any other value, gets the card with no motif. `extra.hero_title` replaces the
+  post title on the card only, and each "\n" in it starts a new line.
   An opted-in post shows the card instead of its `featured_image` and uses the card's
   preview for og:image. Every other post is untouched.
 #}
@@ -28,10 +29,13 @@
    title's length lets one too long for three lines step down (sass/_blog-hero.scss). #}
 {% component blog_hero.card(page) -%}
   {%- set motif %}{{< blog_hero.motif page={page} />}}{% endset -%}
+  {%- set title = page.extra.hero_title | default(value=page.title) -%}
   <div class="blog-hero{% if motif %} blog-hero--motif{% endif %}" aria-hidden="true">
     <div class="blog-hero-body">
       <span class="blog-hero-lockup"></span>
-      <div class="blog-hero-title" style="--blog-hero-chars: {{ page.title | length }}"><span>{{ page.title }}</span></div>
+      <div class="blog-hero-title" style="--blog-hero-chars: {{ title | length }}"><span>
+        {%- for line in title | split(pat="\n") %}{% if not loop.first %}<br>{% endif %}{{ line | trim }}{% endfor -%}
+      </span></div>
       {%- if motif %}
       <span class="blog-hero-motif" style="background-image: url(/assets/media/blog-hero/motif-{{ motif }}.svg)"></span>
       {%- endif %}

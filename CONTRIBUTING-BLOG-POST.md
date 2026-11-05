@@ -173,6 +173,9 @@ draft = true
     # "security" adds the Valkey security shield, faded behind the title; "none" gives the card
     # without it. Leave it out to keep the image.
     hero_motif = "security"
+    # 'hero_title' (optional) is the title on the card when it should differ from 'title',
+    # usually to choose the line breaks: each "\n" starts a new line. The page title is unchanged.
+    hero_title = "Using Valkey for\nmind control experiments"
 +++
 ```
 

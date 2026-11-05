@@ -43,18 +43,25 @@ $blog-hero-ice: #CCF1FF;
   background: url(/assets/media/blog-hero/lockup.svg) left top / contain no-repeat;
 }
 
-// The shield fills the right 45% of the card behind the title, centred in it, clear of the
-// lockup. It is dimmed and dissolves to nothing across its left half, so where the title
-// runs over it the blocks sit on a quiet patch and the right edge of the shield reads whole.
+// The shield is the card's art: 86% of the card's height, centred at 68% across, so it is
+// clear of the lockup. Its tile runs the full height of the card; the glow beyond the
+// shield's outline is cropped by the card's edges. The shield fades out from its left edge
+// to full strength 80% of the way across, so its left half dissolves under the title.
+.blog-hero-body {
+  position: relative;
+}
+
 .blog-hero-motif {
-  grid-area: 1 / 1 / -1 / -1;
-  justify-self: end;
+  position: absolute;
+  top: 0;
+  right: 5cqi;
+  bottom: 0;
   z-index: 0;
-  width: 45%;
-  background: center / contain no-repeat;
-  opacity: 0.7;
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 55%);
-  mask-image: linear-gradient(to right, transparent, #000 55%);
+  width: 54cqi;
+  background: center / auto 114% no-repeat;
+  opacity: 0.9;
+  -webkit-mask-image: linear-gradient(to right, transparent 14%, #000 80%);
+  mask-image: linear-gradient(to right, transparent 14%, #000 80%);
 }
 
 .blog-hero-lockup,
