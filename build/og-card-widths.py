@@ -3,11 +3,11 @@
 # requires-python = ">=3.9"
 # dependencies = ["pillow==11.3.0"]
 # ///
-"""Regenerate the blog hero title card's width table.
+"""Regenerate the og card's width table.
 
-    ./build/blog-hero.py
+    ./build/og-card-widths.py
 
-Rewrites `_data/blog-hero/open-sans-400.json`: the advance widths, in em, of the site's Open
+Rewrites `_data/og-card/open-sans-400.json`: the advance widths, in em, of the site's Open
 Sans 400, which the card's template adds up to set its lines. Rerun it when the font files
 change.
 
@@ -22,7 +22,7 @@ from PIL import ImageFont
 
 SITE = pathlib.Path(__file__).resolve().parent.parent
 FONT = SITE / "static/fonts/open-sans/opensans-latin-normal-400-v20.woff2"
-WIDTHS = SITE / "_data/blog-hero/open-sans-400.json"
+WIDTHS = SITE / "_data/og-card/open-sans-400.json"
 
 # Printable ASCII and the punctuation and accents titles use. The template counts any other
 # character as 1em, the width of a CJK character.
