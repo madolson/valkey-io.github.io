@@ -1013,31 +1013,17 @@ $community-ink: #072150;
   font-size: 1.5rem;
 }
 
-.blog-more {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.2rem;
-  margin-top: 3.2rem;
-
-  &[hidden] {
-    display: none;
-  }
-
-  [hidden] {
-    display: none;
-  }
-
-  button {
-    font-family: inherit;
-    cursor: pointer;
-  }
-}
-
-.blog-more-status {
-  margin: 0;
+// The live count under the list, and the point that loads the next batch
+// as it nears the viewport.
+.blog-status {
+  margin: 2.4rem 0 0;
   color: #606985;
   font-size: 1.3rem;
+  text-align: center;
+}
+
+.blog-sentinel {
+  height: 1px;
 }
 
 // Blog posts (templates/blog-single.html) ------------------------------------

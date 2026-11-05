@@ -62,45 +62,60 @@
       {% endfor %}
     </ul>
     <p class="blog-no-results" hidden>No posts match this filter.</p>
-    <div class="blog-more" hidden>
-      <p class="blog-more-status" aria-live="polite"></p>
-      <button type="button" class="community-home-btn">Show more posts</button>
-    </div>
+    <p class="blog-status" aria-live="polite" hidden></p>
+    <div class="blog-sentinel"></div>
   </section>
 </div>
 </div>
 
 <script>
-// Type pills and "Show more". The chosen type is kept in the URL hash
-// (/blog/#How-to), as the old select did.
+// Type pills, and more rows as the end of the list nears the viewport. The
+// chosen type is kept in the URL hash (/blog/#How-to), as the old select did.
 document.addEventListener('DOMContentLoaded', function() {
   var filter = document.querySelector('.blog-filter');
   var chips = filter ? filter.querySelectorAll('button') : [];
   var items = document.querySelectorAll('.blog-list > li');
-  var more = document.querySelector('.blog-more');
-  var status = more.querySelector('.blog-more-status');
+  var status = document.querySelector('.blog-status');
+  var sentinel = document.querySelector('.blog-sentinel');
   var noResults = document.querySelector('.blog-no-results');
   var step = 20;
-  var limit = step;
   var type = 'All';
+  var remaining = 0;
+  var observer = null;
+  if ('IntersectionObserver' in window) {
+    // The next batch loads once the sentinel is within 800px of the bottom
+    // of the viewport. The huge top margin counts a sentinel scrolled above
+    // the viewport as in view too, so jumping past the list (End, a link to
+    // the footer) still loads more.
+    observer = new IntersectionObserver(function(entries) {
+      if (entries[entries.length - 1].isIntersecting && remaining > 0) {
+        limit += step;
+        render();
+      }
+    }, { rootMargin: '100000px 0px 800px 0px' });
+  }
+  // Without IntersectionObserver every post is shown at once.
+  var limit = observer ? step : Infinity;
 
-  function render(focusFrom) {
+  function render() {
     var matched = 0;
-    var firstNew = null;
     items.forEach(function(li) {
       var match = type === 'All' ? !li.hasAttribute('data-lead') : li.getAttribute('data-type') === type;
-      var show = match && ++matched <= limit;
-      if (show && li.hidden && matched > focusFrom && !firstNew) firstNew = li;
-      li.hidden = !show;
+      li.hidden = !(match && ++matched <= limit);
     });
     chips.forEach(function(chip) {
       chip.setAttribute('aria-pressed', String(chip.getAttribute('data-type') === type));
     });
+    remaining = Math.max(matched - limit, 0);
     noResults.hidden = matched > 0;
-    more.hidden = matched <= step;
-    more.querySelector('button').hidden = matched <= limit;
-    status.textContent = 'Showing ' + Math.min(limit, matched) + ' of ' + matched + ' posts';
-    if (firstNew) firstNew.querySelector('a').focus();
+    status.hidden = matched === 0;
+    status.textContent = 'Showing ' + (matched - remaining) + ' of ' + matched + ' posts';
+    // Observing again reports where the sentinel is now, so a screen tall
+    // enough to show a whole batch keeps loading until it is filled.
+    if (observer) {
+      observer.unobserve(sentinel);
+      if (remaining > 0) observer.observe(sentinel);
+    }
   }
 
   if (filter) {
@@ -111,17 +126,12 @@ document.addEventListener('DOMContentLoaded', function() {
       var chip = event.target.closest('button');
       if (!chip) return;
       type = chip.getAttribute('data-type');
-      limit = step;
-      render(Infinity);
+      limit = observer ? step : Infinity;
+      render();
       history.replaceState(null, '', type === 'All' ? location.pathname + location.search : '#' + encodeURIComponent(type));
     });
   }
-  more.querySelector('button').addEventListener('click', function() {
-    var before = limit;
-    limit += step;
-    render(before);
-  });
-  render(Infinity);
+  render();
 });
 </script>
 {% endblock content %}
