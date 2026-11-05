@@ -309,7 +309,7 @@
 {% endcomponent nav_command_reference %}
 
 {#-
-    The menu.
+    The menu. It starts with a link to the documentation overview, /docs/.
       current: slug of the current topic.
       related: key of the menu entry the current command belongs to (on
                command pages), see nav_command_map.
@@ -322,10 +322,12 @@
       index:   from nav_command_index; used to list the command categories
                (groups) that have documented commands.
       on_command_reference: true on the command reference page.
+      on_overview: true on the documentation overview page.
 -#}
-{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false) %}
+{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false, on_overview=false) %}
 <nav class="docs-menu" aria-label="Documentation">
     <ul class="docs-menu-sections">
+        <li class="docs-menu-overview"><a href="/docs/"{% if on_overview %} class="docs-menu-current" aria-current="page"{% endif %}>Overview</a></li>
     {%- for section in nav %}
         {%- if section.id == "command-reference" %}
         {{< nav_command_reference title={section.title} index={index} on_command_reference={on_command_reference} />}}
