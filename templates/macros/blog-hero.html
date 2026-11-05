@@ -25,7 +25,7 @@
 {%- endcomponent blog_hero.og_image %}
 
 {# The card repeats the title that follows it, so it is hidden from assistive tech. The
-   title's length sets its size, so it fits in three lines (sass/_blog-hero.scss). #}
+   title's length lets one too long for three lines step down (sass/_blog-hero.scss). #}
 {% component blog_hero.card(page) -%}
   {%- set motif %}{{< blog_hero.motif page={page} />}}{% endset -%}
   <div class="blog-hero{% if motif %} blog-hero--motif{% endif %}" aria-hidden="true">

@@ -43,14 +43,14 @@ $blog-hero-ice: #CCF1FF;
   background: url(/assets/media/blog-hero/lockup.svg) left top / contain no-repeat;
 }
 
-// The shield fills the right 32% of the card behind the title, centred in it. It is dimmed
-// and dissolves to nothing across its left half, so where the title runs over it the blocks
-// sit on a quiet patch and the right edge of the shield still reads whole.
+// The shield fills the right 45% of the card behind the title, centred in it, clear of the
+// lockup. It is dimmed and dissolves to nothing across its left half, so where the title
+// runs over it the blocks sit on a quiet patch and the right edge of the shield reads whole.
 .blog-hero-motif {
   grid-area: 1 / 1 / -1 / -1;
   justify-self: end;
   z-index: 0;
-  width: 32%;
+  width: 45%;
   background: center / contain no-repeat;
   opacity: 0.7;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 55%);
@@ -62,19 +62,17 @@ $blog-hero-ice: #CCF1FF;
   z-index: 1;
 }
 
-// The title is the card's subject, so it is as large as three lines allow. A line holds
-// `--measure` cqi of type, a character is about 0.58em of bold Helvetica, and greedy
-// wrapping can strand up to a word per line, so three lines hold `--blog-hero-chars`
-// (set by the template) at 3 * measure / (0.58 * (chars + 12)) cqi. `--cap` is the size at
-// which three lines still leave the rest of the card its room, so a title cannot push the
-// card taller; short titles stop there. The floor only matters below a 300px card.
+// One size for every title, 4.53cqi: what the blog's longest title, 86 characters, needs to
+// fit in three lines. Shorter titles take fewer lines. A longer one steps down so it still
+// fits three: a line holds 86cqi of type, a character is about 0.58em of bold Helvetica,
+// and wrapping can strand up to a word per line, so three lines hold `--blog-hero-chars`
+// (set by the template) at 3 * 86 / (0.58 * (chars + 12)) cqi. The floor only matters
+// below a 300px card.
 .blog-hero-title {
-  --measure: 86;
-  --cap: 7.5;
   grid-area: title;
   align-self: end;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: clamp(1.2rem, calc(3cqi * var(--measure) / (0.58 * (var(--blog-hero-chars) + 12))), var(--cap) * 1cqi);
+  font-size: clamp(1.2rem, 3cqi * 86 / (0.58 * (var(--blog-hero-chars) + 12)), 4.53cqi);
   font-weight: 600;
   line-height: 1.42;
   color: $blog-hero-ink;
