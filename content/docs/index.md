@@ -1,9 +1,7 @@
 +++
 title = "Documentation"
-template = "block-menu.html"
+template = "docs-landing.html"
 page_template = "docs-page.html"
-[extra]
-body_class=  "blocks-page"
 +++
 
 

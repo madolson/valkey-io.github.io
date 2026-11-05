@@ -642,6 +642,19 @@ p {
     padding-bottom: 1rem;
   }
 
+  // The link to the documentation overview, which looks like a section title.
+  // It has no border unless it's current, so it lines up with the titles.
+  .docs-menu-overview > a {
+    padding: 1rem 0.4rem;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+
+    &:not(.docs-menu-current) {
+      border-left: 0;
+    }
+  }
+
   .docs-menu-current {
     background-color: #d1d9ff;
     border-left-color: #2054B2;
@@ -1659,18 +1672,12 @@ pre table {
     li {
       text-align: center;
       padding: 1em;
-      flex: 1 1 0px;
+      flex: 1 1 25rem;
       a {
         text-align: center;
         padding-bottom: 1em;
       }
     }
-  }
-}
-
-.blocks-page {
-  .container {
-    padding-right: 0;
   }
 }
 
