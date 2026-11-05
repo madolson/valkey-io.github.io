@@ -1,0 +1,105 @@
+// The blog hero card. Markup: templates/macros/blog-hero.html. Art: static/assets/media/
+// blog-hero/, from build/blog-hero/extract.mjs.
+//
+// valkey-svgs' card layout, the `key-size-card-flat` variant: the lockup in the upper left,
+// the title in the lower left on light blocks that run off the left edge, and the motif in
+// the band between them, right of the lockup and clear of the title. The title has its own
+// row, so a long one shrinks the band instead of running into the art. Sizes are the
+// banners' own, as a share of the 1920 wide frame, written in cqw of the card.
+//
+// The art is a background rather than <img>, so the post column's rules for images in
+// the post body never reach it.
+
+$blog-hero-ink: #060A24;
+$blog-hero-ice: #CCF1FF;
+
+.blog-hero {
+  container-type: inline-size;
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border-radius: 2rem;
+  background: #171043 url(/assets/media/blog-hero/ground.svg) center / cover no-repeat;
+}
+
+// 2:1 at least, and taller rather than clipped when the title needs the room. Each size
+// has a floor, because at phone width the banner's proportions would set the title at
+// 10px; the floors are where a 520px card lands, so nothing jumps as the card narrows.
+.blog-hero-body {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-areas: "lockup motif" "title title";
+  gap: max(1.2rem, 3cqw) 5cqw;
+  min-height: 50cqw;
+  padding: max(1.5rem, 3.6cqw) max(1.5rem, 5cqw) max(1.5rem, 3.75cqw) 0;
+}
+
+.blog-hero-lockup {
+  grid-area: lockup;
+  height: max(2.4rem, 4.6cqw);
+  aspect-ratio: 187.9 / 63.5;
+  margin-left: max(1.5rem, 4.2cqw);
+  background: url(/assets/media/blog-hero/lockup.svg) left top / contain no-repeat;
+}
+
+.blog-hero-motif {
+  grid-area: motif;
+  min-height: max(12.5rem, 24cqw);
+  background: right center / contain no-repeat;
+}
+
+// One light block per line. `clone` gives every wrapped line its own padding, so each
+// block starts at the card's left edge while the type keeps a 5% inset.
+.blog-hero-title {
+  grid-area: title;
+  max-width: max(66%, 34rem);
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: clamp(1.7rem, 3.23cqw, 3.6rem);
+  font-weight: 600;
+  line-height: 1.42;
+  color: $blog-hero-ink;
+  overflow-wrap: break-word;
+  // valkey-svgs' three shadow passes: contact, falloff, and a broad pool for height.
+  // A filter, not box-shadow, so the lines cast one shadow together, never onto each other.
+  filter: drop-shadow(0 0.065em 0.13em rgba($blog-hero-ink, 0.55))
+    drop-shadow(0 0.16em 0.29em rgba($blog-hero-ink, 0.5))
+    drop-shadow(0 0.42em 0.65em rgba($blog-hero-ink, 0.55));
+
+  span {
+    padding: 0.21em 0.355em 0.21em calc(max(1.5rem, 5cqw) + 0.355em);
+    border-radius: 0 0.065em 0.065em 0;
+    background: $blog-hero-ice;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+}
+
+// Thumbnail: no title, since the post title sits beside it.
+.blog-hero--compact {
+  margin: 0;
+
+  .blog-hero-body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas: "lockup" "motif";
+    gap: 5cqw;
+    height: 100%;
+    min-height: 56cqw;
+    padding: 7cqw;
+  }
+
+  .blog-hero-lockup {
+    height: 11cqw;
+    margin-left: 0;
+  }
+
+  .blog-hero-motif {
+    min-height: 0;
+    background-position: center;
+  }
+}
+
+.blog-featured-card > .blog-hero {
+  flex: 0 0 50%;
+  border-radius: 10px 0 0 10px;
+}

@@ -78,9 +78,7 @@
       {% set featured_posts = featured_posts[:4] %}
         {% for post in featured_posts %}
           <div class="blog-featured-card">
-            {% if post.extra.featured_image %}
-              <img src="{{ post.extra.featured_image }}" alt="{{ post.title }} featured image" class="blog-featured-image"/>
-            {% endif %}
+            {{< blog_hero.banner page={post} img_class="blog-featured-image" img_alt={post.title ~ " featured image"} compact={true} />}}
             <div class="info">
               <h4><a href="{{ post.permalink }}">{{ post.title }}</a></h4>
               <p>{{ post.description }}</p>

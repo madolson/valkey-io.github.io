@@ -158,16 +158,12 @@ draft = true
 [extra]
     # 'featured' controls whether the blog post appears in the featured section on the main blog page
     featured = true
-    # 'featured_image' sets the main image for the blog header
-    # Choose from one of the available images:
-    # "/assets/media/featured/random-01.webp"
-    # "/assets/media/featured/random-02.webp"
-    # "/assets/media/featured/random-03.webp"
-    # "/assets/media/featured/random-04.webp"
-    # "/assets/media/featured/random-05.webp"
-    # "/assets/media/featured/random-06.webp"
-    # "/assets/media/featured/random-07.webp"
-    featured_image = "/assets/media/featured/random-01.webp"
+    # Every post opens with a title card: the Valkey banner background and logo with your title on it.
+    # 'hero_motif' optionally adds artwork to the card. One of "security", "observability",
+    # "performance" or "efficiency". Leave it out for the plain card.
+    hero_motif = "performance"
+    # 'featured_image' optionally replaces the card with an image of your own,
+    # which is also used for link previews. Most posts should leave it out.
 +++
 ```
 
