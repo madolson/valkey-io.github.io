@@ -1,15 +1,12 @@
 {% extends "default.html" %}
 
 {% block content %}
-<div class="styled-title">
-  <h1>{{ section.title }}</h1>
-  <p>{{ section.description }}</p>
-</div>
-
-{# Below the banner, the /community/ canvas: the newest post as a big lead
-   card, then the type pills and every post as a row in one list card. The
-   styles are in the blog section of _community.scss, the pieces in
-   macros/blog.html. #}
+{# No banner or visible title: the page opens on the /community/ canvas with
+   the newest post as a big lead card, then the type pills and every post as
+   a row in one list card. The heading stays for screen readers, and the
+   section description is still the page's meta description. The styles are
+   in the blog section of _community.scss, the pieces in macros/blog.html. #}
+<h1 class="sr-only">{{ section.title }}</h1>
 <div class="community-home-canvas">
 <div class="blog-landing">
   {% set lead = section.pages | first %}

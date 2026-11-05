@@ -653,8 +653,8 @@ $community-ink: #072150;
 
 // Blog landing page (templates/blog.html, macros/blog.html) ------------------
 
-// Below the banner: the newest post as a big lead card, then the type pills
-// and one list card with a row per post. Labels are sentence case.
+// No banner: the newest post as a big lead card, then the type pills and one
+// list card with a row per post. Labels are sentence case.
 .blog-landing {
   display: grid;
   gap: 4rem;
