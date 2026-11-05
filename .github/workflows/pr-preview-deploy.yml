@@ -19,12 +19,17 @@ on:
 permissions: {}
 
 jobs:
+  # Previews are on when the pr-previews environment has the Cloudflare token. A job-level if
+  # can't read secrets, so this job, which every deploy goes through, checks it and stops the
+  # rest when it's missing. The variable check first means nothing runs, and the environment
+  # isn't created, before setup.
   resolve:
     if: >-
-      vars.PREVIEWS_ENABLED == 'true' &&
+      vars.PREVIEWS_PROJECT != '' &&
       (github.event_name == 'workflow_dispatch' ||
        contains(fromJSON('["success", "failure"]'), github.event.workflow_run.conclusion))
     runs-on: ubuntu-latest
+    environment: pr-previews
     permissions:
       actions: read # find the build
       pull-requests: read
@@ -39,8 +44,13 @@ jobs:
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           FORKS: ${{ vars.PREVIEWS_FORKS }}
+          HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
         with:
           script: |
+            if (process.env.HAS_TOKEN !== 'true') {
+              core.info('The pr-previews environment has no CLOUDFLARE_API_TOKEN, so previews are off.');
+              return;
+            }
             const { owner, repo } = context.repo;
             const build = 'pr-preview-build.yml';
             let number, run;
@@ -151,6 +161,11 @@ jobs:
           size=$(du -sb . | cut -f1)
           [ "$size" -le $((1024 * 1024 * 1024)) ] || fail "The build is $size bytes, over the 1 GiB cap."
           echo "The build has $(find . -type f | wc -l) files, $size bytes."
+          # The templates leave analytics out of previews; this catches any that slip back in.
+          if grep -rlE 'googletagmanager\.com|static\.scarf\.sh|transcend-cdn\.com' \
+              --include='*.html' --include='*.js' --include='*.css' .; then
+            fail "The files above load Google Tag Manager, Scarf, or Transcend."
+          fi
           # Written here, not by the build, so a pull request can't change them.
           printf 'User-agent: *\nDisallow: /\n' > robots.txt
           printf '/*\n  X-Robots-Tag: noindex, nofollow\n' > _headers

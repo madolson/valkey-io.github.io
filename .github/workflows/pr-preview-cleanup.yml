@@ -38,7 +38,7 @@ permissions: {}
 
 jobs:
   cleanup:
-    if: vars.PREVIEWS_ENABLED == 'true'
+    if: vars.PREVIEWS_PROJECT != ''
     runs-on: ubuntu-latest
     environment: pr-previews
     permissions:
@@ -58,6 +58,10 @@ jobs:
           STATE: ${{ inputs.state }}
         with:
           script: |
+            if (!process.env.CLOUDFLARE_API_TOKEN) {
+              core.info('The pr-previews environment has no CLOUDFLARE_API_TOKEN, so previews are off.');
+              return;
+            }
             const { owner, repo } = context.repo;
             const { CLOUDFLARE_API, CLOUDFLARE_ACCOUNT_ID, PROJECT, SHA, STATE } = process.env;
             const ttl = Number(process.env.TTL_DAYS) * 24 * 3600 * 1000;

@@ -1,4 +1,4 @@
-{%- block head -%}{%- endblock -%}<!DOCTYPE html>
+{%- block head -%}{%- endblock -%}{% set preview_pr = get_env(name="VALKEY_PREVIEW_PR", default="") %}{# Pull request previews, see docs/pr-previews.md #}<!DOCTYPE html>
 <html lang="{{ page?.lang | default(value=config.default_language) }}">
 {% include "includes/head.html" %}
 <script>
@@ -22,7 +22,7 @@
   {%- if page is defined and page.extra?.sectionid -%} id="{{ page.extra.sectionid }}"{%- endif -%}
   {% if page is defined and page.extra?.body_class %} class="{{ page.extra.body_class }}"{% endif %}
   {% if section is defined and section.extra?.body_class %} class="{{ section.extra.body_class }}"{% endif %}
-  >
+  >{% if preview_pr %}{% include "includes/preview-banner.html" %}{% endif %}
   {%- if config.extra.banner -%}
   <div class="banner">
     <div class="width-limiter">
@@ -136,11 +136,11 @@
           Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
         </p>
       </div>
-      <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=4682283c-f8b7-410c-9c31-c6d7944cee8b" />
+      {% if not preview_pr %}<img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=4682283c-f8b7-410c-9c31-c6d7944cee8b" />
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MFFCB7SR"
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-      <!-- End Google Tag Manager (noscript) -->
+      <!-- End Google Tag Manager (noscript) -->{% endif %}
     </div>
     
 

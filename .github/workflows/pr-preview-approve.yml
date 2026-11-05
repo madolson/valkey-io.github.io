@@ -14,7 +14,9 @@ permissions: {}
 
 jobs:
   approve:
-    if: vars.PREVIEWS_ENABLED == 'true' && github.event.label.name == 'preview'
+    # No Cloudflare token here, since this job doesn't need it. Without one, the deploy it
+    # starts stops at its first job.
+    if: vars.PREVIEWS_PROJECT != '' && github.event.label.name == 'preview'
     runs-on: ubuntu-latest
     permissions:
       actions: write # find the build and start pr-preview-deploy.yml

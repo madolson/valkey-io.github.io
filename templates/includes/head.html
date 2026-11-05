@@ -1,8 +1,8 @@
-<head>
+{% set preview_pr = get_env(name="VALKEY_PREVIEW_PR", default="") %}<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="ROBOTS" content="ALL" />
+    {% if preview_pr %}<meta name="robots" content="noindex">{% else %}<meta name="ROBOTS" content="ALL" />{% endif %}
     <meta name="MSSmartTagsPreventParsing" content="true" />
     <meta name="Copyright" content="" />
     <meta name="keywords" content="open-source, valkey" />
@@ -66,7 +66,7 @@
     <!-- Copy-to-clipboard for .copy-code blocks -->
     <script src="/assets/js/copy-code.js"></script>
 
-    <!-- cookie banner, LF standard -->
+    {% if not preview_pr %}<!-- cookie banner, LF standard -->
     <script
       src="https://transcend-cdn.com/cm/f484e2d0-ad2e-43a9-9d64-d07f6fa20966/airgap.js"
       data-cfasync="false"
@@ -80,7 +80,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-MFFCB7SR');</script>
-    <!-- End Google Tag Manager -->
+    <!-- End Google Tag Manager -->{% endif %}
 
     {% if page and page.extra and page.extra.head_extra %}{{ page.extra.head_extra }}{% endif %}
 </head>

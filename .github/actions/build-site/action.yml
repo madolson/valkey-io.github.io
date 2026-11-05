@@ -14,6 +14,12 @@ inputs:
   base-url:
     description: Build for this URL instead of config.toml's base_url (e.g. for a preview).
     default: ''
+  preview-pr:
+    description: Build a preview of this pull request, with a banner, noindex, and no analytics. Empty for production.
+    default: ''
+  preview-commit:
+    description: The commit a preview shows, for its banner.
+    default: ''
 
 runs:
   using: composite
@@ -69,3 +75,6 @@ runs:
         BUILD_ONLY: true
         BUILD_THEMES: false
         BUILD_FLAGS: ${{ inputs.base-url && format('--base-url {0}', inputs.base-url) || '' }}
+        # Read by the templates with get_env().
+        VALKEY_PREVIEW_PR: ${{ inputs.preview-pr }}
+        VALKEY_PREVIEW_COMMIT: ${{ inputs.preview-commit }}
