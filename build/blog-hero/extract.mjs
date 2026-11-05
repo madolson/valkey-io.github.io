@@ -12,8 +12,8 @@
 //
 // Nothing is copied out of the generator's drawing code. Its lib/core.mjs and theme
 // modules are imported and called, so the ground, the lockup and the palette are the
-// generator's own. The one exception is the shield's outline (`pointedShieldPath`), which
-// comes to a sharper point at the bottom than valkey-svgs' does. Everything is deterministic, so rerunning
+// generator's own. The exceptions are in the shield (`pointedShield`): its outline comes to a
+// sharper point at the bottom than valkey-svgs' does, and its mark sits higher. Everything is deterministic, so rerunning
 // against the same valkey-svgs commit is a no-op diff.
 //
 // The card itself is composed in templates/macros/blog-hero.html and sass/_blog-hero.scss.
@@ -74,26 +74,33 @@ async function theme(name) {
 }
 
 // The security shield: valkey-svgs' `security-shield-clean` art, lattice, glow, halo and mark
-// as the generator draws them, with one change. madolson wanted a sharper point at the
-// bottom, so the generator's `shieldPath()` outline is swapped, in all five places the art
-// uses it, for `pointedShieldPath()`. That is the same construction, flat top and all, except
-// that the sides start curving at 45% of the height rather than 56% and meet at the bottom
-// at 35 degrees below horizontal rather than 18, 5 units lower, so the point is definite.
-// Both control points of each side stay outside the chord to the tip, which keeps the side
+// as the generator draws them, with two changes madolson asked for.
+//
+// A sharper point at the bottom. The generator's `shieldPath()` outline is swapped, in all
+// five places the art uses it, for `pointedShieldPath()`: the same construction, flat top
+// and all, except that the sides start curving at 50% of the height rather than 56% and
+// meet at the bottom at 26 degrees below horizontal rather than 18, 3 units lower. Both
+// control points of each side stay outside the chord to the tip, which keeps the side
 // convex; moving only the second one inward gives an S-bend into a cusp.
-function pointedShieldPath(cx, cy, w, h, shoulder = 0.45) {
+//
+// The mark sits higher. The shield is wide at the top and tapers below, so its area centroid
+// is at y 503, well above its geometric centre, and the generator's mark at 535 reads low.
+// The mark and its halo are raised 45 units, to 490, just above the centroid.
+const MARK_LIFT = 45;
+
+function pointedShieldPath(cx, cy, w, h, shoulder = 0.5) {
   const n = G.n;
   const hw = w / 2;
   const top = cy - h / 2;
-  const bottom = cy + h / 2 + 5;
+  const bottom = cy + h / 2 + 3;
   const sh = bottom - top;
   const sy = top + sh * shoulder;
-  const tipX = hw * 0.5; // the side's last control point, on a 35 degree line into the tip
-  const tipY = bottom - tipX * 0.7;
+  const tipX = hw * 0.5; // the side's last control point, on a 26 degree line into the tip
+  const tipY = bottom - tipX * Math.tan((26 * Math.PI) / 180);
   return (
     `M ${n(cx - hw)} ${n(top)} L ${n(cx + hw)} ${n(top)} L ${n(cx + hw)} ${n(sy)} ` +
-    `C ${n(cx + hw)} ${n(sy + sh * 0.15)} ${n(cx + tipX)} ${n(tipY)} ${n(cx)} ${n(bottom)} ` +
-    `C ${n(cx - tipX)} ${n(tipY)} ${n(cx - hw)} ${n(sy + sh * 0.15)} ${n(cx - hw)} ${n(sy)} Z`
+    `C ${n(cx + hw)} ${n(sy + sh * 0.2)} ${n(cx + tipX)} ${n(tipY)} ${n(cx)} ${n(bottom)} ` +
+    `C ${n(cx - tipX)} ${n(tipY)} ${n(cx - hw)} ${n(sy + sh * 0.2)} ${n(cx - hw)} ${n(sy)} Z`
   );
 }
 
@@ -102,13 +109,20 @@ function pointedShield(t) {
   const flat = /<clipPath id="shieldClean"><path d="([^"]+)"\/>/.exec(art)?.[1];
   const uses = flat ? art.split(`d="${flat}"`).length - 1 : 0;
   if (uses !== 5) throw new Error(`Expected security-shield-clean to draw its outline 5 times, found ${uses}`);
-  return art.split(`d="${flat}"`).join(`d="${pointedShieldPath(960, 545, 570, 580)}"`);
+  const shaped = art.split(`d="${flat}"`).join(`d="${pointedShieldPath(960, 545, 570, 580)}"`);
+  // Everything from the halo on is the halo and the two passes of the mark.
+  const halo = shaped.indexOf('  <circle');
+  const tail = shaped.slice(halo);
+  if (halo < 0 || !tail.includes('url(#h-mint)') || tail.includes('stroke-width')) {
+    throw new Error('Expected security-shield-clean to end with the halo and the mark');
+  }
+  return `${shaped.slice(0, halo)}  <g transform="translate(0 -${MARK_LIFT})">\n${tail}\n  </g>`;
 }
 
 function motifSvg(m, t, art) {
   const [x, y, w, h] = m.box;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="${x} ${y} ${w} ${h}">
-${notice(`The "${t.name}" art, framed for the blog hero card, with its outline's silhouette\n     changed by extract.mjs: a sharper point at the bottom than valkey-svgs' shieldPath(),\n     whose sides round off into a soft one.`)}
+${notice(`The "${t.name}" art, framed for the blog hero card, changed by extract.mjs in two\n     ways: a sharper point at the bottom than valkey-svgs' shieldPath() draws, and the mark\n     and its halo raised ${MARK_LIFT} units.`)}
 ${G.defs()}
 ${art}
 </svg>
