@@ -2,8 +2,8 @@
 // blog-hero/, from build/blog-hero/extract.mjs.
 //
 // valkey-svgs' card layout: the lockup in the upper left, the title in the lower left on
-// light blocks that run off the left edge, and the shield centred in its own column to the
-// right of the title. The card is 16:9 at every width, valkey-svgs' own frame, and its
+// light blocks that run off the left edge, and the shield centred in the right of the card,
+// faded so the title can run over it at full width. The card is 16:9 at every width, valkey-svgs' own frame, and its
 // contents never change its size: a plain card and a shield card, with any title, are the
 // same box. Sizes are in cqi of the card, so it is one picture scaled to any width and a
 // title wraps the same way at every size.
@@ -24,7 +24,7 @@ $blog-hero-ice: #CCF1FF;
   background: #171043 url(/assets/media/blog-hero/ground.svg) center / cover no-repeat;
 }
 
-// Equal top and bottom padding, so the shield's column is centred on the card.
+// Equal top and bottom padding, so the shield is centred on the card's centre line.
 .blog-hero-body {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -35,11 +35,6 @@ $blog-hero-ice: #CCF1FF;
   padding: 4cqi 5cqi 4cqi 0;
 }
 
-.blog-hero--motif .blog-hero-body {
-  grid-template-columns: minmax(0, 1fr) 32%;
-  grid-template-areas: "lockup motif" "title motif";
-}
-
 .blog-hero-lockup {
   grid-area: lockup;
   height: max(2.2rem, 4.6cqi);
@@ -48,9 +43,23 @@ $blog-hero-ice: #CCF1FF;
   background: url(/assets/media/blog-hero/lockup.svg) left top / contain no-repeat;
 }
 
+// The shield fills the right 32% of the card behind the title, centred in it. It is dimmed
+// and dissolves to nothing across its left half, so where the title runs over it the blocks
+// sit on a quiet patch and the right edge of the shield still reads whole.
 .blog-hero-motif {
-  grid-area: motif;
+  grid-area: 1 / 1 / -1 / -1;
+  justify-self: end;
+  z-index: 0;
+  width: 32%;
   background: center / contain no-repeat;
+  opacity: 0.7;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 55%);
+  mask-image: linear-gradient(to right, transparent, #000 55%);
+}
+
+.blog-hero-lockup,
+.blog-hero-title {
+  z-index: 1;
 }
 
 // The title is the card's subject, so it is as large as three lines allow. A line holds
@@ -82,25 +91,5 @@ $blog-hero-ice: #CCF1FF;
     background: $blog-hero-ice;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-  }
-}
-
-.blog-hero--motif .blog-hero-title {
-  --measure: 52;
-}
-
-// Below a 600px card a title column beside the shield is too narrow to set large, so the
-// title takes the full width along the bottom and the shield moves into the space above it,
-// right of the lockup. The cap drops so three lines still leave the shield room.
-@container (max-width: 599px) {
-  .blog-hero--motif .blog-hero-body {
-    grid-template-columns: auto minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr) auto;
-    grid-template-areas: "lockup motif" ". motif" "title title";
-  }
-
-  .blog-hero--motif .blog-hero-title {
-    --measure: 86;
-    --cap: 6;
   }
 }
