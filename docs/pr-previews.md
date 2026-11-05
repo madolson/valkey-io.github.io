@@ -3,6 +3,8 @@
 When previews are on, every pull request into `main` gets its own copy of the site at `https://pr-<number>.<PREVIEWS_PROJECT>.pages.dev/`, built the same way as production, with the docs and command pages.
 A bot comment on the pull request links it and says which commit it shows and when it expires.
 Previews are public, carry a "Preview of pull request #N" banner, and tell search engines not to index them.
+They have no analytics, tracking, or consent tags (Google Tag Manager, the Scarf pixel, Transcend), so preview page views never reach valkey.io's analytics.
+If a page still mentions one of those hosts afterwards, even in text, the preview build fails rather than publish it; teach `build/mark-preview.py` the new form.
 
 A new commit replaces the preview once it builds; if its build fails, the old preview is deleted.
 A preview is also deleted when the pull request closes, and 7 days after its last deploy (the sweep runs daily at 05:30 UTC).
@@ -22,7 +24,7 @@ With `PREVIEWS_FORKS=off`, fork previews already up stay until they expire or ar
 
 | Workflow | Runs on | Does |
 |---|---|---|
-| `pr-preview-build.yml` | `pull_request` | Builds the pull request with `.github/actions/build-site` for its preview URL, adds the banner and noindex tag (`build/mark-preview.py`), and uploads the result as an artifact. No secrets, read-only token. |
+| `pr-preview-build.yml` | `pull_request` | Builds the pull request with `.github/actions/build-site` for its preview URL, adds the banner and noindex tag and removes the analytics tags (`build/mark-preview.py`), and uploads the result as an artifact. No secrets, read-only token. |
 | `pr-preview-deploy.yml` | the build finishing, or the label | Looks the pull request up from GitHub's data (never from the artifact), checks the fork approval, checks the artifact (no symlinks, no files Cloudflare treats as code or configuration, 1 GiB cap), adds `robots.txt` and an `X-Robots-Tag: noindex` header rule, and uploads it with `wrangler pages deploy`. Nothing in the artifact is run. |
 | `pr-preview-approve.yml` | the `preview` label | Approves a fork pull request's head commit, as above. |
 | `pr-preview-cleanup.yml` | a pull request closing, daily, and after each deploy | Deletes previews of closed pull requests, previews past their TTL, and deployments that a newer one replaced, and updates the comments. |

@@ -33,7 +33,7 @@ jobs:
           path: website
           base-url: https://pr-${{ github.event.pull_request.number }}.${{ vars.PREVIEWS_PROJECT }}.pages.dev
 
-      - name: Mark the pages as a preview
+      - name: Mark the pages as a preview and remove analytics
         env:
           PR: ${{ github.event.pull_request.number }}
           SHA: ${{ github.event.pull_request.head.sha }}
