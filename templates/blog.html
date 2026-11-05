@@ -2,20 +2,23 @@
 
 {% block content %}
 {# No banner or visible title: the page opens on the /community/ canvas with
-   the newest post as a big lead card, then the type pills and every post as
-   a row in one list card. The heading stays for screen readers, and the
+   a big lead card, then the type pills and every post as a row in one list
+   card. The heading stays for screen readers, and the
    section description is still the page's meta description. The styles are
    in the blog section of _community.scss, the pieces in macros/blog.html. #}
 <h1 class="sr-only">{{ section.title }}</h1>
 <div class="community-home-canvas">
 <div class="blog-landing">
-  {% set lead = section.pages | first %}
+  {# The lead is the newest post with extra.featured, the flag the old
+     Featured sidebar used, or the newest post if none is featured. #}
+  {% set featured = [p for p in section.pages if p.extra?.featured == true] %}
+  {% if featured %}{% set lead = featured | first %}{% else %}{% set lead = section.pages | first %}{% endif %}
   {% set lead_types = lead.taxonomies.blog_type | default(value=[]) %}
   <a class="blog-lead" href="{{ lead.permalink }}">
     {{< blog_media post={lead} width={1200} height={675} />}}
     <div class="blog-lead-body">
       <p class="blog-lead-kicker">
-        <span class="blog-eyebrow">Latest</span>
+        <span class="blog-eyebrow">{% if featured %}Featured{% else %}Latest{% endif %}</span>
         {% if lead_types %}{{< blog_type name={lead_types | first} />}}{% endif %}
       </p>
       <h2 class="blog-lead-title">{{ lead.title | safe }}</h2>
@@ -39,12 +42,13 @@
       {% endif %}
     </div>
 
-    {# The lead post is also here, so a type filter finds it; the script hides
-       it from the unfiltered list, where it would sit right below itself. #}
+    {# The lead post is listed too, at its date. If it is also the newest post,
+       the script leaves it out of the unfiltered list, where it would be the
+       row right below its own card; a type filter still finds it. #}
     <ul class="blog-list">
       {% for post in section.pages %}
       {% set types = post.taxonomies.blog_type | default(value=[]) %}
-      <li{% if types %} data-type="{{ types | first }}"{% endif %}{% if loop.first %} data-lead{% endif %}>
+      <li{% if types %} data-type="{{ types | first }}"{% endif %}{% if loop.first and post.permalink == lead.permalink %} data-lead{% endif %}>
         <a class="blog-row" href="{{ post.permalink }}">
           <div class="blog-row-text">
             <h3 class="blog-row-title">{{ post.title | safe }}</h3>
