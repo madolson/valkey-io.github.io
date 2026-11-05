@@ -638,8 +638,8 @@ $community-ink: #072150;
 
 // Blog landing page (templates/blog.html, macros/blog.html) ------------------
 
-// Below the banner: the lead post beside a short featured list, then the type
-// chips and a grid of image cards.
+// Below the banner: the newest post as a big lead card, then the type pills
+// and one list card with a row per post. Labels are sentence case.
 .blog-landing {
   display: grid;
   gap: 4rem;
@@ -647,16 +647,21 @@ $community-ink: #072150;
   margin: 3.4rem auto 4.8rem;
 }
 
-.blog-top {
-  display: grid;
-  gap: 2rem;
-
-  @include respond-min(1100px) {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  }
+.blog-heading {
+  margin: 0;
+  color: $community-ink;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
-// A 16:9 frame for the post image, or the banner gradient and Valkey mark
+.blog-eyebrow {
+  color: $community-blue-500;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+// A 16:9 frame for the lead image, or the banner gradient and Valkey mark
 // when there is none.
 .blog-media {
   position: relative;
@@ -686,12 +691,10 @@ $community-ink: #072150;
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  color: #606985;
-  font-size: 1.1rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  color: #47506b;
+  font-size: 1.3rem;
+  font-weight: 600;
   line-height: 1.2;
-  text-transform: uppercase;
 
   &::before {
     content: '';
@@ -713,6 +716,7 @@ $community-ink: #072150;
   display: flex;
   align-items: center;
   gap: 1rem;
+  min-width: 0;
   color: #606985;
   font-size: 1.3rem;
   line-height: 1.35;
@@ -730,18 +734,31 @@ $community-ink: #072150;
     display: none;
   }
 
-  img {
-    width: 3.2rem;
-    height: 3.2rem;
+  img,
+  .blog-avatar-initials {
+    width: 2.8rem;
+    height: 2.8rem;
     border: 2px solid #fff;
     border-radius: 50%;
     background: #e9ebf4;
-    object-fit: cover;
-
-    & + img {
-      margin-left: -1rem;
-    }
   }
+
+  img {
+    object-fit: cover;
+  }
+
+  > * + * {
+    margin-left: -0.9rem;
+  }
+}
+
+.blog-avatar-initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $community-purple-800;
+  font-size: 1.05rem;
+  font-weight: 700;
 }
 
 .blog-byline-names {
@@ -750,7 +767,7 @@ $community-ink: #072150;
   font-weight: 600;
 }
 
-// Lead post. The image sits beside the text once the card is wide enough.
+// Lead post: image beside the text once the card is wide enough.
 .blog-lead {
   @include community-panel;
   display: grid;
@@ -759,27 +776,38 @@ $community-ink: #072150;
   color: inherit;
   text-decoration: none;
 
-  @include respond-min(700px) {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  @include respond-min(768px) {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
     align-items: center;
-    gap: 2.8rem;
-    padding: 1.6rem;
+    gap: 3.4rem;
+    padding: 1.8rem;
   }
 
   .blog-media {
     border-radius: 12px;
   }
 
+  .blog-avatars img,
+  .blog-avatars .blog-avatar-initials {
+    width: 3.4rem;
+    height: 3.4rem;
+  }
+
   &:hover .blog-lead-title {
     text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $community-blue-500;
+    outline-offset: 3px;
   }
 }
 
 .blog-lead-body {
   padding: 0 0.8rem 1rem;
 
-  @include respond-min(700px) {
-    padding: 1rem 2rem 1rem 0;
+  @include respond-min(768px) {
+    padding: 1rem 2.4rem 1rem 0;
   }
 }
 
@@ -787,109 +815,42 @@ $community-ink: #072150;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.6rem 1.4rem;
+  gap: 0.6rem 1.6rem;
   margin: 0;
 }
 
 .blog-lead-title {
-  margin: 1.2rem 0 1rem;
+  margin: 1.2rem 0 1.2rem;
   color: $community-ink;
-  font-size: 2.4rem;
+  font-size: 2.6rem;
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.01em;
 
-  @include respond-min(1280px) {
-    font-size: 2.8rem;
+  @include respond-min(1100px) {
+    font-size: 3.4rem;
   }
 }
 
 .blog-lead-description {
   display: -webkit-box;
-  margin: 0 0 1.8rem;
+  margin: 0 0 2.2rem;
   overflow: hidden;
   color: #47506b;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   line-height: 1.55;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
 }
 
-// Featured: compact rows split by the homepage's hairline.
-.blog-featured {
-  @include community-panel;
-  padding: 2.2rem 2rem;
-
-  @include respond-min(768px) {
-    padding: 2.4rem 2.8rem;
-  }
-
-  .community-home-kicker {
-    margin-bottom: 1.4rem;
-  }
-}
-
-.blog-featured-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  li + li {
-    border-top: 1px solid #e9ebf4;
-  }
-}
-
-.blog-featured-item {
-  display: grid;
-  grid-template-columns: 11.2rem minmax(0, 1fr);
-  align-items: center;
-  gap: 1.4rem;
-  padding: 1.2rem 0;
-  text-decoration: none;
-
-  li:first-child > & {
-    padding-top: 0;
-  }
-
-  li:last-child > & {
-    padding-bottom: 0;
-  }
-
-  .blog-media {
-    border-radius: 8px;
-  }
-
-  time {
-    display: block;
-    margin-top: 0.4rem;
-    color: #606985;
-    font-size: 1.25rem;
-  }
-
-  &:hover .blog-featured-title {
-    text-decoration: underline;
-  }
-}
-
-.blog-featured-title {
-  display: -webkit-box;
-  overflow: hidden;
-  color: $community-ink;
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1.35;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
-
-// All posts: kicker and type chips, then the grid.
+// All posts: heading and type pills, then the list.
 .blog-all-head {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1.2rem 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.6rem;
 }
 
 .blog-filter {
@@ -930,102 +891,105 @@ $community-ink: #072150;
       border-color: $community-purple-800;
       background: $community-purple-800;
       color: #fff;
-
-      .blog-type {
-        color: #fff;
-      }
     }
   }
 
-  // In a chip the label reads as a button, not a kicker.
   .blog-type {
     color: inherit;
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: 0;
-    text-transform: none;
+    font-weight: inherit;
   }
 }
 
-.blog-grid {
-  display: grid;
-  gap: 2.4rem;
+// One white card; each row is a link, split from the next by the homepage's
+// hairline. From 900px the byline, type and date sit in columns, so they line
+// up down the list.
+.blog-list {
+  @include community-panel;
   margin: 0;
-  padding: 0;
+  padding: 0.6rem 2rem;
   list-style: none;
 
-  @include respond-min(640px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  @include respond-min(768px) {
+    padding: 0.8rem 3.4rem;
   }
 
-  @include respond-min(1100px) {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  // Every shown row but the first; the filter hides rows, the lead among them.
+  li:not([hidden]) ~ li:not([hidden]) {
+    border-top: 1px solid #e9ebf4;
   }
 }
 
-// The whole card is the link. Flex keeps the byline on the bottom edge, so
-// the bylines in a row line up.
-.blog-card {
-  @include community-panel;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  overflow: hidden;
+.blog-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "type date"
+    "text text"
+    "byline byline";
+  align-items: center;
+  gap: 0.8rem 1.4rem;
+  padding: 1.8rem 0;
   text-decoration: none;
-  transition: box-shadow 0.15s, transform 0.15s;
 
-  &:hover {
-    box-shadow: 0 14px 34px rgba(60, 60, 130, 0.14);
-    transform: translateY(-2px);
+  @include respond-min(900px) {
+    grid-template-columns: minmax(0, 1fr) 24rem 17rem 10rem;
+    grid-template-areas: "text byline type date";
+    gap: 2.4rem;
+    padding: 2rem 0;
+  }
 
-    .blog-card-title {
-      text-decoration: underline;
-    }
+  &:hover .blog-row-title {
+    text-decoration: underline;
   }
 
   &:focus-visible {
     outline: 2px solid $community-blue-500;
-    outline-offset: 3px;
+    outline-offset: 2px;
   }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-
-    &:hover {
-      transform: none;
-    }
-  }
-}
-
-.blog-card-body {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 1.8rem 2rem 2rem;
 
   .blog-byline {
-    margin-top: auto;
+    grid-area: byline;
   }
 }
 
-.blog-card-title {
-  margin: 1rem 0 0.8rem;
-  color: $community-ink;
-  font-size: 1.9rem;
-  font-weight: 700;
-  line-height: 1.3;
+.blog-row-text {
+  grid-area: text;
+  min-width: 0;
 }
 
-.blog-card-description {
+.blog-row-title {
+  margin: 0;
+  color: $community-ink;
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.blog-row-description {
   display: -webkit-box;
-  margin: 0 0 1.8rem;
+  margin: 0.4rem 0 0;
   overflow: hidden;
   color: #47506b;
-  font-size: 1.45rem;
+  font-size: 1.4rem;
   line-height: 1.5;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+.blog-row-type {
+  grid-area: type;
+}
+
+.blog-row-date {
+  grid-area: date;
+  color: #606985;
+  font-size: 1.3rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  @include respond-min(900px) {
+    text-align: right;
+  }
 }
 
 .blog-no-results {
@@ -1100,10 +1064,11 @@ $community-ink: #072150;
     margin-bottom: 0;
   }
 
+  // Sentence case, like the /blog/ headings.
   .blog-authors h2 {
-    color: $community-blue-500;
-    font-size: 1.1rem;
-    font-weight: 800;
-    letter-spacing: 0.16em;
+    color: $community-ink;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-transform: none;
   }
 }

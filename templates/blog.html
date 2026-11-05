@@ -6,57 +6,33 @@
   <p>{{ section.description }}</p>
 </div>
 
-{# Below the banner, the /community/ canvas: the newest post as the lead
-   card beside a few featured posts, then every post as an image card. The
+{# Below the banner, the /community/ canvas: the newest post as a big lead
+   card, then the type pills and every post as a row in one list card. The
    styles are in the blog section of _community.scss, the pieces in
    macros/blog.html. #}
 <div class="community-home-canvas">
 <div class="blog-landing">
   {% set lead = section.pages | first %}
   {% set lead_types = lead.taxonomies.blog_type | default(value=[]) %}
-  {% set featured = [p for p in section.pages if p.extra?.featured == true and p.permalink != lead.permalink] %}
-  {% set featured = featured[:3] %}
-
-  <div class="blog-top">
-    <a class="blog-lead" href="{{ lead.permalink }}">
-      {{< blog_media post={lead} width={1200} height={675} eager={true} />}}
-      <div class="blog-lead-body">
-        <p class="blog-lead-kicker">
-          <span class="community-home-kicker">Latest</span>
-          {% if lead_types %}{{< blog_type name={lead_types | first} />}}{% endif %}
-        </p>
-        <h2 class="blog-lead-title">{{ lead.title | safe }}</h2>
-        <p class="blog-lead-description">{{ lead.description | safe }}</p>
-        {{< blog_byline post={lead} />}}
-      </div>
-    </a>
-
-    {% if featured %}
-    <section class="blog-featured" aria-labelledby="blog-featured-heading">
-      <h2 class="community-home-kicker" id="blog-featured-heading">Featured</h2>
-      <ul class="blog-featured-list">
-        {% for post in featured %}
-        <li>
-          <a class="blog-featured-item" href="{{ post.permalink }}">
-            {{< blog_media post={post} width={320} height={180} />}}
-            <span class="blog-featured-text">
-              <span class="blog-featured-title">{{ post.title | safe }}</span>
-              <time datetime="{{ post.date }}">{{ post.date | date(format="%B %-d, %Y") }}</time>
-            </span>
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
-    </section>
-    {% endif %}
-  </div>
+  <a class="blog-lead" href="{{ lead.permalink }}">
+    {{< blog_media post={lead} width={1200} height={675} />}}
+    <div class="blog-lead-body">
+      <p class="blog-lead-kicker">
+        <span class="blog-eyebrow">Latest</span>
+        {% if lead_types %}{{< blog_type name={lead_types | first} />}}{% endif %}
+      </p>
+      <h2 class="blog-lead-title">{{ lead.title | safe }}</h2>
+      <p class="blog-lead-description">{{ lead.description | safe }}</p>
+      {{< blog_byline post={lead} />}}
+    </div>
+  </a>
 
   <section class="blog-all" aria-labelledby="blog-all-heading">
     <div class="blog-all-head">
-      <h2 class="community-home-kicker" id="blog-all-heading">All posts</h2>
+      <h2 class="blog-heading" id="blog-all-heading">All posts</h2>
       {% set taxonomy = get_taxonomy(kind="blog_type", required=false) %}
       {% if taxonomy %}
-      {# The script below shows the chips; without it every post is listed. #}
+      {# The script below shows the pills; without it every post is listed. #}
       <div class="blog-filter" role="group" aria-label="Filter posts by type" hidden>
         <button type="button" data-type="All" aria-pressed="true">All</button>
         {% for term in taxonomy.items %}
@@ -68,18 +44,18 @@
 
     {# The lead post is also here, so a type filter finds it; the script hides
        it from the unfiltered list, where it would sit right below itself. #}
-    <ul class="blog-grid">
+    <ul class="blog-list">
       {% for post in section.pages %}
       {% set types = post.taxonomies.blog_type | default(value=[]) %}
       <li{% if types %} data-type="{{ types | first }}"{% endif %}{% if loop.first %} data-lead{% endif %}>
-        <a class="blog-card" href="{{ post.permalink }}">
-          {{< blog_media post={post} width={880} height={495} />}}
-          <div class="blog-card-body">
-            {% if types %}{{< blog_type name={types | first} />}}{% endif %}
-            <h3 class="blog-card-title">{{ post.title | safe }}</h3>
-            <p class="blog-card-description">{{ post.description | safe }}</p>
-            {{< blog_byline post={post} />}}
+        <a class="blog-row" href="{{ post.permalink }}">
+          <div class="blog-row-text">
+            <h3 class="blog-row-title">{{ post.title | safe }}</h3>
+            <p class="blog-row-description">{{ post.description | safe }}</p>
           </div>
+          {{< blog_byline post={post} date={false} />}}
+          <span class="blog-row-type">{% if types %}{{< blog_type name={types | first} />}}{% endif %}</span>
+          <time class="blog-row-date" datetime="{{ post.date }}">{{ post.date | date(format="%b %-d, %Y") }}</time>
         </a>
       </li>
       {% endfor %}
@@ -94,16 +70,16 @@
 </div>
 
 <script>
-// Type chips and "Show more". The chosen type is kept in the URL hash
+// Type pills and "Show more". The chosen type is kept in the URL hash
 // (/blog/#How-to), as the old select did.
 document.addEventListener('DOMContentLoaded', function() {
   var filter = document.querySelector('.blog-filter');
   var chips = filter ? filter.querySelectorAll('button') : [];
-  var items = document.querySelectorAll('.blog-grid > li');
+  var items = document.querySelectorAll('.blog-list > li');
   var more = document.querySelector('.blog-more');
   var status = more.querySelector('.blog-more-status');
   var noResults = document.querySelector('.blog-no-results');
-  var step = 12;
+  var step = 20;
   var limit = step;
   var type = 'All';
 
