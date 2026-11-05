@@ -168,18 +168,18 @@ draft = true
     # "/assets/media/featured/random-06.webp"
     # "/assets/media/featured/random-07.webp"
     featured_image = "/assets/media/featured/random-01.webp"
-    # 'hero_card' (optional) replaces the featured image with a title card that carries your
-    # title and the Valkey logo, and is also the link preview. Leave it out to keep the image.
-    # The card sets the title in white over the Valkey particle-wave background.
-    # A title with a colon is set as a heading and a subheading, split at its first ": ",
-    # unless the whole title fits on one line. Each takes at most two lines, and the build fails
-    # if either would need more: shorten the title, or set 'hero_title'.
+    # 'hero_card' (optional) replaces the featured image with a title card: your title in white
+    # over the Valkey background. Leave it out to keep the featured image.
+    # If your title can't fit the card, the build fails naming your post: shorten the title or
+    # set 'hero_title'.
     hero_card = true
     # 'hero_title' (optional) is the title on the card when it should differ from 'title',
-    # usually to choose the line breaks: each "\n" starts a new line. The page title is unchanged.
+    # usually to choose the line breaks: each "\n" starts a new line.
     hero_title = "Using Valkey for\nmind control experiments"
 +++
 ```
+
+The title card's layout rules are under [Blog hero title cards](README.md#blog-hero-title-cards) in the README.
 
 You combine frontmatter with your writing into a single markdown file.
 The frontmatter must start at the first character on the first line of the file and your markdown goes below it.

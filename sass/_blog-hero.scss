@@ -1,9 +1,9 @@
 // The blog hero title card: the post title in white Open Sans over the particle-wave
 // background. Markup and line setting: templates/macros/blog-hero.html.
 //
-// The card is 16:9 at every width and everything in it is sized in cqi, so it is one picture
-// scaled to any width. The template sets the lines and their sizes, so the text never wraps;
-// this only places it, as measured off the design mockup. The card is 56.25cqi tall.
+// The card is 16:9 at every width, so 56.25cqi tall, and everything in it is sized in cqi: it
+// is one picture scaled to any width. The template sets the lines and their sizes, so the
+// text never wraps; this only places it where the design mockup does.
 //   - The text box starts 4.44% across, which puts the stem of a capital at 5%.
 //   - The heading's first baseline is at 29.83% of the height, 16.78cqi, and a second line
 //     flows down from it. Open Sans's baseline sits 0.938em below the top of a 1.1 line box

@@ -1,20 +1,16 @@
 {#
-  The blog hero title card, for posts with `extra.hero_card = true`: the post title in white
-  Open Sans over the particle-wave background, as real text rather than an image. It replaces
-  the post's `featured_image`. The layout is in sass/_blog-hero.scss.
-
-  A title with a colon is set as a heading and a subheading, split at its first ": ", unless
-  the whole of it fits one line at the full heading size; any other title is all heading. Each
-  takes at most two lines, and the build fails, naming the post, if either would need more.
-  `extra.hero_title` replaces the post title on the card only, and each "\n" in it starts a
-  new line.
+  The blog hero title card, for posts with `extra.hero_card = true`: the post title, or
+  `extra.hero_title`, in white Open Sans over the particle-wave background. It replaces the
+  post's `featured_image`. The rules are under "Blog hero title cards" in README.md, and the
+  styles are in sass/_blog-hero.scss.
 #}
 
 {# The card repeats the title that follows it, so it is hidden from assistive tech. #}
 {% component blog_hero.card(page) -%}
   {%- set title = page.extra.hero_title | default(value=page.title) -%}
-  {#- The card sets its own lines; see blog_hero.fit. A ":" followed by a "\n" break in
-      hero_title splits the title as ": " does, and always splits it. #}
+  {#- A title with a colon is a heading and a subheading, split at its first ": ", unless it
+      fits the first line's hard limit at the full heading size. In hero_title, a ":" right
+      before a "\n" always splits. #}
   {%- set text = title | replace(from=":\n", to=": ") -%}
   {%- set whole %}{{< blog_hero.widths text={text} />}}{% endset -%}
   {%- set line1 %}{{< blog_hero.edge y={(16.78 + 0.3 * 6.11) / 56.25 * 100} edge="core" />}}{% endset -%}
@@ -27,9 +23,10 @@
     {%- set head = parts | first -%}
     {%- for part in parts %}{% if loop.index == 2 %}{% set_global sub = part %}{% elif loop.index > 2 %}{% set_global sub = sub ~ ": " ~ part %}{% endif %}{% endfor -%}
   {%- endif -%}
-  {#- Each is at least 10px on a 310px card, 3.23cqi. If the subheading cannot fit under the
-      heading, the heading shrinks 10% at a time, which sits the subheading higher, where the
-      wave leaves it more room. #}
+  {#- Each is at least 3.23cqi, 10px on a 310px card. The heading leaves 1.91 of its sizes
+      below its last baseline for a two-line subheading (1.204 + 1.1 * 0.642). If the
+      subheading cannot fit, the heading shrinks 10% at a time, which sits the subheading
+      higher, where the wave leaves it more room. #}
   {%- set top = 6.11 -%}
   {%- set h = "" -%}
   {%- set s = "" -%}
@@ -69,9 +66,15 @@
   The card's text layout. The browser cannot be told "wrap, but never leave one word on the
   last line, and never use more than two lines", so the template sets the lines and the
   browser draws them unwrapped. Widths come from Open Sans's advance widths in
-  _data/blog-hero/open-sans-400.json, written by build/blog-hero.py; without kerning, the sum runs up to about 2% wider than the browser draws, so lines come out a
-  little short of their limits, never over them. All lengths are in cqi of a card 56.25cqi
-  tall, so a layout holds at every card width.
+  _data/blog-hero/open-sans-400.json, written by build/blog-hero.py. Without kerning, the
+  sum runs up to about 2% wider than the browser draws, so lines come out a little short of
+  their limits, never over them.
+
+  All lengths are in cqi of the card, which is 56.25cqi tall, so a layout holds at every card
+  width. Text starts 4.44 across. The heading's first baseline is at 16.78 (29.83% of the
+  height) and no baseline goes below 33.75 (60%). The heading is at most 6.11; the
+  subheading is at most 0.642 of the heading, with its first baseline 1.204 heading sizes
+  below the heading's last. Lines are 1.1 sizes apart.
 
   Each line has two limits, read at its bottom edge: a soft one, where text wraps by default,
   and a hard one it may run to when that avoids a third line or a one-word last line. Both
