@@ -662,19 +662,18 @@ $community-ink: #072150;
   margin: 3.4rem auto 4.8rem;
 }
 
-.blog-heading {
+// Labels match the homepage card labels (.homepage-card
+// .community-home-kicker): sentence case in #4a5ad8, which is 5.6:1 on white.
+.blog-heading,
+.blog-eyebrow,
+.blog-single .blog-authors h2 {
   margin: 0;
-  color: $community-ink;
-  font-size: 2.2rem;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-// The homepage label blue: 5.6:1 on white, where #5b6fff is 4.1:1.
-.blog-eyebrow {
   color: #4a5ad8;
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-transform: none;
 }
 
 // A 16:9 frame for the lead image, or the banner gradient and Valkey mark
@@ -1080,11 +1079,4 @@ $community-ink: #072150;
     margin-bottom: 0;
   }
 
-  // Sentence case, like the /blog/ headings.
-  .blog-authors h2 {
-    color: $community-ink;
-    font-size: 1.8rem;
-    font-weight: 700;
-    text-transform: none;
-  }
 }
