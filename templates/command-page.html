@@ -93,13 +93,11 @@
     <dl>
         <dt>Usage:</dt>
         <dd>
-            <code>
-            {% if command_data_obj.container %}{{ command_data_obj.container }}{% endif %} {{command_obj_name}}
-            {% if command_data_obj.arguments %}
-            {% set args_rendered %}{{< arguments_parse argument_array={command_data_obj.arguments} />}}{% endset %}
-            {{ args_rendered }}
-            {% endif %}
-            </code>
+            {% set command_name = command_data_obj.container ~ " " ~ command_obj_name if command_data_obj.container else command_obj_name %}
+            {% set syntax %}{{< command_syntax name={command_name} arguments={command_data_obj?.arguments | default(value=[])} width={80} />}}{% endset %}
+            {#- The syntax isn't escaped yet. `~ ""` drops the safe mark that
+                `set` gives it, so that `escape` escapes it. #}
+            <pre class="command-syntax"><code>{{ (syntax ~ "") | escape }}</code></pre>
         </dd>
     </dl>
     {% if command_data_obj.complexity %}

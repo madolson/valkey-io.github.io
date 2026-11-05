@@ -1,48 +1,161 @@
-{% component arguments_parse(argument_array, separator="") %}
-    {%- for arguments in argument_array -%}
-        {%- if arguments.optional and arguments.optional ==  true -%}
-            {%- set start = "[" -%}
-            {%- set end = "]" -%}
-        {%- elif arguments.type and arguments.type == "oneof"-%}
-            {%- set start = "〈" -%}
-            {%- set end = "〉" -%}
-        {%- else -%}
-            {%- set start = "" -%}
-            {%- set end = "" -%}
-        {%- endif -%}
-        {%- set token = "" -%}
-        {%- if arguments.type and arguments.token -%}
-            {%- set token = arguments.token -%}
-        {%- endif -%}
-        {%- set name = "" -%}
-        {%- if arguments.type and arguments.type !=  "block"  and arguments.type !=  "oneof" and arguments.type !=  "pure-token" -%}
-            {%- set name = arguments.name -%}
-        {%- endif -%}
-        {%- set next = "" -%}
-        {%- if arguments.type and arguments.type == "oneof" -%}
-            {%- if arguments.arguments -%}
-                {%- set next %}{{< arguments_parse argument_array={arguments.arguments} separator="|" />}}{% endset -%}
-            {%- endif -%}
-        {%- else -%}
-            {%- if arguments.arguments -%}
-                {%- set next %}{{< arguments_parse argument_array={arguments.arguments} />}}{% endset -%}
-            {%- endif -%}
-        {%- endif -%}
-        {%- if separator == "|" and loop.last == false -%}
-            {%- set display_separator = " " ~ separator -%}
-        {%- else -%}
-            {%- set display_separator = "" -%}
-        {%- endif -%}
-        {#- Escape the JSON-sourced token and name here. `next` was already
-            escaped by the nested call, so the result is marked safe. -#}
-        {%- set arguments_str = start ~ " " ~ (token | escape) ~ " "
-            ~ (name | escape) ~ " " ~ next ~ " " ~ end ~ display_separator %}
-        {{ arguments_str | safe }}
-        {% if arguments.multiple %}
-            [ {{ arguments_str | safe }} ... ]
-        {% endif %}
+{#-
+    The usage syntax of a command, as plain text: `[x]` is optional, `<x | y>`
+    is one of x or y, `x ...` is one or more x, and `<x y> ...` is one or more
+    of x y. A repeated item is shown once.
+
+    Syntaxes that fit in `width` columns are one line. Longer ones keep the
+    command name and the required arguments right after it on the first line,
+    then put each further argument on its own line. An argument that is still
+    too long is broken up the same way inside its brackets: one alternative per
+    line, each after a `|` under the opening bracket, or one item per line,
+    with the closing bracket on a line of its own.
+
+    syntax_node turns the arguments into JSON nodes. A node is a word, or
+    {"o": open, "e": close, "x": suffix, "alt": bool, "n": [nodes]} for nodes
+    in brackets, which are alternatives if "alt" is true. A plain sequence has
+    no brackets. The text isn't HTML-escaped, so that its length is its width:
+    the caller has to escape the result.
+-#}
+{% component command_syntax(name, arguments, width) %}
+{%- set nodes_json %}[{{ name | json_encode | safe }}{% if arguments %},{{< syntax_nodes args={arguments} />}}{% endif %}]{% endset -%}
+{%- set root = {"o": "", "e": "", "x": "", "alt": false, "n": load_data(literal=nodes_json, format="json")} -%}
+{{< syntax_layout n={root} pad="" width={width} />}}
+{%- endcomponent command_syntax %}
+
+{#- The nodes of a list of arguments, comma-separated. A block without
+    brackets or a leading token is just its arguments, so they're spliced in.
+    One that starts with a token, like `VSIM field param ...`, stays together. -#}
+{% component syntax_nodes(args) %}
+{%- for arg in args -%}
+    {%- if arg.type == "block" and not arg?.token and not arg?.optional and not arg?.multiple and arg.arguments[0].type != "pure-token" -%}
+        {{< syntax_nodes args={arg.arguments} />}}
+    {%- else -%}
+        {{< syntax_node arg={arg} />}}
+    {%- endif -%}
+    {%- if not loop.last -%},{%- endif -%}
+{%- endfor -%}
+{% endcomponent syntax_nodes %}
+
+{#- The node of one argument. -#}
+{% component syntax_node(arg) %}
+{%- set opt = arg?.optional | default(value=false) -%}
+{%- set mult = arg?.multiple | default(value=false) -%}
+{%- set tok = "" if arg.type == "pure-token" else arg?.token | default(value="") -%}
+{#- The argument without its token: a word, the alternatives of a oneof, or
+    the arguments of a block. -#}
+{%- if arg.type == "oneof" -%}
+    {%- set kind = "alt" -%}
+    {%- set kids %}{% for a in arg.arguments %}{{< syntax_node arg={a} />}}{% if not loop.last %},{% endif %}{% endfor %}{% endset -%}
+{%- elif arg.type == "block" -%}
+    {%- set kind = "seq" -%}
+    {%- set kids %}{{< syntax_nodes args={arg.arguments} />}}{% endset -%}
+{%- else -%}
+    {%- set kind = "word" -%}
+    {%- set word = arg.token if arg.type == "pure-token" else arg.name -%}
+{%- endif -%}
+{#- The token goes in front, unless the rest repeats without it, as in
+    `KEYS key ...`; then `tok` stays set. Alternatives after a token need
+    brackets of their own. -#}
+{%- if tok and (not mult or arg?.multiple_token | default(value=false)) -%}
+    {%- if kind == "word" -%}
+        {%- set kids = word | json_encode -%}
+    {%- elif kind == "alt" -%}
+        {%- set kids = '{"o":"<","e":">","x":"","alt":true,"n":[' ~ kids ~ ']}' -%}
+    {%- endif -%}
+    {%- set kids = (tok | json_encode) ~ ',' ~ kids -%}
+    {%- set kind = "seq" -%}
+    {%- set tok = "" -%}
+{%- endif -%}
+{#- Brackets: `[x y]` if optional, `<x | y>` for alternatives, and `<x y> ...`
+    if more than a word repeats. `wrap` adds the brackets of an optional
+    argument around a word or around `TOKEN <x y> ...`. -#}
+{%- set x = " ..." if mult else "" -%}
+{%- set o = "" -%}
+{%- set e = "" -%}
+{%- set wrap = false -%}
+{%- if kind == "word" -%}
+    {%- set wrap = opt -%}
+{%- elif opt and not tok -%}
+    {%- set o = "[" -%}
+    {%- set e = "]" -%}
+{%- elif mult or kind == "alt" -%}
+    {%- set o = "<" -%}
+    {%- set e = ">" -%}
+    {%- set wrap = opt -%}
+{%- endif -%}
+{%- if kind == "word" -%}
+    {%- set node = (word ~ x) | json_encode -%}
+{%- else -%}
+    {%- set node = '{"o":"' ~ o ~ '","e":"' ~ e ~ '","x":"' ~ x ~ '","alt":' ~ (kind == "alt") ~ ',"n":[' ~ kids ~ ']}' -%}
+{%- endif -%}
+{%- if tok -%}
+    {%- set node = (tok | json_encode) ~ ',' ~ node -%}
+{%- endif -%}
+{%- if wrap -%}
+    {%- set node = '{"o":"[","e":"]","x":"","alt":false,"n":[' ~ node ~ ']}' -%}
+{%- elif tok -%}
+    {%- set node = '{"o":"","e":"","x":"","alt":false,"n":[' ~ node ~ ']}' -%}
+{%- endif -%}
+{{ node | safe }}
+{%- endcomponent syntax_node %}
+
+{#- The text of a node on one line. -#}
+{% component syntax_flat(n) %}
+{%- if n is string -%}
+    {{ n | safe }}
+{%- else -%}
+    {{ n.o | safe }}
+    {%- for c in n.n -%}
+        {{< syntax_flat n={c} />}}
+        {%- if not loop.last -%}{{ " | " if n.alt else " " }}{%- endif -%}
     {%- endfor -%}
-{% endcomponent arguments_parse %}
+    {{ (n.e ~ n.x) | safe }}
+{%- endif -%}
+{% endcomponent syntax_flat %}
+
+{#- A node laid out to start after `pad`, which is also the indentation of
+    any further lines it needs. -#}
+{% component syntax_layout(n, pad, width) %}
+{%- set flat %}{{< syntax_flat n={n} />}}{% endset -%}
+{%- if n is string or (pad | length) + (flat | length) <= width -%}
+    {{ flat }}
+{%- elif not n.o -%}
+    {{< syntax_seq items={n.n} pad={pad} cont={pad ~ "  "} width={width} />}}
+{%- else -%}
+    {%- set inner = pad ~ "  " -%}
+    {%- if n.alt -%}
+        {%- for c in n.n -%}
+            {%- set sub %}{{< syntax_layout n={c} pad={inner} width={width} />}}{% endset -%}
+            {{ ((n.o ~ " ") if loop.first else ("\n" ~ pad ~ "| ")) | safe }}{{ sub }}
+        {%- endfor -%}
+    {%- else -%}
+        {{ (n.o ~ " ") | safe }}{{< syntax_seq items={n.n} pad={inner} cont={inner} width={width} />}}
+    {%- endif -%}
+    {{ ("\n" ~ pad ~ n.e ~ n.x) | safe }}
+{%- endif -%}
+{% endcomponent syntax_layout %}
+
+{#- A sequence of nodes. The first one, and the required ones after it, go on
+    the first line while they fit. Every other node starts a line after `cont`. -#}
+{% component syntax_seq(items, pad, cont, width) %}
+{%- set first %}{{< syntax_layout n={items | first} pad={pad} width={width} />}}{% endset -%}
+{{ first }}
+{%- set_global col = (pad | length) + (first | length) -%}
+{%- set_global run = not (first is containing(pat="\n")) -%}
+{%- for x in items -%}
+    {%- if not loop.first -%}
+        {%- set flat %}{{< syntax_flat n={x} />}}{% endset -%}
+        {%- if run and not (x is not string and x.o == "[") and col + 1 + (flat | length) <= width -%}
+            {{ (" " ~ flat) | safe }}
+            {%- set_global col = col + 1 + (flat | length) -%}
+        {%- else -%}
+            {%- set_global run = false -%}
+            {%- set sub %}{{< syntax_layout n={x} pad={cont} width={width} />}}{% endset -%}
+            {{ ("\n" ~ cont) | safe }}{{ sub }}
+        {%- endif -%}
+    {%- endif -%}
+{%- endfor -%}
+{% endcomponent syntax_seq %}
 
 {% component fix_links_command(content) %}
 {{ content
