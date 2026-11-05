@@ -1,0 +1,122 @@
+// The og cards page, /og-cards/: every opted-in post's og card at 1200x630, for
+// build/og-cards.mjs to screenshot. With a #slug in the URL only that card shows, at the top
+// left; without one they all show, for a look in `zola serve`.
+//
+// templates/macros/og-card.html sets the lines, their sizes and the layout numbers; this only
+// places the text, unwrapped. The background is 16:9 and covers the card from the bottom, so
+// the logo keeps its corner and the card loses the top 45px. Every top below is the
+// template's, less those 45px. Open Sans's baseline sits 0.938em below the top of a 1.1 line
+// box and 0.162em above its bottom.
+
+@import "/fonts/open-sans/webfont.css";
+@import '../colors';
+@import '../typography';
+
+body {
+  margin: 0;
+}
+
+body:has(:target) .og-card-frame:not(:target) {
+  display: none;
+}
+
+.og-card {
+  position: relative;
+  width: 1200px;
+  height: 630px;
+  overflow: hidden;
+  background: #1b2028 url(/assets/media/og-card/default-bg.webp) center bottom / cover no-repeat;
+  color: #fff;
+  @include sans-serif;
+  font-weight: 400;
+}
+
+// The first baseline is at 16.78% of the width in the background's frame: 201.36px, less 45.
+.og-card-text {
+  position: absolute;
+  top: calc(156.36px - 0.938 * var(--heading));
+  left: 53.28px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.og-card-heading {
+  font-size: var(--heading);
+}
+
+.og-card-subheading {
+  margin-top: calc(1.042 * var(--heading) - 0.938 * var(--subheading));
+  font-size: var(--subheading);
+}
+
+// The security card, for `og_motif = "security"`: the lockup in the upper left, the title in
+// the lower left on light blocks that run off the left edge, and the shield in the right of
+// the card, faded so the title can run over it at full width.
+
+$og-card-ink: #060A24;
+
+.og-card--security {
+  display: grid;
+  background: #171043 url(/assets/media/og-card/security-bg.svg) center / cover no-repeat;
+}
+
+.og-card-body {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: "lockup" "title";
+  gap: 36px;
+  min-height: 0;
+  padding: 48px 60px 48px 0;
+}
+
+.og-card-lockup {
+  grid-area: lockup;
+  z-index: 1;
+  height: 55.2px;
+  aspect-ratio: 187.9 / 63.5;
+  margin-left: 50.4px;
+  background: url(/assets/media/og-card/lockup.svg) left top / contain no-repeat;
+}
+
+// The shield is 87% of the card's height, centred at 68% across, clear of the lockup. Its
+// tile runs the full height of the card, which crops the glow beyond the shield's outline.
+// It fades in from its left edge to full strength 80% of the way across, so its left half
+// dissolves under the title.
+.og-card-shield {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 768px;
+  background: url(/assets/media/og-card/security-shield.svg) center / auto 114% no-repeat;
+  opacity: 0.9;
+  -webkit-mask-image: linear-gradient(to right, transparent 14%, #000 80%);
+  mask-image: linear-gradient(to right, transparent 14%, #000 80%);
+}
+
+// One size for every title, what the blog's longest title needs to fit in three lines.
+.og-card-title {
+  grid-area: title;
+  z-index: 1;
+  align-self: end;
+  font-size: 54.36px;
+  font-weight: 600;
+  line-height: 1.42;
+  color: $og-card-ink;
+  overflow-wrap: break-word;
+  // Three shadow passes: contact, falloff, and a broad pool for height. A filter, not
+  // box-shadow, so the lines cast one shadow together, never onto each other.
+  filter: drop-shadow(0 0.065em 0.13em rgba($og-card-ink, 0.55))
+    drop-shadow(0 0.16em 0.29em rgba($og-card-ink, 0.5))
+    drop-shadow(0 0.42em 0.65em rgba($og-card-ink, 0.55));
+
+  span {
+    padding: 0.085em 0.355em 0.127em calc(60px + 0.355em);
+    border-radius: 0 0.065em 0.065em 0;
+    background: $blue-vibrant-000;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
+}

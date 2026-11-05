@@ -1,9 +1,7 @@
 {% extends "blog-single.html" %}
 {% block main_content %}
 
-{% if page.extra.hero_card %}
-{{< blog_hero.card page={page} />}}
-{% elif page.extra.featured_image %}
+{% if page.extra.featured_image %}
   <img src="{{ page.extra.featured_image }}" alt="{{ page.title }}" class="feature-img">
 {% endif %}
 

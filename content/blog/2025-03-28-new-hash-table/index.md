@@ -6,7 +6,7 @@ authors= ["zuiderkwast"]
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
 [extra]
-hero_card = true
+og_card = true
 featured = false
 featured_image = "/assets/media/featured/random-05.webp"
 
