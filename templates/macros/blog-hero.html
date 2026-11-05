@@ -60,16 +60,30 @@
     {%- set head = parts | first -%}
     {%- for part in parts %}{% if loop.index == 2 %}{% set_global sub = part %}{% elif loop.index > 2 %}{% set_global sub = sub ~ ": " ~ part %}{% endif %}{% endfor -%}
   {%- endif -%}
-  {%- set h %}{{< blog_hero.fit text={head} base={16.78} fmax={6.11} fmin={3.0} soft={55} hard={80} extra={1.91 if sub else 0} />}}{% endset -%}
-  {%- if h == "!" %}{{ throw(message="blog hero: the heading \"" ~ head ~ "\" of " ~ page.relative_path ~ " needs more than two lines on the card, even at its smallest size. Shorten the title, or set extra.hero_title.") }}{% endif -%}
+  {#- Each is at least 10px on a 310px card, 3.23cqi. If the subheading cannot fit under the
+      heading, the heading shrinks 10% at a time, which sits the subheading higher, where the
+      wave leaves it more room. #}
+  {%- set top = 6.11 -%}
+  {%- set h = "" -%}
+  {%- set s = "" -%}
+  {%- set done = false -%}
+  {%- for attempt in range(end=8) %}{% if not done %}
+    {%- set hh %}{{< blog_hero.fit text={head} base={16.78} fmax={top} fmin={3.23} soft={55} hard={80} extra={1.91 if sub else 0} />}}{% endset -%}
+    {%- if hh == "!" %}{{ throw(message="blog hero: the heading \"" ~ head ~ "\" of " ~ page.relative_path ~ " needs more than two lines on the card, even at its smallest size. Shorten the title, or set extra.hero_title.") }}{% endif -%}
+    {%- set_global h = hh -%}
+    {%- set fh = hh | split(pat="|") | first | float -%}
+    {%- if not sub -%}
+      {%- set_global done = true -%}
+    {%- else -%}
+      {%- set base = 16.78 + (hh | split(pat="|") | length - 2) * 1.1 * fh + 1.204 * fh -%}
+      {%- set ss %}{{< blog_hero.fit text={sub} base={base} fmax={0.642 * fh} fmin={3.23} soft={48} hard={60} extra={0} />}}{% endset -%}
+      {%- if ss != "!" %}{% set_global s = ss %}{% set_global done = true %}{% else %}{% set_global top = fh * 0.9 %}{% if top < 3.23 %}{% set_global done = true %}{% endif %}{% endif -%}
+    {%- endif -%}
+  {%- endif %}{% endfor -%}
+  {%- if sub and not s %}{{ throw(message="blog hero: the subheading \"" ~ sub ~ "\" of " ~ page.relative_path ~ " needs more than two lines on the card, even at its smallest size. Shorten the title, or set extra.hero_title.") }}{% endif -%}
   {%- set h = h | split(pat="|") -%}
   {%- set fh = h | first | float -%}
-  {%- if sub -%}
-    {%- set base = 16.78 + (h | length - 2) * 1.1 * fh + 1.204 * fh -%}
-    {%- set s %}{{< blog_hero.fit text={sub} base={base} fmax={0.642 * fh} fmin={2.4} soft={48} hard={60} extra={0} />}}{% endset -%}
-    {%- if s == "!" %}{{ throw(message="blog hero: the subheading \"" ~ sub ~ "\" of " ~ page.relative_path ~ " needs more than two lines on the card, even at its smallest size. Shorten the title, or set extra.hero_title.") }}{% endif -%}
-    {%- set s = s | split(pat="|") -%}
-  {%- endif %}
+  {%- if sub %}{% set s = s | split(pat="|") %}{% endif %}
   <div class="blog-hero blog-hero--default" aria-hidden="true" style="--heading: {{ fh | round(precision=3) }}cqi{% if sub %}; --subheading: {{ s | first | float | round(precision=3) }}cqi{% endif %}">
     <div class="blog-hero-text">
       <div class="blog-hero-heading">
@@ -147,8 +161,8 @@
    `lim` (from blog_hero.limits): "1" for one line, "2|k" for two with line 2 starting at word
    k, "0" if neither holds. One line whenever the text fits the hard limit. Two lines only at a
    break that keeps both within the hard limits, puts at least two words on the second line
-   and makes the first at least 10% longer than the second; of those, the one nearest where
-   the text would wrap at the soft limit, the longer first line breaking a tie. #}
+   and makes the first at least as long as the second; of those, the one nearest where the
+   text would wrap at the soft limit, the longer first line breaking a tie. #}
 {% component blog_hero.breaks(all, count, lim) -%}
   {%- set s1 = lim | nth(n=0) | float -%}
   {%- set h1 = lim | nth(n=1) | float -%}
@@ -171,7 +185,7 @@
       {%- set_global run = (w | float) if loop.first else run + 0.26 + (w | float) -%}
       {%- set k = loop.index -%}
       {%- set rest = total - run - 0.26 -%}
-      {%- if run <= h1 and rest <= h2 and count - k >= 2 and run >= 1.1 * rest -%}
+      {%- if run <= h1 and rest <= h2 and count - k >= 2 and run >= rest -%}
         {%- set d = k - soft_k if k > soft_k else soft_k - k -%}
         {%- if best < 0 or d <= best_d %}{% set_global best = k %}{% set_global best_d = d %}{% endif -%}
       {%- endif -%}
@@ -185,6 +199,7 @@
    `extra` sizes still to fit below it: "size|line|line", or "!" if no size holds. A "\n" in
    the text is a break the author set, and is kept as written. #}
 {% component blog_hero.fit(text, base, fmax, fmin, soft, hard, extra) -%}
+  {%- set fmax = fmin if fmin > fmax else fmax -%}
   {%- set forced = "\n" in text -%}
   {%- set parts = text | split(pat="\n") -%}
   {%- set flat = text | replace(from="\n", to=" ") -%}
