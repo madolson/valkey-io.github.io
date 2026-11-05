@@ -102,25 +102,37 @@ $blog-hero-ice: #CCF1FF;
 }
 
 // The default card: madolson's background, which already carries the logo, with the title
-// in white Open Sans over its dark upper left, placed as her mockup places it. In cqi of the
-// card, which is 56.25cqi tall:
-//   - The heading's cap height is 9% of the height, so 7.09cqi type. Its last baseline sits
-//     at 30% of the height, 16.875cqi, and longer titles grow upward from there.
-//   - The subheading is 55% of the heading. Its first baseline sits at 45%, 25.3125cqi.
-//   - Both start 5% across and stay left of 55%, over the dark area and off the wave.
-// A title that does not fit one line at full size takes whichever of one to four lines lets
-// it be largest. Each term is the size that fits it in that many lines of the 50cqi column
-// and keeps its cap top below a 6% margin: a character is taken as 0.56em of Open Sans, and
-// each line after the first allows 8 characters for a word stranded by wrapping, which holds
-// with room to spare for every title on the blog. Open Sans's baseline sits 0.963em below
-// the top of a 1.15 line box and 0.187em above its bottom.
+// in white Open Sans over its dark upper left. A title with a colon is a heading and a
+// subheading; any other is all heading. Placement is measured off her mockup, a 16:9 slide,
+// and written in cqi of the card, which is 56.25cqi tall:
+//   - The heading's text box starts 4.44% across, which puts the stem of a capital at 5%.
+//   - Its cap height is 7.76% of the height, so 6.11cqi type, and its first baseline sits at
+//     29.83% of the height, 16.78cqi. A longer heading flows down from there.
+//   - The subheading is 0.642 of the heading, with its baseline 1.204 heading sizes below
+//     the heading's last baseline, as in the mockup.
+//   - The heading stays left of 55% across; the subheading, which sits lower and nearer the
+//     wave, left of 48%. The whole block stays above 60% of the height.
+// A heading that does not fit one line at full size takes whichever of one to four lines
+// lets it be largest, both across its column and down to that 60% line, allowing two lines
+// of subheading under it. A character is taken as 0.56em of Open Sans and each line after
+// the first allows 8 characters for a word stranded by wrapping, which holds with room to
+// spare for every title on the blog. Lines are balanced, so a wrapped heading never ends on
+// a lone word. The subheading fits in two lines of its column at most. Author breaks
+// (`--blog-hero-wrap: 0`) keep each line whole. Open Sans's baseline sits 0.938em below the
+// top of a 1.1 line box and 0.162em above its bottom.
 .blog-hero--default {
+  --room: 16.97cqi; // from the first baseline down to the 60% line
+  --sub-lines: calc(var(--blog-hero-sub) * 1.91); // a subheading's depth, in heading sizes
   --heading: clamp(0.9rem, max(
-    min(7.09cqi, 50cqi / (0.56 * var(--blog-hero-chars))),
-    min(7.09cqi, 100cqi / (0.56 * (var(--blog-hero-chars) + 8))),
-    min(4.48cqi, 150cqi / (0.56 * (var(--blog-hero-chars) + 16))),
-    min(3.24cqi, 200cqi / (0.56 * (var(--blog-hero-chars) + 24)))
-  ), 7.09cqi);
+    min(6.11cqi, 50.5cqi / (0.56 * var(--blog-hero-chars)), var(--room) / max(0.01, var(--sub-lines))),
+    min(6.11cqi, 101cqi / (0.56 * (var(--blog-hero-chars) + 8)), var(--room) / (1.1 + var(--sub-lines))) * var(--blog-hero-wrap),
+    min(6.11cqi, 151.5cqi / (0.56 * (var(--blog-hero-chars) + 16)), var(--room) / (2.2 + var(--sub-lines))) * var(--blog-hero-wrap),
+    min(6.11cqi, 202cqi / (0.56 * (var(--blog-hero-chars) + 24)), var(--room) / (3.3 + var(--sub-lines))) * var(--blog-hero-wrap)
+  ), 6.11cqi);
+  --subheading: clamp(0.8rem, min(0.642 * var(--heading), max(
+    43.5cqi / (0.56 * var(--blog-hero-sub-chars, 1)),
+    87cqi / (0.56 * (var(--blog-hero-sub-chars, 1) + 8)) * var(--blog-hero-sub-wrap, 1)
+  )), 6.11cqi);
   position: relative;
   background: #1b2028 url(/assets/media/blog-hero/default-bg.webp) center / cover no-repeat;
   color: #fff;
@@ -128,21 +140,23 @@ $blog-hero-ice: #CCF1FF;
   font-weight: 400;
 }
 
-.blog-hero-heading,
-.blog-hero-subheading {
+.blog-hero-text {
   position: absolute;
-  left: 5cqi;
-  width: 50cqi;
-  line-height: 1.15;
-  overflow-wrap: break-word;
+  top: calc(16.78cqi - 0.938 * var(--heading));
+  left: 4.44cqi;
+  line-height: 1.1;
+  text-wrap: balance;
 }
 
 .blog-hero-heading {
-  bottom: calc(39.375cqi - 0.187em);
+  width: 50.5cqi;
   font-size: var(--heading);
+  overflow-wrap: break-word;
 }
 
 .blog-hero-subheading {
-  top: calc(25.3125cqi - 0.963em);
-  font-size: max(0.8rem, 0.55 * var(--heading));
+  width: 43.5cqi;
+  margin-top: calc(1.042 * var(--heading) - 0.938 * var(--subheading));
+  font-size: var(--subheading);
+  overflow-wrap: break-word;
 }

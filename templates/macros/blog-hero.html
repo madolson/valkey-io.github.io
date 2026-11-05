@@ -6,9 +6,10 @@
   Setting `hero_motif` at all opts in. "security" gets the valkey-svgs card: the shared
   ground, the corner lockup, the post title on light blocks and the shield faded in behind
   it. "none", or any other value, gets the default card: madolson's background, which
-  carries the logo, with the title and an optional `extra.hero_subtitle` in white over its
-  dark upper left. `extra.hero_title` replaces the post title on either card only, and each
-  "\n" in it starts a new line.
+  carries the logo, with the title in white over its dark upper left. A title with a colon
+  is set as a heading and a subheading, split at its first ": "; any other title is all
+  heading. `extra.hero_title` replaces the post title on either card only, and each "\n" in
+  it starts a new line.
   An opted-in post shows the card instead of its `featured_image` and uses the card's
   preview for og:image. Every other post is untouched.
 #}
@@ -42,13 +43,29 @@
     </div>
   </div>
   {%- else %}
-  <div class="blog-hero blog-hero--default" aria-hidden="true" style="--blog-hero-chars: {{ title | length }}">
-    <div class="blog-hero-heading">
-      {%- for line in title | split(pat="\n") %}{% if not loop.first %}<br>{% endif %}{{ line | trim }}{% endfor -%}
+  {#- The heading is the title up to its first ": " (or ":" and a "\n" break), the subheading
+      the rest. The CSS sizes each from its longest line; `wrap` is 0 when the author set
+      the breaks, so the CSS keeps each line whole. #}
+  {%- set parts = title | replace(from=":\n", to=": ") | split(pat=": ") -%}
+  {%- set sub = "" -%}
+  {%- for part in parts %}{% if loop.index == 2 %}{% set_global sub = part %}{% elif loop.index > 2 %}{% set_global sub = sub ~ ": " ~ part %}{% endif %}{% endfor -%}
+  {%- set head_lines = parts | first | split(pat="\n") -%}
+  {%- set sub_lines = sub | split(pat="\n") -%}
+  {%- set head_chars = 0 -%}
+  {%- for line in head_lines %}{% if line | trim | length > head_chars %}{% set_global head_chars = line | trim | length %}{% endif %}{% endfor -%}
+  {%- set sub_chars = 0 -%}
+  {%- for line in sub_lines %}{% if line | trim | length > sub_chars %}{% set_global sub_chars = line | trim | length %}{% endif %}{% endfor %}
+  <div class="blog-hero blog-hero--default" aria-hidden="true" style="--blog-hero-chars: {{ head_chars }}; --blog-hero-wrap: {% if head_lines | length > 1 %}0{% else %}1{% endif %}; --blog-hero-sub: {% if sub %}1; --blog-hero-sub-chars: {{ sub_chars }}; --blog-hero-sub-wrap: {% if sub_lines | length > 1 %}0{% else %}1{% endif %}{% else %}0{% endif %}">
+    <div class="blog-hero-text">
+      <div class="blog-hero-heading">
+        {%- for line in head_lines %}{% if not loop.first %}<br>{% endif %}{{ line | trim }}{% endfor -%}
+      </div>
+      {%- if sub %}
+      <div class="blog-hero-subheading">
+        {%- for line in sub_lines %}{% if not loop.first %}<br>{% endif %}{{ line | trim }}{% endfor -%}
+      </div>
+      {%- endif %}
     </div>
-    {%- if page.extra.hero_subtitle %}
-    <div class="blog-hero-subheading">{{ page.extra.hero_subtitle }}</div>
-    {%- endif %}
   </div>
   {%- endif -%}
 {%- endcomponent blog_hero.card %}

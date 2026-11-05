@@ -171,13 +171,12 @@ draft = true
     # 'hero_motif' (optional) replaces the featured image with a title card that carries your
     # title and the Valkey logo, and is also the link preview. Leave it out to keep the image.
     # "none" gives the default card: the title in white over the Valkey particle-wave background.
+    # A title with a colon is set there as a heading and a subheading, split at its first ": ".
     # "security" gives the Valkey security card, with the security shield faded behind the title.
     hero_motif = "none"
     # 'hero_title' (optional) is the title on the card when it should differ from 'title',
     # usually to choose the line breaks: each "\n" starts a new line. The page title is unchanged.
     hero_title = "Using Valkey for\nmind control experiments"
-    # 'hero_subtitle' (optional) is a short line under the title on the default card.
-    hero_subtitle = "What the hippocampus caches"
 +++
 ```
 
