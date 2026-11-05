@@ -128,8 +128,8 @@ build/unconverted-doc-links.sh public
 Blog posts can opt in to a title card in place of their featured image; see [Title cards](CONTRIBUTING-BLOG-POST.md#title-cards) for the front matter and the line rules.
 
 The card is `templates/macros/blog-hero.html` and `sass/_blog-hero.scss`, over `static/assets/media/blog-hero/default-bg.webp`.
-The security card's art, `security-bg.svg`, `security-shield.svg` and `lockup.svg`, is in the same directory.
 The template sets the lines by adding up Open Sans's advance widths from `_data/blog-hero/open-sans-400.json`, against right edges measured from that background (`blog_hero.edge`), so a new background needs new edges.
+The security card's art, `security-bg.svg`, `security-shield.svg` and `lockup.svg`, is in the same directory.
 `build/blog-hero.py` regenerates the width table when the Open Sans font files change:
 
 ```shell
