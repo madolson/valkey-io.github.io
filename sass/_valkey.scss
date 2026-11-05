@@ -655,6 +655,18 @@ p {
     }
   }
 
+  // The link to the download pages, styled like the overview link.
+  .docs-menu-download > a {
+    padding: 1rem 0.4rem;
+    font-weight: 700;
+    color: #000;
+    text-transform: uppercase;
+
+    &:not(.docs-menu-current) {
+      border-left: 0;
+    }
+  }
+
   .docs-menu-current {
     background-color: #d1d9ff;
     border-left-color: #2054B2;
