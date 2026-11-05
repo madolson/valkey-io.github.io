@@ -1,13 +1,15 @@
 +++
-title = "Documentation"
+title = "Overview"
 template = "docs-landing.html"
 page_template = "docs-page.html"
 +++
 
+Valkey is an open source (BSD), high-performance key/value datastore. It supports a variety of workloads, such as caching and message queues, and can act as a primary database. Use the documentation menu to get started, learn the data types, operate Valkey, and look up commands.
 
-* [Command Reference](/commands/) A categorized listing of all Valkey commands
-* [Documentation by topic](/topics/) In-depth documentation covering a wide variety of operational and usage subjects
-* [Clients](/clients/) Recommended Valkey client libraries for every major language.
-* [Integrations](/integrations/) Tools, frameworks, and AI integrations that work with Valkey.
-* [Valkey Admin](http://valkey-admin.valkey.io/) An intuitive visual interface to monitor, manage, and interact with your Valkey deployments.
+## Clients
 
+Applications connect to Valkey through a client library. [Clients](/clients/) lists client libraries for every major language and the features each one supports. Anything that speaks the Redis 7.2 wire protocol works with Valkey 7.2 and later, so most existing clients work without changes.
+
+## Integrations
+
+[Integrations](/integrations/) lists frameworks, job queues, AI libraries, and operations tools that work with Valkey.

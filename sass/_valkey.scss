@@ -1653,43 +1653,6 @@ pre table {
   margin-bottom: 0.5em;
 }
 
-.block-menu ul li {
-  border: 1px solid $line;
-  border-radius: 3px;
-  a {
-    display: block;
-  }
-}
-
-.block-menu {
-  ul {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    list-style-type: none;
-    padding: 0;
-    gap: 1em;
-    li {
-      text-align: center;
-      padding: 1em;
-      flex: 1 1 25rem;
-      a {
-        text-align: center;
-        padding-bottom: 1em;
-      }
-    }
-  }
-}
-
-@media (max-width: 768px) {
-  .block-menu ul {
-    display: block;
-    li {
-      margin-bottom: 1em;
-    }
-  }
-}
-
 html.banner-hidden .banner {
   display: none;
 }
