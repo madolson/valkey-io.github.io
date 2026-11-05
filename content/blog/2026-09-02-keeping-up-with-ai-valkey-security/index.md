@@ -13,7 +13,6 @@ og_motif = "security"
 og_title = "Keeping up with AI:\nValkey security in 2026"
 featured = true
 featured_image = "/assets/media/featured/security-shield-clean.webp"
-og_image = "/blog/keeping-up-with-ai-valkey-security/images/og.webp"
 +++
 
 We published five security advisories in Valkey's first 21 months, from the March 2024 fork through the end of 2025.
