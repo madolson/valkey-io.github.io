@@ -1,7 +1,7 @@
 # The `preview` label approves publishing the finished build of a pull request's current head
 # commit, which fork pull requests need (see docs/pr-previews.md). The approval is a commit
-# status on that commit, so a later push or rebuild needs the label again. Never checks out or
-# runs the pull request.
+# status on that commit, named for the pull request, so a later push or a rebuild needs the
+# label again. Never checks out or runs the pull request.
 
 name: PR preview approve
 
@@ -50,7 +50,7 @@ jobs:
             }
 
             await github.rest.repos.createCommitStatus({
-              owner, repo, sha: pr.head.sha, state: 'success', context: 'pr-preview/approval',
+              owner, repo, sha: pr.head.sha, state: 'success', context: `pr-preview/approval-${pr.number}`,
               description: `Preview approved by @${approver}`,
             });
             // The build already finished, so nothing else would start the deploy.

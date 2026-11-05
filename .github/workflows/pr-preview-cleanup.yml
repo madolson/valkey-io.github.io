@@ -1,7 +1,8 @@
-# Deletes previews of closed pull requests, previews older than TTL_DAYS, and deployments a
-# newer one replaced, and keeps each pull request's preview comment current. Runs when a pull
-# request closes, daily, and at the end of every pr-preview-deploy.yml run. Never checks out
-# or runs a pull request. See docs/pr-previews.md.
+# Deletes previews of closed pull requests, previews older than TTL_DAYS, deployments a newer
+# one replaced, and fork previews of anything but the current head, and keeps each pull
+# request's preview comment current. Runs when a pull request closes, daily, and at the end of
+# every pr-preview-deploy.yml run. Never checks out or runs a pull request. See
+# docs/pr-previews.md.
 
 name: PR preview cleanup
 
@@ -23,8 +24,14 @@ on:
         type: string
         required: true
       state:
-        description: published or failed; or unapproved or unbuilt, which delete the preview.
+        description: published, failed, unapproved, or unbuilt (which deletes the old preview).
         type: string
+        required: true
+    # A called workflow gets environment secrets only if the caller passes them by name.
+    secrets:
+      CLOUDFLARE_API_TOKEN:
+        required: true
+      CLOUDFLARE_ACCOUNT_ID:
         required: true
 
 permissions: {}
@@ -71,8 +78,9 @@ jobs:
             // Each pull request's preview deployments, newest first.
             const previews = new Map();
             const seen = new Set(); // a deploy during the listing shifts pages, repeating one
+            const perPage = 25;
             for (let page = 1; ; page++) {
-              const { result, result_info: info } = await cloudflare(`?env=preview&per_page=25&page=${page}`);
+              const { result, result_info: info } = await cloudflare(`?env=preview&per_page=${perPage}&page=${page}`);
               for (const d of result) {
                 if (seen.has(d.id)) continue;
                 seen.add(d.id);
@@ -85,35 +93,51 @@ jobs:
                 const list = previews.get(Number(match[1])) ?? [];
                 previews.set(Number(match[1]), [...list, d]);
               }
-              if (!result.length || page >= (info?.total_pages ?? page)) break;
+              if (info?.total_pages ? page >= info.total_pages : result.length < perPage) break;
             }
             for (const list of previews.values()) list.sort((a, b) => Date.parse(b.created_on) - Date.parse(a.created_on));
+            const commit = d => d.deployment_trigger?.metadata?.commit_hash;
 
             const prs = await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', per_page: 100 });
             const heads = new Map(prs.map(p => [p.number, p.head.sha])); // open pull request -> head
-            if (context.eventName === 'pull_request_target') heads.delete(context.payload.pull_request.number);
+            const forks = new Set(prs.filter(p => p.head.repo?.full_name !== `${owner}/${repo}`).map(p => p.number));
+            const closed = context.eventName === 'pull_request_target' ? context.payload.pull_request.number : 0;
+            heads.delete(closed);
             // What pr-preview-deploy.yml decided, unless the pull request has closed or moved on since.
             const target = heads.get(Number(process.env.PR)) === SHA ? Number(process.env.PR) : 0;
-            const remove = target && ['unapproved', 'unbuilt'].includes(STATE);
 
+            const waiting = sha => 'waiting for a maintainer. This pull request is from a fork, so a maintainer ' +
+              `has to review commit ${sha}, including what runs or is fetched during the build ` +
+              '(`.github/`, `build/`, templates, `config.toml`), then add the `preview` label once it has built.';
             const notes = new Map(); // pull request -> what its comment says
+            const updateOnly = new Set(); // pull requests whose comment, if any, is updated but not created
+            const failed = new Set();
             const errors = [];
             for (const [pr, list] of previews) {
-              const expires = Date.parse(list[0].created_on) + ttl;
-              const why = !heads.has(pr) ? 'closed'
-                : pr === target && remove ? STATE
-                : Date.now() > expires ? 'expired' : '';
+              const head = heads.get(pr);
+              const expired = Date.now() > Date.parse(list[0].created_on) + ttl;
+              // A fork's preview shows only its head, which was approved to publish. A head that
+              // didn't build takes the old preview down too.
+              const headOnly = forks.has(pr) || (pr === target && STATE === 'unbuilt');
+              const keep = !head || expired ? undefined : headOnly ? list.find(d => commit(d) === head) : list[0];
               try {
-                for (const d of why ? list : list.slice(1)) {
+                for (const d of list.filter(d => d !== keep)) {
                   await cloudflare(`/${d.id}?force=true`, 'DELETE');
-                  core.info(`Deleted deployment ${d.id} of #${pr} (${why || 'replaced'}).`);
+                  const why = !head ? 'closed' : expired ? 'expired' : commit(d) === head ? 'replaced' : 'not the head';
+                  core.info(`Deleted deployment ${d.id} of #${pr} (${why}).`);
                 }
               } catch (e) {
+                failed.add(pr);
                 errors.push(e.message);
                 continue;
               }
-              if (why === 'closed') notes.set(pr, 'removed, since the pull request closed.');
-              if (why === 'expired') notes.set(pr, `expired on ${day(expires)}. Push a commit or add the \`preview\` label to publish it again.`);
+              if (!head) notes.set(pr, 'removed, since the pull request closed.');
+              else if (expired) notes.set(pr, `expired on ${day(Date.parse(list[0].created_on) + ttl)}. Push a commit or add the \`preview\` label to publish it again.`);
+              else if (forks.has(pr) && !keep) notes.set(pr, waiting(head));
+            }
+            if (closed && !previews.has(closed)) {
+              notes.set(closed, 'none, since the pull request closed.');
+              updateOnly.add(closed);
             }
 
             const run = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
@@ -122,12 +146,11 @@ jobs:
                 `Commit ${SHA}. Expires ${day(Date.now() + ttl)}. New commits replace it; ` +
                 'on a pull request from a fork, they need the `preview` label again.',
               failed: `couldn't publish commit ${SHA}. See ${run}.`,
-              unapproved: 'waiting for a maintainer. This pull request is from a fork, so a maintainer ' +
-                `has to review commit ${SHA}, including what runs or is fetched during the build ` +
-                '(`.github/`, `build/`, templates, `config.toml`), then add the `preview` label.',
+              // Unless it was approved and published since.
+              unapproved: previews.get(target)?.some(d => commit(d) === SHA) ? undefined : waiting(SHA),
               unbuilt: `none, since commit ${SHA} didn't build. See the pull request's checks.`,
             }[STATE];
-            if (outcome && target) notes.set(target, outcome);
+            if (outcome && target && !failed.has(target)) notes.set(target, outcome);
 
             const marker = '<!-- pr-preview -->';
             for (const [pr, note] of notes) {
@@ -136,7 +159,7 @@ jobs:
                 const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number: pr, per_page: 100 });
                 const mine = comments.find(c => c.user?.login === 'github-actions[bot]' && c.body?.startsWith(marker));
                 if (mine) await github.rest.issues.updateComment({ owner, repo, comment_id: mine.id, body });
-                else await github.rest.issues.createComment({ owner, repo, issue_number: pr, body });
+                else if (!updateOnly.has(pr)) await github.rest.issues.createComment({ owner, repo, issue_number: pr, body });
               } catch (e) {
                 errors.push(`Comment on #${pr}: ${e.message}`);
               }

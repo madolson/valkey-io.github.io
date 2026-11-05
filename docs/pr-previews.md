@@ -13,7 +13,7 @@ To publish an expired preview again, push a commit or add the `preview` label (b
 ## Pull requests from forks
 
 A fork's preview is published only after a maintainer with write access adds the `preview` label, once the head commit has a finished build.
-The label approves the builds of the head commit that have finished at that moment, records that as a `pr-preview/approval` commit status, and is taken off again, so a new commit, or a rebuild of the same one, needs the label again.
+The label approves the builds of the head commit that have finished at that moment, records that as a `pr-preview/approval-<number>` commit status on it, and is taken off again, so a new commit, or a rebuild of the same one, needs the label again.
 Until then, the comment says the preview is waiting for a maintainer, and any earlier preview is deleted.
 
 Before adding the label, check that the head commit is the one you reviewed (the comment names it), and review what runs or is fetched during the build: `.github/`, `build/`, templates, and `config.toml`. The build's output is what gets published.
@@ -27,7 +27,7 @@ With `PREVIEWS_FORKS=off`, fork previews already up stay until they expire or ar
 | `pr-preview-build.yml` | `pull_request` | Builds the pull request with `.github/actions/build-site` for its preview URL, adds the banner and noindex tag and removes the analytics tags (`build/mark-preview.py`), and uploads the result as an artifact. No secrets, read-only token. |
 | `pr-preview-deploy.yml` | the build finishing, or the label | Looks the pull request up from GitHub's data (never from the artifact), checks the fork approval, checks the artifact (no symlinks, no files Cloudflare treats as code or configuration, 1 GiB cap), adds `robots.txt` and an `X-Robots-Tag: noindex` header rule, and uploads it with `wrangler pages deploy`. Nothing in the artifact is run. |
 | `pr-preview-approve.yml` | the `preview` label | Approves a fork pull request's head commit, as above. |
-| `pr-preview-cleanup.yml` | a pull request closing, daily, and after each deploy | Deletes previews of closed pull requests, previews past their TTL, and deployments that a newer one replaced, and updates the comments. |
+| `pr-preview-cleanup.yml` | a pull request closing, daily, and after each deploy | Deletes previews of closed pull requests, previews past their TTL, deployments that a newer one replaced, and fork previews of anything but the current head, and updates the comments. |
 
 None of the workflows that hold the Cloudflare token check out or run pull request code.
 
@@ -58,7 +58,7 @@ The TTL is `TTL_DAYS` in `pr-preview-cleanup.yml`.
    - After closing the pull request, the preview URL no longer serves the site.
 
    Then open one from a fork. Check that the build ran (repository variables reach fork builds) and the comment asks for a maintainer.
-   Have the fork's own workflows set a `pr-preview/approval` status on its head commit, and check that the comment still asks for a maintainer. Then add the label.
+   Have the fork's own workflows set a `pr-preview/approval-<number>` status on its head commit, and check that the comment still asks for a maintainer. Then add the label.
 
 ## Turning it off
 

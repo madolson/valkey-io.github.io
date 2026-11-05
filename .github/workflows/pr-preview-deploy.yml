@@ -93,7 +93,7 @@ jobs:
             if (fork) {
               const statuses = await github.paginate(github.rest.repos.listCommitStatusesForRef, { owner, repo, ref: sha, per_page: 100 });
               approvedAt = Math.max(0, ...statuses
-                .filter(s => s.context === 'pr-preview/approval' && s.state === 'success' && s.creator?.login === 'github-actions[bot]')
+                .filter(s => s.context === `pr-preview/approval-${number}` && s.state === 'success' && s.creator?.login === 'github-actions[bot]')
                 .map(s => Date.parse(s.created_at)));
             }
             const covered = r => !fork || Date.parse(r.updated_at) <= approvedAt;
@@ -174,17 +174,18 @@ jobs:
           npx --yes wrangler@4.153.0 pages deploy "$site" --project-name "$PROJECT" --branch "pr-$PR" \
             --commit-hash "$SHA" --commit-message "Pull request #$PR" --commit-dirty=true
 
-  # Deletes the deployments this one replaced (or, if unapproved or unbuilt, the preview) and
-  # updates the pull request's comment.
+  # Deletes the deployments this one replaced and updates the pull request's comment. No
+  # concurrency group: cleanup checks the pull request's current head itself, and sharing
+  # publish's group would let an older finish cancel a newer publish.
   finish:
     needs: [resolve, publish]
     if: always() && needs.resolve.outputs.action != '' && needs.publish.result != 'cancelled'
-    concurrency:
-      group: pr-preview-${{ needs.resolve.outputs.pr }}
-      cancel-in-progress: true
     permissions:
       pull-requests: write
     uses: ./.github/workflows/pr-preview-cleanup.yml
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     with:
       pr: ${{ needs.resolve.outputs.pr }}
       sha: ${{ needs.resolve.outputs.sha }}
