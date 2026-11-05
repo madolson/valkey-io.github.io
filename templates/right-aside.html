@@ -1,9 +1,12 @@
 {% extends "default.html" %}
 
 {% block content %}
+<div class="styled-title">
+    {% block subhead_content %}{% endblock subhead_content %}
+</div>
+
 <div class="width-limiter">
     <main class="container right-aside">
-        {% block subhead_content %}{% endblock subhead_content %}
         {% block main_content %}{% endblock main_content %}
     </main>
     <aside>

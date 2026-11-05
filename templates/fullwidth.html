@@ -1,13 +1,12 @@
 {% extends "default.html" %}
 
 {% block content %}
+<div class="styled-title">
+    <h1>{% if page and page.title %}{{ page.title }}{% elif section and section.title %}{{ section.title }}{% endif %}</h1>
+</div>
+
 <div class="width-limiter">
     <main class="container">
-        {% block page_title %}
-        {% if not page or page.content is not starting_with(pat="<h1") %}
-        <h1 class="page-title-plain">{% if page and page.title %}{{ page.title }}{% elif section and section.title %}{{ section.title }}{% endif %}</h1>
-        {% endif %}
-        {% endblock page_title %}
         {% block main_content %}{{ page.content | markdown | safe }}{% endblock main_content %}
     </main>
 </div>

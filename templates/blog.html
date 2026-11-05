@@ -1,8 +1,13 @@
 {% extends "blog-aside.html" %}
 
+{% block subhead_content %}
+  <div class="styled-title">
+    <h1>{{ section.title }}</h1>
+    <p>{{ section.description }}</p>
+  </div>
+{% endblock subhead_content %}
+
 {% block main_content %}
-  <h1 class="page-title-plain">{{ section.title }}</h1>
-  <p>{{ section.description }}</p>
   {% set taxonomy = get_taxonomy(kind="blog_type", required=false) %}
   {% if taxonomy %}
   <div class="blog-type-filters" hidden>
