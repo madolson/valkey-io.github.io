@@ -28,6 +28,9 @@
 //   og-<key>.webp        the 1200x630 link preview for a card post with that motif
 //   default-bg.webp      the default card's background, 1888x1062: twice the widest card
 //   og-plain.webp        the default card's link preview: that background, centre-cropped
+//   _data/blog-hero/open-sans-400.json
+//                        the site's Open Sans advance widths, which the template uses to set
+//                        the default card's lines
 //   LICENSE, NOTICE      valkey-svgs' Apache-2.0 licence and notice, which cover all of it
 
 import { execFileSync } from 'node:child_process';
@@ -201,6 +204,41 @@ function rasterise(chrome, scratch, key, svg) {
   execFileSync(PYTHON, ['-c', ENCODE, pngPath, join(OUT, `og-${key}.webp`)], { stdio: ['ignore', 'ignore', 'inherit'] });
 }
 
+// The default card's template sets its own lines (blog_hero.fit), so it needs to know how
+// wide the text is. These are Open Sans 400's advance widths, in em, measured in Chrome from
+// the site's own font files, for printable ASCII and the punctuation and accents titles use.
+// The template counts anything else as 0.6em.
+const GLYPHS = [...Array.from({ length: 95 }, (_, i) => String.fromCharCode(32 + i)), ...'’‘“”–—…×éèüöäñç'];
+
+function measureOpenSans(chrome, scratch) {
+  const css = pathToFileURL(join(SITE, 'static', 'fonts', 'open-sans', 'webfont.css')).href;
+  const page = join(scratch, 'glyphs.html');
+  writeFileSync(page, `<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="${css}"></head>
+<body><pre id="out"></pre><script>
+const chars = ${JSON.stringify(GLYPHS)};
+document.fonts.load('400 100px "Open Sans"', chars.join('')).then(() => {
+  const c = document.createElement('canvas').getContext('2d');
+  c.font = '400 1000px "Open Sans"';
+  const out = { loaded: document.fonts.check('400 100px "Open Sans"') };
+  for (const ch of chars) out[ch] = Math.round(c.measureText(ch).width) / 1000;
+  document.getElementById('out').textContent = JSON.stringify(out);
+});
+</script></body></html>`);
+  const dom = execFileSync(
+    chrome,
+    ['--headless', '--disable-gpu', '--allow-file-access-from-files', '--virtual-time-budget=10000', '--dump-dom', pathToFileURL(page).href],
+    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }
+  );
+  const raw = /<pre id="out">([^<]*)<\/pre>/.exec(dom)?.[1];
+  if (!raw) throw new Error('Could not measure Open Sans: the page did not report widths.');
+  const widths = JSON.parse(raw.replace(/&quot;/g, '"').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&'));
+  if (!widths.loaded) throw new Error('Could not measure Open Sans: the font did not load, so the widths would be a fallback font\'s.');
+  delete widths.loaded;
+  const sorted = Object.fromEntries(Object.keys(widths).sort().map((k) => [k, widths[k]]));
+  mkdirSync(join(SITE, '_data', 'blog-hero'), { recursive: true });
+  writeFileSync(join(SITE, '_data', 'blog-hero', 'open-sans-400.json'), `${JSON.stringify(sorted, null, 1)}\n`);
+}
+
 mkdirSync(OUT, { recursive: true });
 const chrome = findChrome();
 const scratch = mkdtempSync(join(tmpdir(), 'blog-hero-'));
@@ -220,6 +258,7 @@ try {
     console.log(`${m.key.padEnd(14)} <- ${m.theme}`);
   }
   for (const f of ['LICENSE', 'NOTICE']) copyFileSync(join(SVGS, f), join(OUT, f));
+  measureOpenSans(chrome, scratch);
 } finally {
   rmSync(scratch, { recursive: true, force: true });
 }

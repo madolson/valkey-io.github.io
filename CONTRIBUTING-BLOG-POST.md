@@ -171,7 +171,9 @@ draft = true
     # 'hero_motif' (optional) replaces the featured image with a title card that carries your
     # title and the Valkey logo, and is also the link preview. Leave it out to keep the image.
     # "none" gives the default card: the title in white over the Valkey particle-wave background.
-    # A title with a colon is set there as a heading and a subheading, split at its first ": ".
+    # There a title with a colon is set as a heading and a subheading, split at its first ": ",
+    # unless the whole title fits on one line. Each takes at most two lines, and the build fails
+    # if either would need more: shorten the title, or set 'hero_title'.
     # "security" gives the Valkey security card, with the security shield faded behind the title.
     hero_motif = "none"
     # 'hero_title' (optional) is the title on the card when it should differ from 'title',
