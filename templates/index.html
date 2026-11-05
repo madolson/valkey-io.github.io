@@ -82,7 +82,7 @@
                 {% set older_line_page = get_page(path="download/versions/" ~ older_slug ~ ".md") %}
                 <li>
                     <a href="{{ older_line_page.permalink }}">Valkey {{ older_release.extra.tag }}</a>
-                    <small>Released {{ older_release.date | date(format="%B %-d, %Y") }}</small>
+                    <small>{{ older_release.date | date(format="%b %-d, %Y") }}</small>
                 </li>
             {% endfor %}
         </ul>
