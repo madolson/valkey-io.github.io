@@ -120,8 +120,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
   if (filter) {
     filter.hidden = false;
-    var initial = decodeURIComponent(location.hash.slice(1));
-    if (Array.prototype.some.call(chips, function(c) { return c.getAttribute('data-type') === initial; })) type = initial;
+    // A malformed hash (/blog/#%) keeps "All".
+    try {
+      var initial = decodeURIComponent(location.hash.slice(1));
+      if (Array.prototype.some.call(chips, function(c) { return c.getAttribute('data-type') === initial; })) type = initial;
+    } catch (e) {}
     filter.addEventListener('click', function(event) {
       var chip = event.target.closest('button');
       if (!chip) return;
