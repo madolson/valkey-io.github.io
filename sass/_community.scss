@@ -451,8 +451,8 @@ $community-ink: #072150;
 // Every block below the hero is a card on .community-home-canvas. Two columns
 // from 900px: the release cards stack beside the blog card, then Learn more
 // and the logo strip run full width. The 1fr row takes any height the blog
-// card has over the two release cards, so the release card keeps its natural
-// height and the past releases card stretches to line up the bottoms.
+// card has over the two release cards, and the past releases card sits at the
+// top of it, so both release cards keep their natural height.
 .homepage-grid {
   display: grid;
   gap: 2rem;
@@ -469,7 +469,7 @@ $community-ink: #072150;
       "participants participants";
 
     .homepage-card-release { grid-area: release; }
-    .homepage-card-past { grid-area: past; }
+    .homepage-card-past { grid-area: past; align-self: start; }
     .homepage-card-blog { grid-area: blog; }
     .homepage-card-learn { grid-area: learn; }
     .homepage-card-participants { grid-area: participants; }
@@ -492,18 +492,31 @@ $community-ink: #072150;
 
   .release-headline {
     margin-bottom: 1rem;
+
+    a {
+      color: $community-ink;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 
-  // Keeps the head no taller than the kicker alone, so kickers line up
-  // across the cards in a row.
+  .link-readmore {
+    text-transform: none;
+    font-size: 1.4rem;
+  }
+
+  // A line box no taller than the kicker's keeps the head at the kicker's
+  // height, so kickers line up across the cards in a row.
   .community-home-section-head .link-readmore {
     margin: 0;
-    line-height: 1;
+    line-height: 1.1rem;
   }
 }
 
-// One row per post, split by the logo strip's hairline. The row is an anchor,
-// so the title takes the global link colour like the release links beside it.
+// One row per post, split by the logo strip's hairline. The title takes the
+// same ink as the latest release and Learn more titles.
 .homepage-blog-card {
   display: block;
   padding: 1.4rem 0;
@@ -526,6 +539,7 @@ $community-ink: #072150;
 
 .homepage-blog-card-title {
   margin: 0 0 0.3rem;
+  color: $community-ink;
   font-size: 1.7rem;
   font-weight: 700;
   line-height: 1.3;
@@ -544,7 +558,7 @@ $community-ink: #072150;
   color: #47506b;
   font-size: 1.4rem;
   line-height: 1.45;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 }
 
@@ -581,14 +595,13 @@ $community-ink: #072150;
 .homepage-learn-item {
   display: block;
   padding: 1.8rem 2rem;
-  border: 1px solid #e9ebf4;
   border-radius: 14px;
+  background: #f8faff;
   text-decoration: none;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.15s;
 
   &:hover {
-    border-color: #bfc6dd;
-    background: #f8faff;
+    background: #eef1fb;
 
     h3 {
       text-decoration: underline;
@@ -602,7 +615,7 @@ $community-ink: #072150;
 
   h3 {
     margin: 0 0 0.8rem;
-    color: $community-purple-800;
+    color: $community-ink;
     font-size: 1.8rem;
     font-weight: 700;
 
