@@ -78,7 +78,7 @@ $community-ink: #072150;
   }
 
   .release-headline {
-    margin-bottom: 1rem;
+    margin: 0 0 1rem;
 
     a {
       color: $community-ink;
@@ -108,7 +108,6 @@ $community-ink: #072150;
   display: block;
   padding: 1.4rem 0;
   border-top: 1px solid #e9ebf4;
-  text-decoration: none;
 
   &:first-child {
     padding-top: 0;
@@ -184,7 +183,6 @@ $community-ink: #072150;
   padding: 1.8rem 2rem;
   border-radius: 14px;
   background: #f8faff;
-  text-decoration: none;
   transition: background 0.15s;
 
   &:hover {
