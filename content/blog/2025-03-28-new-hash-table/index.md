@@ -6,6 +6,8 @@ authors= ["zuiderkwast"]
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
 [extra]
+hero_motif = "none"
+hero_subtitle = "Storing more data with less memory in Valkey 8.1"
 featured = false
 featured_image = "/assets/media/featured/random-05.webp"
 
