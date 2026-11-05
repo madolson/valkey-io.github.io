@@ -90,11 +90,15 @@ $community-ink: #072150;
     font-size: 1.4rem;
   }
 
-  // A line box no taller than the kicker's keeps the head at the kicker's
-  // height, so kickers line up across the cards in a row.
-  .community-home-section-head .link-readmore {
-    margin: 0;
-    line-height: 1.1rem;
+  // Top-aligned: the link's 1.2em chevron makes its line taller than the
+  // label's, and centring would drop that label 1px below the others in
+  // the row.
+  .community-home-section-head {
+    align-items: flex-start;
+
+    .link-readmore {
+      margin: 0;
+    }
   }
 }
 
