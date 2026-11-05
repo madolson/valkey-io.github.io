@@ -123,20 +123,29 @@ build/broken-links.sh public
 build/unconverted-doc-links.sh public
 ```
 
-## Blog hero title cards
+## Link preview cards
 
-Blog posts can opt in to a title card in place of their featured image; see [Title cards](CONTRIBUTING-BLOG-POST.md#title-cards) for the front matter and the line rules.
+A blog post with `og_card = true` gets a link preview card, its title over the Valkey background, as `/blog/<slug>/og.png`; [CONTRIBUTING-BLOG-POST.md](CONTRIBUTING-BLOG-POST.md#link-preview-cards) covers the front matter and the line rules.
+Its `og:image` and `twitter:image` point there.
 
-The card is `templates/macros/blog-hero.html` and `sass/_blog-hero.scss`, over `static/assets/media/blog-hero/default-bg.webp`.
-The template sets the lines by adding up Open Sans's advance widths from `_data/blog-hero/open-sans-400.json`, against right edges measured from that background (`blog_hero.edge`), so a new background needs new edges.
-`build/blog-hero.py` regenerates the width table when the Open Sans font files change:
+Zola can't draw text into an image, so it renders every card as HTML on one page, `/og-cards/` (`templates/og-cards.html`, out of the sitemap and search, and `noindex`), and the site's build screenshots them.
+`build/og-cards.mjs` serves a built site on 127.0.0.1, has headless Chrome capture each card at 1200x630, shrinks it to 256 colours with pngquant, deletes `/og-cards/`, and fails if any card post's `og.png` is missing or the wrong size.
+To run it yourself, with Node 20 or later, Chrome or Chromium (set `CHROME` to pick one), and pngquant:
 
 ```shell
-./build/blog-hero.py
+zola build
+node build/og-cards.mjs public
+```
+
+The card is `templates/macros/og-card.html` and `sass/css/og-cards.scss`, over `static/assets/media/og-card/default-bg.webp`.
+The template sets the lines by adding up Open Sans's advance widths from `_data/og-card/open-sans-400.json`, against right edges measured from that background (`og_card.edge`), so a new background needs new edges.
+`build/og-card-widths.py` regenerates the width table when the Open Sans font files change:
+
+```shell
+./build/og-card-widths.py
 ```
 
 It runs with [uv](https://docs.astral.sh/uv/), or with `python3` once Pillow is installed.
-The site build never runs it.
 
 ## License
 
