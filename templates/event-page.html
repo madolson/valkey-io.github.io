@@ -6,18 +6,12 @@
 
 {% block content %}
 {% if not page.extra.external_url %}
-<div class="styled-title event-title">
-    <h1>{% if page.extra and page.extra.event_logo %}
-            <img src="{{page.extra.event_logo}}" alt="{{page.title}}" />
-        {% else %}
-            {{ page.title }}
-        {% endif %}
-        
-        </h1>
-</div>
 <div class="event-single">
     <main>
-       
+        <h1 class="page-title-plain">{{ page.title }}</h1>
+        {% if page.extra and page.extra.event_logo %}
+        <img class="event-logo" src="{{page.extra.event_logo}}" alt="" />
+        {% endif %}
         {% block main_content %}{{ page.content | safe }}{% endblock main_content %}
 
     </main>

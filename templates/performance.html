@@ -1,12 +1,9 @@
 {% extends "default.html" %}
 
 {% block content %}
-<div class="styled-title">
-    <h1>{{ page.title }}</h1>
-</div>
-
 <div class="width-limiter">
     <main class="container">
+        <h1 class="page-title-plain">{{ page.title }}</h1>
         {{ page.content | markdown | safe }}
 
         {% set perf = load_data(path="_data/perf.toml") %}

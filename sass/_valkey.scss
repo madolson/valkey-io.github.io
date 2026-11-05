@@ -952,31 +952,9 @@ p {
   @include sans-serif;
 }
 
-.styled-title {
-  padding-top: var(--chakra-space-16);
-  padding-bottom: var(--chakra-space-16);
-  color: var(--chakra-colors-white);
-  text-align: center;
-  background-image: linear-gradient(rgb(59, 42, 102), rgb(78, 81, 191));
-  padding: 80px 20px;
-
-  h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    line-height: 1;
-    color: #fff;
-    margin: 0 auto;
-    padding: 0;
-    background: none;
-    border: none;
-  }
-
-  p {
-    margin: 20px auto;
-    max-width: 800px;
-    color: #fff;
-    line-height: 1.4;
-  }
+// Page title at the top of a page's content.
+.page-title-plain {
+  margin: 0 0 2rem;
 }
 
 #principles {
@@ -1209,10 +1187,10 @@ aside {
   }
 }
 
-.styled-title.event-title {
-  img {
-    width: 33%;
-  }
+.event-logo {
+  display: block;
+  width: 33%;
+  margin-bottom: 2rem;
 }
 .event-single {
   display: flex;
@@ -1231,9 +1209,8 @@ aside {
 }
 
 .keyspace-2025 {
-  .styled-title {
-    background-image: url("/events/keyspace-2025/keyspace-nebula-new.jpg");
-    background-size: cover;
+  .page-title-plain {
+    color: inherit;
   }
   .body {
     background-color: black;
@@ -2396,11 +2373,6 @@ blockquote {
       }
     }
   }
-}
-
-// Page title at the top of the docs content panel (topic and command pages).
-.docs-page-title {
-  margin: 0 0 2rem;
 }
 
 // Homepage blog cards: text-only cards stacked vertically, matching the release
