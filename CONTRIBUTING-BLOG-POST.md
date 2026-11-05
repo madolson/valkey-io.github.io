@@ -174,7 +174,6 @@ draft = true
     # There a title with a colon is set as a heading and a subheading, split at its first ": ",
     # unless the whole title fits on one line. Each takes at most two lines, and the build fails
     # if either would need more: shorten the title, or set 'hero_title'.
-    # "security" gives the Valkey security card, with the security shield faded behind the title.
     hero_motif = "none"
     # 'hero_title' (optional) is the title on the card when it should differ from 'title',
     # usually to choose the line breaks: each "\n" starts a new line. The page title is unchanged.

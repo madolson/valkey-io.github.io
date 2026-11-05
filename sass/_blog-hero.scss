@@ -1,118 +1,25 @@
-// The blog hero card. Markup: templates/macros/blog-hero.html. Art: static/assets/media/
-// blog-hero/, from build/blog-hero/extract.mjs.
+// The blog hero title card: the post title in white Open Sans over the particle-wave
+// background. Markup and line setting: templates/macros/blog-hero.html.
 //
-// Two cards share one box. The security card is valkey-svgs' card layout: the lockup in the
-// upper left, the title in the lower left on light blocks that run off the left edge, and the
-// shield centred in the right of the card, faded so the title can run over it at full width.
-// The default card, at the end of this file, is madolson's background with the title in
-// white over it. Either is 16:9 at every width, valkey-svgs' own frame, and its contents
-// never change its size: both cards, with any title, are the same box. Sizes are in cqi of
-// the card, so it is one picture scaled to any width and a title wraps the same way at
-// every size.
+// The card is 16:9 at every width and everything in it is sized in cqi, so it is one picture
+// scaled to any width. The template sets the lines and their sizes, so the text never wraps;
+// this only places it, as measured off the design mockup. The card is 56.25cqi tall.
+//   - The text box starts 4.44% across, which puts the stem of a capital at 5%.
+//   - The heading's first baseline is at 29.83% of the height, 16.78cqi, and a second line
+//     flows down from it. Open Sans's baseline sits 0.938em below the top of a 1.1 line box
+//     and 0.162em above its bottom.
+//   - The subheading's baseline is 1.204 heading sizes below the heading's last baseline.
 //
-// The art is a background rather than <img>, so the post column's rules for images in
-// the post body never reach it.
-
-$blog-hero-ink: #060A24;
-$blog-hero-ice: #CCF1FF;
+// The background is a CSS background rather than an <img>, so the post column's rules for
+// images never reach it.
 
 .blog-hero {
   container-type: inline-size;
-  display: grid;
+  position: relative;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   margin-bottom: 2rem;
   border-radius: 2rem;
-  background: #171043 url(/assets/media/blog-hero/ground.svg) center / cover no-repeat;
-}
-
-// Equal top and bottom padding, so the shield is centred on the card's centre line.
-.blog-hero-body {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas: "lockup" "title";
-  gap: 3cqi 4cqi;
-  min-height: 0;
-  padding: 4cqi 5cqi 4cqi 0;
-}
-
-.blog-hero-lockup {
-  grid-area: lockup;
-  height: max(2.2rem, 4.6cqi);
-  aspect-ratio: 187.9 / 63.5;
-  margin-left: 4.2cqi;
-  background: url(/assets/media/blog-hero/lockup.svg) left top / contain no-repeat;
-}
-
-// The shield is the card's art: 87% of the card's height, centred at 68% across, so it is
-// clear of the lockup. Its tile runs the full height of the card; the glow beyond the
-// shield's outline is cropped by the card's edges. The shield fades out from its left edge
-// to full strength 80% of the way across, so its left half dissolves under the title.
-.blog-hero-body {
-  position: relative;
-}
-
-.blog-hero-motif {
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-  width: 64cqi;
-  background: center / auto 114% no-repeat;
-  opacity: 0.9;
-  -webkit-mask-image: linear-gradient(to right, transparent 14%, #000 80%);
-  mask-image: linear-gradient(to right, transparent 14%, #000 80%);
-}
-
-.blog-hero-lockup,
-.blog-hero-title {
-  z-index: 1;
-}
-
-// One size for every title, 4.53cqi: what the blog's longest title, 86 characters, needs to
-// fit in three lines. Shorter titles take fewer lines. A longer one steps down so it still
-// fits three: a line holds 86cqi of type, a character is about 0.58em of bold Helvetica,
-// and wrapping can strand up to a word per line, so three lines hold `--blog-hero-chars`
-// (set by the template) at 3 * 86 / (0.58 * (chars + 12)) cqi. The floor only matters
-// below a 300px card.
-.blog-hero-title {
-  grid-area: title;
-  align-self: end;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: clamp(1.2rem, 3cqi * 86 / (0.58 * (var(--blog-hero-chars) + 12)), 4.53cqi);
-  font-weight: 600;
-  line-height: 1.42;
-  color: $blog-hero-ink;
-  overflow-wrap: break-word;
-  // valkey-svgs' three shadow passes: contact, falloff, and a broad pool for height.
-  // A filter, not box-shadow, so the lines cast one shadow together, never onto each other.
-  filter: drop-shadow(0 0.065em 0.13em rgba($blog-hero-ink, 0.55))
-    drop-shadow(0 0.16em 0.29em rgba($blog-hero-ink, 0.5))
-    drop-shadow(0 0.42em 0.65em rgba($blog-hero-ink, 0.55));
-
-  span {
-    padding: 0.21em 0.355em 0.21em calc(5cqi + 0.355em);
-    border-radius: 0 0.065em 0.065em 0;
-    background: $blog-hero-ice;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-  }
-}
-
-// The default card: madolson's background, which already carries the logo, with the title
-// in white Open Sans over its dark upper left. The template sets the lines and their sizes
-// (blog_hero.fit in templates/macros/blog-hero.html), so the text here never wraps; this only
-// places it. Placement is measured off her mockup, a 16:9 slide, in cqi of the card, which is
-// 56.25cqi tall:
-//   - The text box starts 4.44% across, which puts the stem of a capital at 5%.
-//   - The heading's first baseline sits at 29.83% of the height, 16.78cqi, and a second line
-//     flows down from there. Open Sans's baseline sits 0.938em below the top of a 1.1 line box
-//     and 0.162em above its bottom.
-//   - The subheading's baseline sits 1.204 heading sizes below the heading's last baseline.
-.blog-hero--default {
-  position: relative;
   background: #1b2028 url(/assets/media/blog-hero/default-bg.webp) center / cover no-repeat;
   color: #fff;
   @include sans-serif;
