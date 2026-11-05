@@ -1,6 +1,8 @@
 {%- extends "default.html" -%}
 
 {%- block content -%}
+{% include "includes/participant-logo-strip.html" %}
+
 {% if section.extra and section.extra.hero %}
 <div class="hero-section">
     <div class="hero-content">
@@ -145,9 +147,6 @@
     </div>
 </div>
 
-<div class="community-home-canvas">
-{% include "includes/community-photo-carousel.html" %}
-</div>
 <script src="/assets/js/community.js" defer></script>
 
 {%- endblock content -%}

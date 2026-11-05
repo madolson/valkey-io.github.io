@@ -2,26 +2,7 @@
 
 {% block content %}
 {% set extra = section.extra %}
-{# Same order as the Participants page #}
-{% set participants = load_data(path="_data/participants.yml") | sort(attribute="name") %}
-
-{# Participant logo strip #}
-{% if participants and participants | length > 0 %}
-<section class="community-logo-band">
-  <div class="community-logo-band-inner">
-    <div class="community-logo-band-head">
-      <a class="community-home-kicker" href="/participants/">Valkey participants</a>
-      <button class="community-logo-pause" type="button" id="communityLogoPause" aria-pressed="false" aria-label="Pause the scrolling participant logos">Pause</button>
-    </div>
-    <div class="community-logo-row" role="group" aria-label="Valkey participant organizations">
-      <div class="community-logo-track" id="communityLogoTrack">
-        {{< logo_set participants={participants} />}}
-        {{< logo_set participants={participants} duplicate={true} />}}
-      </div>
-    </div>
-  </div>
-</section>
-{% endif %}
+{% include "includes/participant-logo-strip.html" %}
 
 {# Hero #}
 {% if extra.hero %}
@@ -49,7 +30,29 @@
 </section>
 {% endif %}
 
-{% include "includes/community-photo-carousel.html" %}
+{# Community photo carousel #}
+{% if extra.photos and extra.photos | length > 0 %}
+<section class="community-home-photos" aria-label="Community in action">
+  <div class="community-home-section-head">
+    <h2 class="community-home-kicker">Community in action</h2>
+    <div class="community-home-carousel-controls">
+      <button class="community-home-carousel-button" id="communityPhotoPrev" type="button" aria-label="Previous community photos">&lsaquo;</button>
+      <span class="community-home-carousel-status" id="communityPhotoStatus" aria-live="polite"></span>
+      <button class="community-home-carousel-button" id="communityPhotoNext" type="button" aria-label="Next community photos">&rsaquo;</button>
+    </div>
+  </div>
+  <div class="community-home-photo-viewport">
+    <div class="community-home-photo-track" id="communityPhotoTrack">
+      {% for photo in extra.photos %}
+      {% set thumb = resize_image(path="static" ~ photo.src, width=800, op="fit_width") %}
+      <figure>
+        <img src="{{ thumb.url }}" alt="{{ photo.alt }}" width="{{ thumb.width }}" height="{{ thumb.height }}" decoding="async"{% if loop.index > 3 %} loading="lazy"{% endif %}{% if photo.position %} style="object-position: {{ photo.position }};"{% endif %}>
+      </figure>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
 </div>
 
 {# Ways to contribute #}
