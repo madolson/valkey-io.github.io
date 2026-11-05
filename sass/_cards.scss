@@ -21,12 +21,15 @@ $community-ink: #072150;
 
 // A card's section label: sentence case in #4a5ad8, the hero button blue,
 // which is 5.6:1 on white where /community/'s #5b6fff kicker is 4.1:1.
+// 2.4rem keeps it above the homepage's 2rem release headline. Balanced
+// wrapping avoids leaving "releases" alone on a line.
 @mixin card-label {
   color: #4a5ad8;
-  font-size: 1.6rem;
+  font-size: 2.4rem;
   font-weight: 600;
   letter-spacing: normal;
   text-transform: none;
+  text-wrap: balance;
 }
 
 // Homepage (templates/index.html) -------------------------------------------
@@ -95,11 +98,11 @@ $community-ink: #072150;
     font-size: 1.4rem;
   }
 
-  // Top-aligned: the link's 1.2em chevron makes its line taller than the
-  // label's, and centring would drop that label 1px below the others in
-  // the row.
+  // Baseline-aligned: the label is the tallest item, so it sits at the top
+  // of the head and lines up with the labels in the other cards, and the
+  // link shares its baseline.
   .community-home-section-head {
-    align-items: flex-start;
+    align-items: baseline;
 
     .link-readmore {
       margin: 0;
