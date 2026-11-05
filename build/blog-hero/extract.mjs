@@ -5,7 +5,11 @@
 // when the generator changes; the site build never runs it and needs nothing but Zola.
 //
 //   git clone https://github.com/madolson/valkey-svgs /tmp/valkey-svgs
-//   node build/blog-hero/extract.mjs /tmp/valkey-svgs
+//   node build/blog-hero/extract.mjs /tmp/valkey-svgs ["Default Valkey empty.png"]
+//
+// The optional second argument is the background of the default card, a 1920x1080 PNG that
+// madolson made with the logo already in it. It is not part of valkey-svgs, so it is only
+// re-encoded when given; without it the committed default-bg.webp and og-plain.webp stay.
 //
 // Needs Node 22. The og:image rasters also need what valkey-svgs needs: a Chrome-based
 // browser and python3 with Pillow. Set PYTHON to pick the interpreter.
@@ -21,7 +25,9 @@
 //   ground.svg           the shared background: sky gradient, vignette, film grain
 //   lockup.svg           the Valkey mark and wordmark in white, as the corner stamp draws it
 //   motif-<key>.svg      a motif, framed around its centre, on a transparent ground
-//   og-<key>.webp        the 1200x630 link preview for a card post; og-plain.webp has no motif
+//   og-<key>.webp        the 1200x630 link preview for a card post with that motif
+//   default-bg.webp      the default card's background, 1888x1062: twice the widest card
+//   og-plain.webp        the default card's link preview: that background, centre-cropped
 //   LICENSE, NOTICE      valkey-svgs' Apache-2.0 licence and notice, which cover all of it
 
 import { execFileSync } from 'node:child_process';
@@ -33,11 +39,12 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const SITE = resolve(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const OUT = join(SITE, 'static', 'assets', 'media', 'blog-hero');
 
-if (process.argv.length !== 3) {
-  console.error('Usage: node build/blog-hero/extract.mjs <path to a valkey-svgs checkout>');
+if (process.argv.length !== 3 && process.argv.length !== 4) {
+  console.error('Usage: node build/blog-hero/extract.mjs <path to a valkey-svgs checkout> [default background PNG]');
   process.exit(2);
 }
 const SVGS = resolve(process.argv[2]);
+const DEFAULT_PNG = process.argv[3] && resolve(process.argv[3]);
 const load = (...p) => import(pathToFileURL(join(SVGS, ...p)).href);
 const G = await load('lib', 'core.mjs');
 
@@ -142,19 +149,24 @@ ${notice('The Valkey lockup in white, as the corner stamp on every banner draws 
 
 // Link previews. A card's title is HTML, which no unfurler can render, so the preview is
 // the generator's own banner for the theme with the lockup and no caption: the platforms
-// print the post title beside the image anyway. The plain card has no motif, so its
-// preview is the ground with the lockup centred and large instead of a bare corner.
+// print the post title beside the image anyway.
 function ogSvg(t, art) {
-  if (t) return G.wrap({ ...t, caption: undefined }, art);
-  const h = 220;
-  const w = (G.LOCKUP.vw / G.LOCKUP.vh) * h;
-  return G.wrap(ground, '', { chrome: false }).replace(
-    '</svg>',
-    `  <g opacity="0.95">${G.lockup((G.W - w) / 2, (G.H - h) / 2, h)}</g>\n</svg>`
-  );
+  return G.wrap({ ...t, caption: undefined }, art);
 }
 
 const PYTHON = process.env.PYTHON ?? 'python3';
+// The default card's background and its preview, from madolson's PNG.
+const DEFAULT_ENCODE = `
+import sys
+from PIL import Image
+src, bg, og = sys.argv[1], sys.argv[2], sys.argv[3]
+im = Image.open(src).convert("RGB")
+im.resize((1888, 1062), Image.LANCZOS).save(bg, "WEBP", quality=85, method=6)
+keep = round(im.width / (1200 / 630))
+top = (im.height - keep) // 2
+im.crop((0, top, im.width, top + keep)).resize((1200, 630), Image.LANCZOS).save(og, "WEBP", quality=90, method=6)
+`;
+
 const ENCODE = `
 import sys
 from PIL import Image
@@ -195,7 +207,11 @@ const scratch = mkdtempSync(join(tmpdir(), 'blog-hero-'));
 try {
   writeFileSync(join(OUT, 'ground.svg'), G.wrap(ground, notice('The shared ground of every Valkey banner.'), { chrome: false }));
   writeFileSync(join(OUT, 'lockup.svg'), lockupSvg());
-  rasterise(chrome, scratch, 'plain', ogSvg(null, ''));
+  if (DEFAULT_PNG) {
+    execFileSync(PYTHON, ['-c', DEFAULT_ENCODE, DEFAULT_PNG, join(OUT, 'default-bg.webp'), join(OUT, 'og-plain.webp')], {
+      stdio: ['ignore', 'ignore', 'inherit'],
+    });
+  }
   for (const m of MOTIFS) {
     const t = await theme(m.theme);
     const art = m.art(t);

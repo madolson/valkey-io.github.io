@@ -1,12 +1,14 @@
 // The blog hero card. Markup: templates/macros/blog-hero.html. Art: static/assets/media/
 // blog-hero/, from build/blog-hero/extract.mjs.
 //
-// valkey-svgs' card layout: the lockup in the upper left, the title in the lower left on
-// light blocks that run off the left edge, and the shield centred in the right of the card,
-// faded so the title can run over it at full width. The card is 16:9 at every width, valkey-svgs' own frame, and its
-// contents never change its size: a plain card and a shield card, with any title, are the
-// same box. Sizes are in cqi of the card, so it is one picture scaled to any width and a
-// title wraps the same way at every size.
+// Two cards share one box. The security card is valkey-svgs' card layout: the lockup in the
+// upper left, the title in the lower left on light blocks that run off the left edge, and the
+// shield centred in the right of the card, faded so the title can run over it at full width.
+// The default card, at the end of this file, is madolson's background with the title in
+// white over it. Either is 16:9 at every width, valkey-svgs' own frame, and its contents
+// never change its size: both cards, with any title, are the same box. Sizes are in cqi of
+// the card, so it is one picture scaled to any width and a title wraps the same way at
+// every size.
 //
 // The art is a background rather than <img>, so the post column's rules for images in
 // the post body never reach it.
@@ -97,4 +99,50 @@ $blog-hero-ice: #CCF1FF;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
   }
+}
+
+// The default card: madolson's background, which already carries the logo, with the title
+// in white Open Sans over its dark upper left, placed as her mockup places it. In cqi of the
+// card, which is 56.25cqi tall:
+//   - The heading's cap height is 9% of the height, so 7.09cqi type. Its last baseline sits
+//     at 30% of the height, 16.875cqi, and longer titles grow upward from there.
+//   - The subheading is 55% of the heading. Its first baseline sits at 45%, 25.3125cqi.
+//   - Both start 5% across and stay left of 55%, over the dark area and off the wave.
+// A title that does not fit one line at full size takes whichever of one to four lines lets
+// it be largest. Each term is the size that fits it in that many lines of the 50cqi column
+// and keeps its cap top below a 6% margin: a character is taken as 0.56em of Open Sans, and
+// each line after the first allows 8 characters for a word stranded by wrapping, which holds
+// with room to spare for every title on the blog. Open Sans's baseline sits 0.963em below
+// the top of a 1.15 line box and 0.187em above its bottom.
+.blog-hero--default {
+  --heading: clamp(0.9rem, max(
+    min(7.09cqi, 50cqi / (0.56 * var(--blog-hero-chars))),
+    min(7.09cqi, 100cqi / (0.56 * (var(--blog-hero-chars) + 8))),
+    min(4.48cqi, 150cqi / (0.56 * (var(--blog-hero-chars) + 16))),
+    min(3.24cqi, 200cqi / (0.56 * (var(--blog-hero-chars) + 24)))
+  ), 7.09cqi);
+  position: relative;
+  background: #1b2028 url(/assets/media/blog-hero/default-bg.webp) center / cover no-repeat;
+  color: #fff;
+  @include sans-serif;
+  font-weight: 400;
+}
+
+.blog-hero-heading,
+.blog-hero-subheading {
+  position: absolute;
+  left: 5cqi;
+  width: 50cqi;
+  line-height: 1.15;
+  overflow-wrap: break-word;
+}
+
+.blog-hero-heading {
+  bottom: calc(39.375cqi - 0.187em);
+  font-size: var(--heading);
+}
+
+.blog-hero-subheading {
+  top: calc(25.3125cqi - 0.963em);
+  font-size: max(1rem, 0.55 * var(--heading));
 }
