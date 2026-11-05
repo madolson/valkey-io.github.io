@@ -1734,8 +1734,10 @@ html.banner-hidden .banner {
 // Hero Section Styles
 .hero-section {
   position: relative;
+  min-height: min(65vh, 68rem);
   background-size: cover;
-  background-position: right center;
+  // Only the photo layer moves; the gradients fill the box either way.
+  background-position: center, center, 65% center;
   background-color: #30186e;
   // The radial layer dims the photo behind the headline without hiding it.
   background-image:
@@ -1758,6 +1760,13 @@ html.banner-hidden .banner {
   @include respond-min(768px) {
     padding: 10rem 2rem;
 
+  }
+
+  // Zoom the photo so its streaks read larger. At 135% of the width it is
+  // still taller than the hero from 1024px up, so it covers.
+  @include respond-min(1024px) {
+    background-size: cover, cover, 135% auto;
+    background-position: center, center, 15% 45%;
   }
 }
 
