@@ -9,6 +9,7 @@ blog_type = ["Technical Deep Dive"]
 
 [extra]
 hero_motif = "security"
+hero_title = "Keeping up with AI:\nValkey security in 2026"
 featured = true
 featured_image = "/assets/media/featured/security-shield-clean.webp"
 og_image = "/blog/keeping-up-with-ai-valkey-security/images/og.webp"
