@@ -612,17 +612,12 @@ $community-ink: #072150;
     line-height: 1.2;
   }
 
-  // Drop the generic .body main/aside column widths, padding and fills.
+  // The article and the sidebar are the cards. width: auto drops the
+  // generic .body main/aside column widths.
   > main,
   > aside {
-    width: auto;
-    padding: 0;
-    background: none;
-  }
-
-  .main-inner,
-  > aside {
     @include card;
+    width: auto;
     padding: 2.2rem 2rem;
 
     @include respond-min(768px) {
