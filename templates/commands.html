@@ -90,7 +90,7 @@ function searchCommands() {
         var items = group.querySelectorAll(".command-entry");
         var found = false;
         items.forEach(function (item) {
-            var text = item.querySelector("a").innerText.toLowerCase();
+            var text = item.querySelector("code a").innerText.toLowerCase();
             if (text.includes(input)) {
                 item.style.display = "";
                 found = true;
