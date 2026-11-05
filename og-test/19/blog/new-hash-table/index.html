@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="ROBOTS" content="ALL" />
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/og.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="A new hash table" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/og.png" />
+    
+    
+
+    <meta name="description" content="Designing a state-of-the art hash table" />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; A new hash table</title>
+    <meta name="title" property="og:title" content="Valkey: A new hash table">
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/og-test/19/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/assets/js/copy-code.js"></script>
+
+    <!-- cookie banner, LF standard -->
+    <script
+      src="https://transcend-cdn.com/cm/f484e2d0-ad2e-43a9-9d64-d07f6fa20966/airgap.js"
+      data-cfasync="false"
+      data-prompt="auto"
+    ></script>
+
+    <!-- google analytics, LF standard -->
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-MFFCB7SR');</script>
+    <!-- End Google Tag Manager -->
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div class="header">
+    <div class="width-limiter">
+      <a href="/" class="logo">
+        <img src="/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/commands/">Command Reference</a>
+            <a role="menuitem" href="/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/clients/">Clients</a>
+            <a role="menuitem" href="/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/participants/">Participants</a>
+        <a role="menuitem" href="/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/assets/media/featured/random-05.webp" alt="A new hash table" class="feature-img">
+
+
+<h1>A new hash table</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2025-03-28
+  
+    &middot; 
+    
+      
+      
+      <em>Viktor Söderqvist</em>
+    
+  
+</div>
+<p>Many workloads are bound on storing data. Being able to store more data using
+less memory allows you to reduce the size of your clusters.</p>
+<p>In Valkey, keys and values are stored in what's called a hash table. A hash
+table works by chopping a key into a number of seemingly random bits. These bits
+are shaped into a memory address, pointing to where the value is supposed to be
+stored. It's a very fast way of jumping directly to the right place in memory
+without scanning through all the keys.</p>
+<p>For the 8.1 release, we looked into improving the performance and memory usage,
+so that users can store more data using less memory. This work led us to the
+design of a new hash table, but first, let's take a look at the hash table that
+was used in Valkey until now.</p>
+<h2 id="the-dict">The dict</h2>
+<p>The hash table used Valkey until now, called "dict", has the following memory
+layout:</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/dict-structure.png" alt="dict structure" /></p>
+<p>The dict has two tables, called "table 0" and "table 1". Usually only one
+exists, but both are used when incremental rehashing is in progress.</p>
+<p>It's a chained hash table, so if multiple keys are hashed to the same slot in
+the table, their key-value entries form a linked list. That's what the "next"
+pointer in the <code>dictEntry</code> is for.</p>
+<p>To lookup a key "FOO" and access the value "BAR", Valkey still has to read from
+memory four times. If there is a hash collision, it has to follow two more
+pointers for each hash collision and thus read twice more from memory (the key
+and the next pointer).</p>
+<h2 id="minimize-memory-accesses">Minimize memory accesses</h2>
+<p>One of the slower operations when looking up a key-value pair is reading from
+the main RAM memory. A key point is therefore to make sure we have as few memory
+accesses as possible. Ideally, the memory we want to access should already be
+loaded in the CPU cache, which is a smaller but much faster memory belonging to
+the CPU.</p>
+<p>Optimizing for memory usage, we also want to minimize the number of distinct
+memory allocations and the number of pointers between them, because storing a
+pointer needs 8 bytes in a 64-bit system. If we can save one pointer per
+key-value pair, for 100 million keys that's almost a gigabyte.</p>
+<p>When the CPU loads some data from the main memory into the CPU cache, it does so
+in fixed size blocks called cache lines. The cache-line size is 64 bytes on
+almost all modern hardware. Recent work on hash tables, such as <a rel="external" href="https://abseil.io/about/design/swisstables">Swiss
+tables</a>, are highly optimized to
+store and access data within a single cache line. If the key you're looking
+for isn't found where you first look for it (due to a hash collision), then it
+should ideally be found within the same cache line. If it is, then it's found
+very fast once this cache line has been loaded into the CPU cache.</p>
+<h2 id="required-features">Required features</h2>
+<p>Why not use an open-source state-of-the-art hash table implementation such as
+Swiss tables? The answer is that we require some specific features, apart from
+the basic operations like add, lookup, replace and delete:</p>
+<ul>
+<li>
+<p>Incremental rehashing, so that when the hashtable is full, we don't freeze the
+server while the table is being resized.</p>
+</li>
+<li>
+<p>Scan, a way to iterate over the hash table even if the hash table is resized
+between the iterations. This is important to keep supporting the
+<a href="/commands/scan/">SCAN</a> command.</p>
+</li>
+<li>
+<p>Random element sampling, for commands like <a href="/commands/randomkey/">RANDOMKEY</a>.</p>
+</li>
+</ul>
+<p>These aren't standard features, so we couldn't simply pick an off-the-shelf hash
+table. We had to design one ourselves.</p>
+<h2 id="design">Design</h2>
+<p>In the new hash table designed for Valkey 8.1, the table consists of buckets of
+64 bytes, one cache line. Each bucket can store up to seven elements. Keys that
+map to the same bucket are all stored in the same bucket. The bucket also
+contains a metadata section, marked "m" in the figures. The bucket layout
+including the metadata section is explained in more detail below.</p>
+<p>We've eliminated the <code>dictEntry</code> and instead embed key and value in the
+<code>serverObject</code>, along with other data for the key.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/hashtable-structure.png" alt="hashtable structure" /></p>
+<p>Assuming the <code>hashtable</code> structure is already in the CPU cache, looking up
+key-value entry now requires only two memory lookups: The bucket and the
+<code>serverObject</code>. If there is a hash collision, the object we're looking for is
+most likely in the same bucket, so no extra memory access is required.</p>
+<p>If a bucket becomes full, the last element slot in the bucket is replaced by a
+pointer to a child bucket. A child bucket has the same layout as a regular
+bucket, but it's a separate allocation. The lengths of these bucket chains are
+not bounded, but long chains are very rare as long as keys are well distributed
+by the hashing function. Most of the keys are stored in top-level buckets.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/hashtable-child-buckets.png" alt="hashtable structure" /></p>
+<p>The elements in the same bucket, or bucket chain, are stored without any
+internal ordering. When inserting a new entry into the bucket, any of the free
+slots can be used.</p>
+<p>As mentioned earlier, each bucket also contains a metadata section. The bucket
+metadata consists of eight bytes of which one bit indicates whether the bucket
+has a child bucket or not. The next seven bits, one bit for each of the seven
+element slots, indicates whether that slot is filled, i.e. whether it contains
+an element or not. The remaining seven bytes are used for storing a one byte
+secondary hash for each of the entries stored in the bucket.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/hash-bucket-structure.png" alt="bucket structure" /></p>
+<p>The secondary hash is made up of hash bits that are not used when looking up the
+bucket. Out of a 64 bits hash, we need not more than 56 bits for looking up the
+bucket and we use the remaining 8 bits as the secondary hash. These hash bits
+are used for quickly eliminating mismatching entries when looking up a key
+without comparing the keys. Comparing the keys of each entry in the bucket would
+require an extra memory access per entry. If the secondary hash mismatches the
+key we're looking for, we can immediately skip that entry. The chance of a false
+positive, meaning an entry for which the secondary hash is matching although the
+entry doesn't match the key were looking for, is one in 256, so this eliminates
+99.6% of the false positives.</p>
+<h2 id="results">Results</h2>
+<p>By replacing the hash table with a different implementation, we've managed to
+reduce the memory usage by roughly 20 bytes per key-value pair.</p>
+<p>The graph below shows the memory overhead for different value sizes. The
+overhead is the memory usage excluding the key and the value itself. Lower is
+better. (The zigzag pattern is because of unused memory resulting from the memory
+allocator's discrete allocation sizes.)</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/memory-usage.png" alt="memory usage by version" /></p>
+<p>For keys with an <a href="/commands/expire/">expire time</a> (time-to-live, TTL) the memory
+usage is down even more, roughly 30 bytes per key-value pair.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/memory-usage-with-expire.png" alt="memory usage with expire" /></p>
+<p>In some workloads, such as when storing very small objects and when pipelining
+is used extensively, the latency and CPU usage are also improved. In most cases
+though this is negligible in practice. The key takeaway appears to be reduced
+memory usage.</p>
+<h2 id="hashes-sets-and-sorted-sets">Hashes, sets and sorted sets</h2>
+<p>The nested data types Hashes, Sets and Sorted sets also make use of the new hash
+table when they contain a sufficiently large number of elements. The memory
+usage is down by roughly 10-20 bytes per element for these types of keys.</p>
+<p>Special thanks to Rain Valentine for the graphs and for the help with
+integrating this hash table into Valkey.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/assets/media/authors/zuiderkwast.jpeg" alt="photo of Viktor Söderqvist" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Viktor Söderqvist</h4>
+    
+    <a target="_blank" href="https://github.com/zuiderkwast"><i class="icon icon-github-square"></i> @zuiderkwast</a>
+    
+    <p>Viktor is an open source developer from Ericsson and one of the maintainers of Valkey.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/&title=A%20new%20hash%20table&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/og-test/19/blog/new-hash-table/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/2025-03-4-go-client-in-public-preview/">&laquo; Introducing the Valkey Glide Go Client: Now in Public Preview!</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/og-test/19/blog/valkey-8-1-0-ga/">Valkey 8.1: Continuing to Deliver Enhanced Performance and Reliability &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/connect">
+            <img src="/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/code_of_conduct">Code of Conduct</a>
+          <a href="/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/about">About</a>
+          <a href="/leadership">Leadership</a>
+          <a href="/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=4682283c-f8b7-410c-9c31-c6d7944cee8b" />
+      <!-- Google Tag Manager (noscript) -->
+      <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MFFCB7SR"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <!-- End Google Tag Manager (noscript) -->
+    </div>
+    
+
+</body>
+</html>
