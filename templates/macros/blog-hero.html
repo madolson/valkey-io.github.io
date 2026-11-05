@@ -14,7 +14,7 @@
   <div class="blog-hero blog-hero--security" aria-hidden="true">
     <div class="blog-hero-body">
       <span class="blog-hero-lockup"></span>
-      <div class="blog-hero-title" style="--blog-hero-chars: {{ title | length }}"><span>
+      <div class="blog-hero-title"><span>
         {%- for line in title | split(pat="\n") %}{% if not loop.first %}<br>{% endif %}{{ line | trim }}{% endfor -%}
       </span></div>
       <span class="blog-hero-shield"></span>

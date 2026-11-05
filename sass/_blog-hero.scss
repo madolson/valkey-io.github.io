@@ -41,14 +41,12 @@
 // of the card, faded so the title can run over it at full width.
 
 $blog-hero-ink: #060A24;
-$blog-hero-ice: #CCF1FF;
 
 .blog-hero--security {
   display: grid;
   background: #171043 url(/assets/media/blog-hero/security-bg.svg) center / cover no-repeat;
 }
 
-// Equal top and bottom padding, so the shield is centred on the card's centre line.
 .blog-hero-body {
   position: relative;
   display: grid;
@@ -85,17 +83,14 @@ $blog-hero-ice: #CCF1FF;
   mask-image: linear-gradient(to right, transparent 14%, #000 80%);
 }
 
-// One size for every title, 4.53cqi: what the blog's longest title, 86 characters, needs to
-// fit in three lines. A longer one steps down so it still fits three: a line holds 86cqi of
-// type, a character is about 0.58em of bold Helvetica, and wrapping can strand up to a word
-// per line, so three lines hold `--blog-hero-chars` (set by the template) at
-// 3 * 86 / (0.58 * (chars + 12)) cqi. The floor only matters below a 300px card.
+// One size for every title, 4.53cqi, what the blog's longest title needs to fit in three
+// lines. The 12px floor only applies to a card narrower than 265px.
 .blog-hero-title {
   grid-area: title;
   z-index: 1;
   align-self: end;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: clamp(1.2rem, 3cqi * 86 / (0.58 * (var(--blog-hero-chars) + 12)), 4.53cqi);
+  font-size: max(1.2rem, 4.53cqi);
   font-weight: 600;
   line-height: 1.42;
   color: $blog-hero-ink;
@@ -109,7 +104,7 @@ $blog-hero-ice: #CCF1FF;
   span {
     padding: 0.21em 0.355em 0.21em calc(5cqi + 0.355em);
     border-radius: 0 0.065em 0.065em 0;
-    background: $blog-hero-ice;
+    background: $blue-vibrant-000;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
   }
