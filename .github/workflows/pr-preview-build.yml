@@ -1,0 +1,51 @@
+# Builds a pull request's preview and uploads it as an artifact. pr-preview-deploy.yml
+# publishes it. This runs the pull request's code, so it gets no secrets and a read-only
+# token. See docs/pr-previews.md.
+
+name: PR preview build
+
+on:
+  pull_request:
+    branches: ["main"]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-preview-build-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    if: vars.PREVIEWS_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          path: website
+          persist-credentials: false
+
+      - name: Build
+        uses: ./website/.github/actions/build-site
+        with:
+          path: website
+          base-url: https://pr-${{ github.event.pull_request.number }}.${{ vars.PREVIEWS_PROJECT }}.pages.dev
+
+      - name: Mark the pages as a preview
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: website/build/mark-preview.py website/public "$PR" "$SHA" "$PR_URL"
+
+      - name: Upload
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: pr-preview-site
+          path: website/public
+          if-no-files-found: error
+          # Longer than the 7-day TTL, so the `preview` label can republish an expired preview
+          # or approve a fork's build weeks later without a rebuild.
+          retention-days: 30

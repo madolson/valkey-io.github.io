@@ -11,6 +11,9 @@ inputs:
   checkout-content:
     description: Check out the content repositories. Set to false if an earlier build in the job already did.
     default: 'true'
+  base-url:
+    description: Build for this URL instead of config.toml's base_url (e.g. for a preview).
+    default: ''
 
 runs:
   using: composite
@@ -65,3 +68,4 @@ runs:
         BUILD_DIR: ${{ inputs.path }}
         BUILD_ONLY: true
         BUILD_THEMES: false
+        BUILD_FLAGS: ${{ inputs.base-url && format('--base-url {0}', inputs.base-url) || '' }}

@@ -1,0 +1,61 @@
+# The `preview` label approves publishing the finished build of a pull request's current head
+# commit, which fork pull requests need (see docs/pr-previews.md). The approval is a commit
+# status on that commit, so a later push or rebuild needs the label again. Never checks out or
+# runs the pull request.
+
+name: PR preview approve
+
+on:
+  pull_request_target:
+    branches: ["main"]
+    types: [labeled]
+
+permissions: {}
+
+jobs:
+  approve:
+    if: vars.PREVIEWS_ENABLED == 'true' && github.event.label.name == 'preview'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write # find the build and start pr-preview-deploy.yml
+      pull-requests: write # take the label off
+      statuses: write # record the approval
+    steps:
+      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const approver = context.payload.sender.login;
+
+            // The label is a button, so it never stays on to imply later commits are approved.
+            await github.rest.issues.removeLabel({ owner, repo, issue_number: pr.number, name: 'preview' })
+              .catch(e => core.warning(`Couldn't remove the label: ${e.message}`));
+
+            // Triage access can add labels. Publishing needs write.
+            const { data } = await github.rest.repos.getCollaboratorPermissionLevel({ owner, repo, username: approver });
+            if (!['admin', 'write'].includes(data.permission)) {
+              core.setFailed(`@${approver} has ${data.permission} access. Publishing a preview needs write.`);
+              return;
+            }
+
+            // The approval covers builds that have finished, so there has to be one.
+            const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
+              owner, repo, workflow_id: 'pr-preview-build.yml', event: 'pull_request', status: 'success',
+              head_sha: pr.head.sha, per_page: 100,
+            });
+            if (!runs.some(r => r.head_repository?.id === pr.head.repo?.id && r.head_branch === pr.head.ref)) {
+              core.setFailed(`${pr.head.sha} has no finished build yet. Add the label again once it has one.`);
+              return;
+            }
+
+            await github.rest.repos.createCommitStatus({
+              owner, repo, sha: pr.head.sha, state: 'success', context: 'pr-preview/approval',
+              description: `Preview approved by @${approver}`,
+            });
+            // The build already finished, so nothing else would start the deploy.
+            await github.rest.actions.createWorkflowDispatch({
+              owner, repo, workflow_id: 'pr-preview-deploy.yml',
+              ref: context.payload.repository.default_branch, inputs: { pr: String(pr.number) },
+            });
+            core.info(`Approved ${pr.head.sha} for PR #${pr.number}.`);
