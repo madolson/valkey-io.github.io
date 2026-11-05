@@ -56,7 +56,7 @@ title= "Read the docs"
 
 +++
 
-## Learn more
+## Learn more {.community-home-kicker}
 
 Valkey can run as either a **standalone** daemon or in a **cluster**, with options for **replication** and **high availability**. Valkey natively supports a rich collection of datatypes, including **strings**, **numbers**, **hashes**, **lists**, **sets**, **sorted sets**, **bitmaps**, **hyperloglogs** and more.
 You can operate on data structures in-place with an expressive collection of commands.
