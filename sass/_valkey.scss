@@ -1099,64 +1099,6 @@ aside {
   &[data-type="Events"] { background-color: $red-100; }
 }
 
-.blog-featured {
-  &-card {
-    display: flex;
-    margin-bottom: 2rem;
-
-    img {
-      max-width: 50%;
-      height: auto;
-      object-fit: cover;
-    }
-
-    .info {
-      flex: 1 1 50%;
-      width: 50%;
-      padding: 1.25rem;
-
-      h4 {
-        margin: 0 0 1.25rem;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-
-        a {
-          color: #000;
-        }
-      }
-    
-      p {
-        margin: 0 0 1.25rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-      }
-
-      .read-more {
-
-      }
-    }
-    .read-more {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      line-height: 1.2;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 12px 24px;
-      border: 1px solid #e2e8f0;
-      border-radius: 50px;
-      color: #2d3748;
-      align-self: flex-end;
-      margin-left: auto;
-      transition: all 0.2s;
-    }
-
-  }
-}
-
 .styled-title.event-title {
   img {
     width: 33%;

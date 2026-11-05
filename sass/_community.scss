@@ -636,81 +636,396 @@ $community-ink: #072150;
   }
 }
 
-// Blog index and posts (templates/blog-aside.html, blog-single.html) --------
+// Blog landing page (templates/blog.html, macros/blog.html) ------------------
 
-// Like the homepage: the banner is the one full-width band, and below it
-// every block is a white card on .community-home-canvas.
-.blog-index,
-.blog-single {
+// Below the banner: the lead post beside a short featured list, then the type
+// chips and a grid of image cards.
+.blog-landing {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 2rem;
+  gap: 4rem;
   max-width: var(--max-width);
-  margin: 3.4rem auto;
-
-  // Drop the generic .body main/aside column widths, padding and fills.
-  > main,
-  > aside {
-    width: auto;
-    max-width: none;
-    padding: 0;
-    background: none;
-  }
+  margin: 3.4rem auto 4.8rem;
 }
 
-// Featured stays on the left, as before.
-.blog-index {
-  @include respond-min(1024px) {
-    grid-template-columns: 380px minmax(0, 1fr);
-
-    > main { grid-area: 1 / 2; }
-    > aside { grid-area: 1 / 1; }
-  }
-
-  // Same height as the head that holds the filter, so the two kickers line up.
-  .community-home-section-head {
-    min-height: 3.2rem;
-  }
-}
-
-.blog-type-filters select {
-  padding: 0.5rem 1.2rem;
-  border: 1px solid #bfc6dd;
-  border-radius: 20px;
-  background: #fff;
-  color: #47506b;
-  font-size: 1.3rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.blog-list {
+.blog-top {
   display: grid;
-  gap: 1.4rem;
+  gap: 2rem;
+
+  @include respond-min(1100px) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  }
+}
+
+// A 16:9 frame for the post image, or the banner gradient and Valkey mark
+// when there is none.
+.blog-media {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgb(59, 42, 102), rgb(78, 81, 191));
+
+  img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.blog-media-empty::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.9);
+  mask: url('/img/Valkey-logo.svg') center / auto 36% no-repeat;
+  -webkit-mask: url('/img/Valkey-logo.svg') center / auto 36% no-repeat;
+}
+
+// Type label: a dot in the type's badge colour, then the name.
+.blog-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #606985;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  line-height: 1.2;
+  text-transform: uppercase;
+
+  &::before {
+    content: '';
+    flex: 0 0 auto;
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+    background: $grey-dk-200;
+  }
+
+  &[data-type="Technical Deep Dive"]::before { background: #6983ff; }
+  &[data-type="Community Highlight"]::before { background: $green-200; }
+  &[data-type="How-to"]::before { background: $purple-200; }
+  &[data-type="Announcements"]::before { background: $yellow-100; }
+  &[data-type="Events"]::before { background: $red-100; }
+}
+
+.blog-byline {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #606985;
+  font-size: 1.3rem;
+  line-height: 1.35;
+
+  time {
+    display: block;
+  }
+}
+
+.blog-avatars {
+  display: flex;
+  flex: 0 0 auto;
+
+  &:empty {
+    display: none;
+  }
+
+  img {
+    width: 3.2rem;
+    height: 3.2rem;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #e9ebf4;
+    object-fit: cover;
+
+    & + img {
+      margin-left: -1rem;
+    }
+  }
+}
+
+.blog-byline-names {
+  display: block;
+  color: $community-ink;
+  font-weight: 600;
+}
+
+// Lead post. The image sits beside the text once the card is wide enough.
+.blog-lead {
+  @include community-panel;
+  display: grid;
+  gap: 2rem;
+  padding: 1.4rem;
+  color: inherit;
+  text-decoration: none;
+
+  @include respond-min(700px) {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 2.8rem;
+    padding: 1.6rem;
+  }
+
+  .blog-media {
+    border-radius: 12px;
+  }
+
+  &:hover .blog-lead-title {
+    text-decoration: underline;
+  }
+}
+
+.blog-lead-body {
+  padding: 0 0.8rem 1rem;
+
+  @include respond-min(700px) {
+    padding: 1rem 2rem 1rem 0;
+  }
+}
+
+.blog-lead-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1.4rem;
+  margin: 0;
+}
+
+.blog-lead-title {
+  margin: 1.2rem 0 1rem;
+  color: $community-ink;
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+
+  @include respond-min(1280px) {
+    font-size: 2.8rem;
+  }
+}
+
+.blog-lead-description {
+  display: -webkit-box;
+  margin: 0 0 1.8rem;
+  overflow: hidden;
+  color: #47506b;
+  font-size: 1.6rem;
+  line-height: 1.55;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+// Featured: compact rows split by the homepage's hairline.
+.blog-featured {
+  @include community-panel;
+  padding: 2.2rem 2rem;
+
+  @include respond-min(768px) {
+    padding: 2.4rem 2.8rem;
+  }
+
+  .community-home-kicker {
+    margin-bottom: 1.4rem;
+  }
+}
+
+.blog-featured-list {
   margin: 0;
   padding: 0;
   list-style: none;
+
+  li + li {
+    border-top: 1px solid #e9ebf4;
+  }
 }
 
-// The text inside uses the homepage blog row styles (.homepage-blog-card-*).
-.blog-list-card {
-  @include community-panel;
-  display: block;
-  padding: 1.8rem 2.4rem;
+.blog-featured-item {
+  display: grid;
+  grid-template-columns: 11.2rem minmax(0, 1fr);
+  align-items: center;
+  gap: 1.4rem;
+  padding: 1.2rem 0;
   text-decoration: none;
 
-  &:hover .homepage-blog-card-title {
+  li:first-child > & {
+    padding-top: 0;
+  }
+
+  li:last-child > & {
+    padding-bottom: 0;
+  }
+
+  .blog-media {
+    border-radius: 8px;
+  }
+
+  time {
+    display: block;
+    margin-top: 0.4rem;
+    color: #606985;
+    font-size: 1.25rem;
+  }
+
+  &:hover .blog-featured-title {
     text-decoration: underline;
+  }
+}
+
+.blog-featured-title {
+  display: -webkit-box;
+  overflow: hidden;
+  color: $community-ink;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.35;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+// All posts: kicker and type chips, then the grid.
+.blog-all-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem 2rem;
+  margin-bottom: 2rem;
+}
+
+.blog-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+
+  &[hidden] {
+    display: none;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.7rem 1.4rem;
+    border: 1px solid #d5daea;
+    border-radius: 999px;
+    background: #fff;
+    color: #47506b;
+    font: inherit;
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+
+    &:hover {
+      border-color: $community-purple-800;
+      color: $community-purple-800;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $community-blue-500;
+      outline-offset: 2px;
+    }
+
+    &[aria-pressed="true"] {
+      border-color: $community-purple-800;
+      background: $community-purple-800;
+      color: #fff;
+
+      .blog-type {
+        color: #fff;
+      }
+    }
+  }
+
+  // In a chip the label reads as a button, not a kicker.
+  .blog-type {
+    color: inherit;
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+}
+
+.blog-grid {
+  display: grid;
+  gap: 2.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include respond-min(640px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-min(1100px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+// The whole card is the link. Flex keeps the byline on the bottom edge, so
+// the bylines in a row line up.
+.blog-card {
+  @include community-panel;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  text-decoration: none;
+  transition: box-shadow 0.15s, transform 0.15s;
+
+  &:hover {
+    box-shadow: 0 14px 34px rgba(60, 60, 130, 0.14);
+    transform: translateY(-2px);
+
+    .blog-card-title {
+      text-decoration: underline;
+    }
   }
 
   &:focus-visible {
     outline: 2px solid $community-blue-500;
-    outline-offset: 2px;
+    outline-offset: 3px;
   }
 
-  .blog-type-badge {
-    margin-right: 0.4rem;
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
   }
+}
+
+.blog-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 1.8rem 2rem 2rem;
+
+  .blog-byline {
+    margin-top: auto;
+  }
+}
+
+.blog-card-title {
+  margin: 1rem 0 0.8rem;
+  color: $community-ink;
+  font-size: 1.9rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.blog-card-description {
+  display: -webkit-box;
+  margin: 0 0 1.8rem;
+  overflow: hidden;
+  color: #47506b;
+  font-size: 1.45rem;
+  line-height: 1.5;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 .blog-no-results {
@@ -719,21 +1034,56 @@ $community-ink: #072150;
   font-size: 1.5rem;
 }
 
-.blog-featured-card {
-  @include community-panel;
-  overflow: hidden;
+.blog-more {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 3.2rem;
 
-  &:last-child {
-    margin-bottom: 0;
+  &[hidden] {
+    display: none;
+  }
+
+  [hidden] {
+    display: none;
+  }
+
+  button {
+    font-family: inherit;
+    cursor: pointer;
   }
 }
 
-// The post is unchanged inside its card; the sidebar is a second card that
-// keeps its own height.
+.blog-more-status {
+  margin: 0;
+  color: #606985;
+  font-size: 1.3rem;
+}
+
+// Blog posts (templates/blog-single.html) ------------------------------------
+
+// The article and the sidebar are white cards on .community-home-canvas.
+// The article itself is unchanged; its type rules are in _valkey.scss.
 .blog-single {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  max-width: var(--max-width);
+  margin: 3.4rem auto;
+
   @include respond-min(1024px) {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
     align-items: start;
+  }
+
+  // Drop the generic .body main/aside column widths, padding and fills.
+  > main,
+  > aside {
+    width: auto;
+    max-width: none;
+    padding: 0;
+    background: none;
   }
 
   .main-inner,
