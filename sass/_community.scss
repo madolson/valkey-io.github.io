@@ -622,3 +622,125 @@ $community-ink: #072150;
     line-height: 1.5;
   }
 }
+
+// Blog index and posts (templates/blog-aside.html, blog-single.html) --------
+
+// Like the homepage: the banner is the one full-width band, and below it
+// every block is a white card on .community-home-canvas.
+.blog-index,
+.blog-single {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2rem;
+  max-width: var(--max-width);
+  margin: 3.4rem auto;
+
+  // Drop the generic .body main/aside column widths, padding and fills.
+  > main,
+  > aside {
+    width: auto;
+    max-width: none;
+    padding: 0;
+    background: none;
+  }
+}
+
+// Featured stays on the left, as before.
+.blog-index {
+  @include respond-min(1024px) {
+    grid-template-columns: 380px minmax(0, 1fr);
+
+    > main { grid-area: 1 / 2; }
+    > aside { grid-area: 1 / 1; }
+  }
+
+  // Same height as the head that holds the filter, so the two kickers line up.
+  .community-home-section-head {
+    min-height: 3.2rem;
+  }
+}
+
+.blog-type-filters select {
+  padding: 0.5rem 1.2rem;
+  border: 1px solid #bfc6dd;
+  border-radius: 20px;
+  background: #fff;
+  color: #47506b;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.blog-list {
+  display: grid;
+  gap: 1.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// The text inside uses the homepage blog row styles (.homepage-blog-card-*).
+.blog-list-card {
+  @include community-panel;
+  display: block;
+  padding: 1.8rem 2.4rem;
+  text-decoration: none;
+
+  &:hover .homepage-blog-card-title {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $community-blue-500;
+    outline-offset: 2px;
+  }
+
+  .blog-type-badge {
+    margin-right: 0.4rem;
+  }
+}
+
+.blog-no-results {
+  margin: 0;
+  color: #606985;
+  font-size: 1.5rem;
+}
+
+.blog-featured-card {
+  @include community-panel;
+  overflow: hidden;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+// The post is unchanged inside its card; the sidebar is a second card that
+// keeps its own height.
+.blog-single {
+  @include respond-min(1024px) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .main-inner,
+  > aside {
+    @include community-panel;
+    padding: 2.2rem 2rem;
+
+    @include respond-min(768px) {
+      padding: 2.7rem 3.4rem;
+    }
+  }
+
+  > aside > :last-child {
+    margin-bottom: 0;
+  }
+
+  .blog-authors h2 {
+    color: $community-blue-500;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+  }
+}
