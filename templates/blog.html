@@ -84,9 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
   var observer = null;
   if ('IntersectionObserver' in window) {
     // The next batch loads once the sentinel is within 800px of the bottom
-    // of the viewport. The huge top margin counts a sentinel scrolled above
-    // the viewport as in view too, so jumping past the list (End, a link to
-    // the footer) still loads more.
+    // of the viewport. The huge top margin also counts it as in view once it
+    // is above the viewport: on phones the footer is taller than the screen,
+    // so after a jump to the footer nothing more would load otherwise.
     observer = new IntersectionObserver(function(entries) {
       if (entries[entries.length - 1].isIntersecting && remaining > 0) {
         limit += step;
