@@ -557,7 +557,6 @@ $community-ink: #072150;
   align-items: flex-start;
 
   p {
-    max-width: 100rem;
     margin: 1.2rem 0 0;
     color: #47506b;
     font-size: 1.6rem;
@@ -580,28 +579,46 @@ $community-ink: #072150;
 }
 
 .homepage-learn-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.8rem;
-  padding-top: 1.8rem;
-  border-top: 1px solid #e9ebf4;
+  display: block;
+  padding: 1.8rem 2rem;
+  border: 1px solid #e9ebf4;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+
+  &:hover {
+    border-color: #bfc6dd;
+    background: #f8faff;
+
+    h3 {
+      text-decoration: underline;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $community-blue-500;
+    outline-offset: 2px;
+  }
 
   h3 {
-    margin: 0;
+    margin: 0 0 0.8rem;
     color: $community-purple-800;
     font-size: 1.8rem;
     font-weight: 700;
+
+    // Same chevron as .link-readmore. inline-block keeps the hover underline
+    // off it.
+    &::after {
+      content: '\203A';
+      display: inline-block;
+      margin-left: 0.4em;
+    }
   }
 
   p {
-    margin: 0 0 0.6rem;
+    margin: 0;
     color: #47506b;
     font-size: 1.5rem;
     line-height: 1.5;
-  }
-
-  .community-home-btn {
-    margin-top: auto;
   }
 }

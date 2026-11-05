@@ -116,13 +116,13 @@
             {{ section.content | safe }}
         </div>
         {% if section.extra and section.extra.documentation_cards %}
+        {# The whole tile is the link, like the blog rows. #}
         <div class="homepage-learn-grid">
             {% for card in section.extra.documentation_cards %}
-            <div class="homepage-learn-item">
+            <a class="homepage-learn-item" href="{{ card.button_url }}">
                 <h3>{{ card.title }}</h3>
                 <p>{{ card.description }}</p>
-                <a class="community-home-btn" href="{{ card.button_url }}">{{ card.button_text }}</a>
-            </div>
+            </a>
             {% endfor %}
         </div>
         {% endif %}

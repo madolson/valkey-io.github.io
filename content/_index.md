@@ -23,25 +23,21 @@ secondary_button_url = "/topics/installation"
 [[extra.documentation_cards]]
 title = "Usage guide"
 description = "Detailed documentation on the various datatypes supported by Valkey and best practices."
-button_text = "Documentation by topic"
 button_url = "/topics/"
 
 [[extra.documentation_cards]]
 title = "Valkey API"
 description = "View the full list of Valkey commands including first party modules."
-button_text = "Command Reference"
 button_url = "/commands"
 
 [[extra.documentation_cards]]
 title = "Clients"
 description = "Recommended Valkey client libraries for Python, Java, Go, Node.js, PHP, C#, Ruby, and more."
-button_text = "Learn More"
 button_url = "/clients/"
 
 [[extra.documentation_cards]]
 title = "Performance"
 description = "Deep dive into Valkey performance numbers across versions."
-button_text = "Explore"
 button_url = "/performance/"
 
 [[extra.download_ctas]]
