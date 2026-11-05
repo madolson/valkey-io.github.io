@@ -642,21 +642,9 @@ p {
     padding-bottom: 1rem;
   }
 
-  // The link to the documentation overview, which looks like a section title.
-  // It has no border unless it's current, so it lines up with the titles.
-  .docs-menu-overview > a {
-    padding: 1rem 0.4rem;
-    font-weight: 700;
-    color: #000;
-    text-transform: uppercase;
-
-    &:not(.docs-menu-current) {
-      border-left: 0;
-    }
-  }
-
-  // The link to the download pages, styled like the overview link.
-  .docs-menu-download > a {
+  // Links to pages outside the documentation, which look like section titles.
+  // They have no border unless current, so they line up with the titles.
+  .docs-menu-link > a {
     padding: 1rem 0.4rem;
     font-weight: 700;
     color: #000;
