@@ -8,6 +8,7 @@ authors = ["madolson", "murphyjacob4", "hpatro"]
 blog_type = ["Technical Deep Dive"]
 
 [extra]
+hero_motif = "security"
 featured = true
 featured_image = "/assets/media/featured/security-shield-clean.webp"
 og_image = "/blog/keeping-up-with-ai-valkey-security/images/og.webp"
