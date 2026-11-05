@@ -15,10 +15,11 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   text-decoration: none;
+}
 
-  &:hover {
-    color: $community-purple-800;
-  }
+// Only labels that are links, such as "Valkey participants", change colour.
+a.community-home-kicker:hover {
+  color: $community-purple-800;
 }
 
 .community-home-btn {
