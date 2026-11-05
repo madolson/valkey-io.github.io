@@ -1,7 +1,8 @@
 // Community landing page (templates/community-home.html)
 // The "Ways to contribute" tiles reuse the shared .community-card styles
-// from _valkey.scss. Everything here is specific to the landing page:
-// participant logo strip, photo hero, connect bar, and photo carousel.
+// from _valkey.scss. Everything else is the landing page's participant logo
+// strip, photo hero, connect bar, and photo carousel. The homepage reuses the
+// canvas and photo carousel.
 
 $community-purple-900: #2d2471;
 $community-purple-800: #35247e;
