@@ -40,18 +40,9 @@ const load = (...p) => import(pathToFileURL(join(SVGS, ...p)).href);
 const G = await load('lib', 'core.mjs');
 
 // The front matter value (`extra.hero_motif`) maps to a generator theme. `box` is the tile
-// cut out of that theme's 1920x1080 drawing grid. The card centres the tile beside the title,
-// so each box is close to square and centred on the subject: the shield whole, the mark at
-// the performance vanishing point. The chart and the cell grid are twice as wide as they are
-// tall, so their boxes keep the end that carries the point (the tallest bars under the flat
-// latency lines, the compacted cells) and `fade` dissolves the cut edge instead of leaving a
-// seam. `fade` is the share of the box feathered on the left and on the right.
-const MOTIFS = [
-  { key: 'security', theme: 'security-shield-clean', box: [575, 155, 770, 780] },
-  { key: 'observability', theme: 'benchmarks', box: [640, 280, 840, 590], fade: [0.3, 0] },
-  { key: 'performance', theme: 'performance', box: [1110, 120, 840, 770], fade: [0.4, 0.06] },
-  { key: 'efficiency', theme: 'memory-efficiency', box: [730, 186, 850, 708], fade: [0.3, 0] },
-];
+// cut out of that theme's 1920x1080 drawing grid, centred on the subject with room for its
+// glow, so the card can centre the tile beside the title and the subject lands centred too.
+const MOTIFS = [{ key: 'security', theme: 'security-shield-clean', box: [575, 155, 770, 780] }];
 
 const rev = (() => {
   try {
@@ -81,23 +72,12 @@ async function theme(name) {
   return { theme: t, art: t.art(G.rng(t.seed), { text: t.text }, t) };
 }
 
-function feather([x, y, w, h], [left, right]) {
-  const stop = (o, a) => `<stop offset="${o}" stop-color="#fff" stop-opacity="${a}"/>`;
-  return (
-    `  <linearGradient id="fade" gradientUnits="userSpaceOnUse" x1="${x}" y1="0" x2="${x + w}" y2="0">` +
-    `${stop(0, 0)}${stop(left, 1)}${stop(1 - right, 1)}${stop(1, 0)}</linearGradient>\n` +
-    `  <mask id="feather" maskUnits="userSpaceOnUse" x="${x}" y="${y}" width="${w}" height="${h}">` +
-    `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#fade)"/></mask>`
-  );
-}
-
 function motifSvg(m, t, art) {
   const [x, y, w, h] = m.box;
-  const body = m.fade ? `${feather(m.box, m.fade)}\n  <g mask="url(#feather)">\n${art}\n  </g>` : art;
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="${x} ${y} ${w} ${h}">
 ${notice(`The "${t.name}" art, re-framed to the box around its motif for the blog hero card.`)}
 ${G.defs()}
-${body}
+${art}
 </svg>
 `;
 }

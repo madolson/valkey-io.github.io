@@ -6,7 +6,6 @@ authors= ["hpatro", "maheshcherukumilli", "sarthakaggarwal97", "sungming2"]
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
 [extra]
-hero_motif = "performance"
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"
 +++

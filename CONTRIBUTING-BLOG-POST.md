@@ -170,9 +170,9 @@ draft = true
     featured_image = "/assets/media/featured/random-01.webp"
     # 'hero_motif' (optional) replaces the featured image with a title card: the Valkey
     # banner background and logo with your title on it, which is also the link preview.
-    # One of "security", "observability", "performance" or "efficiency" adds that artwork
-    # beside the title; "none" gives the card without artwork. Leave it out to keep the image.
-    hero_motif = "performance"
+    # "security" adds the Valkey security shield beside the title; "none" gives the card
+    # without it. Leave it out to keep the image.
+    hero_motif = "security"
 +++
 ```
 

@@ -6,7 +6,6 @@ authors = ["dragosandriciuc","rainvalentine"]
 [taxonomies]
 blog_type = ["Technical Deep Dive"]
 [extra]
-hero_motif = "efficiency"
 featured = true
 featured_image = "/assets/media/featured/random-07.webp"
 +++
