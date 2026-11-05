@@ -1,11 +1,10 @@
 // The blog hero card. Markup: templates/macros/blog-hero.html. Art: static/assets/media/
 // blog-hero/, from build/blog-hero/extract.mjs.
 //
-// valkey-svgs' card layout, the `key-size-card-flat` variant: the lockup in the upper left,
-// the title in the lower left on light blocks that run off the left edge, and the motif in
-// the band between them, right of the lockup and clear of the title. The title has its own
-// row, so a long one shrinks the band instead of running into the art. Sizes are the
-// banners' own, as a share of the 1920 wide frame, written in cqw of the card.
+// valkey-svgs' card layout: the lockup in the upper left, the title in the lower left on
+// light blocks that run off the left edge, and the motif centred in its own column to the
+// right of the title. Sizes are written in cqw of the card, each with a rem floor so a
+// phone-width card keeps readable type.
 //
 // The art is a background rather than <img>, so the post column's rules for images in
 // the post body never reach it.
@@ -21,17 +20,20 @@ $blog-hero-ice: #CCF1FF;
   background: #171043 url(/assets/media/blog-hero/ground.svg) center / cover no-repeat;
 }
 
-// 2:1 at least, and taller rather than clipped when the title needs the room. Each size
-// has a floor, because at phone width the banner's proportions would set the title at
-// 10px; the floors are where a 520px card lands, so nothing jumps as the card narrows.
+// 2:1 at least, and taller rather than clipped when the title needs the room.
 .blog-hero-body {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) auto;
-  grid-template-areas: "lockup motif" "title title";
-  gap: max(1.2rem, 3cqw) 5cqw;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: "lockup" "title";
+  gap: max(1.2rem, 3cqw) 4cqw;
   min-height: 50cqw;
-  padding: max(1.5rem, 3.6cqw) max(1.5rem, 5cqw) max(1.5rem, 3.75cqw) 0;
+  padding: max(1.5rem, 3.6cqw) max(1.5rem, 5cqw) max(1.5rem, 4.2cqw) 0;
+}
+
+.blog-hero--motif .blog-hero-body {
+  grid-template-columns: minmax(0, 1fr) 40%;
+  grid-template-areas: "lockup motif" "title motif";
 }
 
 .blog-hero-lockup {
@@ -44,17 +46,16 @@ $blog-hero-ice: #CCF1FF;
 
 .blog-hero-motif {
   grid-area: motif;
-  min-height: max(12.5rem, 24cqw);
-  background: right center / contain no-repeat;
+  background: center / contain no-repeat;
 }
 
 // One light block per line. `clone` gives every wrapped line its own padding, so each
 // block starts at the card's left edge while the type keeps a 5% inset.
 .blog-hero-title {
   grid-area: title;
-  max-width: max(66%, 34rem);
+  align-self: end;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: clamp(1.7rem, 3.23cqw, 3.6rem);
+  font-size: clamp(2rem, 4.4cqw, 4.2rem);
   font-weight: 600;
   line-height: 1.42;
   color: $blog-hero-ink;
@@ -74,32 +75,16 @@ $blog-hero-ice: #CCF1FF;
   }
 }
 
-// Thumbnail: no title, since the post title sits beside it.
-.blog-hero--compact {
-  margin: 0;
-
-  .blog-hero-body {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto minmax(0, 1fr);
-    grid-template-areas: "lockup" "motif";
-    gap: 5cqw;
-    height: 100%;
-    min-height: 56cqw;
-    padding: 7cqw;
-  }
-
-  .blog-hero-lockup {
-    height: 11cqw;
-    margin-left: 0;
+// Below 500px a title column beside the motif would be four words wide, so the motif moves
+// up beside the lockup and the title takes the full width under both. The type floor is
+// reached at 455px, so nothing changes size at the switch.
+@container (max-width: 499px) {
+  .blog-hero--motif .blog-hero-body {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "lockup motif" "title title";
   }
 
   .blog-hero-motif {
-    min-height: 0;
-    background-position: center;
+    min-height: 38cqw;
   }
-}
-
-.blog-featured-card > .blog-hero {
-  flex: 0 0 50%;
-  border-radius: 10px 0 0 10px;
 }

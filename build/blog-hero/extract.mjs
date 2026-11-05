@@ -18,8 +18,8 @@
 // This script only makes its pieces:
 //   ground.svg           the shared background: sky gradient, vignette, film grain
 //   lockup.svg           the Valkey mark and wordmark in white, as the corner stamp draws it
-//   motif-<key>.svg      one theme's art, re-framed tight around it, on a transparent ground
-//   og-<key>.webp        the 1200x630 link preview for posts using that card
+//   motif-<key>.svg      one theme's art, re-framed around its centre, on a transparent ground
+//   og-<key>.webp        the 1200x630 link preview for a card post; og-plain.webp has no motif
 //   LICENSE, NOTICE      valkey-svgs' Apache-2.0 licence and notice, which cover all of it
 
 import { execFileSync } from 'node:child_process';
@@ -39,16 +39,18 @@ const SVGS = resolve(process.argv[2]);
 const load = (...p) => import(pathToFileURL(join(SVGS, ...p)).href);
 const G = await load('lib', 'core.mjs');
 
-// The front matter key (`extra.hero_motif`) maps to a generator theme. `box` is the tile
-// cut out of that theme's 1920x1080 drawing grid, chosen to hold the whole motif with its
-// glow and nothing else, so the card can place it without cropping anything. `fade` feathers
-// the tile's left and right edges for a motif that has no natural edge there: the
-// performance streaks run on past any box, and a hard cut through them reads as a seam.
+// The front matter value (`extra.hero_motif`) maps to a generator theme. `box` is the tile
+// cut out of that theme's 1920x1080 drawing grid. The card centres the tile beside the title,
+// so each box is close to square and centred on the subject: the shield whole, the mark at
+// the performance vanishing point. The chart and the cell grid are twice as wide as they are
+// tall, so their boxes keep the end that carries the point (the tallest bars under the flat
+// latency lines, the compacted cells) and `fade` dissolves the cut edge instead of leaving a
+// seam. `fade` is the share of the box feathered on the left and on the right.
 const MOTIFS = [
   { key: 'security', theme: 'security-shield-clean', box: [575, 155, 770, 780] },
-  { key: 'observability', theme: 'benchmarks', box: [236, 280, 1240, 590] },
-  { key: 'performance', theme: 'performance', box: [760, 120, 1160, 770], fade: [0.42, 0.05] },
-  { key: 'efficiency', theme: 'memory-efficiency', box: [96, 186, 1500, 708] },
+  { key: 'observability', theme: 'benchmarks', box: [640, 280, 840, 590], fade: [0.3, 0] },
+  { key: 'performance', theme: 'performance', box: [1110, 120, 840, 770], fade: [0.4, 0.06] },
+  { key: 'efficiency', theme: 'memory-efficiency', box: [730, 186, 850, 708], fade: [0.3, 0] },
 ];
 
 const rev = (() => {
@@ -113,7 +115,7 @@ ${notice('The Valkey lockup in white, as the corner stamp on every banner draws 
 
 // Link previews. A card's title is HTML, which no unfurler can render, so the preview is
 // the generator's own banner for the theme with the lockup and no caption: the platforms
-// print the post title beside the image anyway. The default card has no motif, so its
+// print the post title beside the image anyway. The plain card has no motif, so its
 // preview is the ground with the lockup centred and large instead of a bare corner.
 function ogSvg(t, art) {
   if (t) return G.wrap({ ...t, caption: undefined }, art);
@@ -166,7 +168,7 @@ const scratch = mkdtempSync(join(tmpdir(), 'blog-hero-'));
 try {
   writeFileSync(join(OUT, 'ground.svg'), G.wrap(ground, notice('The shared ground of every Valkey banner.'), { chrome: false }));
   writeFileSync(join(OUT, 'lockup.svg'), lockupSvg());
-  rasterise(chrome, scratch, 'default', ogSvg(null, ''));
+  rasterise(chrome, scratch, 'plain', ogSvg(null, ''));
   for (const m of MOTIFS) {
     const { theme: t, art } = await theme(m.theme);
     writeFileSync(join(OUT, `motif-${m.key}.svg`), motifSvg(m, t, art));
