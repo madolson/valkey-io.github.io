@@ -7,6 +7,7 @@ authors= [ "allenhelton"]
 [taxonomies]
 blog_type = ["How-to"]
 [extra]
+hero_motif = "security"
 featured = true
 featured_image = "/assets/media/featured/random-06.webp"
 +++

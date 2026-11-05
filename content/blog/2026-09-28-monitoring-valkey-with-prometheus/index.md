@@ -6,6 +6,7 @@ authors =  ["dragosandriciuc"]
 [taxonomies]
 blog_type = ["How-to"]
 [extra]
+hero_motif = "observability"
 featured = true
 +++
 
