@@ -979,15 +979,6 @@ p {
   }
 }
 
-// Docs pages get a compact title bar so the content starts near the top.
-.styled-title.docs-title {
-  padding: 24px 20px;
-
-  h1 {
-    font-size: 2.4rem;
-  }
-}
-
 #principles {
   dl {
     counter-reset: principles;
