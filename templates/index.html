@@ -97,7 +97,7 @@
             <h2 class="community-home-kicker">Latest blog posts</h2>
             <a href="/blog/" class="link-readmore">All blog posts</a>
         </div>
-        <div class="homepage-blog-section">
+        <div>
             {% set blog_post_section = get_section(path="blog/_index.md") %}
             {% set blog_count = section.extra.latest_blog_posts %}
             {% set blog_posts = blog_post_section.pages[:blog_count] %}
