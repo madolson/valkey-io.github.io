@@ -3,11 +3,27 @@
   `extra.hero_title`, in white Open Sans over the particle-wave background. It replaces the
   post's `featured_image`. The rules are under "Blog hero title cards" in README.md, and the
   styles are in sass/_blog-hero.scss.
+
+  `extra.hero_motif = "security"` swaps in the security card: the title on light blocks over
+  the security shield. Its lines wrap in the browser, at a "\n" in hero_title or where they
+  run out of room.
 #}
 
 {# The card repeats the title that follows it, so it is hidden from assistive tech. #}
 {% component blog_hero.card(page) -%}
   {%- set title = page.extra.hero_title | default(value=page.title) -%}
+  {%- set motif = page.extra.hero_motif | default(value="") -%}
+  {%- if motif == "security" -%}
+  <div class="blog-hero blog-hero--security" aria-hidden="true">
+    <div class="blog-hero-body">
+      <span class="blog-hero-lockup"></span>
+      <div class="blog-hero-title" style="--blog-hero-chars: {{ title | length }}"><span>
+        {%- for line in title | split(pat="\n") %}{% if not loop.first %}<br>{% endif %}{{ line | trim }}{% endfor -%}
+      </span></div>
+      <span class="blog-hero-shield"></span>
+    </div>
+  </div>
+  {%- else %}
   {#- A title with a colon is a heading and a subheading, split at its first ": ", unless it
       fits the first line's hard limit at the full heading size. In hero_title, a ":" right
       before a "\n" always splits. #}
@@ -60,6 +76,7 @@
       {%- endif %}
     </div>
   </div>
+  {%- endif -%}
 {%- endcomponent blog_hero.card %}
 
 {#

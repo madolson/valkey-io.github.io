@@ -176,6 +176,9 @@ draft = true
     # 'hero_title' (optional) is the title on the card when it should differ from 'title',
     # usually to choose the line breaks: each "\n" starts a new line.
     hero_title = "Using Valkey for\nmind control experiments"
+    # 'hero_motif' (optional) picks another style of card. "security" sets your title over the
+    # Valkey security shield; set 'og_image' with it, for the link preview.
+    # hero_motif = "security"
 +++
 ```
 
