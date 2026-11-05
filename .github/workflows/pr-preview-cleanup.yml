@@ -1,8 +1,8 @@
-# Deletes previews of closed pull requests, previews older than TTL_DAYS, deployments a newer
-# one replaced, and fork previews of anything but the current head, and keeps each pull
-# request's preview comment current. Runs when a pull request closes, daily, and at the end of
-# every pr-preview-deploy.yml run. Never checks out or runs a pull request. See
-# docs/pr-previews.md.
+# Deletes previews of closed pull requests, previews older than TTL_DAYS, and fork previews of
+# anything but the current head, and keeps each pull request's preview comment current. Runs
+# when a pull request closes, daily, and at the end of every pr-preview-deploy.yml run. Never
+# checks out or runs a pull request. S3 also expires preview objects on its own (see
+# infra/pr-previews.yml), in case this stops running. See docs/pr-previews.md.
 
 name: PR preview cleanup
 
@@ -29,78 +29,72 @@ on:
         required: true
     # A called workflow gets environment secrets only if the caller passes them by name.
     secrets:
-      CLOUDFLARE_API_TOKEN:
-        required: true
-      CLOUDFLARE_ACCOUNT_ID:
+      AWS_ROLE_ARN:
         required: true
 
 permissions: {}
 
 jobs:
   cleanup:
-    if: vars.PREVIEWS_PROJECT != ''
+    if: vars.PREVIEWS_DOMAIN != ''
     runs-on: ubuntu-latest
     environment: pr-previews
     permissions:
+      id-token: write # assume the AWS role
       pull-requests: write # list open pull requests and update the preview comments
+    env:
+      # Previews are on when the environment has the role; steps can't read secrets in if.
+      HAS_ROLE: ${{ secrets.AWS_ROLE_ARN != '' }}
     steps:
-      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+      - if: env.HAS_ROLE == 'true'
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - if: env.HAS_ROLE == 'true'
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           # Long enough to review a pull request, short enough that an abandoned one's preview
-          # doesn't linger. A new commit or the `preview` label publishes a fresh one.
+          # doesn't linger. A new commit or the `preview` label publishes a fresh one. S3's own
+          # expiry (ExpireDays in infra/pr-previews.yml) is one day longer.
           TTL_DAYS: 7
-          CLOUDFLARE_API: https://api.cloudflare.com/client/v4
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          PROJECT: ${{ vars.PREVIEWS_PROJECT }}
+          BUCKET: ${{ vars.PREVIEWS_BUCKET }}
+          DOMAIN: ${{ vars.PREVIEWS_DOMAIN }}
           PR: ${{ inputs.pr }}
           SHA: ${{ inputs.sha }}
           STATE: ${{ inputs.state }}
         with:
           script: |
-            if (!process.env.CLOUDFLARE_API_TOKEN) {
-              core.info('The pr-previews environment has no CLOUDFLARE_API_TOKEN, so previews are off.');
-              return;
-            }
             const { owner, repo } = context.repo;
-            const { CLOUDFLARE_API, CLOUDFLARE_ACCOUNT_ID, PROJECT, SHA, STATE } = process.env;
+            const { BUCKET, DOMAIN, SHA, STATE } = process.env;
             const ttl = Number(process.env.TTL_DAYS) * 24 * 3600 * 1000;
             const day = time => new Date(time).toISOString().slice(0, 10);
-            const deployments = `${CLOUDFLARE_API}/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${PROJECT}/deployments`;
-            async function cloudflare(path, method = 'GET') {
-              const res = await fetch(deployments + path, {
-                method, headers: { Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}` },
-              });
-              if (method === 'DELETE' && res.status === 404) return; // already gone
-              const body = await res.json().catch(() => ({}));
-              if (!res.ok || !body.success) {
-                throw new Error(`Cloudflare ${method} ${path}: HTTP ${res.status} ${JSON.stringify(body.errors ?? body)}`);
-              }
-              return body;
+            async function aws(...args) {
+              const { exitCode, stdout, stderr } = await exec.getExecOutput('aws', args, { silent: true, ignoreReturnCode: true });
+              if (exitCode !== 0) throw Object.assign(new Error(`aws ${args.slice(0, 2).join(' ')}: ${stderr.trim()}`), { stderr });
+              return stdout;
             }
 
-            // Each pull request's preview deployments, newest first.
+            // Each preview's marker, which the deploy writes before the files: { commit, deployed }.
             const previews = new Map();
-            const seen = new Set(); // a deploy during the listing shifts pages, repeating one
-            const perPage = 25;
-            for (let page = 1; ; page++) {
-              const { result, result_info: info } = await cloudflare(`?env=preview&per_page=${perPage}&page=${page}`);
-              for (const d of result) {
-                if (seen.has(d.id)) continue;
-                seen.add(d.id);
-                const branch = d.deployment_trigger?.metadata?.branch ?? '';
-                const match = /^pr-([1-9][0-9]*)$/.exec(branch);
-                if (!match) {
-                  core.warning(`Leaving deployment ${d.id} alone: its branch, "${branch}", isn't a pull request's.`);
-                  continue;
-                }
-                const list = previews.get(Number(match[1])) ?? [];
-                previews.set(Number(match[1]), [...list, d]);
+            const prefixes = JSON.parse(await aws('s3api', 'list-objects-v2', '--bucket', BUCKET, '--prefix', 'pr-',
+              '--delimiter', '/', '--query', 'CommonPrefixes[].Prefix', '--output', 'json')) ?? [];
+            for (const prefix of prefixes) {
+              const match = /^pr-([1-9][0-9]*)\/$/.exec(prefix);
+              if (!match) {
+                core.warning(`Leaving ${prefix} alone: it isn't a pull request's.`);
+                continue;
               }
-              if (info?.total_pages ? page >= info.total_pages : result.length < perPage) break;
+              let marker = {};
+              try {
+                marker = JSON.parse(await aws('s3', 'cp', `s3://${BUCKET}/${prefix}_preview.json`, '-'));
+              } catch (e) {
+                // Only a missing or unreadable marker means unmarked; any other AWS error stops the run.
+                if (e.stderr !== undefined && !/\(404\)|NoSuchKey|Not Found/.test(e.stderr)) throw e;
+              }
+              previews.set(Number(match[1]), marker);
             }
-            for (const list of previews.values()) list.sort((a, b) => Date.parse(b.created_on) - Date.parse(a.created_on));
-            const commit = d => d.deployment_trigger?.metadata?.commit_hash;
 
             const prs = await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', per_page: 100 });
             const heads = new Map(prs.map(p => [p.number, p.head.sha])); // open pull request -> head
@@ -117,27 +111,26 @@ jobs:
             const updateOnly = new Set(); // pull requests whose comment, if any, is updated but not created
             const failed = new Set();
             const errors = [];
-            for (const [pr, list] of previews) {
+            for (const [pr, marker] of previews) {
               const head = heads.get(pr);
-              const expired = Date.now() > Date.parse(list[0].created_on) + ttl;
+              const deployed = Date.parse(marker.deployed ?? '');
               // A fork's preview shows only its head, which was approved to publish. A head that
               // didn't build takes the old preview down too.
               const headOnly = forks.has(pr) || (pr === target && STATE === 'unbuilt');
-              const keep = !head || expired ? undefined : headOnly ? list.find(d => commit(d) === head) : list[0];
+              const why = !head ? 'closed' : !(deployed > 0) ? 'unmarked' : Date.now() > deployed + ttl ? 'expired'
+                : headOnly && marker.commit !== head ? 'not the head' : '';
+              if (!why) continue;
               try {
-                for (const d of list.filter(d => d !== keep)) {
-                  await cloudflare(`/${d.id}?force=true`, 'DELETE');
-                  const why = !head ? 'closed' : expired ? 'expired' : commit(d) === head ? 'replaced' : 'not the head';
-                  core.info(`Deleted deployment ${d.id} of #${pr} (${why}).`);
-                }
+                await aws('s3', 'rm', `s3://${BUCKET}/pr-${pr}/`, '--recursive', '--only-show-errors');
+                core.info(`Deleted the preview of #${pr} (${why}).`);
               } catch (e) {
                 failed.add(pr);
                 errors.push(e.message);
                 continue;
               }
-              if (!head) notes.set(pr, 'removed, since the pull request closed.');
-              else if (expired) notes.set(pr, `expired on ${day(Date.parse(list[0].created_on) + ttl)}. Push a commit or add the \`preview\` label to publish it again.`);
-              else if (forks.has(pr) && !keep) notes.set(pr, waiting(head));
+              if (why === 'closed') notes.set(pr, 'removed, since the pull request closed.');
+              else if (why === 'expired') notes.set(pr, `expired on ${day(deployed + ttl)}. Push a commit or add the \`preview\` label to publish it again.`);
+              else if (why === 'not the head' && forks.has(pr)) notes.set(pr, waiting(head));
             }
             if (closed && !previews.has(closed)) {
               notes.set(closed, 'none, since the pull request closed.');
@@ -146,12 +139,12 @@ jobs:
 
             const run = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
             const outcome = {
-              published: `https://pr-${target}.${PROJECT}.pages.dev/\n\n` +
+              published: `https://pr-${target}.${DOMAIN}/\n\n` +
                 `Commit ${SHA}. Expires ${day(Date.now() + ttl)}. New commits replace it; ` +
                 'on a pull request from a fork, they need the `preview` label again.',
               failed: `couldn't publish commit ${SHA}. See ${run}.`,
               // Unless it was approved and published since.
-              unapproved: previews.get(target)?.some(d => commit(d) === SHA) ? undefined : waiting(SHA),
+              unapproved: previews.get(target)?.commit === SHA ? undefined : waiting(SHA),
               unbuilt: `none, since commit ${SHA} didn't build. See the pull request's checks.`,
             }[STATE];
             if (outcome && target && !failed.has(target)) notes.set(target, outcome);

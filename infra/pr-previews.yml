@@ -1,0 +1,283 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Pull request previews for valkey.io (see docs/pr-previews.md). A private S3 bucket, served
+  only through CloudFront at https://pr-<number>.<PreviewsDomain>/, and a role that GitHub
+  Actions in the repository's pr-previews environment can assume to write pr-* keys.
+
+Parameters:
+  PreviewsDomain:
+    Type: String
+    Description: >
+      Previews are served at pr-<number>.<this domain>. Use a domain that isn't valkey.io or
+      a subdomain of it, so previews share no cookies or site with valkey.io.
+    AllowedPattern: "^([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$"
+  HostedZoneId:
+    Type: String
+    Default: ""
+    Description: >
+      The Route 53 hosted zone for PreviewsDomain, if it's in this account. Then the stack
+      validates the certificate and adds the wildcard record itself. Leave empty for DNS
+      elsewhere and add both records by hand.
+  GitHubOidcProviderArn:
+    Type: String
+    Default: ""
+    Description: >
+      The account's existing token.actions.githubusercontent.com OIDC provider. An account can
+      have only one, so leave this empty only if the account has none and the stack should
+      create it.
+  ExpireDays:
+    Type: Number
+    Default: 8
+    MinValue: 1
+    Description: >
+      S3 deletes preview objects this many days after upload, even if the workflows stop. One
+      more than the workflows' 7-day TTL, so they normally get there first.
+  GitHubOwner:
+    Type: String
+    Default: valkey-io
+  GitHubOwnerId:
+    Type: String
+    Default: "164458127"
+  GitHubRepo:
+    Type: String
+    Default: valkey-io.github.io
+  GitHubRepoId:
+    Type: String
+    Default: "777882230"
+  GitHubEnvironment:
+    Type: String
+    Default: pr-previews
+
+Rules:
+  UsEast1:
+    Assertions:
+      - Assert: !Equals [!Ref "AWS::Region", us-east-1]
+        AssertDescription: CloudFront only uses certificates from us-east-1, so deploy the stack there.
+
+Conditions:
+  Route53: !Not [!Equals [!Ref HostedZoneId, ""]]
+  CreateOidcProvider: !Equals [!Ref GitHubOidcProviderArn, ""]
+
+Resources:
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced # no ACLs
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: expire-previews
+            Status: Enabled
+            Prefix: pr-
+            ExpirationInDays: !Ref ExpireDays
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: CloudFrontReadsPreviews
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub "${Bucket.Arn}/pr-*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}"
+          - Sid: DenyPlainHttp
+            Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource:
+              - !GetAtt Bucket.Arn
+              - !Sub "${Bucket.Arn}/*"
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Sub "*.${PreviewsDomain}"
+      ValidationMethod: DNS
+      DomainValidationOptions: !If
+        - Route53
+        - - DomainName: !Sub "*.${PreviewsDomain}"
+            HostedZoneId: !Ref HostedZoneId
+        - !Ref AWS::NoValue
+
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${AWS::StackName}-oac"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # pr-<n>.<domain>/<path> is s3://<bucket>/pr-<n>/<path>, and directories serve index.html.
+  HostToPrefix:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: !Sub "${AWS::StackName}-host-to-prefix"
+      AutoPublish: true
+      FunctionConfig:
+        Comment: Maps pr-<n>.<domain> to the pr-<n>/ key prefix
+        Runtime: cloudfront-js-2.0
+      FunctionCode: |
+        function handler(event) {
+          var request = event.request;
+          var host = request.headers.host ? request.headers.host.value : '';
+          var match = host.match(/^(pr-[1-9][0-9]{0,6})\./);
+          if (!match) {
+            return { statusCode: 404, statusDescription: 'Not Found' };
+          }
+          var uri = request.uri;
+          var name = uri.substring(uri.lastIndexOf('/') + 1);
+          if (name !== '' && name.indexOf('.') === -1) {
+            return {
+              statusCode: 301,
+              statusDescription: 'Moved Permanently',
+              headers: { location: { value: uri + '/' } },
+            };
+          }
+          request.uri = '/' + match[1] + uri + (name === '' ? 'index.html' : '');
+          return request;
+        }
+
+  NoIndex:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: !Sub "${AWS::StackName}-noindex"
+        CustomHeadersConfig:
+          Items:
+            - Header: X-Robots-Tag
+              Value: noindex, nofollow
+              Override: true
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: valkey.io pull request previews
+        Enabled: true
+        Aliases:
+          - !Sub "*.${PreviewsDomain}"
+        ViewerCertificate:
+          AcmCertificateArn: !Ref Certificate
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+        HttpVersion: http2and3
+        IPV6Enabled: true
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: previews
+            DomainName: !GetAtt Bucket.RegionalDomainName
+            OriginAccessControlId: !GetAtt OriginAccessControl.Id
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+        DefaultCacheBehavior:
+          TargetOriginId: previews
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD]
+          # Managed CachingDisabled: every request reads S3, so an update or a deletion shows
+          # at once and the workflows never need to invalidate.
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          ResponseHeadersPolicyId: !Ref NoIndex
+          FunctionAssociations:
+            - EventType: viewer-request
+              FunctionARN: !GetAtt HostToPrefix.FunctionARN
+
+  WildcardRecord:
+    Type: AWS::Route53::RecordSet
+    Condition: Route53
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub "*.${PreviewsDomain}"
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt Distribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2 # CloudFront's, the same for every distribution
+
+  WildcardRecordIpv6:
+    Type: AWS::Route53::RecordSet
+    Condition: Route53
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Sub "*.${PreviewsDomain}"
+      Type: AAAA
+      AliasTarget:
+        DNSName: !GetAtt Distribution.DomainName
+        HostedZoneId: Z2FDTNDATAQYW2
+
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Condition: CreateOidcProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: [sts.amazonaws.com]
+
+  DeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: GitHub Actions in the pr-previews environment publish and delete previews.
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !If [CreateOidcProvider, !Ref GitHubOidcProvider, !Ref GitHubOidcProviderArn]
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+                # Only jobs in the environment, which is restricted to main. The repository
+                # issues the name-based subject today; the immutable owner@id/repo@id form is
+                # there for when it switches, since a trust policy without it then fails.
+                token.actions.githubusercontent.com:sub:
+                  - !Sub "repo:${GitHubOwner}/${GitHubRepo}:environment:${GitHubEnvironment}"
+                  - !Sub "repo:${GitHubOwner}@${GitHubOwnerId}/${GitHubRepo}@${GitHubRepoId}:environment:${GitHubEnvironment}"
+      Policies:
+        - PolicyName: previews
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: WritePreviews
+                Effect: Allow
+                # GetObject reads each preview's marker; the objects are public through CloudFront anyway.
+                Action: [s3:PutObject, s3:DeleteObject, s3:GetObject]
+                Resource: !Sub "${Bucket.Arn}/pr-*"
+              - Sid: ListPreviews
+                Effect: Allow
+                Action: s3:ListBucket
+                Resource: !GetAtt Bucket.Arn
+                Condition:
+                  StringLike:
+                    s3:prefix: pr-*
+
+Outputs:
+  RoleArn:
+    Description: Save it as the AWS_ROLE_ARN secret of the pr-previews environment.
+    Value: !GetAtt DeployRole.Arn
+  BucketName:
+    Description: Save it as the PREVIEWS_BUCKET variable of the pr-previews environment.
+    Value: !Ref Bucket
+  WildcardTarget:
+    Description: Without Route 53, point a CNAME for *.<PreviewsDomain> here.
+    Value: !GetAtt Distribution.DomainName

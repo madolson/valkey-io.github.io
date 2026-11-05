@@ -1,6 +1,6 @@
 # Publishes the site pr-preview-build.yml built for a pull request to
-# https://pr-<number>.<PREVIEWS_PROJECT>.pages.dev/, replacing the pull request's previous
-# preview. Fork pull requests need a maintainer's approval for each head commit (see
+# https://pr-<number>.<PREVIEWS_DOMAIN>/ (the pr-<number>/ prefix of the previews bucket, see
+# infra/pr-previews.yml), replacing the pull request's previous preview. Fork pull requests need a maintainer's approval for each head commit (see
 # pr-preview-approve.yml). Never checks out or runs the pull request: the build is only
 # checked and uploaded. See docs/pr-previews.md.
 
@@ -19,13 +19,13 @@ on:
 permissions: {}
 
 jobs:
-  # Previews are on when the pr-previews environment has the Cloudflare token. A job-level if
+  # Previews are on when the pr-previews environment has the AWS role. A job-level if
   # can't read secrets, so this job, which every deploy goes through, checks it and stops the
   # rest when it's missing. The variable check first means nothing runs, and the environment
   # isn't created, before setup.
   resolve:
     if: >-
-      vars.PREVIEWS_PROJECT != '' &&
+      vars.PREVIEWS_DOMAIN != '' &&
       (github.event_name == 'workflow_dispatch' ||
        contains(fromJSON('["success", "failure"]'), github.event.workflow_run.conclusion))
     runs-on: ubuntu-latest
@@ -44,11 +44,11 @@ jobs:
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           FORKS: ${{ vars.PREVIEWS_FORKS }}
-          HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}
+          HAS_ROLE: ${{ secrets.AWS_ROLE_ARN != '' }}
         with:
           script: |
-            if (process.env.HAS_TOKEN !== 'true') {
-              core.info('The pr-previews environment has no CLOUDFLARE_API_TOKEN, so previews are off.');
+            if (process.env.HAS_ROLE !== 'true') {
+              core.info('The pr-previews environment has no AWS_ROLE_ARN, so previews are off.');
               return;
             }
             const { owner, repo } = context.repo;
@@ -134,6 +134,7 @@ jobs:
     environment: pr-previews
     permissions:
       actions: read # download the build from its run
+      id-token: write # assume the AWS role
     concurrency:
       group: pr-preview-${{ needs.resolve.outputs.pr }}
       cancel-in-progress: true
@@ -147,7 +148,6 @@ jobs:
           github-token: ${{ github.token }}
 
       # The build ran the pull request's code, so its output is only checked and uploaded.
-      # Cloudflare Pages treats a few file names as code or configuration.
       - name: Check the build
         working-directory: site
         run: |
@@ -155,9 +155,6 @@ jobs:
           [ -f index.html ] || fail "The build has no index.html."
           [ -z "$(find . -type l -print -quit)" ] || fail "The build has symlinks."
           [ -z "$(find . ! -type f ! -type d -print -quit)" ] || fail "The build has special files."
-          for name in _worker.js _routes.json _headers _redirects; do
-            [ ! -e "$name" ] || fail "The build has $name, which Cloudflare Pages treats as code or configuration."
-          done
           size=$(du -sb . | cut -f1)
           [ "$size" -le $((1024 * 1024 * 1024)) ] || fail "The build is $size bytes, over the 1 GiB cap."
           echo "The build has $(find . -type f | wc -l) files, $size bytes."
@@ -166,41 +163,40 @@ jobs:
               --include='*.html' --include='*.js' --include='*.css' .; then
             fail "The files above load Google Tag Manager, Scarf, or Transcend."
           fi
-          # Written here, not by the build, so a pull request can't change them.
+          # Written here, not by the build, so a pull request can't change it. CloudFront adds
+          # X-Robots-Tag: noindex to every response.
           printf 'User-agent: *\nDisallow: /\n' > robots.txt
-          printf '/*\n  X-Robots-Tag: noindex, nofollow\n' > _headers
 
-      - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
-          node-version: 22
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
 
       - name: Publish
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          PROJECT: ${{ vars.PREVIEWS_PROJECT }}
+          BUCKET: ${{ vars.PREVIEWS_BUCKET }}
           PR: ${{ needs.resolve.outputs.pr }}
           SHA: ${{ needs.resolve.outputs.sha }}
-          WRANGLER_SEND_METRICS: 'false'
         run: |
-          site=$PWD/site
-          # From an empty directory, so wrangler finds no functions/ or wrangler config to use.
-          cd "$(mktemp -d)"
-          npx --yes wrangler@4.153.0 pages deploy "$site" --project-name "$PROJECT" --branch "pr-$PR" \
-            --commit-hash "$SHA" --commit-message "Pull request #$PR" --commit-dirty=true
+          prefix="s3://$BUCKET/pr-$PR"
+          # The marker goes first, so a cleanup meanwhile sees this commit, not an unmarked preview.
+          printf '{"commit": "%s", "deployed": "%s"}\n' "$SHA" "$(date -u +%FT%TZ)" |
+            aws s3 cp - "$prefix/_preview.json" --content-type application/json --only-show-errors
+          # no-cache: browsers revalidate, so an update shows on reload. CloudFront caches nothing.
+          aws s3 sync site/ "$prefix/" --delete --exclude _preview.json --cache-control no-cache --only-show-errors
 
-  # Deletes the deployments this one replaced and updates the pull request's comment. No
+  # Deletes previews that should go and updates the pull request's comment. No
   # concurrency group: cleanup checks the pull request's current head itself, and sharing
   # publish's group would let an older finish cancel a newer publish.
   finish:
     needs: [resolve, publish]
     if: always() && needs.resolve.outputs.action != '' && needs.publish.result != 'cancelled'
     permissions:
+      id-token: write
       pull-requests: write
     uses: ./.github/workflows/pr-preview-cleanup.yml
     secrets:
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
     with:
       pr: ${{ needs.resolve.outputs.pr }}
       sha: ${{ needs.resolve.outputs.sha }}

@@ -18,9 +18,9 @@ concurrency:
 
 jobs:
   build:
-    # Previews are on once the Cloudflare token is set up, but this job can't see secrets, so it
-    # goes by the PREVIEWS_PROJECT variable that's set up with it.
-    if: vars.PREVIEWS_PROJECT != ''
+    # Previews are on once the AWS role is set up, but this job can't see secrets, so it goes by
+    # the PREVIEWS_DOMAIN variable that's set up with it.
+    if: vars.PREVIEWS_DOMAIN != ''
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
         uses: ./website/.github/actions/build-site
         with:
           path: website
-          base-url: https://pr-${{ github.event.pull_request.number }}.${{ vars.PREVIEWS_PROJECT }}.pages.dev
+          base-url: https://pr-${{ github.event.pull_request.number }}.${{ vars.PREVIEWS_DOMAIN }}
           preview-pr: ${{ github.event.pull_request.number }}
           preview-commit: ${{ github.event.pull_request.head.sha }}
 
