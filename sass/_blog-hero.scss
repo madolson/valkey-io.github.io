@@ -89,7 +89,6 @@ $blog-hero-ink: #060A24;
   grid-area: title;
   z-index: 1;
   align-self: end;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: max(1.2rem, 4.53cqi);
   font-weight: 600;
   line-height: 1.42;
@@ -102,7 +101,7 @@ $blog-hero-ink: #060A24;
     drop-shadow(0 0.42em 0.65em rgba($blog-hero-ink, 0.55));
 
   span {
-    padding: 0.21em 0.355em 0.21em calc(5cqi + 0.355em);
+    padding: 0.085em 0.355em 0.127em calc(5cqi + 0.355em);
     border-radius: 0 0.065em 0.065em 0;
     background: $blue-vibrant-000;
     -webkit-box-decoration-break: clone;
