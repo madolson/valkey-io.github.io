@@ -19,8 +19,8 @@ concurrency:
 jobs:
   build:
     # Previews are on once the AWS role is set up, but this job can't see secrets, so it goes by
-    # the PREVIEWS_DOMAIN variable that's set up with it.
-    if: vars.PREVIEWS_DOMAIN != ''
+    # the PREVIEWS_HOST variable that's set up with it.
+    if: vars.PREVIEWS_HOST != ''
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -34,7 +34,7 @@ jobs:
         uses: ./website/.github/actions/build-site
         with:
           path: website
-          base-url: https://pr-${{ github.event.pull_request.number }}.${{ vars.PREVIEWS_DOMAIN }}
+          base-url: https://${{ vars.PREVIEWS_HOST }}/pr-${{ github.event.pull_request.number }}
           preview-pr: ${{ github.event.pull_request.number }}
           preview-commit: ${{ github.event.pull_request.head.sha }}
 
@@ -44,6 +44,6 @@ jobs:
           name: pr-preview-site
           path: website/public
           if-no-files-found: error
-          # Longer than the 7-day TTL, so the `preview` label can republish an expired preview
+          # Longer than the 14-day TTL, so the `preview` label can republish an expired preview
           # or approve a fork's build weeks later without a rebuild.
           retention-days: 30

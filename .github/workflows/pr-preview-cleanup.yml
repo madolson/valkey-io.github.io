@@ -36,7 +36,7 @@ permissions: {}
 
 jobs:
   cleanup:
-    if: vars.PREVIEWS_DOMAIN != ''
+    if: vars.PREVIEWS_HOST != ''
     runs-on: ubuntu-latest
     environment: pr-previews
     permissions:
@@ -58,16 +58,16 @@ jobs:
           # Long enough to review a pull request, short enough that an abandoned one's preview
           # doesn't linger. A new commit or the `preview` label publishes a fresh one. S3's own
           # expiry (ExpireDays in infra/pr-previews.yml) is one day longer.
-          TTL_DAYS: 7
+          TTL_DAYS: 14
           BUCKET: ${{ vars.PREVIEWS_BUCKET }}
-          DOMAIN: ${{ vars.PREVIEWS_DOMAIN }}
+          HOST: ${{ vars.PREVIEWS_HOST }}
           PR: ${{ inputs.pr }}
           SHA: ${{ inputs.sha }}
           STATE: ${{ inputs.state }}
         with:
           script: |
             const { owner, repo } = context.repo;
-            const { BUCKET, DOMAIN, SHA, STATE } = process.env;
+            const { BUCKET, HOST, SHA, STATE } = process.env;
             const ttl = Number(process.env.TTL_DAYS) * 24 * 3600 * 1000;
             const day = time => new Date(time).toISOString().slice(0, 10);
             async function aws(...args) {
@@ -139,7 +139,7 @@ jobs:
 
             const run = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
             const outcome = {
-              published: `https://pr-${target}.${DOMAIN}/\n\n` +
+              published: `https://${HOST}/pr-${target}/\n\n` +
                 `Commit ${SHA}. Expires ${day(Date.now() + ttl)}. New commits replace it; ` +
                 'on a pull request from a fork, they need the `preview` label again.',
               failed: `couldn't publish commit ${SHA}. See ${run}.`,

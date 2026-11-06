@@ -1,6 +1,6 @@
 # Pull request previews
 
-Previews turn on once the AWS side is set up (see [Setting it up](#setting-it-up)). Then every pull request into `main` gets its own copy of the site at `https://pr-<number>.<PREVIEWS_DOMAIN>/`, built the same way as production, with the docs and command pages.
+Previews turn on once the AWS side is set up (see [Setting it up](#setting-it-up)). Then every pull request into `main` gets its own copy of the site at `https://<PREVIEWS_HOST>/pr-<number>/`, built the same way as production, with the docs and command pages.
 A bot comment on the pull request links it and says which commit it shows and when it expires.
 Previews are public, carry a "Preview of pull request #N" banner, and tell search engines not to index them.
 They have no analytics, tracking, or consent tags (Google Tag Manager, the Scarf pixel, Transcend), so preview page views never reach valkey.io's analytics.
@@ -11,7 +11,7 @@ To build a preview locally: `VALKEY_PREVIEW_PR=123 zola serve`.
 If a template adds another tracking tag, put it inside `{% if not preview_pr %}` like the others. Otherwise the deploy finds its host in the build and refuses to publish (it checks for `googletagmanager.com`, `static.scarf.sh`, and `transcend-cdn.com`, even in text).
 
 A new commit replaces the preview once it builds; if its build fails, the old preview is deleted.
-A preview is also deleted when the pull request closes, and 7 days after its last deploy (the sweep runs daily at 05:30 UTC). S3 itself deletes preview files 8 days after upload, so previews expire even if the workflows stop.
+A preview is also deleted when the pull request closes, and 14 days after its last deploy (the sweep runs daily at 05:30 UTC). S3 itself deletes preview files 15 days after upload, so previews expire even if the workflows stop.
 To publish an expired preview again, push a commit or add the `preview` label (builds are kept 30 days; after that, re-run the build).
 
 ## Pull requests from forks
@@ -27,7 +27,9 @@ With `PREVIEWS_FORKS=off`, fork previews already up stay until they expire.
 ## How it works
 
 Previews live in a private S3 bucket, one `pr-<number>/` prefix per pull request, served only through CloudFront ([`infra/pr-previews.yml`](../infra/pr-previews.yml)).
-A CloudFront Function maps the `pr-<number>` host to its prefix, and CloudFront adds `X-Robots-Tag: noindex, nofollow` to every response.
+CloudFront serves them at its own `*.cloudfront.net` hostname, so there's no domain or certificate to manage. A CloudFront Function serves `index.html` for directories under `/pr-<number>/`, 404s every other path, and answers `/robots.txt` with `Disallow: /`; CloudFront adds `X-Robots-Tag: noindex, nofollow` to every response.
+The site works under `/pr-<number>/` because the templates put the base URL's path in front of root-relative links (`templates/macros/links.html`).
+All previews share that one hostname, so a preview's scripts can reach the others' pages and storage in the same browser. That's why fork previews need a maintainer first.
 The workflows reach AWS through GitHub's OIDC, so no AWS key is stored anywhere. The role they assume can only write and delete `pr-*` keys in that bucket.
 
 | Workflow | Runs on | Does |
@@ -44,7 +46,7 @@ Only the jobs that publish or delete can assume the role, and none of them check
 Previews are on when both of these exist, and off when either is missing:
 
 - The `AWS_ROLE_ARN` secret in the `pr-previews` environment. The deploy and cleanup jobs check for it and do nothing without it.
-- The `PREVIEWS_DOMAIN` repository variable. The build job runs pull request code and can't see secrets, so it goes by this instead, and it gives the preview's URL. Every other job also waits for it, so nothing runs, and the environment isn't created, before setup.
+- The `PREVIEWS_HOST` repository variable, the CloudFront hostname. The build job runs pull request code and can't see secrets, so it goes by this instead, and it gives the preview's URL. Every other job also waits for it, so nothing runs, and the environment isn't created, before setup.
 
 They also need the `PREVIEWS_BUCKET` variable in the `pr-previews` environment.
 
@@ -54,32 +56,28 @@ The TTL is `TTL_DAYS` in `pr-preview-cleanup.yml`, and S3's backstop is `ExpireD
 
 ## Setting it up
 
-This needs someone who administers the project's AWS account, and someone who can add DNS records for the previews domain.
+This needs someone who administers the project's AWS account.
 
-1. Pick the previews domain. Use a domain of its own, not `valkey.io` or a subdomain of it: a subdomain would put the previews on the same site as valkey.io and its other subdomains, so their cookies and `SameSite` protections wouldn't separate them from a pull request's pages.
-   Registering it in Route 53, in the same account, lets the stack create the DNS records itself.
-2. Deploy `infra/pr-previews.yml` as a CloudFormation stack in **us-east-1** (CloudFront only uses certificates from there):
+1. Deploy `infra/pr-previews.yml` as a CloudFormation stack in **us-east-1**, where the workflows expect the bucket:
 
    ```shell
    aws cloudformation deploy --region us-east-1 --stack-name valkey-pr-previews \
      --template-file infra/pr-previews.yml --capabilities CAPABILITY_IAM \
-     --parameter-overrides PreviewsDomain=<previews domain> \
-       GitHubOidcProviderArn=arn:aws:iam::<account>:oidc-provider/token.actions.githubusercontent.com \
-       HostedZoneId=<Route 53 zone ID, or leave this out>
+     --parameter-overrides \
+       GitHubOidcProviderArn=arn:aws:iam::<account>:oidc-provider/token.actions.githubusercontent.com
    ```
 
    An account has only one GitHub OIDC provider. If the account already publishes releases from GitHub Actions, it has one: pass its ARN (**IAM** > **Identity providers**). Leave `GitHubOidcProviderArn` out only if there's none, and the stack creates it.
-3. Without Route 53, the stack waits while the certificate validates. Add the validation CNAME that ACM shows (**Certificate Manager** > the `*.<previews domain>` certificate > **Domains**) to the domain's DNS. Once the stack finishes, add a CNAME for `*.<previews domain>` pointing at the stack's `WildcardTarget` output. Keep the validation record: ACM renews the certificate with it.
-4. In this repository, create an environment named `pr-previews` (**Settings** > **Environments** > **New environment**).
+2. In this repository, create an environment named `pr-previews` (**Settings** > **Environments** > **New environment**).
    Under **Deployment branches and tags**, choose **Selected branches and tags** and add `main`. The role trusts only jobs in this environment, so this is what keeps it to `main`.
    Add the environment secret `AWS_ROLE_ARN` (the stack's `RoleArn` output) and the environment variable `PREVIEWS_BUCKET` (its `BucketName` output).
-5. Create the `preview` label.
-6. Add the repository variable `PREVIEWS_DOMAIN` (**Settings** > **Secrets and variables** > **Actions** > **Variables** > **New repository variable**) set to the previews domain, and `PREVIEWS_FORKS=off` if fork previews should be off.
-   `PREVIEWS_DOMAIN` has to be a repository variable, not an environment one, because the build job doesn't use the environment.
+3. Create the `preview` label.
+4. Add the repository variable `PREVIEWS_HOST` (**Settings** > **Secrets and variables** > **Actions** > **Variables** > **New repository variable**) set to the stack's `PreviewsHost` output (`d<id>.cloudfront.net`), and `PREVIEWS_FORKS=off` if fork previews should be off.
+   `PREVIEWS_HOST` has to be a repository variable, not an environment one, because the build job doesn't use the environment.
    This turns previews on.
-7. Check it with a test pull request from a branch in this repository:
+5. Check it with a test pull request from a branch in this repository:
    - The comment appears, and the preview loads.
-   - `curl -sI https://pr-<number>.<previews domain>/` shows `x-robots-tag: noindex, nofollow`.
+   - `curl -sI https://<host>/pr-<number>/` shows `x-robots-tag: noindex, nofollow`, and `https://<host>/robots.txt` is `Disallow: /`.
    - `curl -sI https://<bucket>.s3.amazonaws.com/pr-<number>/index.html` is refused (403): the bucket isn't public.
    - After closing the pull request, the preview URL no longer serves the site.
 
@@ -90,7 +88,7 @@ If assuming the role fails with `Not authorized to perform sts:AssumeRoleWithWeb
 
 ## Turning it off
 
-Delete the `AWS_ROLE_ARN` secret and the `PREVIEWS_DOMAIN` variable. The deploy and cleanup stop without the first, and the build stops without the second.
-Previews already up are deleted by S3 within 8 days. To delete them now, empty the bucket's `pr-` prefixes, or delete the stack after emptying the bucket.
+Delete the `AWS_ROLE_ARN` secret and the `PREVIEWS_HOST` variable. The deploy and cleanup stop without the first, and the build stops without the second.
+Previews already up are deleted by S3 within 15 days. To delete them now, empty the bucket's `pr-` prefixes, or delete the stack after emptying the bucket.
 
 To take down one bad preview right away: `aws s3 rm s3://<bucket>/pr-<number>/ --recursive`. CloudFront caches nothing, so it's gone at once.

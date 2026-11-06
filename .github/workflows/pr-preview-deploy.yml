@@ -1,5 +1,5 @@
 # Publishes the site pr-preview-build.yml built for a pull request to
-# https://pr-<number>.<PREVIEWS_DOMAIN>/ (the pr-<number>/ prefix of the previews bucket, see
+# https://<PREVIEWS_HOST>/pr-<number>/ (the pr-<number>/ prefix of the previews bucket, see
 # infra/pr-previews.yml), replacing the pull request's previous preview. Fork pull requests need a maintainer's approval for each head commit (see
 # pr-preview-approve.yml). Never checks out or runs the pull request: the build is only
 # checked and uploaded. See docs/pr-previews.md.
@@ -25,7 +25,7 @@ jobs:
   # isn't created, before setup.
   resolve:
     if: >-
-      vars.PREVIEWS_DOMAIN != '' &&
+      vars.PREVIEWS_HOST != '' &&
       (github.event_name == 'workflow_dispatch' ||
        contains(fromJSON('["success", "failure"]'), github.event.workflow_run.conclusion))
     runs-on: ubuntu-latest
@@ -163,8 +163,8 @@ jobs:
               --include='*.html' --include='*.js' --include='*.css' .; then
             fail "The files above load Google Tag Manager, Scarf, or Transcend."
           fi
-          # Written here, not by the build, so a pull request can't change it. CloudFront adds
-          # X-Robots-Tag: noindex to every response.
+          # In place of Zola's, which allows everything. Crawlers only read the host's own
+          # /robots.txt, which CloudFront serves, and every response has X-Robots-Tag: noindex.
           printf 'User-agent: *\nDisallow: /\n' > robots.txt
 
       - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1

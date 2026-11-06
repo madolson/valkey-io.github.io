@@ -1,23 +1,10 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >
   Pull request previews for valkey.io (see docs/pr-previews.md). A private S3 bucket, served
-  only through CloudFront at https://pr-<number>.<PreviewsDomain>/, and a role that GitHub
-  Actions in the repository's pr-previews environment can assume to write pr-* keys.
+  only through CloudFront at https://<distribution>.cloudfront.net/pr-<number>/, and a role
+  that GitHub Actions in the repository's pr-previews environment can assume to write pr-* keys.
 
 Parameters:
-  PreviewsDomain:
-    Type: String
-    Description: >
-      Previews are served at pr-<number>.<this domain>. Use a domain that isn't valkey.io or
-      a subdomain of it, so previews share no cookies or site with valkey.io.
-    AllowedPattern: "^([a-z0-9]([a-z0-9-]*[a-z0-9])?\\.)+[a-z]{2,}$"
-  HostedZoneId:
-    Type: String
-    Default: ""
-    Description: >
-      The Route 53 hosted zone for PreviewsDomain, if it's in this account. Then the stack
-      validates the certificate and adds the wildcard record itself. Leave empty for DNS
-      elsewhere and add both records by hand.
   GitHubOidcProviderArn:
     Type: String
     Default: ""
@@ -27,11 +14,11 @@ Parameters:
       create it.
   ExpireDays:
     Type: Number
-    Default: 8
+    Default: 15
     MinValue: 1
     Description: >
       S3 deletes preview objects this many days after upload, even if the workflows stop. One
-      more than the workflows' 7-day TTL, so they normally get there first.
+      more than the workflows' 14-day TTL, so they normally get there first.
   GitHubOwner:
     Type: String
     Default: valkey-io
@@ -52,10 +39,9 @@ Rules:
   UsEast1:
     Assertions:
       - Assert: !Equals [!Ref "AWS::Region", us-east-1]
-        AssertDescription: CloudFront only uses certificates from us-east-1, so deploy the stack there.
+        AssertDescription: The workflows reach the bucket in us-east-1, so deploy the stack there.
 
 Conditions:
-  Route53: !Not [!Equals [!Ref HostedZoneId, ""]]
   CreateOidcProvider: !Equals [!Ref GitHubOidcProviderArn, ""]
 
 Resources:
@@ -110,17 +96,6 @@ Resources:
               Bool:
                 aws:SecureTransport: "false"
 
-  Certificate:
-    Type: AWS::CertificateManager::Certificate
-    Properties:
-      DomainName: !Sub "*.${PreviewsDomain}"
-      ValidationMethod: DNS
-      DomainValidationOptions: !If
-        - Route53
-        - - DomainName: !Sub "*.${PreviewsDomain}"
-            HostedZoneId: !Ref HostedZoneId
-        - !Ref AWS::NoValue
-
   OriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
     Properties:
@@ -130,33 +105,42 @@ Resources:
         SigningBehavior: always
         SigningProtocol: sigv4
 
-  # pr-<n>.<domain>/<path> is s3://<bucket>/pr-<n>/<path>, and directories serve index.html.
-  HostToPrefix:
+  # Only /pr-<n>/ paths reach the bucket, a directory serves its index.html, and a path
+  # without an extension or trailing slash redirects to the directory. /robots.txt turns
+  # crawlers away from the whole host, since a robots.txt under /pr-<n>/ doesn't count.
+  PreviewPaths:
     Type: AWS::CloudFront::Function
     Properties:
-      Name: !Sub "${AWS::StackName}-host-to-prefix"
+      Name: !Sub "${AWS::StackName}-preview-paths"
       AutoPublish: true
       FunctionConfig:
-        Comment: Maps pr-<n>.<domain> to the pr-<n>/ key prefix
+        Comment: Serves index.html under /pr-<n>/ and 404s everything else
         Runtime: cloudfront-js-2.0
       FunctionCode: |
         function handler(event) {
           var request = event.request;
-          var host = request.headers.host ? request.headers.host.value : '';
-          var match = host.match(/^(pr-[1-9][0-9]{0,6})\./);
-          if (!match) {
+          var uri = request.uri;
+          if (uri === '/robots.txt') {
+            return {
+              statusCode: 200,
+              statusDescription: 'OK',
+              headers: { 'content-type': { value: 'text/plain' } },
+              body: 'User-agent: *\nDisallow: /\n',
+            };
+          }
+          if (!/^\/pr-[1-9][0-9]{0,6}(\/|$)/.test(uri)) {
             return { statusCode: 404, statusDescription: 'Not Found' };
           }
-          var uri = request.uri;
           var name = uri.substring(uri.lastIndexOf('/') + 1);
-          if (name !== '' && name.indexOf('.') === -1) {
+          if (name === '') {
+            request.uri = uri + 'index.html';
+          } else if (name.indexOf('.') === -1) {
             return {
               statusCode: 301,
               statusDescription: 'Moved Permanently',
               headers: { location: { value: uri + '/' } },
             };
           }
-          request.uri = '/' + match[1] + uri + (name === '' ? 'index.html' : '');
           return request;
         }
 
@@ -177,12 +161,7 @@ Resources:
       DistributionConfig:
         Comment: valkey.io pull request previews
         Enabled: true
-        Aliases:
-          - !Sub "*.${PreviewsDomain}"
-        ViewerCertificate:
-          AcmCertificateArn: !Ref Certificate
-          SslSupportMethod: sni-only
-          MinimumProtocolVersion: TLSv1.2_2021
+        # No aliases: previews use the distribution's own *.cloudfront.net name and certificate.
         HttpVersion: http2and3
         IPV6Enabled: true
         PriceClass: PriceClass_100
@@ -202,29 +181,7 @@ Resources:
           ResponseHeadersPolicyId: !Ref NoIndex
           FunctionAssociations:
             - EventType: viewer-request
-              FunctionARN: !GetAtt HostToPrefix.FunctionARN
-
-  WildcardRecord:
-    Type: AWS::Route53::RecordSet
-    Condition: Route53
-    Properties:
-      HostedZoneId: !Ref HostedZoneId
-      Name: !Sub "*.${PreviewsDomain}"
-      Type: A
-      AliasTarget:
-        DNSName: !GetAtt Distribution.DomainName
-        HostedZoneId: Z2FDTNDATAQYW2 # CloudFront's, the same for every distribution
-
-  WildcardRecordIpv6:
-    Type: AWS::Route53::RecordSet
-    Condition: Route53
-    Properties:
-      HostedZoneId: !Ref HostedZoneId
-      Name: !Sub "*.${PreviewsDomain}"
-      Type: AAAA
-      AliasTarget:
-        DNSName: !GetAtt Distribution.DomainName
-        HostedZoneId: Z2FDTNDATAQYW2
+              FunctionARN: !GetAtt PreviewPaths.FunctionARN
 
   GitHubOidcProvider:
     Type: AWS::IAM::OIDCProvider
@@ -278,6 +235,6 @@ Outputs:
   BucketName:
     Description: Save it as the PREVIEWS_BUCKET variable of the pr-previews environment.
     Value: !Ref Bucket
-  WildcardTarget:
-    Description: Without Route 53, point a CNAME for *.<PreviewsDomain> here.
+  PreviewsHost:
+    Description: Save it as the PREVIEWS_HOST repository variable. Previews are at https://<this>/pr-<number>/.
     Value: !GetAtt Distribution.DomainName

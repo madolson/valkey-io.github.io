@@ -16,7 +16,7 @@ jobs:
   approve:
     # Not in the pr-previews environment, since this job doesn't touch AWS. Without the role,
     # the deploy it starts stops at its first job.
-    if: vars.PREVIEWS_DOMAIN != '' && github.event.label.name == 'preview'
+    if: vars.PREVIEWS_HOST != '' && github.event.label.name == 'preview'
     runs-on: ubuntu-latest
     permissions:
       actions: write # find the build and start pr-preview-deploy.yml
