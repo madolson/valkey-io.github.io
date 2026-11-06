@@ -1,13 +1,26 @@
 {#
   The og card: a blog post's 1200x630 link preview, for posts with `extra.og_card = true`. It
-  sets the post title, or `extra.og_title`, in white Open Sans over the particle-wave
-  background. templates/og-cards.html renders every card on one page, and
-  build/og-cards.mjs captures each to the post's og.jpg. The rules are under "Link
-  preview cards" in CONTRIBUTING-BLOG-POST.md; the styles are in sass/css/og-cards.scss.
+  sets the post title, or `extra.og_title`, as text over Valkey art. The default card sets it
+  in white over the particle-wave background, and `extra.og_motif = "security"` swaps in the
+  security card, which sets it on light blocks over the security shield and lets the browser
+  wrap it. templates/og-cards.html renders every card on one page, and build/og-cards.mjs
+  captures each to the post's og.jpg. The rules are under "Link preview cards" in
+  CONTRIBUTING-BLOG-POST.md; the styles are in sass/css/og-cards.scss.
 #}
 
 {% component og_card.card(page) -%}
   {%- set title = page.extra.og_title | default(value=page.title) -%}
+  {%- if (page.extra.og_motif | default(value="")) == "security" -%}
+  <div class="og-card og-card--security">
+    <div class="og-card-body">
+      <span class="og-card-lockup"></span>
+      <div class="og-card-title"><span>
+        {%- for line in title | split(pat="\n") %}{% if not loop.first %}<br>{% endif %}{{ line | trim }}{% endfor -%}
+      </span></div>
+      <span class="og-card-shield"></span>
+    </div>
+  </div>
+  {%- else %}
   {#- A heading and a subheading split at a ":" right before a "\n" in og_title, or else at
       the first ": " unless the whole title fits the first line's hard limit at full size. #}
   {%- set head = title -%}
@@ -65,6 +78,7 @@
       {%- endif %}
     </div>
   </div>
+  {%- endif -%}
 {%- endcomponent og_card.card %}
 
 {#

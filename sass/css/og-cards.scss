@@ -8,6 +8,7 @@
 // box and 0.162em above its bottom.
 
 @import "/fonts/open-sans/webfont.css";
+@import '../colors';
 @import '../typography';
 
 body {
@@ -41,4 +42,76 @@ body {
 .og-card-subheading {
   margin-top: calc(1.042 * var(--heading) - 0.938 * var(--subheading));
   font-size: var(--subheading);
+}
+
+// The security card, for `og_motif = "security"`: the lockup in the upper left, the title in
+// the lower left on light blocks that run off the left edge, and the shield in the right of
+// the card, faded so the title can run over it at full width.
+
+$og-card-ink: #060A24;
+
+.og-card--security {
+  display: grid;
+  background: #171043 url(/assets/media/og-card/security-bg.svg) center / cover no-repeat;
+}
+
+.og-card-body {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas: "lockup" "title";
+  gap: 36px;
+  min-height: 0;
+  padding: 48px 60px 48px 0;
+}
+
+.og-card-lockup {
+  grid-area: lockup;
+  z-index: 1;
+  height: 55.2px;
+  aspect-ratio: 187.9 / 63.5;
+  margin-left: 50.4px;
+  background: url(/assets/media/og-card/lockup.svg) left top / contain no-repeat;
+}
+
+// The shield is 87% of the card's height, centred at 68% across, clear of the lockup. Its
+// tile runs the full height of the card, which crops the glow beyond the shield's outline.
+// It fades in from its left edge to full strength 80% of the way across, so its left half
+// dissolves under the title.
+.og-card-shield {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 768px;
+  background: url(/assets/media/og-card/security-shield.svg) center / auto 114% no-repeat;
+  opacity: 0.9;
+  -webkit-mask-image: linear-gradient(to right, transparent 14%, #000 80%);
+  mask-image: linear-gradient(to right, transparent 14%, #000 80%);
+}
+
+// One size for every title, what the blog's longest title needs to fit in three lines.
+.og-card-title {
+  grid-area: title;
+  z-index: 1;
+  align-self: end;
+  font-size: 54.36px;
+  font-weight: 600;
+  line-height: 1.42;
+  color: $og-card-ink;
+  overflow-wrap: break-word;
+  // Three shadow passes: contact, falloff, and a broad pool for height. A filter, not
+  // box-shadow, so the lines cast one shadow together, never onto each other.
+  filter: drop-shadow(0 0.065em 0.13em rgba($og-card-ink, 0.55))
+    drop-shadow(0 0.16em 0.29em rgba($og-card-ink, 0.5))
+    drop-shadow(0 0.42em 0.65em rgba($og-card-ink, 0.55));
+
+  span {
+    padding: 0.085em 0.355em 0.127em calc(60px + 0.355em);
+    border-radius: 0 0.065em 0.065em 0;
+    background: $blue-vibrant-000;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+  }
 }

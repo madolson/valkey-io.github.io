@@ -140,6 +140,7 @@ node build/og-cards.mjs public
 
 The card is `templates/macros/og-card.html` and `sass/css/og-cards.scss`, over `static/assets/media/og-card/default-bg.webp`.
 The template sets the lines by adding up Open Sans's advance widths from `_data/og-card/open-sans-400.json`, against right edges measured from that background (`og_card.edge`), so a new background needs new edges.
+The security card's art, `security-bg.svg`, `security-shield.svg` and `lockup.svg`, is in the same directory as that background.
 `build/og-card-widths.py` regenerates the width table when the Open Sans font files change:
 
 ```shell

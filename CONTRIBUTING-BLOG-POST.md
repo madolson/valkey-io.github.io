@@ -174,6 +174,8 @@ draft = true
     # 'og_title' (optional) is the card's text when it should differ from 'title'.
     # Each "\n" starts a new line; this one keeps "mind control" together.
     # og_title = "Using Valkey for\nmind control experiments"
+    # 'og_motif' (optional) picks another style of card; see "Link preview cards" below.
+    # og_motif = "security"
 +++
 ```
 
@@ -270,6 +272,9 @@ The page's own title doesn't change.
 
 If a heading or subheading can't fit, the build fails with an error naming your post and the rule it broke.
 Shorten the title, or set the breaks yourself in `og_title`.
+
+For a post about Valkey security, `og_motif = "security"` swaps in the security card: the title on light blocks over the security shield.
+The browser wraps its lines, so the rules above don't apply; set the breaks with `og_title`.
 
 To see your card, run `zola serve` and open `http://127.0.0.1:1111/og-cards/`.
 The site's build renders each card to `/blog/<your-slug>/og.jpg`; see [Link preview cards](README.md#link-preview-cards) in the README to render them yourself.
