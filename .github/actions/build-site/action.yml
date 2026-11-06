@@ -66,13 +66,11 @@ runs:
         BUILD_ONLY: true
         BUILD_THEMES: false
 
-    # Each post with og_card = true gets a public/blog/<slug>/og.png. See build/og-cards.mjs.
+    # Each post with og_card = true gets a public/blog/<slug>/og.jpg. See build/og-cards.mjs.
     - name: Render og cards
       shell: bash
       working-directory: ${{ inputs.path }}
       run: |
         # The build step's container leaves public/ owned by root.
         sudo chown -R "$(id -u):$(id -g)" public
-        sudo apt-get update -qq
-        sudo apt-get install -y -qq --no-install-recommends pngquant
         node build/og-cards.mjs public
