@@ -59,29 +59,29 @@
     <ul class="breadcrumb-list">
         {% if nav_location and nav_location.section %}
         <li class="breadcrumb-item">
-            <a href="/topics/" class="breadcrumb-link">Topics</a>
+            <a href="{{ base_path }}/topics/" class="breadcrumb-link">Topics</a>
         </li>
         <li class="breadcrumb-item">
-            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
+            <img src="{{ base_path }}/img/caret-right.svg" alt="" width="8" height="10"/>
             {% if nav_location.landing %}
-            <a href="/topics/{{ nav_location.landing }}/" class="breadcrumb-link">{{ nav_location.title }}</a>
+            <a href="{{ base_path }}/topics/{{ nav_location.landing }}/" class="breadcrumb-link">{{ nav_location.title }}</a>
             {% else %}
             {{ nav_location.title }}
             {% endif %}
         </li>
         {% if nav_location.topic and nav_location.topic != nav_location.landing %}
         <li class="breadcrumb-item">
-            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
-            <a href="/topics/{{ nav_location.topic }}/" class="breadcrumb-link">{{< nav_topic_title slug={nav_location.topic} extra={config.extra} />}}</a>
+            <img src="{{ base_path }}/img/caret-right.svg" alt="" width="8" height="10"/>
+            <a href="{{ base_path }}/topics/{{ nav_location.topic }}/" class="breadcrumb-link">{{< nav_topic_title slug={nav_location.topic} extra={config.extra} />}}</a>
         </li>
         {% endif %}
         {% else %}
         <li class="breadcrumb-item">
-            <a href="/commands/" class="breadcrumb-link">Commands</a>
+            <a href="{{ base_path }}/commands/" class="breadcrumb-link">Commands</a>
         </li>
         {% endif %}
         <li class="breadcrumb-item breadcrumb-current" aria-current="page">
-            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
+            <img src="{{ base_path }}/img/caret-right.svg" alt="" width="8" height="10"/>
             {% if command_title %}{{ command_title }}{% else %}{{ page.slug | upper }}{% endif %}
         </li>
     </ul>
@@ -156,13 +156,13 @@
 {% if command_description %}
 {%- set command_description_with_fixed_links %}{{< fix_links_command content={command_description} />}}{% endset -%}
 
-{{ command_description_with_fixed_links | markdown | safe }}
+{{< with_base_path html={command_description_with_fixed_links | markdown} base={base_path} />}}
 {% else %}
 <code>ERROR. Command description not loaded</code><br />
 {% endif %}
 {% if command_data_obj.replaced_by %}
 <h3 id="deprecation-advice">Deprecation advice</h3>
-Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{{ command_data_obj.replaced_by | markdown | safe  }}</div>
+Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{{< with_base_path html={command_data_obj.replaced_by | markdown} base={base_path} />}}</div>
 
 {% endif %}
 {% set_global resp2_replies = load_data(path="../_data/resp2_replies.json", required=false) -%}
@@ -177,17 +177,17 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
         {% if resp2_reply == resp3_reply -%}
             <h3>RESP2/RESP3 Reply</h3>
             {% set resp2_fixed %}{{< fix_links_command content={resp2_reply} />}}{% endset %}
-            {{ resp2_fixed | markdown | safe }}
+            {{< with_base_path html={resp2_fixed | markdown} base={base_path} />}}
         {% else %}
             {% if resp2_reply -%}
                 <h3>RESP2 Reply</h3>
                 {% set resp2_fixed %}{{< fix_links_command content={resp2_reply} />}}{% endset %}
-                {{ resp2_fixed | markdown | safe }}
+                {{< with_base_path html={resp2_fixed | markdown} base={base_path} />}}
             {% endif -%}
             {% if resp3_reply -%}
                 <h3>RESP3 Reply</h3>
                 {% set resp3_fixed %}{{< fix_links_command content={resp3_reply} />}}{% endset %}
-                {{ resp3_fixed | markdown | safe }}
+                {{< with_base_path html={resp3_fixed | markdown} base={base_path} />}}
             {% endif -%}
         {% endif -%}
     {% endif -%}
@@ -206,7 +206,7 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
         {% for entry in command_data_obj.history%}
         <tr>
             <td>{{ entry[0] }}</td>
-            <td>{{ entry[1] | markdown | safe}}</td>
+            <td>{{< with_base_path html={entry[1] | markdown} base={base_path} />}}</td>
         </tr>
         {% endfor %}
 
@@ -223,8 +223,8 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
 {% if nav_location and nav_location.section %}
 {% set nav_related = nav_location.topic if nav_location.topic else "section:" ~ nav_location.section %}
-{{< nav_menu nav={nav_data} extra={config.extra} related={nav_related} open={nav_location.section} command_map={nav_command_map} index={nav_index} current_command={page.slug} />}}
+{{< nav_menu nav={nav_data} extra={config.extra} related={nav_related} open={nav_location.section} command_map={nav_command_map} index={nav_index} current_command={page.slug} base={base_path} />}}
 {% else %}
-{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} />}}
+{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} base={base_path} />}}
 {% endif %}
 {% endblock related_content %}

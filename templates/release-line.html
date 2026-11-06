@@ -50,9 +50,9 @@
 
 {% if page.content %}
     <h2>Major features in {{ line }}:</h2>
-    <div class="release-highlights">{{ page.content | safe }}</div>
+    <div class="release-highlights">{{< with_base_path html={page.content} base={base_path} />}}</div>
     {% if page.extra.blog_url %}
-        <a href="{{ page.extra.blog_url }}" class="link-readmore">{{ page.extra.blog_text }}</a>
+        <a href="{% if page.extra.blog_url is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ page.extra.blog_url }}" class="link-readmore">{{ page.extra.blog_text }}</a>
     {% endif %}
     <hr class="release-rule" />
 {% endif %}

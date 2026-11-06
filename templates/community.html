@@ -5,9 +5,9 @@
   <div class="community-section">
     <div class="community-header">
       {% if section %}
-      {{ section.content | markdown | safe }}
+      {{< with_base_path html={section.content | markdown} base={base_path} />}}
       {% else %}
-      {{ page.content | markdown | safe }}
+      {{< with_base_path html={page.content | markdown} base={base_path} />}}
       {% endif %}
     </div>
     {# Subpages show only their own cards. The landing page's contribute cards
@@ -23,12 +23,12 @@
       <div class="community-card-grid">
         {% for card in cards%}
           <div class="community-card">
-            <img src="/img/{{ card.icon }}" alt="{{ card.title }}" class="community-card-icon" />
+            <img src="{{ base_path }}/img/{{ card.icon }}" alt="{{ card.title }}" class="community-card-icon" />
             <h3>{{ card.title }}</h3>
             <p>{{ card.description }}</p>
             <div class="community-card-actions">
               {% for link in card.links %}
-                <a href="{{ link.url }}" class="btn"{% if link.url is starting_with(pat="http") %} target="_blank" rel="noopener"{% endif %}>{{ link.text }}</a>
+                <a href="{% if link.url is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ link.url }}" class="btn"{% if link.url is starting_with(pat="http") %} target="_blank" rel="noopener"{% endif %}>{{ link.text }}</a>
               {% endfor %}
             </div>
           </div>

@@ -1,0 +1,205 @@
+# Publishes the site pr-preview-build.yml built for a pull request to
+# https://<PREVIEWS_HOST>/pr-<number>/ (the pr-<number>/ prefix of the previews bucket, see
+# infra/pr-previews.yml), replacing the pull request's previous preview. Fork pull requests need a maintainer's approval for each head commit (see
+# pr-preview-approve.yml). Never checks out or runs the pull request: the build is only
+# checked and uploaded. See docs/pr-previews.md.
+
+name: PR preview deploy
+
+on:
+  workflow_run:
+    workflows: ["PR preview build"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: The pull request to publish the current head of.
+        required: true
+
+permissions: {}
+
+jobs:
+  # Previews are on when the pr-previews environment has the AWS role. A job-level if
+  # can't read secrets, so this job, which every deploy goes through, checks it and stops the
+  # rest when it's missing. The variable check first means nothing runs, and the environment
+  # isn't created, before setup.
+  resolve:
+    if: >-
+      vars.PREVIEWS_HOST != '' &&
+      (github.event_name == 'workflow_dispatch' ||
+       contains(fromJSON('["success", "failure"]'), github.event.workflow_run.conclusion))
+    runs-on: ubuntu-latest
+    environment: pr-previews
+    permissions:
+      actions: read # find the build
+      pull-requests: read
+      statuses: read # find the approval
+    outputs:
+      pr: ${{ steps.resolve.outputs.pr }}
+      sha: ${{ steps.resolve.outputs.sha }}
+      run-id: ${{ steps.resolve.outputs.run-id }}
+      action: ${{ steps.resolve.outputs.action }} # publish, unapproved, unbuilt, or empty for nothing
+    steps:
+      - id: resolve
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          FORKS: ${{ vars.PREVIEWS_FORKS }}
+          HAS_ROLE: ${{ secrets.AWS_ROLE_ARN != '' }}
+        with:
+          script: |
+            if (process.env.HAS_ROLE !== 'true') {
+              core.info('The pr-previews environment has no AWS_ROLE_ARN, so previews are off.');
+              return;
+            }
+            const { owner, repo } = context.repo;
+            const build = 'pr-preview-build.yml';
+            let number, run;
+            if (context.eventName === 'workflow_run') {
+              run = context.payload.workflow_run;
+              // Matching on the name alone would accept a same-named workflow a pull request adds.
+              const { data: workflow } = await github.rest.actions.getWorkflow({ owner, repo, workflow_id: build });
+              if (run.workflow_id !== workflow.id || run.event !== 'pull_request') {
+                core.info(`Run ${run.id} isn't a preview build.`);
+                return;
+              }
+              // workflow_run.pull_requests is empty for forks, so look the pull request up by its head.
+              const prs = await github.paginate(github.rest.pulls.list, {
+                owner, repo, state: 'open', base: 'main', per_page: 100,
+                head: `${run.head_repository.owner.login}:${run.head_branch}`,
+              });
+              const matches = prs.filter(p => p.head.sha === run.head_sha && p.head.repo?.id === run.head_repository.id);
+              if (matches.length !== 1) {
+                core.info(`${matches.length} open pull requests have head ${run.head_sha}, so there's nothing to publish.`);
+                return;
+              }
+              number = matches[0].number;
+            } else {
+              number = Number(context.payload.inputs.pr);
+              if (!Number.isInteger(number) || number < 1) {
+                core.setFailed('pr must be a pull request number.');
+                return;
+              }
+            }
+
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: number });
+            const sha = pr.head.sha;
+            if (pr.state !== 'open' || pr.base.ref !== 'main') {
+              core.info(`#${number} is closed or isn't into main.`);
+              return;
+            }
+            if (run && run.head_sha !== sha) {
+              core.info(`#${number} has moved on to ${sha}. That commit's build publishes instead.`);
+              return;
+            }
+
+            const fork = pr.head.repo?.full_name !== `${owner}/${repo}`;
+            if (fork && process.env.FORKS === 'off') {
+              core.info('Previews of fork pull requests are off (PREVIEWS_FORKS).');
+              return;
+            }
+            // A fork's approval covers only builds that had finished when it was given, so
+            // rebuilding the same commit (with whatever it fetches changed) needs a new one.
+            let approvedAt = 0;
+            if (fork) {
+              const statuses = await github.paginate(github.rest.repos.listCommitStatusesForRef, { owner, repo, ref: sha, per_page: 100 });
+              approvedAt = Math.max(0, ...statuses
+                .filter(s => s.context === `pr-preview/approval-${number}` && s.state === 'success' && s.creator?.login === 'github-actions[bot]')
+                .map(s => Date.parse(s.created_at)));
+            }
+            const covered = r => !fork || Date.parse(r.updated_at) <= approvedAt;
+
+            if (!run) {
+              const runs = (await github.paginate(github.rest.actions.listWorkflowRuns, {
+                owner, repo, workflow_id: build, event: 'pull_request', status: 'success', head_sha: sha, per_page: 100,
+              })).filter(r => r.head_repository?.id === pr.head.repo?.id && r.head_branch === pr.head.ref);
+              run = runs.find(covered) ?? runs[0];
+              if (!run) {
+                core.info(`${sha} has no successful build yet. If it's still building, it publishes when it's done.`);
+                return;
+              }
+            }
+
+            // unbuilt: the head's build failed, so the preview of an earlier commit goes.
+            const action = run.conclusion !== 'success' ? 'unbuilt' : covered(run) ? 'publish' : 'unapproved';
+            core.info(`#${number} at ${sha}, built by run ${run.id}: ${action}.`);
+            core.setOutput('pr', number);
+            core.setOutput('sha', sha);
+            core.setOutput('run-id', run.id);
+            core.setOutput('action', action);
+
+  publish:
+    needs: resolve
+    if: needs.resolve.outputs.action == 'publish'
+    runs-on: ubuntu-latest
+    environment: pr-previews
+    permissions:
+      actions: read # download the build from its run
+      id-token: write # assume the AWS role
+    concurrency:
+      group: pr-preview-${{ needs.resolve.outputs.pr }}
+      cancel-in-progress: true
+    steps:
+      - name: Download the build
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: pr-preview-site
+          path: site
+          run-id: ${{ needs.resolve.outputs.run-id }}
+          github-token: ${{ github.token }}
+
+      # The build ran the pull request's code, so its output is only checked and uploaded.
+      - name: Check the build
+        working-directory: site
+        run: |
+          fail() { echo "::error::$1"; exit 1; }
+          [ -f index.html ] || fail "The build has no index.html."
+          [ -z "$(find . -type l -print -quit)" ] || fail "The build has symlinks."
+          [ -z "$(find . ! -type f ! -type d -print -quit)" ] || fail "The build has special files."
+          size=$(du -sb . | cut -f1)
+          [ "$size" -le $((1024 * 1024 * 1024)) ] || fail "The build is $size bytes, over the 1 GiB cap."
+          echo "The build has $(find . -type f | wc -l) files, $size bytes."
+          # The templates leave analytics out of previews; this catches any that slip back in.
+          if grep -rlE 'googletagmanager\.com|static\.scarf\.sh|transcend-cdn\.com' \
+              --include='*.html' --include='*.js' --include='*.css' .; then
+            fail "The files above load Google Tag Manager, Scarf, or Transcend."
+          fi
+          # In place of Zola's, which allows everything. Crawlers only read the host's own
+          # /robots.txt, which CloudFront serves, and every response has X-Robots-Tag: noindex.
+          printf 'User-agent: *\nDisallow: /\n' > robots.txt
+
+      - uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Publish
+        env:
+          BUCKET: ${{ vars.PREVIEWS_BUCKET }}
+          PR: ${{ needs.resolve.outputs.pr }}
+          SHA: ${{ needs.resolve.outputs.sha }}
+        run: |
+          prefix="s3://$BUCKET/pr-$PR"
+          # The marker goes first, so a cleanup meanwhile sees this commit, not an unmarked preview.
+          printf '{"commit": "%s", "deployed": "%s"}\n' "$SHA" "$(date -u +%FT%TZ)" |
+            aws s3 cp - "$prefix/_preview.json" --content-type application/json --only-show-errors
+          # no-cache: browsers revalidate, so an update shows on reload. CloudFront caches nothing.
+          aws s3 sync site/ "$prefix/" --delete --exclude _preview.json --cache-control no-cache --only-show-errors
+
+  # Deletes previews that should go and updates the pull request's comment. No
+  # concurrency group: cleanup checks the pull request's current head itself, and sharing
+  # publish's group would let an older finish cancel a newer publish.
+  finish:
+    needs: [resolve, publish]
+    if: always() && needs.resolve.outputs.action != '' && needs.publish.result != 'cancelled'
+    permissions:
+      id-token: write
+      pull-requests: write
+    uses: ./.github/workflows/pr-preview-cleanup.yml
+    secrets:
+      AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+    with:
+      pr: ${{ needs.resolve.outputs.pr }}
+      sha: ${{ needs.resolve.outputs.sha }}
+      state: >-
+        ${{ needs.resolve.outputs.action != 'publish' && needs.resolve.outputs.action
+        || needs.publish.result == 'success' && 'published' || 'failed' }}

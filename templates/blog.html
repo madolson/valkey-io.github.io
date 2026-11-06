@@ -79,7 +79,7 @@
         {% for post in featured_posts %}
           <div class="blog-featured-card">
             {% if post.extra.featured_image %}
-              <img src="{{ post.extra.featured_image }}" alt="{{ post.title }} featured image" class="blog-featured-image"/>
+              <img src="{% if post.extra.featured_image is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ post.extra.featured_image }}" alt="{{ post.title }} featured image" class="blog-featured-image"/>
             {% endif %}
             <div class="info">
               <h4><a href="{{ post.permalink }}">{{ post.title }}</a></h4>

@@ -22,7 +22,7 @@
 
 {% set latest = release_lines | first %}
 
-{{ page.content | safe }}
+{{< with_base_path html={page.content} base={base_path} />}}
 
 <h2>Latest release: Valkey {{ latest.extra.tag }}</h2>
 {{< release_info date={latest.date} release={latest.extra} />}}

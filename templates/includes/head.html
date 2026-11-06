@@ -1,8 +1,8 @@
-<head>
+{% set preview_pr = get_env(name="VALKEY_PREVIEW_PR", default="") %}<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="ROBOTS" content="ALL" />
+    {% if preview_pr %}<meta name="robots" content="noindex">{% else %}<meta name="ROBOTS" content="ALL" />{% endif %}
     <meta name="MSSmartTagsPreventParsing" content="true" />
     <meta name="Copyright" content="" />
     <meta name="keywords" content="open-source, valkey" />
@@ -18,15 +18,15 @@
     {% elif section and section.description %}<meta name="description" content="{{ section.description}}" />{% endif %}
 
     <!-- Favicons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
-    <link rel="manifest" href="/img/favicon/site.webmanifest">
-    <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
-    <link rel="shortcut icon" href="/img/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ base_path }}/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ base_path }}/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ base_path }}/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="{{ base_path }}/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="{{ base_path }}/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="{{ base_path }}/img/favicon/favicon.ico">
     <meta name="msapplication-TileColor" content="#2d89ef">
-    <meta name="msapplication-TileImage" content="/img/favicon/mstile-144x144.png">
-    <meta name="msapplication-config" content="/img/favicon/browserconfig.xml">
+    <meta name="msapplication-TileImage" content="{{ base_path }}/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="{{ base_path }}/img/favicon/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 
     <title>
@@ -54,19 +54,19 @@
     Valkey
     {%- endif -%}">
 
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="{{ base_path }}/css/styles.css">
     <link rel="alternate" type="application/atom+xml" title="Atom feed" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" />
 
     <!-- Nav JS -->
-    <script src="/assets/js/nav.js"></script>
+    <script src="{{ base_path }}/assets/js/nav.js"></script>
 
     <!-- Carousel JS -->
-    <script src="/assets/js/carousel.js"></script>
+    <script src="{{ base_path }}/assets/js/carousel.js"></script>
 
     <!-- Copy-to-clipboard for .copy-code blocks -->
-    <script src="/assets/js/copy-code.js"></script>
+    <script src="{{ base_path }}/assets/js/copy-code.js"></script>
 
-    <!-- cookie banner, LF standard -->
+    {% if not preview_pr %}<!-- cookie banner, LF standard -->
     <script
       src="https://transcend-cdn.com/cm/f484e2d0-ad2e-43a9-9d64-d07f6fa20966/airgap.js"
       data-cfasync="false"
@@ -80,7 +80,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-MFFCB7SR');</script>
-    <!-- End Google Tag Manager -->
+    <!-- End Google Tag Manager -->{% endif %}
 
     {% if page and page.extra and page.extra.head_extra %}{{ page.extra.head_extra }}{% endif %}
 </head>
