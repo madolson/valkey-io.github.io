@@ -277,4 +277,4 @@ For a post about Valkey security, `og_motif = "security"` swaps in the security 
 The browser wraps its lines, so the rules above don't apply; set the breaks with `og_title`.
 
 To see your card, run `zola serve` and open `http://127.0.0.1:1111/og-cards/`.
-The site's build renders each card to `/blog/<your-slug>/og.png`; see [Link preview cards](README.md#link-preview-cards) in the README to render them yourself.
+The site's build renders each card to `/blog/<your-slug>/og.jpg`; see [Link preview cards](README.md#link-preview-cards) in the README to render them yourself.

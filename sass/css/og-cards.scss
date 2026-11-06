@@ -1,6 +1,5 @@
 // The og cards page, /og-cards/: every opted-in post's og card at 1200x630, for
-// build/og-cards.mjs to screenshot. With a #slug in the URL only that card shows, at the top
-// left; without one they all show, for a look in `zola serve`.
+// build/og-cards.mjs to capture at twice the pixel density, and for a look in `zola serve`.
 //
 // templates/macros/og-card.html sets the lines, their sizes and the layout numbers; this only
 // places the text, unwrapped. The background is 16:9 and covers the card from the bottom, so
@@ -14,10 +13,6 @@
 
 body {
   margin: 0;
-}
-
-body:has(:target) .og-card-frame:not(:target) {
-  display: none;
 }
 
 .og-card {

@@ -125,12 +125,13 @@ build/unconverted-doc-links.sh public
 
 ## Link preview cards
 
-A blog post with `og_card = true` gets a link preview card, its title over the Valkey background, as `/blog/<slug>/og.png`; [CONTRIBUTING-BLOG-POST.md](CONTRIBUTING-BLOG-POST.md#link-preview-cards) covers the front matter and the line rules.
+A blog post with `og_card = true` gets a link preview card, its title over the Valkey background, as `/blog/<slug>/og.jpg`; [CONTRIBUTING-BLOG-POST.md](CONTRIBUTING-BLOG-POST.md#link-preview-cards) covers the front matter and the line rules.
 Its `og:image` and `twitter:image` point there.
 
 Zola can't draw text into an image, so it renders every card as HTML on one page, `/og-cards/` (`templates/og-cards.html`, out of the sitemap and search, and `noindex`), and the site's build screenshots them.
-`build/og-cards.mjs` serves a built site on 127.0.0.1, has headless Chrome capture each card at 1200x630, shrinks it to 256 colours with pngquant, deletes `/og-cards/`, and fails if any card post's `og.png` is missing or the wrong size.
-To run it yourself, with Node 20 or later, Chrome or Chromium (set `CHROME` to pick one), and pngquant:
+`build/og-cards.mjs` serves a built site on 127.0.0.1, has headless Chrome capture each 1200x630 card at twice the pixel density as a 2400x1260, quality 90 JPEG, deletes `/og-cards/`, and fails if any card post's `og.jpg` is missing, the wrong size, or 1 MB or more.
+The platforms scale the larger image down cleanly, and JPEG keeps the particle background in full colour at about 300 KB, where a lossless PNG is 1.6 MB.
+To run it yourself, with Node 20 or later and Chrome or Chromium (set `CHROME` to pick one):
 
 ```shell
 zola build

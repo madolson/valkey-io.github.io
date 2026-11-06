@@ -1,6 +1,6 @@
-{#- Every blog post with `extra.og_card = true` as its 1200x630 og card, one per #slug, for
-    build/og-cards.mjs to screenshot to data-og. It links nothing and readers never see it:
-    it is noindex, out of the sitemap and search, and the CI build deletes it. -#}
+{#- Every blog post with `extra.og_card = true` as its 1200x630 og card, for
+    build/og-cards.mjs to capture to data-og. It links nothing and readers never see it: it is
+    noindex, out of the sitemap and search, and the CI build deletes it. -#}
 <!doctype html>
 <html lang="en">
 <head>
@@ -12,7 +12,7 @@
 <body>
 {%- set blog = get_section(path="blog/_index.md") %}
 {%- for post in blog.pages %}{% if post.extra.og_card %}
-  <div class="og-card-frame" id="{{ post.slug }}" data-og="{{ post.path }}og.png">
+  <div class="og-card-frame" id="{{ post.slug }}" data-og="{{ post.path }}og.jpg">
   {{< og_card.card page={post} />}}
   </div>
 {%- endif %}{% endfor %}
