@@ -79,13 +79,13 @@
     <header class="catalog-header">
       <h1 class="catalog-title">Clients</h1>
       <p class="catalog-lede">Client libraries and tools used for connecting to Valkey. Anything that speaks the Redis 7.2 wire protocol works with Valkey 7.2 and later, so most existing clients need no changes to migrate.</p>
-      <p class="catalog-crosslink">See also: <a href="/integrations/">Integrations</a></p>
+      <p class="catalog-crosslink">See also: <a href="{{ base_path }}/integrations/">Integrations</a></p>
     </header>
     {% else %}
     <header class="catalog-header">
       <h1 class="catalog-title">Integrations</h1>
       <p class="catalog-lede">Frameworks, job queues, AI libraries, and operations tools that work with Valkey.</p>
-      <p class="catalog-crosslink">See also: <a href="/clients/">Clients</a></p>
+      <p class="catalog-crosslink">See also: <a href="{{ base_path }}/clients/">Clients</a></p>
     </header>
     {% endif %}
 
@@ -139,7 +139,7 @@
                  data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
           <div class="entry-head">
             <h2 class="entry-name">
-              {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
+              {% if entry.documentation %}<a href="{% if entry.documentation is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
             </h2>
             <div class="entry-tags">
               <span class="chip chip-language">
@@ -149,7 +149,7 @@
                       style="background:{{ lc.color }};color:{{ lc.fg }}">{{ lc.mono }}</span>
                 {%- endif -%}
                 {{ lang }}</span>
-              {% if is_first_party %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
+              {% if is_first_party %}<span class="chip chip-project"><img class="chip-icon" src="{{ base_path }}/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
@@ -193,8 +193,8 @@
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
-            {% if entry.repository and (entry.repository is starting_with(pat="http://") or entry.repository is starting_with(pat="https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
-            {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
+            {% if entry.repository and (entry.repository is starting_with(pat="http://") or entry.repository is starting_with(pat="https://")) %}<a class="link-repo" href="{% if entry.repository is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ entry.repository }}">Repository</a>{% endif %}
+            {% if entry.documentation %}<a class="link-site" href="{% if entry.documentation is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
           </div>
           </div>
@@ -221,11 +221,11 @@
                  data-first-party="{% if is_first_party %}true{% else %}false{% endif %}">
           <div class="entry-head">
             <h2 class="entry-name">
-              {% if entry.documentation %}<a href="{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
+              {% if entry.documentation %}<a href="{% if entry.documentation is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ entry.documentation }}">{{ entry.name }}</a>{% else %}{{ entry.name }}{% endif %}
             </h2>
             <div class="entry-tags">
               {% for t in ec_tags %}<span class="chip chip-tag">{{ t }}</span>{% endfor %}
-              {% if is_first_party %}<span class="chip chip-project"><img class="chip-icon" src="/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
+              {% if is_first_party %}<span class="chip chip-project"><img class="chip-icon" src="{{ base_path }}/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>{% endif %}
             </div>
           </div>
 
@@ -248,8 +248,8 @@
           {% if entry.license %}<dl class="kv"><dt>License</dt><dd><span class="num">{{ entry.license }}</span></dd></dl>{% endif %}
 
           <footer class="entry-foot">
-            {% if entry.repository and (entry.repository is starting_with(pat="http://") or entry.repository is starting_with(pat="https://")) %}<a class="link-repo" href="{{ entry.repository }}">Repository</a>{% endif %}
-            {% if entry.documentation %}<a class="link-site" href="{{ entry.documentation }}">Documentation</a>{% endif %}
+            {% if entry.repository and (entry.repository is starting_with(pat="http://") or entry.repository is starting_with(pat="https://")) %}<a class="link-repo" href="{% if entry.repository is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ entry.repository }}">Repository</a>{% endif %}
+            {% if entry.documentation %}<a class="link-site" href="{% if entry.documentation is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ entry.documentation }}">Documentation</a>{% endif %}
           </footer>
           </div>
           </div>
@@ -278,5 +278,5 @@
 
     {{<catalog.footer_cta cta_text="Add your library" noscript_noun="library" />}}
 
-  <script defer src="/assets/js/libraries.js"></script>
+  <script defer src="{{ base_path }}/assets/js/libraries.js"></script>
 {% endblock content %}

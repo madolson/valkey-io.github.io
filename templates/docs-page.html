@@ -35,20 +35,20 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb">
     <ul class="breadcrumb-list">
         <li class="breadcrumb-item">
-            <a href="/topics/" class="breadcrumb-link">Topics</a>
+            <a href="{{ base_path }}/topics/" class="breadcrumb-link">Topics</a>
         </li>
         {% if nav_location.section and nav_location.landing != page.slug %}
         <li class="breadcrumb-item">
-            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
+            <img src="{{ base_path }}/img/caret-right.svg" alt="" width="8" height="10"/>
             {% if nav_location.landing %}
-            <a href="/topics/{{ nav_location.landing }}/" class="breadcrumb-link">{{ nav_location.title }}</a>
+            <a href="{{ base_path }}/topics/{{ nav_location.landing }}/" class="breadcrumb-link">{{ nav_location.title }}</a>
             {% else %}
             {{ nav_location.title }}
             {% endif %}
         </li>
         {% endif %}
         <li class="breadcrumb-item breadcrumb-current" aria-current="page">
-            <img src="/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            <img src="{{ base_path }}/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
             {% if frontmatter_title %}{{ frontmatter_title }}{% else %}{{ page.slug | upper }}{% endif %}
         </li>
     </ul>
@@ -62,7 +62,7 @@
 <hr />
 {% endif %}
 {%- set content_with_fixed_links %}{{< fix_links_docs content={page_contents} />}}{% endset -%}
-{{ content_with_fixed_links | markdown | safe }}
+{{< with_base_path html={content_with_fixed_links | markdown} base={base_path} />}}
 {% endblock main_content %}
 
 {% block related_content %}
@@ -70,7 +70,7 @@
 {% set nav_index = load_data(literal=nav_index_json, format="json") %}
 {% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
 {% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
-{{< nav_menu nav={nav_data} extra={config.extra} current={page.slug} open={nav_location.section} command_map={nav_command_map} index={nav_index} />}}
+{{< nav_menu nav={nav_data} extra={config.extra} current={page.slug} open={nav_location.section} command_map={nav_command_map} index={nav_index} base={base_path} />}}
 
 <div class="edit_box">
     See an error?

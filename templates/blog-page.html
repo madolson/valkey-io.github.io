@@ -2,7 +2,7 @@
 {% block main_content %}
 
 {% if page.extra.featured_image %}
-  <img src="{{ page.extra.featured_image }}" alt="{{ page.title }}" class="feature-img">
+  <img src="{% if page.extra.featured_image is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ page.extra.featured_image }}" alt="{{ page.title }}" class="feature-img">
 {% endif %}
 
 <h1>{{ page.title }}</h1>
@@ -22,7 +22,7 @@
     {% endfor %}
   {% endif %}
 </div>
-{{ page.content | safe }}
+{{< with_base_path html={page.content} base={base_path} />}}
 {% endblock main_content%}
 
 {% block related_content %}

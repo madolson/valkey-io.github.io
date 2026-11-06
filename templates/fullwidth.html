@@ -7,7 +7,7 @@
 
 <div class="width-limiter">
     <main class="container">
-        {% block main_content %}{{ page.content | markdown | safe }}{% endblock main_content %}
+        {% block main_content %}{{< with_base_path html={page.content | markdown} base={base_path} />}}{% endblock main_content %}
     </main>
 </div>
 {% endblock content %}

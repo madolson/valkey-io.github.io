@@ -805,7 +805,7 @@ p {
 
   aside {
     background-color: #f1f0fa;
-    background-image: url('/img/aside-banner.webp');
+    background-image: url('../img/aside-banner.webp');
     width: 33%;
     max-width: 420px;
     height: calc(0px + 100vh);
@@ -1239,7 +1239,7 @@ aside {
 
 .keyspace-2025 {
   .styled-title {
-    background-image: url("/events/keyspace-2025/keyspace-nebula-new.jpg");
+    background-image: url("../events/keyspace-2025/keyspace-nebula-new.jpg");
     background-size: cover;
   }
   .body {
@@ -1728,7 +1728,7 @@ html.banner-hidden .banner {
   background-size: cover;
   background-position: right center;
   background-color: #30186e;
-  background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)), url('/img/hero-bg.webp');
+  background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)), url('../img/hero-bg.webp');
   display: flex;
   align-items: center;
   justify-content: center;

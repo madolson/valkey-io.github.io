@@ -1,0 +1,11 @@
+{# The path part of base_url, without a trailing slash: "" for https://valkey.io, "/pr-1" for a
+   build at https://example.org/pr-1. Templates put it in front of root-relative links, so the
+   site also works under a path, and the output for valkey.io is unchanged. default.html sets
+   it as base_path for every template; components don't see that, so they take a base
+   argument instead. #}
+{% component base_path() %}{{ get_url(path="/") | regex_replace(pattern="^[a-z]+://[^/]*", rep="") | regex_replace(pattern="/$", rep="") }}{% endcomponent base_path %}
+
+{# Markdown can't use base_path, so this adds it to the root-relative href and src attributes
+   of rendered markdown (page content, valkey-doc topics and commands). It leaves
+   protocol-relative (//host) and other links alone, and does nothing when base is "". #}
+{% component with_base_path(html, base) %}{% if base %}{{ html | regex_replace(pattern="(?P<attr>\\b(?:href|src)=\")/(?P<rest>[^/])", rep="${attr}" ~ base ~ "/${rest}") | safe }}{% else %}{{ html | safe }}{% endif %}{% endcomponent with_base_path %}

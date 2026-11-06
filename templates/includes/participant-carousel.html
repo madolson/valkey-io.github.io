@@ -19,7 +19,7 @@
                     <div class="homepage-participant-card" onclick="window.open('{{ participant.link }}', '_blank')" role="button" tabindex="0" aria-label="Visit {{ participant.name }} website">
                         <div class="homepage-participant-image-container">
                             {% if participant.image and participant.image.path %}
-                            <img src="{{ participant.image.path }}" alt="{{ participant.image.alt | default(value=participant.name ~ ' logo') }}" class="homepage-participant-image" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img src="{% if participant.image.path is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ participant.image.path }}" alt="{{ participant.image.alt | default(value=participant.name ~ ' logo') }}" class="homepage-participant-image" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="homepage-participant-image-placeholder" style="display: none;">{{ participant.name | truncate(length=2) }}</div>
                             {% else %}
                             <div class="homepage-participant-image-placeholder">{{ participant.name | truncate(length=2) }}</div>
@@ -27,9 +27,9 @@
                         </div>
                         <h3 class="homepage-participant-name">{{ participant.name }}</h3>
                         {% if participant.offering %}
-                        <div class="homepage-participant-offering">{{ participant.offering | markdown | safe }}</div>
+                        <div class="homepage-participant-offering">{{< with_base_path html={participant.offering | markdown} base={base_path} />}}</div>
                         {% elif participant.company %}
-                        <div class="homepage-participant-offering">{{ participant.company | markdown | safe }}</div>
+                        <div class="homepage-participant-offering">{{< with_base_path html={participant.company | markdown} base={base_path} />}}</div>
                         {% else %}
                         <div class="homepage-participant-offering">Valkey participant</div>
                         {% endif %}

@@ -1,7 +1,7 @@
 <div class="author-container">
   <div class="author-photo-container">
     {% if author_page.extra and author_page.extra.photo %}
-    <img class="author-photo" src="{{ author_page.extra.photo }}" alt="photo of {{author_page.title}}" />
+    <img class="author-photo" src="{% if author_page.extra.photo is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ author_page.extra.photo }}" alt="photo of {{author_page.title}}" />
     {% endif %}
   </div>
   <div class="author-info">
@@ -9,6 +9,6 @@
     {% if author_page.extra and author_page.extra.github %}
     <a target="_blank" href="https://github.com/{{author_page.extra.github}}"><i class="icon icon-github-square"></i> @{{author_page.extra.github}}</a>
     {% endif %}
-    {{ author_page.content | safe }}
+    {{< with_base_path html={author_page.content} base={base_path} />}}
   </div>
 </div>

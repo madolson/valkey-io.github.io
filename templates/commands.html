@@ -121,22 +121,22 @@ document.addEventListener("DOMContentLoaded", function() {
 {% set nav_index = load_data(literal=nav_index_json, format="json") %}
 {% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
 {% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
-{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} on_command_reference={true} />}}
+{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} on_command_reference={true} base={base_path} />}}
 <script>
 // The menu marks "All commands" as the current page. If the URL points to a
 // command category (e.g. /commands/#hash), mark that category's link instead.
 (function () {
     function markCurrent() {
-        var links = document.querySelectorAll('.docs-menu a[href^="/commands/"]');
-        var target = '/commands/' + window.location.hash;
+        var links = document.querySelectorAll('.docs-menu a[href^="{{ base_path }}/commands/"]');
+        var target = '{{ base_path }}/commands/' + window.location.hash;
         var found = Array.prototype.some.call(links, function (a) {
             return a.getAttribute('href') === target;
         });
-        if (!found) target = '/commands/';
+        if (!found) target = '{{ base_path }}/commands/';
         links.forEach(function (a) {
             if (a.getAttribute('href') === target) {
                 a.classList.add('docs-menu-current');
-                a.setAttribute('aria-current', target === '/commands/' ? 'page' : 'location');
+                a.setAttribute('aria-current', target === '{{ base_path }}/commands/' ? 'page' : 'location');
             } else {
                 a.classList.remove('docs-menu-current');
                 a.removeAttribute('aria-current');

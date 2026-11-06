@@ -29,7 +29,7 @@
    already links to /participants/, where each logo is linked with a
    description. Rendering them as links here added ~20 tab stops with no skip
    link and let keyboard focus scroll the marquee off-track. #}
-{% component logo_set(participants, duplicate=false) %}
+{% component logo_set(participants, duplicate=false, base="") %}
 <div class="community-logo-set"{% if duplicate %} aria-hidden="true"{% endif %}>
   {%- for participant in participants -%}
     {%- if participant.name and participant.image and participant.image.path -%}
@@ -38,7 +38,7 @@
       {%- set height = height | trim -%}
       {%- set alt = participant.image.alt | default(value=participant.name ~ " logo") -%}
       <span class="community-logo-cell" title="{{ participant.name }}" style="--logo-height: {{ height }}px">
-        <img src="{{ src }}" alt="{% if not duplicate %}{{ alt }}{% endif %}" loading="eager" decoding="async">
+        <img src="{% if src is starting_with(pat="/") %}{{ base }}{% endif %}{{ src }}" alt="{% if not duplicate %}{{ alt }}{% endif %}" loading="eager" decoding="async">
       </span>
     {%- endif -%}
   {%- endfor -%}
