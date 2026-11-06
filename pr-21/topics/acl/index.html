@@ -1,0 +1,2025 @@
+
+
+
+
+
+
+    
+    
+    
+    
+        
+     
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey Documentation &middot; ACL</title>
+    <meta name="title" property="og:title" content="Valkey Documentation: ACL">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+
+    <div class="styled-title">
+        <h1 class="page-title">Documentation: ACL</h1>
+    </div>
+
+
+<div class="left-aside-bg">
+    <div class="left-aside">
+        <main>
+            
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item">
+            <a href="/valkey-io.github.io/pr-21/topics/" class="breadcrumb-link">Topics</a>
+        </li>
+        
+        <li class="breadcrumb-item">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="" width="8" height="10"/>
+            
+            <a href="/valkey-io.github.io/pr-21/topics/security/" class="breadcrumb-link">Security</a>
+            
+        </li>
+        
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            ACL
+        </li>
+    </ul>
+</nav>
+
+            <div class="main-inner">
+                
+<p>The Valkey ACL, short for Access Control List, is a feature that allows certain connections to be limited in terms of the commands that can be executed and the keys that can be accessed.
+The way it works is that, after connecting, a client is required to either provide a username and a valid password, or a valid TLS certificate to authenticate.
+If authentication succeeded, the connection is associated with a given user and the limits the user has.
+Valkey can be configured so that new connections are already authenticated with a "default" user (this is the default configuration).
+Configuring the default user has, as a side effect, the ability to provide only a specific subset of functionalities to connections that are not explicitly authenticated.</p>
+<p>The standard way to authenticate is the two-argument form of the <code>AUTH</code> command:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>AUTH &lt;username&gt; &lt;password&gt;</span></span></code></pre>
+<p>If the password is valid matches, the connection will be authenticated to the user with the name <code>&lt;username&gt;</code>.</p>
+<p>When the single argument form of the command is used, where only the password is specified, it is assumed that the implicit username is "default".</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>AUTH &lt;password&gt;</span></span></code></pre>
+<p>This form authenticates against the "default" user's password, either set by ACLs or by setting <code>requirepass</code>.</p>
+<h2 id="when-acls-are-useful">When ACLs are useful</h2>
+<p>Before using ACLs, you may want to ask yourself what's the goal you want to
+accomplish by implementing this layer of protection. Normally there are
+two main goals that are well served by ACLs:</p>
+<ol>
+<li>You want to improve security by restricting the access to commands and keys, so that untrusted clients have no access and trusted clients have just the minimum access level to the database in order to perform the work needed. For instance, certain clients may just be able to execute read only commands.</li>
+<li>You want to improve operational safety, so that processes or humans accessing Valkey are not allowed to damage the data or the configuration due to software errors or manual mistakes. For instance, there is no reason for a worker that fetches delayed jobs from Valkey to be able to call the <code>FLUSHALL</code> command.</li>
+</ol>
+<p>Another typical usage of ACLs is related to managed Valkey instances. Valkey is
+often provided as a managed service both by internal company teams that handle
+the Valkey infrastructure for the other internal customers they have, or is
+provided in a software-as-a-service setup by cloud providers. In both
+setups, we want to be sure that configuration commands are excluded for the
+customers.</p>
+<h2 id="configure-acls-with-the-acl-command">Configure ACLs with the ACL command</h2>
+<p>ACLs are defined using a DSL (domain specific language) that describes what
+a given user is allowed to do. Such rules are always implemented from the
+first to the last, left-to-right, because sometimes the order of the rules is
+important to understand what the user is really able to do.</p>
+<p>By default there is a single user defined, called <em>default</em>. We
+can use the <code>ACL LIST</code> command in order to check the currently active ACLs
+and verify what the configuration of a freshly started, defaults-configured
+Valkey instance is:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL LIST</span></span>
+<span class="giallo-l"><span>1) &quot;user default on nopass ~* &amp;* +@all&quot;</span></span></code></pre>
+<p>The command above reports the list of users in the same format that is
+used in the Valkey configuration files, by translating the current ACLs set
+for the users back into their description. If <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#roles">roles</a> are defined,
+they are reported first, in lines starting with "role".</p>
+<p>The first two words in each line are "user" followed by the username. The
+next words are ACL rules that describe different things. We'll show how the rules work in detail, but for now it is enough to say that the default
+user is configured to be active (on), to require no password (nopass), to
+access every possible key (<code>~*</code>) and Pub/Sub channel (<code>&amp;*</code>), every
+database, and be able to call every possible command (<code>+@all</code>).</p>
+<p>Also, in the special case of the default user, having the <em>nopass</em> rule means
+that new connections are automatically authenticated with the default user
+without any explicit <code>AUTH</code> call needed.</p>
+<h2 id="acl-rules">ACL rules</h2>
+<p>The following is the list of valid ACL rules. Certain rules are just
+single words that are used in order to activate or remove a flag, or to
+perform a given change to the user ACL. Other rules are char prefixes that
+are concatenated with command or category names, key patterns, and
+so forth.</p>
+<p>Enable and disallow users:</p>
+<ul>
+<li><code>on</code>: Enable the user: it is possible to authenticate as this user.</li>
+<li><code>off</code>: Disallow the user: it's no longer possible to authenticate with this user; however, previously authenticated connections will still work. Note that if the default user is flagged as <em>off</em>, new connections will start as not authenticated and will require the user to send <code>AUTH</code> or <code>HELLO</code> with the AUTH option in order to authenticate in some way, regardless of the default user configuration.</li>
+</ul>
+<p>Allow and disallow commands:</p>
+<ul>
+<li><code>+&lt;command&gt;</code>: Add the command to the list of commands the user can call. Can be used with <code>|</code> for allowing subcommands (e.g "+config|get").</li>
+<li><code>-&lt;command&gt;</code>: Remove the command to the list of commands the user can call. Starting Valkey 7.0, it can be used with <code>|</code> for blocking subcommands (e.g "-config|set"). Note that commands which do not require authentication cannot be removed, e.g. AUTH, HELLO, and RESET.</li>
+<li><code>+@&lt;category&gt;</code>: Add all the commands in such category to be called by the user, with valid categories being like @admin, @set, @sortedset, ... and so forth, see the full list by calling the <code>ACL CAT</code> command. The special category @all means all the commands, both the ones currently present in the server, and the ones that will be loaded in the future via modules.</li>
+<li><code>-@&lt;category&gt;</code>: Like <code>+@&lt;category&gt;</code> but removes the commands from the list of commands the client can call.</li>
+<li><code>+&lt;command&gt;|first-arg</code>: Allow a specific first argument of an otherwise disabled command. It is only supported on commands with no sub-commands, and is not allowed as negative form like -SELECT|1, only additive starting with "+". This feature is deprecated and may be removed in the future.</li>
+<li><code>allcommands</code>: Alias for +@all. Note that it implies the ability to execute all the future commands loaded via the modules system.</li>
+<li><code>nocommands</code>: Alias for -@all.</li>
+</ul>
+<p>Allow and disallow certain keys and key permissions:</p>
+<ul>
+<li><code>~&lt;pattern&gt;</code>: Add a pattern of keys that can be mentioned as part of commands. For instance <code>~*</code> allows all the keys. The pattern is a glob-style pattern like the one of <code>KEYS</code>. It is possible to specify multiple patterns.</li>
+<li><code>%R~&lt;pattern&gt;</code>: Add the specified read key pattern. This behaves similar to the regular key pattern but only grants permission to read from keys that match the given pattern. See <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#key-permissions">key permissions</a> for more information.</li>
+<li><code>%W~&lt;pattern&gt;</code>: Add the specified write key pattern. This behaves similar to the regular key pattern but only grants permission to write to keys that match the given pattern. See <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#key-permissions">key permissions</a> for more information.</li>
+<li><code>%RW~&lt;pattern&gt;</code>: Alias for <code>~&lt;pattern&gt;</code>.</li>
+<li><code>allkeys</code>: Alias for <code>~*</code>.</li>
+<li><code>resetkeys</code>: Flush the list of allowed keys patterns. For instance the ACL <code>~foo:* ~bar:* resetkeys ~objects:*</code>, will only allow the client to access keys that match the pattern <code>objects:*</code>.</li>
+</ul>
+<p>Allow and disallow Pub/Sub channels:</p>
+<ul>
+<li><code>&amp;&lt;pattern&gt;</code>: Add a glob style pattern of Pub/Sub channels that can be accessed by the user. It is possible to specify multiple channel patterns. Note that pattern matching is done only for channels mentioned by <code>PUBLISH</code> and <code>SUBSCRIBE</code>, whereas <code>PSUBSCRIBE</code> requires a literal match between its channel patterns and those allowed for user.</li>
+<li><code>allchannels</code>: Alias for <code>&amp;*</code> that allows the user to access all Pub/Sub channels.</li>
+<li><code>resetchannels</code>: Flush the list of allowed channel patterns and disconnect the user's Pub/Sub clients if these are no longer able to access their respective channels and/or channel patterns.</li>
+</ul>
+<p>Allow and disallow logical databases:</p>
+<ul>
+<li><code>db=&lt;id&gt;[,&lt;id&gt;...]</code>: Sets the specified database id(s) as the databases the user is allowed to access.
+Multiple ids are separated by commas, e.g. <code>db=0,1,2</code>; at least one id is required.
+Clears the <code>alldbs</code> flag and any previously configured database ids on the selector.
+See <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#database-permissions">database permissions</a> for more information.</li>
+<li><code>alldbs</code>: Allow the user to access all databases. This is the default for newly created selectors and is omitted from generated ACL strings.</li>
+<li><code>resetdbs</code>: Flush the list of allowed databases and clear the <code>alldbs</code> flag. After <code>resetdbs</code>, the user (or selector) cannot access any database until additional <code>db=</code> rules or <code>alldbs</code> are added.</li>
+</ul>
+<p>Configure valid passwords for the user:</p>
+<ul>
+<li><code>&gt;&lt;password&gt;</code>: Add this password to the list of valid passwords for the user. For example <code>&gt;mypass</code> will add "mypass" to the list of valid passwords.  This directive clears the <em>nopass</em> flag (see later). Every user can have any number of passwords.</li>
+<li><code>&lt;&lt;password&gt;</code>: Remove this password from the list of valid passwords. Emits an error in case the password you are trying to remove is actually not set.</li>
+<li><code>#&lt;hash&gt;</code>: Add this SHA-256 hash value to the list of valid passwords for the user. This hash value will be compared to the hash of a password entered for an ACL user. This allows users to store hashes in the <code>acl.conf</code> file rather than storing cleartext passwords. Only SHA-256 hash values are accepted as the password hash must be 64 characters and only contain lowercase hexadecimal characters.</li>
+<li><code>!&lt;hash&gt;</code>: Remove this hash value from the list of valid passwords. This is useful when you do not know the password specified by the hash value but would like to remove the password from the user.</li>
+<li><code>nopass</code>: All the set passwords of the user are removed, and the user is flagged as requiring no password: it means that every password will work against this user. If this directive is used for the default user, every new connection will be immediately authenticated with the default user without any explicit AUTH command required. Note that the <em>resetpass</em> directive will clear this condition.</li>
+<li><code>resetpass</code>: Flushes the list of allowed passwords and removes the <em>nopass</em> status. After <em>resetpass</em>, the user has no associated passwords and can only authenticate using client certificates, if <code>tls-auth-clients-user</code> is enabled.</li>
+</ul>
+<p><em>Note: if a user is not flagged with nopass and has no list of valid passwords, that user is impossible to authenticate via password. Such users can still be authenticated through mTLS certificate fields if <code>tls-auth-clients-user</code> is enabled.</em></p>
+<p>Configure selectors for the user:</p>
+<ul>
+<li><code>(&lt;rule list&gt;)</code>: Create a new selector to match rules against. Selectors are evaluated after the user permissions, and are evaluated according to the order they are defined. If a command matches either the user permissions or any selector, it is allowed. See <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#selectors">selectors</a> for more information.</li>
+<li><code>clearselectors</code>: Delete all of the selectors attached to the user.</li>
+</ul>
+<p>Assign roles to the user (Added in version 9.2):</p>
+<ul>
+<li><code>role=&lt;role&gt;[,&lt;role&gt; ...]</code>: Assign the named roles to the user, replacing any role the user already had. At least one role has to be named, and every named role must already exist. See <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#roles">roles</a> for more information.</li>
+<li><code>resetroles</code>: Remove every role from the user.</li>
+</ul>
+<p>Reset the user:</p>
+<ul>
+<li><code>reset</code> Performs the following actions: resetpass, resetkeys, resetchannels, allchannels (if acl-pubsub-default is set), resetdbs, alldbs, off, clearselectors, -@all, resetroles. The user returns to the same state it had immediately after its creation.</li>
+</ul>
+<h2 id="create-and-edit-user-acls-with-the-acl-setuser-command">Create and edit user ACLs with the ACL SETUSER command</h2>
+<p>Users can be created and modified in two main ways:</p>
+<ol>
+<li>Using the ACL command and its <code>ACL SETUSER</code> subcommand.</li>
+<li>Modifying the server configuration, where users can be defined, and restarting the server. With an <em>external ACL file</em>, just call <code>ACL LOAD</code>.</li>
+</ol>
+<p>In this section we'll learn how to define users using the <code>ACL</code> command.
+With such knowledge, it will be trivial to do the same things via the
+configuration files. Defining users in the configuration deserves its own
+section and will be discussed later separately.</p>
+<p>To start, try the simplest <code>ACL SETUSER</code> command call:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER alice</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>The <code>ACL SETUSER</code> command takes the username and a list of ACL rules to apply
+to the user. However the above example did not specify any rule at all.
+This will just create the user if it did not exist, using the defaults for new
+users. If the user already exists, the command above will do nothing at all.</p>
+<p>Check the default user status:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL LIST</span></span>
+<span class="giallo-l"><span>1) &quot;user alice off resetchannels -@all&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;user default on nopass ~* &amp;* +@all&quot;</span></span></code></pre>
+<p>The new user "alice" is:</p>
+<ul>
+<li>In the off status, so <code>AUTH</code> will not work for the user "alice".</li>
+<li>The user also has no passwords set.</li>
+<li>Cannot access any command. Note that the user is created by default without the ability to access any command, so the <code>-@all</code> in the output above could be omitted; however, <code>ACL LIST</code> attempts to be explicit rather than implicit.</li>
+<li>There are no key patterns that the user can access.</li>
+<li>There are no Pub/Sub channels that the user can access.</li>
+</ul>
+<p>Such user is completely useless. Let's try to define the user so that
+it is active, has a password, and can access with only the <code>GET</code> command
+to key names starting with the string "cached:".</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER alice on &gt;p1pp0 ~cached:* +get</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Now the user can do something, but will refuse to do other things:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; AUTH alice p1pp0</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; GET foo</span></span>
+<span class="giallo-l"><span>(error) NOPERM this user has no permissions to access one of the keys used as arguments</span></span>
+<span class="giallo-l"><span>&gt; GET cached:1234</span></span>
+<span class="giallo-l"><span>(nil)</span></span>
+<span class="giallo-l"><span>&gt; SET cached:1234 zap</span></span>
+<span class="giallo-l"><span>(error) NOPERM this user has no permissions to run the &#39;set&#39; command</span></span></code></pre>
+<p>Things are working as expected. In order to inspect the configuration of the
+user alice (remember that user names are case sensitive), it is possible to
+use an alternative to <code>ACL LIST</code> which is designed to be more suitable for
+computers to read, while <code>ACL GETUSER</code> is more human readable.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL GETUSER alice</span></span>
+<span class="giallo-l"><span>1) &quot;flags&quot;</span></span>
+<span class="giallo-l"><span>2) 1) &quot;on&quot;</span></span>
+<span class="giallo-l"><span>3) &quot;passwords&quot;</span></span>
+<span class="giallo-l"><span>4) 1) &quot;2d9c75...&quot;</span></span>
+<span class="giallo-l"><span>5) &quot;commands&quot;</span></span>
+<span class="giallo-l"><span>6) &quot;-@all +get&quot;</span></span>
+<span class="giallo-l"><span>7) &quot;keys&quot;</span></span>
+<span class="giallo-l"><span>8) &quot;~cached:*&quot;</span></span>
+<span class="giallo-l"><span>9) &quot;channels&quot;</span></span>
+<span class="giallo-l"><span>10) &quot;&quot;</span></span>
+<span class="giallo-l"><span>11) &quot;databases&quot;</span></span>
+<span class="giallo-l"><span>12) &quot;alldbs&quot;</span></span>
+<span class="giallo-l"><span>13) &quot;selectors&quot;</span></span>
+<span class="giallo-l"><span>14) (empty array)</span></span></code></pre>
+<p>The <code>ACL GETUSER</code> returns a field-value array that describes the user in more parsable terms. The output includes the set of flags, a list of key patterns, passwords, and so forth. New fields may be added over time. For example, Valkey 9.1 added the <code>databases</code> field. The output is probably more readable if we use RESP3, so that it is returned as a map reply:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL GETUSER alice</span></span>
+<span class="giallo-l"><span>1# &quot;flags&quot; =&gt; 1~ &quot;on&quot;</span></span>
+<span class="giallo-l"><span>2# &quot;passwords&quot; =&gt; 1) &quot;2d9c75273d72b32df726fb545c8a4edc719f0a95a6fd993950b10c474ad9c927&quot;</span></span>
+<span class="giallo-l"><span>3# &quot;commands&quot; =&gt; &quot;-@all +get&quot;</span></span>
+<span class="giallo-l"><span>4# &quot;keys&quot; =&gt; &quot;~cached:*&quot;</span></span>
+<span class="giallo-l"><span>5# &quot;channels&quot; =&gt; &quot;&quot;</span></span>
+<span class="giallo-l"><span>6# &quot;databases&quot; =&gt; &quot;alldbs&quot;</span></span>
+<span class="giallo-l"><span>7# &quot;selectors&quot; =&gt; (empty array)</span></span></code></pre>
+<p><em>Note: from now on, we'll continue using the Valkey default protocol, version 2</em></p>
+<p>Using another <code>ACL SETUSER</code> command (from a different user, because alice cannot run the <code>ACL</code> command), we can add multiple patterns to the user:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER alice ~objects:* ~items:* ~public:*</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL LIST</span></span>
+<span class="giallo-l"><span>1) &quot;user alice on #2d9c75... ~cached:* ~objects:* ~items:* ~public:* resetchannels -@all +get&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;user default on nopass ~* &amp;* +@all&quot;</span></span></code></pre>
+<p>The user representation in memory is now as we expect it to be.</p>
+<h2 id="multiple-calls-to-acl-setuser">Multiple calls to ACL SETUSER</h2>
+<p>It is very important to understand what happens when <code>ACL SETUSER</code> is called
+multiple times. What is critical to know is that every <code>ACL SETUSER</code> call will
+NOT reset the user, but will just apply the ACL rules to the existing user.
+The user is reset only if it was not known before. In that case, a brand new
+user is created with zeroed-ACLs. The user cannot do anything, is
+disallowed, has no passwords, and so forth. This is the best default for safety.</p>
+<p>However later calls will just modify the user incrementally. For instance,
+the following sequence:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER myuser +set</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL SETUSER myuser +get</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Will result in myuser being able to call both <code>GET</code> and <code>SET</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL LIST</span></span>
+<span class="giallo-l"><span>1) &quot;user default on nopass ~* &amp;* +@all&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;user myuser off resetchannels -@all +get +set&quot;</span></span></code></pre><h2 id="command-categories">Command categories</h2>
+<p>Setting user ACLs by specifying all the commands one after the other is
+really annoying, so instead we do things like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER antirez on +@all -@dangerous &gt;42a979... ~*</span></span></code></pre>
+<p>By saying +@all and -@dangerous, we included all the commands and later removed
+all the commands that are tagged as dangerous inside the Valkey command table.
+Note that command categories <strong>never include modules commands</strong> with
+the exception of +@all. If you say +@all, all the commands can be executed by
+the user, even future commands loaded via the modules system. However if you
+use the ACL rule +@read or any other, the modules commands are always
+excluded. This is very important because you should just trust the Valkey
+internal command table. Modules may expose dangerous things and in
+the case of an ACL that is just additive, that is, in the form of <code>+@all -...</code>
+You should be absolutely sure that you'll never include what you did not mean
+to.</p>
+<p>The following is a list of command categories and their meanings:</p>
+<ul>
+<li><strong>admin</strong> - Administrative commands. Normal applications will never need to use
+these. Includes <code>REPLICAOF</code>, <code>CONFIG</code>, <code>DEBUG</code>, <code>SAVE</code>, <code>MONITOR</code>, <code>ACL</code>, <code>SHUTDOWN</code>, etc.</li>
+<li><strong>bitmap</strong> - Data type: bitmaps related.</li>
+<li><strong>blocking</strong> - Potentially blocking the connection until released by another
+command.</li>
+<li><strong>connection</strong> - Commands affecting the connection or other connections.
+This includes <code>AUTH</code>, <code>SELECT</code>, <code>COMMAND</code>, <code>CLIENT</code>, <code>ECHO</code>, <code>PING</code>, etc.</li>
+<li><strong>dangerous</strong> - Potentially dangerous commands (each should be considered with care for
+various reasons). This includes <code>FLUSHALL</code>, <code>MIGRATE</code>, <code>RESTORE</code>, <code>SORT</code>, <code>KEYS</code>,
+<code>CLIENT</code>, <code>DEBUG</code>, <code>INFO</code>, <code>CONFIG</code>, <code>SAVE</code>, <code>REPLICAOF</code>, etc.</li>
+<li><strong>geo</strong> - Data type: geospatial indexes related.</li>
+<li><strong>hash</strong> - Data type: hashes related.</li>
+<li><strong>hyperloglog</strong> - Data type: hyperloglog related.</li>
+<li><strong>fast</strong> - Fast O(1) commands. May loop on the number of arguments, but not the
+number of elements in the key.</li>
+<li><strong>keyspace</strong> - Writing or reading from keys, databases, or their metadata
+in a type agnostic way. Includes <code>DEL</code>, <code>RESTORE</code>, <code>DUMP</code>, <code>RENAME</code>, <code>EXISTS</code>, <code>DBSIZE</code>,
+<code>KEYS</code>, <code>EXPIRE</code>, <code>TTL</code>, <code>FLUSHALL</code>, etc. Commands that may modify the keyspace,
+key, or metadata will also have the <code>write</code> category. Commands that only read
+the keyspace, key, or metadata will have the <code>read</code> category.</li>
+<li><strong>list</strong> - Data type: lists related.</li>
+<li><strong>pubsub</strong> - PubSub-related commands.</li>
+<li><strong>read</strong> - Reading from keys (values or metadata). Note that commands that don't
+interact with keys, will not have either <code>read</code> or <code>write</code>.</li>
+<li><strong>scripting</strong> - Scripting related.</li>
+<li><strong>set</strong> - Data type: sets related.</li>
+<li><strong>sortedset</strong> - Data type: sorted sets related.</li>
+<li><strong>slow</strong> - All commands that are not <code>fast</code>.</li>
+<li><strong>stream</strong> - Data type: streams related.</li>
+<li><strong>string</strong> - Data type: strings related.</li>
+<li><strong>transaction</strong> - <code>WATCH</code> / <code>MULTI</code> / <code>EXEC</code> related commands.</li>
+<li><strong>write</strong> - Writing to keys (values or metadata).</li>
+</ul>
+<p>Valkey can also show you a list of all categories and the exact commands each category includes using the Valkey <code>ACL CAT</code> command. It can be used in two forms:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ACL CAT -- Will just list all the categories available</span></span>
+<span class="giallo-l"><span>ACL CAT &lt;category-name&gt; -- Will list all the commands inside the category</span></span></code></pre>
+<p>Examples:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span> &gt; ACL CAT</span></span>
+<span class="giallo-l"><span> 1) &quot;keyspace&quot;</span></span>
+<span class="giallo-l"><span> 2) &quot;read&quot;</span></span>
+<span class="giallo-l"><span> 3) &quot;write&quot;</span></span>
+<span class="giallo-l"><span> 4) &quot;set&quot;</span></span>
+<span class="giallo-l"><span> 5) &quot;sortedset&quot;</span></span>
+<span class="giallo-l"><span> 6) &quot;list&quot;</span></span>
+<span class="giallo-l"><span> 7) &quot;hash&quot;</span></span>
+<span class="giallo-l"><span> 8) &quot;string&quot;</span></span>
+<span class="giallo-l"><span> 9) &quot;bitmap&quot;</span></span>
+<span class="giallo-l"><span>10) &quot;hyperloglog&quot;</span></span>
+<span class="giallo-l"><span>11) &quot;geo&quot;</span></span>
+<span class="giallo-l"><span>12) &quot;stream&quot;</span></span>
+<span class="giallo-l"><span>13) &quot;pubsub&quot;</span></span>
+<span class="giallo-l"><span>14) &quot;admin&quot;</span></span>
+<span class="giallo-l"><span>15) &quot;fast&quot;</span></span>
+<span class="giallo-l"><span>16) &quot;slow&quot;</span></span>
+<span class="giallo-l"><span>17) &quot;blocking&quot;</span></span>
+<span class="giallo-l"><span>18) &quot;dangerous&quot;</span></span>
+<span class="giallo-l"><span>19) &quot;connection&quot;</span></span>
+<span class="giallo-l"><span>20) &quot;transaction&quot;</span></span>
+<span class="giallo-l"><span>21) &quot;scripting&quot;</span></span></code></pre>
+<p>As you can see, so far there are 21 distinct categories. Now let's check what
+command is part of the <em>geo</em> category:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span> &gt; ACL CAT geo</span></span>
+<span class="giallo-l"><span> 1) &quot;geohash&quot;</span></span>
+<span class="giallo-l"><span> 2) &quot;georadius_ro&quot;</span></span>
+<span class="giallo-l"><span> 3) &quot;georadiusbymember&quot;</span></span>
+<span class="giallo-l"><span> 4) &quot;geopos&quot;</span></span>
+<span class="giallo-l"><span> 5) &quot;geoadd&quot;</span></span>
+<span class="giallo-l"><span> 6) &quot;georadiusbymember_ro&quot;</span></span>
+<span class="giallo-l"><span> 7) &quot;geodist&quot;</span></span>
+<span class="giallo-l"><span> 8) &quot;georadius&quot;</span></span>
+<span class="giallo-l"><span> 9) &quot;geosearch&quot;</span></span>
+<span class="giallo-l"><span>10) &quot;geosearchstore&quot;</span></span></code></pre>
+<p>Note that commands may be part of multiple categories. For example, an
+ACL rule like <code>+@geo -@read</code> will result in certain geo commands to be
+excluded because they are read-only commands.</p>
+<h2 id="allow-block-subcommands">Allow/block subcommands</h2>
+<p>Subcommands can be allowed/blocked just like other
+commands (by using the separator <code>|</code> between the command and subcommand, for
+example: <code>+config|get</code> or <code>-config|set</code>)</p>
+<p>That is true for all commands except DEBUG. In order to allow/block specific DEBUG subcommands, see the next section.</p>
+<h2 id="allow-the-first-arg-of-a-blocked-command">Allow the first-arg of a blocked command</h2>
+<p><strong>Note: This feature is deprecated and may be removed in the future.</strong></p>
+<p>Sometimes the ability to exclude or include a command or a subcommand as a whole is not enough.
+Many deployments may not be happy providing the ability to execute a <code>SELECT</code> for any DB, but may
+still want to be able to run <code>SELECT 0</code>.
+Database permissions are the preferred way to restrict which databases a user
+can access; see <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#database-permissions">database permissions</a>.</p>
+<p>For versions without database permissions, we could alter the ACL of a user in the following way:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ACL SETUSER myuser -select +select|0</span></span></code></pre>
+<p>First, remove the <code>SELECT</code> command and then add the allowed
+first-arg. Note that <strong>it is not possible to do the reverse</strong> since first-args
+can be only added, not excluded. It is safer to specify all the first-args
+that are valid for some user since it is possible that
+new first-args may be added in the future.</p>
+<p>Another example:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ACL SETUSER myuser -debug +debug|digest</span></span></code></pre>
+<p>Note that first-arg matching may add some performance penalty; however, it is hard to measure even with synthetic benchmarks. The
+additional CPU cost is only paid when such commands are called, and not when
+other commands are called.</p>
+<p>It is possible to use this mechanism in order to allow subcommands in Valkey
+versions prior to 7.0 (see above section).</p>
+<h2 id="all-vs-all">+@all VS -@all</h2>
+<p>In the previous section, it was observed how it is possible to define command
+ACLs based on adding/removing single commands.</p>
+<h2 id="selectors">Selectors</h2>
+<p>Valkey supports adding multiple sets of rules that are evaluated independently of each other.
+These secondary sets of permissions are called selectors and added by wrapping a set of rules within parentheses.
+In order to execute a command, either the root permissions (rules defined outside of parenthesis) or any of the selectors (rules defined inside parenthesis) must match the given command.
+Internally, the root permissions are checked first followed by selectors in the order they were added.</p>
+<p>For example, consider a user with the ACL rules <code>+GET ~key1 (+SET ~key2)</code>.
+This user is able to execute <code>GET key1</code> and <code>SET key2 hello</code>, but not <code>GET key2</code> or <code>SET key1 world</code>.</p>
+<p>Unlike the user's root permissions, selectors cannot be modified after they are added.
+Instead, selectors can be removed with the <code>clearselectors</code> keyword, which removes all of the added selectors.
+Note that <code>clearselectors</code> does not remove the root permissions.</p>
+<h2 id="roles">Roles</h2>
+<p>Starting with Valkey 9.2, permissions can be defined once in a named <em>role</em> and assigned to any number of users, instead of being repeated in every user.
+A role holds the same kind of permissions a user does: commands, key patterns, channel patterns, databases and selectors.
+Roles are created and modified with <a href="/valkey-io.github.io/pr-21/commands/acl-setrole"><code>ACL SETROLE</code></a>, which accepts the same rules as <a href="/valkey-io.github.io/pr-21/commands/acl-setuser"><code>ACL SETUSER</code></a> except for the ones that only make sense for a user: <code>on</code>, <code>off</code>, <code>reset</code>, the password rules, <code>role=</code> and <code>resetroles</code>.
+Roles are assigned to a user with the <code>role=</code> rule, and removed with <code>resetroles</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETROLE reader ~app:* +@read</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL SETROLE writer ~app:* +@write</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL SETUSER alice on &gt;alicepass role=reader</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL SETUSER bob on &gt;bobpass role=reader,writer</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL DRYRUN alice SET app:1 x</span></span>
+<span class="giallo-l"><span>&quot;User alice has no permissions to run the &#39;set&#39; command&quot;</span></span>
+<span class="giallo-l"><span>&gt; ACL DRYRUN bob SET app:1 x</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>The <code>role=</code> rule replaces the whole set of roles held by the user, so <code>ACL SETUSER bob role=writer</code> leaves bob with the writer role only.</p>
+<p>A user's own permissions and the permissions of each of its roles are evaluated independently, and a command is allowed if any of them allows it, in the same way <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#selectors">selectors</a> work.
+The user's own permissions are checked first, followed by the roles in the order they were assigned.
+This means a user can be granted permissions on top of a role, but cannot be restricted below what a role grants.</p>
+<p>Other things to know about roles:</p>
+<ul>
+<li>Changes to a role with <a href="/valkey-io.github.io/pr-21/commands/acl-setrole"><code>ACL SETROLE</code></a> take effect immediately for every user holding it. Pub/Sub clients of those users that lose access to their channels are disconnected.</li>
+<li>Roles cannot be nested, cannot have passwords, and cannot be authenticated against.</li>
+<li>A role cannot be deleted with <a href="/valkey-io.github.io/pr-21/commands/acl-delrole"><code>ACL DELROLE</code></a> while it is assigned to a user. <a href="/valkey-io.github.io/pr-21/commands/acl-getrole"><code>ACL GETROLE</code></a> lists the users holding a role.</li>
+<li><a href="/valkey-io.github.io/pr-21/commands/acl-roles"><code>ACL ROLES</code></a> lists the role names, <a href="/valkey-io.github.io/pr-21/commands/acl-users"><code>ACL USERS</code></a> lists only the users. <a href="/valkey-io.github.io/pr-21/commands/acl-list"><code>ACL LIST</code></a> reports both, with the <code>role</code> lines listed before the <code>user</code> lines.</li>
+<li><a href="/valkey-io.github.io/pr-21/commands/acl-getuser"><code>ACL GETUSER</code></a> reports the roles held by a user in the <code>roles</code> field, but the other fields only describe the user's own rules. Use <a href="/valkey-io.github.io/pr-21/commands/acl-dryrun"><code>ACL DRYRUN</code></a> to check the effective permissions of a user.</li>
+<li>Role names are case sensitive and may contain any printable ASCII character except for spaces, commas, quotes and backslashes. Roles have their own namespace, so a role may share its name with a user, a command, or a category.</li>
+</ul>
+<p><strong>Note:</strong> like a new user, a new role starts with access to all databases (<code>alldbs</code>, see <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#database-permissions">database permissions</a>), and to all Pub/Sub channels if <code>acl-pubsub-default</code> is set to <code>allchannels</code>.
+Since permissions are combined with OR logic, such a role grants all databases (and channels) to its users, even to a user restricted with <code>resetdbs</code>, <code>db=&lt;id&gt;</code> or <code>resetchannels</code>.
+To limit what a role grants, restrict the role itself, for example:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETROLE reader ~app:* +@read db=0 resetchannels</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre><h2 id="key-permissions">Key permissions</h2>
+<p>key patterns can also be used to define how a command is able to touch a key.
+This is achieved through rules that define key permissions.
+The key permission rules take the form of <code>%(&lt;permission&gt;)~&lt;pattern&gt;</code>.
+Permissions are defined as individual characters that map to the following key permissions:</p>
+<ul>
+<li>W (Write): The data stored within the key may be updated or deleted.</li>
+<li>R (Read): User supplied data from the key is processed, copied or returned. Note that this does not include metadata such as size information (example <code>STRLEN</code>), type information (example <code>TYPE</code>) or information about whether a value exists within a collection (example <code>SISMEMBER</code>).</li>
+</ul>
+<p>Permissions can be composed together by specifying multiple characters.
+Specifying the permission as 'RW' is considered full access and is analogous to just passing in <code>~&lt;pattern&gt;</code>.</p>
+<p>For a concrete example, consider a user with ACL rules <code>+@all ~app1:* (+@read ~app2:*)</code>.
+This user has full access on <code>app1:*</code> and readonly access on <code>app2:*</code>.
+However, some commands support reading data from one key, doing some transformation, and storing it into another key.
+One such command is the <code>COPY</code> command, which copies the data from the source key into the destination key.
+The example set of ACL rules is unable to handle a request copying data from <code>app2:user</code> into <code>app1:user</code>, since neither the root permission nor the selector fully matches the command.
+However, using key selectors you can define a set of ACL rules that can handle this request <code>+@all ~app1:* %R~app2:*</code>.
+The first pattern is able to match <code>app1:user</code> and the second pattern is able to match <code>app2:user</code>.</p>
+<p>Which type of permission is required for a command is documented through <a href="/valkey-io.github.io/pr-21/topics/key-specs#logical-operation-flags">key specifications</a>.
+The type of permission is based off the keys logical operation flags.
+The insert, update, and delete flags map to the write key permission.
+The access flag maps to the read key permission.
+If the key has no logical operation flags, such as <code>EXISTS</code>, the user still needs either key read or key write permissions to execute the command.</p>
+<p>Note: Side channels to accessing user data are ignored when it comes to evaluating whether read permissions are required to execute a command.
+This means that some write commands that return metadata about the modified key only require write permission on the key to execute.
+For example, consider the following two commands:</p>
+<ul>
+<li><code>LPUSH key1 data</code>: modifies "key1" but only returns metadata about it, the size of the list after the push, so the command only requires write permission on "key1" to execute.</li>
+<li><code>LPOP key2</code>: modifies "key2" but also returns data from it, the left most item in the list, so the command requires both read and write permission on "key2" to execute.</li>
+</ul>
+<p>If an application needs to make sure no data is accessed from a key, including side channels, it's recommended to not provide any access to the key.</p>
+<h2 id="database-permissions">Database permissions</h2>
+<p>In addition to commands, keys, and Pub/Sub channels, ACL rules can restrict
+which databases (see <a href="/valkey-io.github.io/pr-21/commands/select"><code>SELECT</code></a>) a user is
+allowed to access. By default a newly created selector has the <code>alldbs</code> flag
+set, meaning the user can use any database. A <code>db=&lt;id&gt;[,&lt;id&gt;...]</code> rule
+restricts the selector to only the listed databases.</p>
+<p>The default scope for database permissions is <code>alldbs</code>. The following rules
+control database access:</p>
+<ul>
+<li><code>db=&lt;id&gt;[,&lt;id&gt;...]</code>: Allow access only to the listed database ids.
+At least one id is required.
+This replaces any previously configured database ids and clears <code>alldbs</code>.</li>
+<li><code>alldbs</code>: Allow access to every database (default for new selectors).</li>
+<li><code>resetdbs</code>: Remove every database from the allowed list and clear <code>alldbs</code>.</li>
+</ul>
+<p>For example, to create a user that may only operate on databases 0 and 1:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER alice on +@all ~* db=0,1 nopass</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL LIST</span></span>
+<span class="giallo-l"><span>1) &quot;user alice on nopass ~* resetchannels db=0,1 +@all&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;user default on nopass ~* &amp;* +@all&quot;</span></span></code></pre>
+<p>A later <code>db=</code> rule replaces the previous database list:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER alice db=2,3</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL LIST</span></span>
+<span class="giallo-l"><span>1) &quot;user alice on nopass ~* resetchannels db=2,3 +@all&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;user default on nopass ~* &amp;* +@all&quot;</span></span></code></pre>
+<p>Use <code>resetdbs</code> to remove database access from an existing user:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER alice resetdbs</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL LIST</span></span>
+<span class="giallo-l"><span>1) &quot;user alice on nopass ~* resetchannels resetdbs +@all&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;user default on nopass ~* &amp;* +@all&quot;</span></span></code></pre>
+<p>Database permissions can also be combined with <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#selectors">selectors</a> so that
+different rule sets apply to different databases:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER bob on nopass (db=0,1 +@write +select ~*) (db=2,3 +@read +select ~*)</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; ACL LIST</span></span>
+<span class="giallo-l"><span>1) &quot;user bob on nopass resetchannels -@all (~* resetchannels db=0,1 -@all +@write +select) (~* resetchannels db=2,3 -@all +@read +select)&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;user default on nopass ~* &amp;* +@all&quot;</span></span></code></pre>
+<p>The <code>ACL LIST</code> output shows three sets of permissions for <code>bob</code>: the root
+permissions (<code>-@all</code>, with implicit <code>alldbs</code>) and two selectors, one for each
+parenthesized rule set. A command is allowed when the root permissions or any selector matches it.
+See <a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#selectors">selectors</a> for more information.</p>
+<h3 id="how-database-permissions-are-evaluated">How database permissions are evaluated</h3>
+<p>When a command is executed, the user must have access both to the command
+itself and to every database the command touches. Two groups of commands
+are checked specifically against the database list:</p>
+<p>Commands that explicitly reference a database id in their arguments require
+the user to have access to that id:</p>
+<ul>
+<li><a href="/valkey-io.github.io/pr-21/commands/select"><code>SELECT</code></a> - target database id.</li>
+<li><a href="/valkey-io.github.io/pr-21/commands/swapdb"><code>SWAPDB</code></a> - both database ids.</li>
+<li><a href="/valkey-io.github.io/pr-21/commands/move"><code>MOVE</code></a> - destination database id, and the source
+database which is the currently selected database.</li>
+<li><a href="/valkey-io.github.io/pr-21/commands/copy"><code>COPY</code></a> - the destination database id when the <code>DB</code>
+option is used.</li>
+</ul>
+<p>Commands that do not specify a database id but operate across the entire
+keyspace require the user to have <code>alldbs</code>:</p>
+<ul>
+<li><a href="/valkey-io.github.io/pr-21/commands/flushall"><code>FLUSHALL</code></a></li>
+<li><a href="/valkey-io.github.io/pr-21/commands/cluster-cancelslotmigrations"><code>CLUSTER CANCELSLOTMIGRATIONS</code></a></li>
+<li><a href="/valkey-io.github.io/pr-21/commands/cluster-migrateslots"><code>CLUSTER MIGRATESLOTS</code></a></li>
+</ul>
+<p>When access is denied because of database permissions, the server replies with
+a <code>NOPERM</code> error mentioning the database, and the event is recorded in
+<a href="/valkey-io.github.io/pr-21/commands/acl-log"><code>ACL LOG</code></a> with the reason <code>database</code>.</p>
+<h3 id="connection-establishment">Connection establishment</h3>
+<p>Authentication and authorization are decoupled from the currently selected
+database. New client connections are placed in database 0 by default, even if
+the authenticated user is not allowed to access database 0. This lets a client
+authenticate first and then issue <a href="/valkey-io.github.io/pr-21/commands/select"><code>SELECT</code></a> (or any
+command that does not access the keyspace) to switch to a database the user is
+allowed to use.</p>
+<h2 id="how-passwords-are-stored-internally">How passwords are stored internally</h2>
+<p>Valkey internally stores passwords hashed with SHA256. If you set a password
+and check the output of <code>ACL LIST</code> or <code>ACL GETUSER</code>, you'll see a long hex
+string that looks pseudo random. Here is an example, because in the previous
+examples, for the sake of brevity, the long hex string was trimmed:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL GETUSER default</span></span>
+<span class="giallo-l"><span>1) &quot;flags&quot;</span></span>
+<span class="giallo-l"><span>2) 1) &quot;on&quot;</span></span>
+<span class="giallo-l"><span>3) &quot;passwords&quot;</span></span>
+<span class="giallo-l"><span>4) 1) &quot;2d9c75273d72b32df726fb545c8a4edc719f0a95a6fd993950b10c474ad9c927&quot;</span></span>
+<span class="giallo-l"><span>5) &quot;commands&quot;</span></span>
+<span class="giallo-l"><span>6) &quot;+@all&quot;</span></span>
+<span class="giallo-l"><span>7) &quot;keys&quot;</span></span>
+<span class="giallo-l"><span>8) &quot;~*&quot;</span></span>
+<span class="giallo-l"><span>9) &quot;channels&quot;</span></span>
+<span class="giallo-l"><span>10) &quot;&amp;*&quot;</span></span>
+<span class="giallo-l"><span>11) &quot;selectors&quot;</span></span>
+<span class="giallo-l"><span>12) (empty array)</span></span></code></pre>
+<p>Using SHA256 provides the ability to avoid storing the password in clear text
+while still allowing for a very fast <code>AUTH</code> command, which is a very important
+feature of Valkey and is coherent with what clients expect from Valkey.</p>
+<p>However ACL <em>passwords</em> are not really passwords. They are shared secrets
+between the server and the client, because the password is
+not an authentication token used by a human being. For instance:</p>
+<ul>
+<li>There are no length limits, the password will just be memorized in some client software. There is no human that needs to recall a password in this context.</li>
+<li>The ACL password does not protect any other thing. For example, it will never be the password for some email account.</li>
+<li>Often when you are able to access the hashed password itself, by having full access to the Valkey commands of a given server, or corrupting the system itself, you already have access to what the password is protecting: the Valkey instance stability and the data it contains.</li>
+</ul>
+<p>For this reason, slowing down the password authentication, in order to use an
+algorithm that uses time and space to make password cracking hard,
+is a very poor choice. What we suggest instead is to generate strong
+passwords, so that nobody will be able to crack it using a
+dictionary or a brute force attack even if they have the hash. To do so, there is a special ACL
+command <code>ACL GENPASS</code> that generates passwords using the system cryptographic pseudorandom
+generator:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL GENPASS</span></span>
+<span class="giallo-l"><span>&quot;dd721260bfe1b3d9601e7fbab36de6d04e2e67b0ef1c53de59d45950db0dd3cc&quot;</span></span></code></pre>
+<p>The command outputs a 32-byte (256-bit) pseudorandom string converted to a
+64-byte alphanumerical string. This is long enough to avoid attacks and short
+enough to be easy to manage, cut &amp; paste, store, and so forth. This is what
+you should use in order to generate Valkey passwords.</p>
+<h2 id="use-an-external-acl-file">Use an external ACL file</h2>
+<p>There are two ways to store users inside the Valkey configuration:</p>
+<ol>
+<li>Users can be specified directly inside the <code>valkey.conf</code> file.</li>
+<li>It is possible to specify an external ACL file.</li>
+</ol>
+<p>The two methods are <em>mutually incompatible</em>, so Valkey will ask you to use one
+or the other. Specifying users inside <code>valkey.conf</code> is
+good for simple use cases. When there are multiple users to define, in a
+complex environment, we recommend you use the ACL file instead.</p>
+<p>The format used inside <code>valkey.conf</code> and in the external ACL file is exactly
+the same, so it is trivial to switch from one to the other, and is
+the following:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>user &lt;username&gt; ... acl rules ...</span></span></code></pre>
+<p>For instance:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>user worker +@list +@connection ~jobs:* on &gt;ffa9203c493aa99</span></span></code></pre>
+<p><a href="https://madolson.github.io/valkey-io.github.io/pr-21/topics/acl/#roles">Roles</a> are defined in the same way, using the <code>role</code> keyword:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>role &lt;rolename&gt; ... acl rules ...</span></span></code></pre>
+<p>For instance:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>role jobs +@list ~jobs:*</span></span>
+<span class="giallo-l"><span>user worker +@connection on &gt;ffa9203c493aa99 role=jobs</span></span></code></pre>
+<p>Roles are loaded before users, so the <code>role</code> and <code>user</code> lines may appear in
+any order. <code>ACL SAVE</code> writes the roles before the users.</p>
+<p>When you want to use an external ACL file, you are required to specify
+the configuration directive called <code>aclfile</code>, like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>aclfile /etc/valkey/users.acl</span></span></code></pre>
+<p>When you are just specifying a few users directly inside the <code>valkey.conf</code>
+file, you can use <code>CONFIG REWRITE</code> in order to store the new user configuration
+inside the file by rewriting it.</p>
+<p>The external ACL file however is more powerful. You can do the following:</p>
+<ul>
+<li>Use <code>ACL LOAD</code> if you modified the ACL file manually and you want Valkey to reload the new configuration. Note that this command is able to load the file <em>only if all the users are correctly specified</em>. Otherwise, an error is reported to the user, and the old configuration will remain valid.</li>
+<li>Use <code>ACL SAVE</code> to save the current ACL configuration to the ACL file.</li>
+</ul>
+<p>Note that <code>CONFIG REWRITE</code> does not also trigger <code>ACL SAVE</code>. When you use
+an ACL file, the configuration and the ACLs are handled separately.</p>
+<h2 id="acl-rules-for-sentinel-and-replicas">ACL rules for Sentinel and Replicas</h2>
+<p>In case you don't want to provide Valkey replicas and Valkey Sentinel instances
+full access to your Valkey instances, the following is the set of commands
+that must be allowed in order for everything to work correctly.</p>
+<p>For Sentinel, allow the user to access the following commands both in the primary and replica instances:</p>
+<ul>
+<li>AUTH, CLIENT, SUBSCRIBE, SCRIPT, PUBLISH, PING, INFO, MULTI, SLAVEOF, CONFIG, CLIENT, EXEC.</li>
+</ul>
+<p>Sentinel does not need to access any key in the database but does use Pub/Sub, so the ACL rule would be the following (note: <code>AUTH</code> is not needed since it is always allowed):</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ACL SETUSER sentinel-user on &gt;somepassword allchannels +multi +slaveof +ping +exec +subscribe +config|rewrite +role +publish +info +client|setname +client|kill +script|kill</span></span></code></pre>
+<p>Valkey replicas require the following commands to be allowed on the primary instance:</p>
+<ul>
+<li>PSYNC, REPLCONF, PING</li>
+</ul>
+<p>For cluster deployments, Valkey 9.0 introduces the Atomic Slot Migration feature, which requires the replication user to be allowed to run <code>CLUSTER SYNCSLOTS</code>.
+No keys need to be accessed, so this translates to the following rules:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ACL setuser replica-user on &gt;somepassword +psync +replconf +ping +cluster|syncslots</span></span></code></pre>
+<p>Note that you don't need to configure the replicas to allow the primary to be able to execute any set of commands. The primary is always authenticated as the root user from the point of view of replicas.</p>
+
+
+            </div>
+        </main>
+        <aside>
+            
+
+
+
+
+
+<nav class="docs-menu" aria-label="Documentation">
+    <ul class="docs-menu-sections">
+        <li>
+            <details>
+                <summary>Getting started</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/introduction/">Introduction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/quickstart/">Quick start guide</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/installation/">Installation</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/faq/">FAQ</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/migration/">Migration from Redis to Valkey</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-bundle/">Valkey Bundle</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        
+<li>
+    <details>
+        <summary>Command reference</summary>
+        <ul>
+            <li><a href="/valkey-io.github.io/pr-21/commands/">All commands</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bitmap">Bitmap</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bloom">Bloom filter</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#cluster">Cluster</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#connection">Connection</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#generic">Generic</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#geo">Geospatial indices</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hash">Hash</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hyperloglog">HyperLogLog</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#json">JSON</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#list">List</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#pubsub">Pub/Sub</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#scripting">Scripting and Functions</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#search">Search</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#server">Server</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#set">Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#sorted-set">Sorted Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#stream">Stream</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#string">String</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#transactions">Transactions</a></li>
+        </ul>
+    </details>
+</li>
+
+        <li>
+            <details>
+                <summary>Data types</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/data-types/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/strings/">Strings</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Strings commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Strings commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/append/">APPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decr/">DECR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decrby/">DECRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delex/">DELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delifeq/">DELIFEQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/get/">GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getdel/">GETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getex/">GETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getrange/">GETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getset/">GETSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incr/">INCR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrby/">INCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrbyfloat/">INCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lcs/">LCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mget/">MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mset/">MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetex/">MSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetnx/">MSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psetex/">PSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/set/">SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setex/">SETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setnx/">SETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setrange/">SETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/strlen/">STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/substr/">SUBSTR</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/lists/">Lists</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Lists commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Lists commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmove/">BLMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmpop/">BLMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blpop/">BLPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpop/">BRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpoplpush/">BRPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lindex/">LINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/linsert/">LINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/llen/">LLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmove/">LMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmpop/">LMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpop/">LPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpos/">LPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpush/">LPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpushx/">LPUSHX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrange/">LRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrem/">LREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lset/">LSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ltrim/">LTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpop/">RPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpoplpush/">RPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpush/">RPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpushx/">RPUSHX</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sets/">Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/sadd/">SADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scard/">SCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiff/">SDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiffstore/">SDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinter/">SINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sintercard/">SINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinterstore/">SINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sismember/">SISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smembers/">SMEMBERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smismember/">SMISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smove/">SMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spop/">SPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srandmember/">SRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srem/">SREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sscan/">SSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunion/">SUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunionstore/">SUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hashes/">Hashes</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hashes commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hashes commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hdel/">HDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexists/">HEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpire/">HEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpireat/">HEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpiretime/">HEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hget/">HGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetall/">HGETALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetdel/">HGETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetex/">HGETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrby/">HINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrbyfloat/">HINCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hkeys/">HKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hlen/">HLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmget/">HMGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmset/">HMSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpersist/">HPERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpire/">HPEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpireat/">HPEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpiretime/">HPEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpttl/">HPTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hrandfield/">HRANDFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hscan/">HSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hset/">HSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetex/">HSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetnx/">HSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hstrlen/">HSTRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/httl/">HTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hvals/">HVALS</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sorted-sets/">Sorted Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sorted Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sorted Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzmpop/">BZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmax/">BZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmin/">BZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zadd/">ZADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcard/">ZCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcount/">ZCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiff/">ZDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiffstore/">ZDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zincrby/">ZINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinter/">ZINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zintercard/">ZINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinterstore/">ZINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zlexcount/">ZLEXCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmpop/">ZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmscore/">ZMSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmax/">ZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmin/">ZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrandmember/">ZRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrange/">ZRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebylex/">ZRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebyscore/">ZRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangestore/">ZRANGESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrank/">ZRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrem/">ZREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebylex/">ZREMRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyrank/">ZREMRANGEBYRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyscore/">ZREMRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrange/">ZREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebylex/">ZREVRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebyscore/">ZREVRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrank/">ZREVRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscan/">ZSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscore/">ZSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunion/">ZUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunionstore/">ZUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/streams-intro/">Streams</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Streams commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Streams commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/xack/">XACK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xackdel/">XACKDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xadd/">XADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xautoclaim/">XAUTOCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xclaim/">XCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdel/">XDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdelex/">XDELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup/">XGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-create/">XGROUP CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-createconsumer/">XGROUP CREATECONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-delconsumer/">XGROUP DELCONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-destroy/">XGROUP DESTROY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-help/">XGROUP HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-setid/">XGROUP SETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo/">XINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-consumers/">XINFO CONSUMERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-groups/">XINFO GROUPS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-help/">XINFO HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-stream/">XINFO STREAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xlen/">XLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xpending/">XPENDING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrange/">XRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xread/">XREAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xreadgroup/">XREADGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrevrange/">XREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xsetid/">XSETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xtrim/">XTRIM</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/geospatial/">Geospatial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Geospatial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Geospatial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/geoadd/">GEOADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geodist/">GEODIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geohash/">GEOHASH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geopos/">GEOPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius/">GEORADIUS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember/">GEORADIUSBYMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember_ro/">GEORADIUSBYMEMBER_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius_ro/">GEORADIUS_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearch/">GEOSEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearchstore/">GEOSEARCHSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitmaps/">Bitmaps</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitmaps commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitmaps commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitcount/">BITCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitop/">BITOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitpos/">BITPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getbit/">GETBIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setbit/">SETBIT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitfields/">Bitfields</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitfields commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitfields commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield/">BITFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield_ro/">BITFIELD_RO</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hyperloglogs/">HyperLogLog</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">HyperLogLog commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="HyperLogLog commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfadd/">PFADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfcount/">PFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfdebug/">PFDEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfmerge/">PFMERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfselftest/">PFSELFTEST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bloomfilters/">Bloom Filters <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bloom Filters commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bloom Filters commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.add/">BF.ADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.card/">BF.CARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.exists/">BF.EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.info/">BF.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.insert/">BF.INSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.load/">BF.LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.madd/">BF.MADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.mexists/">BF.MEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.reserve/">BF.RESERVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-json/">JSON <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">JSON commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="JSON commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrappend/">JSON.ARRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrindex/">JSON.ARRINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrinsert/">JSON.ARRINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrlen/">JSON.ARRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrpop/">JSON.ARRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrtrim/">JSON.ARRTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.clear/">JSON.CLEAR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.debug/">JSON.DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.del/">JSON.DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.forget/">JSON.FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.get/">JSON.GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.merge/">JSON.MERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mget/">JSON.MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mset/">JSON.MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.numincrby/">JSON.NUMINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.nummultby/">JSON.NUMMULTBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objkeys/">JSON.OBJKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objlen/">JSON.OBJLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.resp/">JSON.RESP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.set/">JSON.SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strappend/">JSON.STRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strlen/">JSON.STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.toggle/">JSON.TOGGLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.type/">JSON.TYPE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Application development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/keyspace/">Keyspace</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Keyspace commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Keyspace commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/copy/">COPY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dbsize/">DBSIZE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/del/">DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dump/">DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exists/">EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expire/">EXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expireat/">EXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expiretime/">EXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushall/">FLUSHALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushdb/">FLUSHDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/keys/">KEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/migrate/">MIGRATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/move/">MOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object/">OBJECT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-encoding/">OBJECT ENCODING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-freq/">OBJECT FREQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-help/">OBJECT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-idletime/">OBJECT IDLETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-refcount/">OBJECT REFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/persist/">PERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpire/">PEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpireat/">PEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpiretime/">PEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pttl/">PTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/randomkey/">RANDOMKEY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rename/">RENAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/renamenx/">RENAMENX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/restore/">RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scan/">SCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort/">SORT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort_ro/">SORT_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/swapdb/">SWAPDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/touch/">TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ttl/">TTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/type/">TYPE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unlink/">UNLINK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/wait/">WAIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/waitaof/">WAITAOF</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/pipelining/">Pipelining</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/transactions/">Transactions</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Transactions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Transactions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/discard/">DISCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exec/">EXEC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/multi/">MULTI</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unwatch/">UNWATCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/watch/">WATCH</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/pubsub/">Pub/Sub</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Pub/Sub commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Pub/Sub commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/psubscribe/">PSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/publish/">PUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub/">PUBSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-channels/">PUBSUB CHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-help/">PUBSUB HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numpat/">PUBSUB NUMPAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numsub/">PUBSUB NUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardchannels/">PUBSUB SHARDCHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardnumsub/">PUBSUB SHARDNUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/punsubscribe/">PUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spublish/">SPUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ssubscribe/">SSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/subscribe/">SUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunsubscribe/">SUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unsubscribe/">UNSUBSCRIBE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/notifications/">Keyspace notifications</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Patterns and tutorials</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lru-cache/">Key eviction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/client-side-caching/">Client-side caching</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/distlock/">Distributed Locks</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/indexing/">Secondary indexing</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/twitter-clone/">Patterns example</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Scripting and functions</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/programmability/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Scripting and functions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Scripting and functions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval/">EVAL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha/">EVALSHA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha_ro/">EVALSHA_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval_ro/">EVAL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall/">FCALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall_ro/">FCALL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function/">FUNCTION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-delete/">FUNCTION DELETE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-dump/">FUNCTION DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-flush/">FUNCTION FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-help/">FUNCTION HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-kill/">FUNCTION KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-list/">FUNCTION LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-load/">FUNCTION LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-restore/">FUNCTION RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-stats/">FUNCTION STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script/">SCRIPT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-debug/">SCRIPT DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-exists/">SCRIPT EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-flush/">SCRIPT FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-help/">SCRIPT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-kill/">SCRIPT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-load/">SCRIPT LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-show/">SCRIPT SHOW</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/eval-intro/">Scripting with Lua</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/functions-intro/">Functions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lua-api/">Lua API reference</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldb/">Debugging Lua scripts</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Search <span class="docs-menu-badge">module</span></summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/search/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Search commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Search commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.aggregate/">FT.AGGREGATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.create/">FT.CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.cursor/">FT.CURSOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.dropindex/">FT.DROPINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.hybrid/">FT.HYBRID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.info/">FT.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.search/">FT.SEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft._list/">FT._LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-query/">Queries</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-expressions/">Aggregation expressions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-data-formats/">Data formats</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-configurables/">Configuration</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-monitoring/">Metrics and configurations</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-observables/">INFO SEARCH metrics</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Administration</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/server/">The Valkey server</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cli/">CLI</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey.conf/">Configuration</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Configuration commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Configuration commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/config/">CONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-get/">CONFIG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-help/">CONFIG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-resetstat/">CONFIG RESETSTAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-rewrite/">CONFIG REWRITE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-set/">CONFIG SET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/persistence/">Persistence</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Persistence commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Persistence commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgrewriteaof/">BGREWRITEAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgsave/">BGSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lastsave/">LASTSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/save/">SAVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/replication/">Replication</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Replication commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Replication commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/failover/">FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psync/">PSYNC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replconf/">REPLCONF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replicaof/">REPLICAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/role/">ROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slaveof/">SLAVEOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sync/">SYNC</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel/">High availability with Valkey Sentinel</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/admin/">Administration</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/clients/">Client handling</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Client handling commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Client handling commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/auth/">AUTH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client/">CLIENT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-caching/">CLIENT CACHING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-capa/">CLIENT CAPA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getname/">CLIENT GETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getredir/">CLIENT GETREDIR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-help/">CLIENT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-id/">CLIENT ID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-import-source/">CLIENT IMPORT-SOURCE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-info/">CLIENT INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-kill/">CLIENT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-list/">CLIENT LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-evict/">CLIENT NO-EVICT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-touch/">CLIENT NO-TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-pause/">CLIENT PAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-reply/">CLIENT REPLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setinfo/">CLIENT SETINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setname/">CLIENT SETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-tracking/">CLIENT TRACKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-trackinginfo/">CLIENT TRACKINGINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unblock/">CLIENT UNBLOCK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unpause/">CLIENT UNPAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/echo/">ECHO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hello/">HELLO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ping/">PING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/quit/">QUIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/reset/">RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/select/">SELECT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/signals/">Signal handling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ARM/">ARM support</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/RDMA/">RDMA experimental support</a>
+</li>
+
+                    <li>
+                        <details class="docs-menu-other-commands">
+                            <summary>Other commands</summary>
+                            <ul class="docs-menu-commands" aria-label="Administration commands">
+                                <li><a href="/valkey-io.github.io/pr-21/commands/debug/">DEBUG</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/info/">INFO</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/lolwut/">LOLWUT</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/monitor/">MONITOR</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/restore-asking/">RESTORE-ASKING</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/shutdown/">SHUTDOWN</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/time/">TIME</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Cluster</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-tutorial/">Cluster tutorial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Cluster tutorial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Cluster tutorial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/asking/">ASKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster/">CLUSTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslots/">CLUSTER ADDSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslotsrange/">CLUSTER ADDSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-bumpepoch/">CLUSTER BUMPEPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-cancelslotmigrations/">CLUSTER CANCELSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-count-failure-reports/">CLUSTER COUNT-FAILURE-REPORTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-countkeysinslot/">CLUSTER COUNTKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslots/">CLUSTER DELSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslotsrange/">CLUSTER DELSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-failover/">CLUSTER FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-flushslots/">CLUSTER FLUSHSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-forget/">CLUSTER FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getkeysinslot/">CLUSTER GETKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getslotmigrations/">CLUSTER GETSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-help/">CLUSTER HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-info/">CLUSTER INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-keyslot/">CLUSTER KEYSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-links/">CLUSTER LINKS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-meet/">CLUSTER MEET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-migrateslots/">CLUSTER MIGRATESLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myid/">CLUSTER MYID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myshardid/">CLUSTER MYSHARDID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-nodes/">CLUSTER NODES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicas/">CLUSTER REPLICAS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicate/">CLUSTER REPLICATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-reset/">CLUSTER RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-saveconfig/">CLUSTER SAVECONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-set-config-epoch/">CLUSTER SET-CONFIG-EPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-setslot/">CLUSTER SETSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-shards/">CLUSTER SHARDS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slaves/">CLUSTER SLAVES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slot-stats/">CLUSTER SLOT-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slots/">CLUSTER SLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-syncslots/">CLUSTER SYNCSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/clusterscan/">CLUSTERSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readonly/">READONLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readwrite/">READWRITE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-spec/">Cluster specification</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/atomic-slot-migration/">Atomic slot migration</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details open>
+                <summary>Security</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/security/">Overview</a>
+</li>
+
+                    
+<li>
+    <details class="docs-menu-current-topic" open>
+        <summary class="docs-menu-current" aria-current="page"><span>ACL</span>
+        </summary>
+        <ul class="docs-menu-commands" aria-label="ACL commands">
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl/">ACL</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-cat/">ACL CAT</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-delrole/">ACL DELROLE</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-deluser/">ACL DELUSER</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-digest/">ACL DIGEST</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-dryrun/">ACL DRYRUN</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-genpass/">ACL GENPASS</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-getrole/">ACL GETROLE</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-getuser/">ACL GETUSER</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-help/">ACL HELP</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-list/">ACL LIST</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-load/">ACL LOAD</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-log/">ACL LOG</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-roles/">ACL ROLES</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-save/">ACL SAVE</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-setrole/">ACL SETROLE</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-setuser/">ACL SETUSER</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-users/">ACL USERS</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/acl-whoami/">ACL WHOAMI</a></li>
+        </ul>
+    </details>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/tls/">TLS</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldap/">LDAP authentication <span class="docs-menu-badge">module</span></a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Performance and troubleshooting</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/problems/">Troubleshooting Valkey</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/memory-optimization/">Memory optimization</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Memory optimization commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Memory optimization commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory/">MEMORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-doctor/">MEMORY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-help/">MEMORY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-malloc-stats/">MEMORY MALLOC-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-purge/">MEMORY PURGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-stats/">MEMORY STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-usage/">MEMORY USAGE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency-monitor/">Latency monitoring</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Latency monitoring commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Latency monitoring commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency/">LATENCY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-doctor/">LATENCY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-graph/">LATENCY GRAPH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-help/">LATENCY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-histogram/">LATENCY HISTOGRAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-history/">LATENCY HISTORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-latest/">LATENCY LATEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-reset/">LATENCY RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency/">Diagnosing latency issues</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Diagnosing latency issues commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Diagnosing latency issues commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog/">COMMANDLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-get/">COMMANDLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-help/">COMMANDLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-len/">COMMANDLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-reset/">COMMANDLOG RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog/">SLOWLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-get/">SLOWLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-help/">SLOWLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-len/">SLOWLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-reset/">SLOWLOG RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hotkeys/">Hot key tracking</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hot key tracking commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hot key tracking commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys/">HOTKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-get/">HOTKEYS GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-help/">HOTKEYS HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-reset/">HOTKEYS RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/benchmark/">Benchmarking tool</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/performance-on-cpu/">CPU profiling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/debugging/">Debugging</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/mass-insertion/">Bulk loading</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Module development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/modules-intro/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Module development commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Module development commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/module/">MODULE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-help/">MODULE HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-list/">MODULE LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-load/">MODULE LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-loadex/">MODULE LOADEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-unload/">MODULE UNLOAD</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-native-types/">Modules API for native types</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-blocking-ops/">Modules and blocking commands</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-api-ref/">Modules API reference</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Client development</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/protocol/">Serialization protocol specification</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/command-arguments/">Command arguments</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Command arguments commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Command arguments commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/command/">COMMAND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-count/">COMMAND COUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-docs/">COMMAND DOCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeys/">COMMAND GETKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeysandflags/">COMMAND GETKEYSANDFLAGS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-help/">COMMAND HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-info/">COMMAND INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-list/">COMMAND LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/key-specs/">Command key specifications</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/command-tips/">Command tips</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel-clients/">Sentinel client spec</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>About Valkey</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/releases/">Releases and versioning schema</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/history/">History</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+    </ul>
+</nav>
+
+
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/acl.md">Update this Page on GitHub!</a>
+</div>
+
+        </aside>
+    </div>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

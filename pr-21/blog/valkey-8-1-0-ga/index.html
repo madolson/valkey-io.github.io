@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-03.webp" />
+    
+    
+
+    <meta name="description" content="Valkey 8.1 is now generally available! Come learn about the exciting improvements in performance, reliability, and observability that are available in this new version." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Valkey 8.1: Continuing to Deliver Enhanced Performance and Reliability</title>
+    <meta name="title" property="og:title" content="Valkey: Valkey 8.1: Continuing to Deliver Enhanced Performance and Reliability">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-03.webp" alt="Valkey 8.1: Continuing to Deliver Enhanced Performance and Reliability" class="feature-img">
+
+
+<h1>Valkey 8.1: Continuing to Deliver Enhanced Performance and Reliability</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2025-04-02
+  
+    &middot; 
+    
+      
+      
+      <em>Ricardo J. Dias</em>,
+    
+      
+      
+      <em>Martin Visser</em>
+    
+  
+</div>
+<p>The Valkey community is excited to unveil the new release of Valkey 8.1,
+a minor version update designed to further enhance performance, reliability, observability and usability
+over Valkey 8.0 for all Valkey installations.</p>
+<p>In this blog, we'll dive a bit deeper into some of the new features in Valkey 8.1 and how they can benefit your applications.</p>
+<h2 id="performance">Performance</h2>
+<p>Valkey 8.1 introduces several performance improvements that reduce latency, increase throughput, and lower memory usage.</p>
+<h3 id="the-new-hashtable">The New Hashtable</h3>
+<p>The main changes responsible for several performance improvements is the new hashtable implementation that is used both as the main key-value store in Valkey and the implementations for the Hash, Set, and Sorted Set data types.</p>
+<p>The new hashtable implementation is a complete rewrite of the previous hashtable. The new design adopts several modern design techniques to reduce the number of allocations to store each object, which reduces the number of random memory accesses while also saving memory.</p>
+<p>The result is we observed a roughly 20 byte reduction per key-value pair for keys without a TTL, and up to a 30 byte reduction for key-value pairs with a TTL. The new implementation also helps improve the Valkey server throughput by roughly 10% compared to 8.0 version for pipeline workloads when I/O threading is not used.</p>
+<p>You can learn more about the design and results in <a href="/valkey-io.github.io/pr-21/blog/new-hash-table">the dedicated blog post about the implementation</a>.</p>
+<h3 id="iterator-prefetching">Iterator Prefetching</h3>
+<p>Iterating over the key set keys is done in various scenarios, for example when a Valkey node needs to send all the keys and values to a newly connected replica.</p>
+<p>In Valkey 8.1 the iteration functionality is improved by using memory prefetching techniques.</p>
+<p>This means that when an element is going to be returned to the caller, the bucket and its elements have already been loaded into CPU cache when the previous bucket was being iterated.</p>
+<p>This makes the iterator <a rel="external" href="https://github.com/valkey-io/valkey/pull/1568">3.5x</a> faster than without prefetching, thus reducing the time it takes to send the data to a newly connected replica.</p>
+<p>Commands like <code>KEYS</code> and also benefit from this optimization.</p>
+<h3 id="i-o-threads-improvements">I/O Threads Improvements</h3>
+<p>Following up the I/O threads improvements added in 8.0, more operations have been offloaded to the I/O thread pool in the 8.1 release, improving the throughput and latency of some operations.</p>
+<p>In the new release, TLS connections are now able to offload the TLS negotiation to I/O threads. This change improves the rate of accepting new connections by around <a rel="external" href="https://github.com/valkey-io/valkey/pull/1338">300%</a>.</p>
+<p>Other sources of overhead in the TLS connection handling were identified, namely in the calls to <code>SSL_pending()</code> and <code>ERR_clear_error()</code> functions, which were being called in the main event thread. By offloading these functions to the I/O threads pool, a throughput improvement was achieved in some operations. For instance, it was observed a <a rel="external" href="https://github.com/valkey-io/valkey/pull/1271">10%</a> improvement in <code>SET</code> operations throughput, and a <a rel="external" href="https://github.com/valkey-io/valkey/pull/1271">22%</a> improvement in <code>GET</code> operations throughput.</p>
+<p>Replication traffic efficiency was also improved in 8.1 by offloading the reading of replication stream on the replicas to the I/O thread pool which means they can serve more read traffic. On the primaries, replication stream writes are now offloaded to the I/O thread pool.</p>
+<h3 id="replication-improvements">Replication Improvements</h3>
+<p>Full syncs with TLS enabled are up to <a rel="external" href="https://github.com/valkey-io/valkey/pull/1479">18%</a> faster by removing redundant CRC checksumming when using diskless replication.</p>
+<p>The fork copy-on-write memory overhead is reduced by up to <a rel="external" href="https://github.com/valkey-io/valkey/pull/905">47%</a></p>
+<h3 id="sorted-set-and-hyperloglog-and-bitcount-optimizations">Sorted set and hyperloglog and bitcount optimizations</h3>
+<p><code>ZRANK</code> command, which serves a popular usecase in operating Leaderboards, was optimized to perform up to <a rel="external" href="https://github.com/valkey-io/valkey/pull/1389">45%</a> faster, depending on the sorted set size.</p>
+<p><code>ZADD</code> and other commands that involve floating point numbers are optimized by <a rel="external" href="https://github.com/valkey-io/valkey/pull/1260"><code>fast_float</code></a> to parse floats using SIMD instructions.
+This optimization requires a C++ compiler, and is currently an opt-in feature at compile time.</p>
+<p>The probabilistic hyperloglog is another great data type, used for counting unique elements in very large datasets whilst using only 12KB of memory regardless of the amount of elements. By using the modern CPUs Advanced Vector Extensions of x86, Valkey 8.1 can achieve a <a rel="external" href="https://github.com/valkey-io/valkey/pull/1293">12x</a> speed for the operations like <code>PFMERGE</code> and <code>PFCOUNT</code> on hyperloglog data types.</p>
+<p>Similarly, the BITCOUNT operation has been improved up to <a rel="external" href="https://github.com/valkey-io/valkey/pull/1741">514%</a> using AVX2 on x86.</p>
+<h3 id="active-defrag-improvements">Active Defrag Improvements</h3>
+<p>Active Defrag has been improved to eliminate latencies greater than 1ms (https://github.com/valkey-io/valkey/pull/1242).  Defrag cycle time has been reduced to 500us (with increased frequency), resulting in much more predictable latencies, with a dramatic reduction in tail latencies.</p>
+<p>An anti-starvation protection has also been introduced in the presence of long-running commands. If a slow command delays the defrag cycle, the defrag process will run proportionately longer to ensure that the configured CPU is achieved. Given the presence of slow commands, the proportional extra time is insignificant to latency.</p>
+<h2 id="observability">Observability</h2>
+<p>There are also several improvements to the observability of the system behavior in Valkey 8.1.</p>
+<h3 id="log-improvements">Log Improvements</h3>
+<p>Valkey 8.1 brings new options to the format of the log file entries as well as the way timestamps are recorded in the log file. This makes it easier to consume the log files by log collecting systems.</p>
+<p>The format of the log file entries is controlled by the <code>log-format</code> parameter, where the default is the existing format :</p>
+<ul>
+<li><code>legacy</code>: the default, traditional log format</li>
+<li><code>logfmt</code>: a structured log format; see https://www.brandur.org/logfmt</li>
+</ul>
+<p>The formatting of the timestamp of the log file entries is controlled by the <code>log-timestamp-format</code> parameter, where the default is the existing format:</p>
+<ul>
+<li><code>legacy</code>: default format</li>
+<li><code>iso8601</code>: ISO 8601 extended date and time with time zone, of the form yyyy-mm-ddThh:mm:ss.sss±hh:mm</li>
+<li><code>milliseconds</code>: milliseconds since the epoch</li>
+</ul>
+<p><em>Note</em>: using both the <code>logfmt</code> and <code>iso8601</code> format uses around 60% more space, so disk space should be considered when implementing these.</p>
+<h3 id="extending-the-slowlog-to-commandlog">Extending the Slowlog to Commandlog</h3>
+<p>Valkey has long had the capability to record slow commands at execution time based on the threshold set with the <code>slowlog-log-slower-than</code> parameter to keep the last <code>slowlog-max-len</code> entries. A useful tool in troubleshooting, it didn't take into account the overall round-trip to the application or the impact on network usage. With the addition of the new <code>COMMANDLOG</code> feature in Valkey 8.1, the recording of large requests and replies is now giving users great visibility in end-to-end latency.</p>
+<h3 id="improved-latency-insights">Improved Latency Insights</h3>
+<p>Valkey has a built-in latency monitoring framework which samples latency-sensitive code paths such as for example fork when enabled through <code>latency-monitor-threshold</code> <a rel="external" href="https://valkey.io/topics/latency-monitor/">latency monitor</a>.</p>
+<p>The new feature adds to additional metrics to the <code>LATENCY LATEST</code> command that reports on the latest latency events that have been collected. The additional information in Valkey 8.1 reports on the total of the recorded latencies as well as the number of recorded spikes for this event. These additional fields allow users to better understand how often these latency events are occurring and the total impact they are causing to the system.</p>
+<h2 id="extensibility">Extensibility</h2>
+<p>Valkey is already well known by its extensibility features. The sophisticated module system allows to extend the core system with new features developed as external modules.</p>
+<h3 id="programmability">Programmability</h3>
+<p>In Valkey 8.1 the module system API was extended with the support for developing new scripting engines as external modules.</p>
+<p>This new API opens the door for the development of new language and runtime alternatives to the Lua base scripts supported by the Valkey core when using <code>EVAL</code> and <code>FCALL</code> commands.</p>
+<p>In future releases of Valkey, we expect the emergence of new scripting engines. A good candidate is a scripting engine based on WASM, allowing <code>EVAL</code> scripts to be written in other languages than Lua and to be executed in a more secure sandbox environment.</p>
+<p>There are also benefits for existing Lua scripts, since new Lua runtimes can be easily plugged in that provide better security properties and/or better performance.</p>
+<p>Developers that intend to build new scripting engines for Valkey should check the <a rel="external" href="https://valkey.io/topics/modules-api-ref/">Module API</a> documentation.</p>
+<h2 id="additional-highlights">Additional Highlights</h2>
+<h3 id="conditional-updates">Conditional Updates</h3>
+<p>This new functionality allows Valkey users to perform conditional updates using the <code>SET</code> command if the given comparison-value matches the key’s current value. This is a not only a quality-of-life improvement for developers as they no longer need to add this condition to their application code, it also saves a roundtrip to first get a value and then compare it before a <code>SET</code>. When using the optional <code>GET</code> as part of the <code>SET IFEQ</code>, the existing value is returned regardless whether it matches the comparison-value.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Valkey 8.1 continues the path of innovation and improvements, transparently bringing more performance and reliability to the user.  We look forward to hearing what you achieve with Valkey 8.1! More detail can be found in <a rel="external" href="https://github.com/valkey-io/valkey/releases/tag/8.1.0">release notes</a> for the 8.1 GA release.</p>
+<h2 id="thank-you">THANK YOU</h2>
+<p>We appreciate the efforts of all who contributed code to this release!</p>
+<ul>
+<li>Alan Scherger (<a rel="external" href="https://github.com/flyinprogrammer">flyinprogrammer</a>),</li>
+<li>Amit Nagler (<a rel="external" href="https://github.com/naglera">naglera</a>),</li>
+<li>Basel Naamna (<a rel="external" href="https://github.com/xbasel">xbasel</a>),</li>
+<li>Ben Totten (<a rel="external" href="https://github.com/bentotten">bentotten</a>),</li>
+<li>Binbin (<a rel="external" href="https://github.com/enjoy-binbin">enjoy-binbin</a>),</li>
+<li>Caiyi Wu (<a rel="external" href="https://github.com/Codebells">Codebells</a>),</li>
+<li>Danish Mehmood (<a rel="external" href="https://github.com/danish-mehmood">danish-mehmood</a>),</li>
+<li>Eran Ifrah (<a rel="external" href="https://github.com/eifrah-aws">eifrah-aws</a>),</li>
+<li>Guillaume Koenig (<a rel="external" href="https://github.com/knggk">knggk</a>),</li>
+<li>Harkrishn Patro (<a rel="external" href="https://github.com/hpatro">hpatro</a>),</li>
+<li>Jacob Murphy (<a rel="external" href="https://github.com/murphyjacob4">murphyjacob4</a>),</li>
+<li>Jim Brunner (<a rel="external" href="https://github.com/JimB123">JimB123</a>),</li>
+<li>Josef Šimánek (<a rel="external" href="https://github.com/simi">simi</a>),</li>
+<li>Jungwoo Song (<a rel="external" href="https://github.com/bluayer">bluayer</a>),</li>
+<li>Karthick Ariyaratnam (<a rel="external" href="https://github.com/karthyuom">karthyuom</a>),</li>
+<li>Karthik Subbarao (<a rel="external" href="https://github.com/KarthikSubbarao">KarthikSubbarao</a>),</li>
+<li>Lipeng Zhu (<a rel="external" href="https://github.com/zhulipeng">zhulipeng</a>),</li>
+<li>Madelyn Olson (<a rel="external" href="https://github.com/madolson">madolson</a>),</li>
+<li>Masahiro Ide (<a rel="external" href="https://github.com/imasahiro">imasahiro</a>),</li>
+<li>Melroy van den Berg (<a rel="external" href="https://github.com/melroy89">melroy89</a>),</li>
+<li>Mikhail Koviazin (<a rel="external" href="https://github.com/mkmkme">mkmkme</a>),</li>
+<li>Nadav Gigi (<a rel="external" href="https://github.com/NadavGigi">NadavGigi</a>),</li>
+<li>Nadav Levanoni (<a rel="external" href="https://github.com/nadav-levanoni">nadav-levanoni</a>),</li>
+<li>Nikhil Manglore (<a rel="external" href="https://github.com/Nikhil-Manglore">Nikhil-Manglore</a>),</li>
+<li>Parth Patel (<a rel="external" href="https://github.com/parthpatel">parthpatel</a>),</li>
+<li>Pierre (<a rel="external" href="https://github.com/pieturin">pieturin</a>),</li>
+<li>Ping Xie (<a rel="external" href="https://github.com/PingXie">PingXie</a>),</li>
+<li>Qu Chen (<a rel="external" href="https://github.com/QuChen88">QuChen88</a>),</li>
+<li>Rain Valentine (<a rel="external" href="https://github.com/SoftlyRaining">SoftlyRaining</a>),</li>
+<li>Ran Shidlansik (<a rel="external" href="https://github.com/ranshid">ranshid</a>),</li>
+<li>Ray Cao (<a rel="external" href="https://github.com/RayaCoo">RayaCoo</a>),</li>
+<li>Ricardo Dias (<a rel="external" href="https://github.com/rjd15372">rjd15372</a>),</li>
+<li>Romain Geissler (<a rel="external" href="https://github.com/Romain-Geissler-1A">Romain-Geissler-1A</a>),</li>
+<li>Roman Gershman (<a rel="external" href="https://github.com/romange">romange</a>),</li>
+<li>Roshan Khatri (<a rel="external" href="https://github.com/roshkhatri">roshkhatri</a>),</li>
+<li>Rueian (<a rel="external" href="https://github.com/rueian">rueian</a>),</li>
+<li>Sarthak Aggarwal (<a rel="external" href="https://github.com/sarthakaggarwal97">sarthakaggarwal97</a>),</li>
+<li>Seungmin Lee (<a rel="external" href="https://github.com/sungming2">sungming2</a>),</li>
+<li>Shai Zarka (<a rel="external" href="https://github.com/zarkash-aws">zarkash-aws</a>),</li>
+<li>Shivshankar (<a rel="external" href="https://github.com/Shivshankar-Reddy">Shivshankar-Reddy</a>),</li>
+<li>Simon Baatz (<a rel="external" href="https://github.com/gmbnomis">gmbnomis</a>),</li>
+<li>Sinkevich Artem (<a rel="external" href="https://github.com/ArtSin">ArtSin</a>),</li>
+<li>Stav Ben-Tov (<a rel="external" href="https://github.com/stav-bentov">stav-bentov</a>),</li>
+<li>Stefan Mueller (<a rel="external" href="https://github.com/muelstefamzn">muelstefamzn</a>),</li>
+<li>Tal Shachar (<a rel="external" href="https://github.com/talxsha">talxsha</a>),</li>
+<li>Thalia Archibald (<a rel="external" href="https://github.com/thaliaarchi">thaliaarchi</a>),</li>
+<li>Uri Yagelnik (<a rel="external" href="https://github.com/uriyage">uriyage</a>),</li>
+<li>Vadym Khoptynets (<a rel="external" href="https://github.com/poiuj">poiuj</a>),</li>
+<li>Viktor Szépe (<a rel="external" href="https://github.com/szepeviktor">szepeviktor</a>),</li>
+<li>Viktor Söderqvist (<a rel="external" href="https://github.com/zuiderkwast">zuiderkwast</a>),</li>
+<li>Vu Diep (<a rel="external" href="https://github.com/vudiep411">vudiep411</a>),</li>
+<li>Wen Hui (<a rel="external" href="https://github.com/hwware">hwware</a>),</li>
+<li>Xuyang WANG (<a rel="external" href="https://github.com/Nugine">Nugine</a>),</li>
+<li>Yanqi Lv (<a rel="external" href="https://github.com/lyq2333">lyq2333</a>),</li>
+<li>Yury Fridlyand (<a rel="external" href="https://github.com/Yury-Fridlyand">Yury-Fridlyand</a>),</li>
+<li>Zvi Schneider (<a rel="external" href="https://github.com/zvi-code">zvi-code</a>),</li>
+<li>bodong.ybd (<a rel="external" href="https://github.com/yangbodong22011">yangbodong22011</a>),</li>
+<li><a rel="external" href="https://github.com/chx9">chx9</a>,</li>
+<li><a rel="external" href="https://github.com/kronwerk">kronwerk</a>,</li>
+<li>otheng (<a rel="external" href="https://github.com/otheng03">otheng03</a>),</li>
+<li><a rel="external" href="https://github.com/secwall">secwall</a>,</li>
+<li>skyfirelee (<a rel="external" href="https://github.com/artikell">artikell</a>),</li>
+<li>xingbowang (<a rel="external" href="https://github.com/xingbowang">xingbowang</a>),</li>
+<li>zhaozhao.zz (<a rel="external" href="https://github.com/soloestoy">soloestoy</a>),</li>
+<li>zhenwei pi(<a rel="external" href="https://github.com/pizhenwei">pizhenwei</a>),</li>
+<li>zixuan zhao (<a rel="external" href="https://github.com/azuredream">azuredream</a>),</li>
+<li>烈香 (<a rel="external" href="https://github.com/hengyoush">hengyoush</a>),</li>
+<li>风去幽墨 (<a rel="external" href="https://github.com/fengquyoumo">fengquyoumo</a>)</li>
+</ul>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/rdias.jpeg" alt="photo of Ricardo J. Dias" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Ricardo J. Dias</h4>
+    
+    <a target="_blank" href="https://github.com/rjd15372"><i class="icon icon-github-square"></i> @rjd15372</a>
+    
+    <p>Ricardo is a principal software engineer at Percona where he works as contributor to the Valkey project. Ricardo has been working in distributed storage systems for many years, but his interests are not limited to distributed systems, he also enjoys designing and implementing lock-free data structures, as well as, developing static code analyzers. In his free time, he's a family guy and also manages a roller hockey club.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/mvisser.jpeg" alt="photo of Martin Visser" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Martin Visser</h4>
+    
+    <a target="_blank" href="https://github.com/martinrvisser"><i class="icon icon-github-square"></i> @martinrvisser</a>
+    
+    <p>Martin is Percona’s tech lead for Valkey. A long term database geek from analytics, OLTP to in-memory, he is also an open source enthusiast at heart.
+In his spare time, Martin is a family man and enjoys learning, tinkering and building.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-1-0-ga/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-1-0-ga/&title=Valkey%208.1%3A%20Continuing%20to%20Deliver%20Enhanced%20Performance%20and%20Reliability&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-1-0-ga/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/new-hash-table/">&laquo; A new hash table</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-bloom-filters/">Introducing Bloom Filters for Valkey &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

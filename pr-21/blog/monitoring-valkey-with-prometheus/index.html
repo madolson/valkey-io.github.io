@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="Learn how to expose Valkey metrics to Prometheus, visualize them in Grafana, and choose the right exporter for your deployment." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Monitoring Valkey with Prometheus</title>
+    <meta name="title" property="og:title" content="Valkey: Monitoring Valkey with Prometheus">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Monitoring Valkey with Prometheus</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="How-to">How-to</span>
+  
+  2026-09-28
+  
+    &middot; 
+    
+      
+      
+      <em>Dragos Andriciuc</em>
+    
+  
+</div>
+<p>Imagine this: your application is running fine, until one day, out of the blue, requests start timing out.
+The only thing you know for certain is that you implemented Valkey to be somewhere in the request path.
+Is it memory pressure? A lagging replica? A burst of slow commands?
+Without metrics, "somewhere in the request path" is as specific as your diagnosis gets.</p>
+<p>Enter Prometheus.
+This post covers two popular ways to get Valkey metrics into Prometheus format, shows how to wire them up for live dashboards in Grafana, and walks through a docker compose setup you can run locally in a few minutes.</p>
+<h2 id="what-is-prometheus">What is Prometheus?</h2>
+<p><a rel="external" href="https://prometheus.io/">Prometheus</a> is an open-source systems monitoring and alerting toolkit designed for reliability, multi-dimensional data collection and querying even during outages or broken architectures.
+It scrapes and periodically pulls metrics from instrumented jobs exposed by the systems it monitors, storing them as time series (changes over time) in its own local database, which allows you to query, graph, and alert on that data using its flexible query language, <a rel="external" href="https://prometheus.io/docs/prometheus/latest/querying/basics/">PromQL</a>.</p>
+<p>Each Prometheus server is standalone and runs independently. It relies only on:</p>
+<ul>
+<li>a local storage such as an HDD or SSD by default,</li>
+<li>optionally, <a rel="external" href="https://prometheus.io/docs/alerting/latest/alertmanager/">Alertmanager</a>, which handles routing and deduplicating notifications.</li>
+</ul>
+<p>In Valkey's case, there is a catch: Prometheus does not talk to Valkey natively.
+Valkey does not expose any metrics endpoint on its own.
+However it does expose operational data through the <a rel="external" href="https://valkey.io/commands/info/"><code>INFO</code> command</a>.</p>
+<h2 id="why-monitor-valkey-with-prometheus">Why monitor Valkey with Prometheus?</h2>
+<p>If you can't see your Valkey database or cache, it will continue to keep serving requests while its fragmentation goes unnoticed and memory creeps toward the <code>maxmemory</code> ceiling, or replicas lag behind and the first sign of trouble is often a latency spike somewhere downstream, long after the root cause started.</p>
+<p>Putting Valkey and Prometheus together provides several advantages.</p>
+<ul>
+<li><strong>Trend visibility</strong>: View the operations per second, hit ratio, memory usage, and connection counts over time, not just a snapshot from <code>INFO</code> when something's already broken.</li>
+<li><strong>Alerting before things break</strong>: Set alert rules and manage those alerts using Alertmanager
+which send out notifications using methods such as email, on-call notification systems, and chat platforms.</li>
+<li><strong>A single pane of glass</strong>: Your Valkey metrics sit alongside your application, database, and infrastructure metrics in the same Prometheus and <a rel="external" href="https://grafana.com/">Grafana</a> stack using a standalone exporter, so you can correlate a request-latency spike in your app with what Valkey was doing at that exact moment.</li>
+<li><strong>Capacity planning</strong>: Long-running historical data makes it much easier to answer "when do we need to scale this" instead of blindly guessing metrics.</li>
+<li><strong>Cluster and replication awareness</strong>: For Valkey Cluster or primary/replica setups, per-node metrics make split-brain-adjacent issues (replication lag, slot imbalance) visible instead of silent by tracking deltas and slot assignments across them.</li>
+</ul>
+<h2 id="tools-for-exporting-valkey-metrics-to-prometheus">Tools for exporting Valkey metrics to Prometheus</h2>
+<p>Two tools are useful when talking about exporting Valkey metrics with Prometheus: <strong>BetterDB</strong> and <strong>redis_exporter</strong>.
+They solve overlapping but distinct problems.</p>
+<h3 id="betterdb">BetterDB</h3>
+<p><a rel="external" href="https://www.betterdb.com/">BetterDB</a> is a Valkey-native observability platform.</p>
+<p>BetterDB is a full monitoring and observability application that provides real-time dashboards, anomaly detection, and operational intelligence for your Valkey deployment, not only a metrics-to-Prometheus bridge.</p>
+<h3 id="what-metrics-does-betterdb-cover">What metrics does BetterDB cover</h3>
+<p>It exposes its own metrics at <code>GET /api/prometheus/metrics</code> in the standard text/plain format and standard Node.js process metrics from <code>prom-client</code>. It covers the following:</p>
+<ul>
+<li><strong>Core Valkey performance</strong>: Operations processed per second, memory usage, and network throughput, derived from <code>INFO</code>.</li>
+<li><strong>ACL audit metrics</strong>: Denied ACL events, broken down by reason and by username, used to catch misconfigured permissions or attempted unauthorized access.</li>
+<li><strong>Client connection metrics</strong>: Current and peak connection counts, broken down by client name and by ACL user.</li>
+<li><strong>Slowlog metrics</strong>: Metrics data such as average duration, and percentage share, grouped by query <em>pattern</em> rather than raw individual queries, which makes spotting a problematic query class faster than reviewing entries one by one.</li>
+<li><strong>COMMANDLOG metrics (Valkey 8.1+)</strong>: Large-request and large-reply counts, grouped and analyzed by command pattern.</li>
+<li><strong>Vector Index / AI metrics</strong>: This is for deployments running <a rel="external" href="https://valkey.io/topics/search/"><code>valkey-search</code></a>, a dedicated set of per-index health metrics and gauges (indexed docs, index memory, indexing failures, percent indexed).</li>
+<li><strong>Node.js process metrics</strong>: Since the monitor itself is a Node.js application, it also exposes its own CPU, event-loop metrics, and HEAP/GC metrics, which keeps an eye on the monitoring tool's own health.</li>
+</ul>
+<h3 id="example-for-betterdb">Example for BetterDB</h3>
+<p>A snippet of what BetterDB exposes on its Prometheus endpoint looks like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span># Client connections</span></span>
+<span class="giallo-l"><span>betterdb_client_connections_current{connection=&quot;172.17.0.4:6379&quot;} 1</span></span>
+<span class="giallo-l"><span>betterdb_client_connections_by_name{connection=&quot;172.17.0.4:6379&quot;,client_name=&quot;BetterDB-Monitor&quot;} 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Memory</span></span>
+<span class="giallo-l"><span>betterdb_memory_used_bytes{connection=&quot;172.17.0.4:6379&quot;} 1281040</span></span>
+<span class="giallo-l"><span>betterdb_memory_fragmentation_ratio{connection=&quot;172.17.0.4:6379&quot;} 10.35</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Throughput</span></span>
+<span class="giallo-l"><span>betterdb_commands_processed_total{connection=&quot;172.17.0.4:6379&quot;} 319</span></span>
+<span class="giallo-l"><span>betterdb_instantaneous_ops_per_sec{connection=&quot;172.17.0.4:6379&quot;} 0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Anomaly detection</span></span>
+<span class="giallo-l"><span>betterdb_anomaly_events_total{connection=&quot;172.17.0.4:6379&quot;,severity=&quot;warning&quot;,metric_type=&quot;fragmentation_ratio&quot;,anomaly_type=&quot;spike&quot;} 1</span></span>
+<span class="giallo-l"><span>betterdb_correlated_groups_total{connection=&quot;172.17.0.4:6379&quot;,pattern=&quot;memory_pressure&quot;,severity=&quot;warning&quot;} 1</span></span></code></pre>
+<p>You can get it to run using this one-liner with Docker or <code>npx</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">docker</span><span style="color: #A5D6FF;"> run</span><span style="color: #79C0FF;"> -d --name</span><span style="color: #A5D6FF;"> betterdb</span><span style="color: #79C0FF;"> -p</span><span style="color: #A5D6FF;"> 3001:3001</span><span style="color: #79C0FF;"> -e</span><span style="color: #A5D6FF;"> DB_HOST=your-valkey-host-ip</span><span style="color: #79C0FF;"> -e</span><span style="color: #A5D6FF;"> DB_PORT=</span><span style="color: #79C0FF;">6379</span><span style="color: #A5D6FF;"> betterdb/monitor</span></span></code></pre>
+<p>Then point Prometheus at <code>http://&lt;host&gt;:3001/prometheus/metrics</code>, and open <code>http://&lt;host&gt;:3001</code> for your built-in dashboard.</p>
+<h3 id="redis-exporter-valkey-compatible">redis_exporter (Valkey-compatible)</h3>
+<p><a rel="external" href="https://github.com/oliver006/redis_exporter">redis_exporter</a> is a long-standing, community-standard Prometheus exporter for Valkey metrics.
+It focuses entirely on getting Valkey metrics into Prometheus format rather than providing its own dashboard, which makes it lightweight and easy to slot into an existing Grafana or Alertmanager stack.</p>
+<p>At the time of writing, it supports Valkey 7.x, 8.x, and 9.x.</p>
+<h3 id="what-metrics-does-redis-exporter-cover">What metrics does redis_exporter cover</h3>
+<p>Most items from Valkey's <code>INFO</code> command are exported directly:</p>
+<ul>
+<li><strong>Memory</strong>: Used memory, RSS, fragmentation ratio, <code>maxmemory</code>, and (through <code>redis_memory_max_bytes</code>) the configured memory ceiling.</li>
+<li><strong>Throughput and commands</strong>: Total commands processed, ops/sec, commandstats, and latency histograms.</li>
+<li><strong>Keyspace</strong>: Per-database total key counts, expiring key counts, and average key TTL.</li>
+<li><strong>Clients and connections</strong>: Connected clients, blocked clients, rejected connections and optionally a full client list breakdown with <code>--export-client-list</code>.</li>
+<li><strong>Replication</strong>: Role (primary/replica), connected replicas, replication offset and lag.</li>
+<li><strong>Persistence</strong>: RDB save status, AOF status, last save time and duration.</li>
+<li><strong>Keyspace hits/misses</strong>: The raw data needed for a cache hit-ratio panel.</li>
+<li><strong>Cluster support</strong>: With <code>--is-cluster</code>, it can discover and scrape every node in a Valkey Cluster using the <code>/discover-cluster-nodes</code> endpoint in the Prometheus configuration.</li>
+<li><strong>Availability Zone awareness</strong>: Support for Valkey's AZ-aware replica routing metrics is available in <a rel="external" href="https://github.com/oliver006/redis_exporter/pull/1177">PR 1177</a>. When Valkey reports an <code>availability_zone</code> field in its <code>INFO</code> output, the exporter includes it automatically.</li>
+<li><strong>Custom and key-level metrics</strong>: Using <code>--check-keys</code>, <code>--check-single-keys</code>, and <code>--check-key-groups</code>, you can export the size or length of specific keys or key patterns (handy for tracking the size of a specific queue or sorted set), and even aggregate memory usage by key-naming convention using Lua scripts run on the server-side.</li>
+</ul>
+<p><strong>Example</strong></p>
+<p>Running the exporter and hitting <code>/metrics</code> gives you plain Prometheus text output like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span># Server status</span></span>
+<span class="giallo-l"><span>redis_up 1</span></span>
+<span class="giallo-l"><span>redis_instance_info{valkey_version=&quot;9.1.1&quot;,role=&quot;master&quot;,...} 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Memory</span></span>
+<span class="giallo-l"><span>redis_memory_used_bytes 1.30248e+06</span></span>
+<span class="giallo-l"><span>redis_mem_fragmentation_ratio 10.22</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Throughput</span></span>
+<span class="giallo-l"><span>redis_commands_processed_total 11823</span></span>
+<span class="giallo-l"><span>redis_net_input_bytes_total 237055</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Keyspace</span></span>
+<span class="giallo-l"><span>redis_db_keys{db=&quot;db0&quot;} 0</span></span>
+<span class="giallo-l"><span>redis_keyspace_misses_total 367</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Exporter self-metrics</span></span>
+<span class="giallo-l"><span>redis_exporter_scrapes_total 1</span></span>
+<span class="giallo-l"><span>redis_exporter_last_scrape_error{err=&quot;&quot;} 0</span></span></code></pre>
+<p><strong>Note:</strong> The <code>redis_</code> metric prefix is just the exporter's default Prometheus namespace.
+The prefix is configurable using <code>--namespace=valkey</code> (or any string) if you want <code>valkey_</code> metric names instead.
+For more information, see the <code>namespace</code> flag in <a rel="external" href="https://github.com/oliver006/redis_exporter/blob/master/README.md#command-line-flags">redis_exporter's command line flags table</a>.</p>
+<p>This is an example of a minimal Prometheus scrape configuration for it:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="yaml"><span class="giallo-l"><span style="color: #7EE787;">scrape_configs</span><span>:</span></span>
+<span class="giallo-l"><span>  -</span><span style="color: #7EE787;"> job_name</span><span>:</span><span style="color: #A5D6FF;"> redis_exporter</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    static_configs</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #7EE787;"> targets</span><span>: [</span><span style="color: #A5D6FF;">&#39;redis_exporter:9121&#39;</span><span>]</span></span></code></pre><h2 id="where-each-one-fits">Where each one fits</h2>
+<p>BetterDB and redis_exporter operate at different layers of the monitoring stack.
+While BetterDB is an integrated monitoring application that collects, stores, analyzes, and presents Valkey data, redis_exporter focuses on exposing Valkey metrics to Prometheus so you can build your own dashboards and alerts around them.
+The comparison below focuses on what each tool provides rather than treating the absence of a built-in UI or analysis feature as a lack of underlying metrics.</p>
+<table><thead><tr><th></th><th>BetterDB</th><th>redis_exporter</th></tr></thead><tbody>
+<tr><td><strong>What it is</strong></td><td>Full monitoring application including dashboard, a Prometheus endpoint, an audit trail and anomaly detection</td><td>Single-purpose Prometheus exporter focused on metrics export, no built-in UI</td></tr>
+<tr><td><strong>Setup</strong></td><td>One Docker container or <code>npx @betterdb/monitor</code>; configurable storage backend</td><td>One Docker container; typically paired with your own Grafana dashboards</td></tr>
+<tr><td><strong>Valkey-specific features</strong></td><td>Native support for <code>COMMANDLOG</code> and <code>CLUSTER SLOT-STATS</code></td><td>Exposes many Valkey metrics through INFO and dedicated collectors, including <code>COMMANDLOG</code></td></tr>
+<tr><td><strong>Vector/AI search visibility</strong></td><td>Dedicated tab and metrics for <code>valkey-search</code></td><td>Optional, using the <code>--include-search-indexes-metrics</code> flag, less purpose-built</td></tr>
+<tr><td><strong>Slowlog analysis</strong></td><td>Grouped by query pattern, with duration and percentage breakdowns</td><td>Exported by default but no detailed slowlog entry analysis</td></tr>
+<tr><td><strong>Maturity / ecosystem</strong></td><td>Newer project, smaller community, actively evolving</td><td>Long-established (originally for Redis), ~3.6k GitHub stars, huge base of existing Grafana dashboards and alerting "mixins"</td></tr>
+<tr><td><strong>Cluster support</strong></td><td>Supported, with docs specifically for cluster setup</td><td>Built-in cluster node discovery via <code>--is-cluster</code> and <code>/discover-cluster-nodes</code></td></tr>
+<tr><td><strong>Extensibility for custom app metrics</strong></td><td>Not really the point of the tool</td><td>Strong with Lua scripting (<code>--script</code>), custom key/key-group tracking</td></tr>
+<tr><td><strong>Overhead</strong></td><td>Runs its own Node.js process and storage backend; larger footprint than a pure exporter</td><td>Lightweight single Go binary; designed for low-overhead metrics collection</td></tr>
+<tr><td><strong>Licensing model</strong></td><td>MIT-licensed core with additional proprietary/source-available features</td><td>Fully open-source (MIT), community-maintained, no commercial layer</td></tr>
+<tr><td><strong>Best fit</strong></td><td>Teams that want a ready-made dashboard, audit trail, and Valkey-native visibility without assembling Grafana dashboards themselves</td><td>Teams that already run Grafana, Prometheus, Alertmanager and want a proven, low-overhead metrics source to plug into that existing stack</td></tr>
+</tbody></table>
+<p>These are not mutually exclusive and it is common to run redis_exporter feeding your existing Grafana and Alertmanager stack for the operational baseline (memory, ops/sec, replication, keyspace), and add BetterDB when you specifically want slowlog pattern analysis, ACL audit visibility, or vector-search monitoring that plain <code>INFO</code> scraping does not provide.</p>
+<h2 id="running-everything-locally">Running everything locally</h2>
+<p>Here is a docker compose setup that spins up Valkey, redis_exporter, Prometheus, and Grafana together, so you can see metrics flowing end-to-end on your laptop.</p>
+<p>Create a project directory with these files:</p>
+<ol>
+<li>Create the <strong><code>compose.yml</code></strong> file:</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="yaml"><span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #7EE787;">services</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  valkey</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    image</span><span>:</span><span style="color: #A5D6FF;"> valkey/valkey:9-alpine</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    container_name</span><span>:</span><span style="color: #A5D6FF;"> valkey</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    ports</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> &quot;6379:6379&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    command</span><span>: [</span><span style="color: #A5D6FF;">&quot;valkey-server&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;--save&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;&quot;</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #7EE787;">  redis_exporter</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    image</span><span>:</span><span style="color: #A5D6FF;"> oliver006/redis_exporter:latest</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    container_name</span><span>:</span><span style="color: #A5D6FF;"> redis_exporter</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    environment</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> REDIS_ADDR=redis://valkey:6379</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    ports</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> &quot;9121:9121&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    depends_on</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> valkey</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #7EE787;">  prometheus</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    image</span><span>:</span><span style="color: #A5D6FF;"> prom/prometheus:latest</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    container_name</span><span>:</span><span style="color: #A5D6FF;"> prometheus</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    volumes</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> ./prometheus.yml:/etc/prometheus/prometheus.yml:ro</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    ports</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> &quot;9090:9090&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    depends_on</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> redis_exporter</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #7EE787;">  grafana</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    image</span><span>:</span><span style="color: #A5D6FF;"> grafana/grafana:latest</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    container_name</span><span>:</span><span style="color: #A5D6FF;"> grafana</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    ports</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> &quot;3000:3000&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    environment</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> GF_SECURITY_ADMIN_PASSWORD=admin</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    depends_on</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> prometheus</span></span></code></pre>
+<ol start="2">
+<li>Create the <strong><code>prometheus.yml</code></strong> file:</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>global:</span></span>
+<span class="giallo-l"><span>  scrape_interval: 15s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>scrape_configs:</span></span>
+<span class="giallo-l"><span>  - job_name: redis_exporter</span></span>
+<span class="giallo-l"><span>    static_configs:</span></span>
+<span class="giallo-l"><span>      - targets: [&#39;redis_exporter:9121&#39;]</span></span></code></pre>
+<ol start="3">
+<li>Bring the whole setup up:</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">docker</span><span style="color: #A5D6FF;"> compose up</span><span style="color: #79C0FF;"> -d</span></span></code></pre>
+<p>For the above examples:</p>
+<ul>
+<li><strong>Valkey</strong> is reachable on <code>localhost:6379</code></li>
+<li>The link to <strong>redis_exporter metrics</strong> is: <code>http://localhost:9121/metrics</code></li>
+<li>You can access the <strong>Prometheus UI</strong> at: <code>http://localhost:9090</code> (try the query <code>redis_connected_clients</code> or <code>rate(redis_commands_processed_total[1m])</code>)</li>
+<li>You can access <strong>Grafana</strong> at: <code>http://localhost:3000</code> (login <code>admin</code> / <code>admin</code>), then add Prometheus (<code>http://prometheus:9090</code>) as a data source and import the <a rel="external" href="https://grafana.com/grafana/dashboards/763-redis-dashboard-for-prometheus-redis-exporter-1-x/">community redis_exporter dashboard</a> (ID <code>763</code>) for an instant, pre-built view.</li>
+</ul>
+<p>If you want to add BetterDB to the same stack instead of, or alongside, redis_exporter then add this service and point Prometheus at it too:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="yaml"><span class="giallo-l"><span style="color: #7EE787;">  betterdb</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    image</span><span>:</span><span style="color: #A5D6FF;"> betterdb/monitor</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    container_name</span><span>:</span><span style="color: #A5D6FF;"> betterdb</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    environment</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> DB_HOST=valkey</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> DB_PORT=6379</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> STORAGE_TYPE=memory</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    ports</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> &quot;3001:3001&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    depends_on</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> valkey</span></span></code></pre><pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="yaml"><span class="giallo-l"><span style="color: #8B949E;">  # add to prometheus.yml scrape_configs:</span></span>
+<span class="giallo-l"><span>  -</span><span style="color: #7EE787;"> job_name</span><span>:</span><span style="color: #A5D6FF;"> betterdb</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    static_configs</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #7EE787;"> targets</span><span>: [</span><span style="color: #A5D6FF;">&#39;betterdb:3001&#39;</span><span>]</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    metrics_path</span><span>:</span><span style="color: #A5D6FF;"> /prometheus/metrics</span></span></code></pre>
+<p>Then open <code>http://localhost:3001</code> to access BetterDB's own dashboard, in addition to querying its metrics from Prometheus and Grafana.</p>
+<p>You can also generate some traffic to see the dashboards move:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">docker</span><span style="color: #A5D6FF;"> exec</span><span style="color: #79C0FF;"> -it</span><span style="color: #A5D6FF;"> valkey valkey-cli</span><span style="color: #79C0FF;"> --no-raw</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> SET foo bar</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> GET foo</span></span></code></pre>
+<p>Or, for a sustained load, run <code>valkey-benchmark</code> from inside the container:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">docker</span><span style="color: #A5D6FF;"> exec</span><span style="color: #79C0FF;"> -it</span><span style="color: #A5D6FF;"> valkey valkey-benchmark</span><span style="color: #79C0FF;"> -q -n 100000</span></span></code></pre>
+<p>The above is a complete, disposable local loop with Valkey, an exporter, Prometheus scraping it, and Grafana visualizing it.
+This is a hypothetical mirror of what you'd run in production, just without the TLS, ACLs, and persistence you'd want to layer on before shipping it anywhere real.</p>
+<h2 id="what-s-next">What's next?</h2>
+<p>Monitoring is one of the easiest ways to improve the reliability of your Valkey deployment.
+Whether you choose a lightweight exporter such as redis_exporter or a more feature-rich platform like BetterDB, exposing metrics to Prometheus lets you detect memory pressure, replication issues, and performance regressions before they affect your applications and architecture.</p>
+<p>Start by deploying the local Docker Compose stack from this guide, explore the available metrics, then adapt the configuration for your own environment by adding authentication, TLS, alerting rules, and dashboards.
+Historical Valkey metrics collected by Prometheus make troubleshooting and capacity planning far easier than relying on isolated <code>INFO</code> snapshots.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/dragosandriciuc.jpg" alt="photo of Dragos Andriciuc" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Dragos Andriciuc</h4>
+    
+    <a target="_blank" href="https://github.com/Andriciuc"><i class="icon icon-github-square"></i> @Andriciuc</a>
+    
+    <p>Dragos Andriciuc is a Senior Technical Educator for Valkey at Percona where he creates technical content, blogs, and upstream documentation to help users and the community better understand Valkey. A Romanian national based in a small town outside of the capital of Bucharest, he studied Computer Science at Sheffield University and started to work in the technical writing field. He enjoys scuba diving, practicing airsoft, and spending time with his family.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/monitoring-valkey-with-prometheus/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/monitoring-valkey-with-prometheus/&title=Monitoring%20Valkey%20with%20Prometheus&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/monitoring-valkey-with-prometheus/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/browsing-a-valkey-keyspace-safely/">&laquo; Browsing a Valkey keyspace safely: SCAN, INFO, and a read-only ACL user</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/announcing-planet-valkey/">Announcing Planet Valkey &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

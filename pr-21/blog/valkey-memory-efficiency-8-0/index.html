@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-05.webp" />
+    
+    
+
+    <meta name="description" content="Learn about the new memory efficiency improvements in Valkey 8 which reduces memory overhead, which allows more data to be stored in the same amount of memory." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Storing more with less: Memory Efficiency in Valkey 8</title>
+    <meta name="title" property="og:title" content="Valkey: Storing more with less: Memory Efficiency in Valkey 8">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-05.webp" alt="Storing more with less: Memory Efficiency in Valkey 8" class="feature-img">
+
+
+<h1>Storing more with less: Memory Efficiency in Valkey 8</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2024-09-04
+  
+    &middot; 
+    
+      
+      
+      <em>Harkrishn Patro</em>
+    
+  
+</div>
+<p>Valkey 8.0 GA is around the corner and one of the themes is increasing overall memory efficiency. Memory overhead reduction has the obvious effect of better resource utilization, but also impacts performance. By minimizing unnecessary memory consumption, you can store more data with the same hardware resources and improve overall system responsiveness. This post is going to give an overview into how Valkey internally manages the data and its memory overhead. Additionally, it talks about the two major improvements for Valkey 8.0 that improves the overall memory efficiency.</p>
+<h2 id="overview">Overview</h2>
+<p>Valkey has two modes of operation: standalone and cluster mode. Standalone allows for one primary with it’s replica(s). To shard data horizontally and scale to store large amounts of data, cluster mode provides a mechanism to set up multiple primaries each with their own replica(s).</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/valkey_operation_mode.png" alt="Figure 1 Standalone (left) and Cluster mode (right)" /></p>
+<p>For both standalone and cluster mode setup, Valkey's main dictionary is a hash table with a chained linked list: The major components are a <strong>bucket</strong> and <strong>dictionary entry</strong>. A key is hashed to a bucket and each bucket points to a linked list of dictionary entries and further each dictionary entry consists of key, value, and a next pointer. Each pointer takes 8 bytes of memory usage. So, a single dictionary entry has a minimum overhead of 24 bytes.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/dictionary_bucket_and_entry_overview.png" alt="Figure 2 Dictionary bucket pointing to a dictionary entry" /></p>
+<p>In cluster mode, Valkey uses a concept called <a rel="external" href="https://valkey.io/topics/cluster-tutorial/">hash slots</a> to shard data. There are 16,384 hash slots in cluster, and to compute the hash slot for a given key, the server computes the CRC16 of the key modulo 16,384. Keys are distributed on basis of these slots assigned to each of the primary. The server needs to maintain additional metadata for bookkeeping i.e. slot-to-key mapping to move a slot from one primary to another. In order to maintain the slot to key mapping, two additional pointers <code>slot-prev</code> and <code>slot-next</code> (Figure 3)  are stored as metadata in each dictionary entry forming a double linked list of all keys belonging to a given slot. This further increases the overhead by 16 bytes per dictionary entry i.e. total 40 bytes.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/dictionary_in_cluster_mode_7.2.png" alt="Figure 3 Dictionary in cluster mode (Valkey 7.2) with multiple key value pair" /></p>
+<h2 id="improvements">Improvements</h2>
+<h3 id="optimization-1-dictionary-per-slot">Optimization 1 - <a rel="external" href="https://github.com/redis/redis/pull/11695">Dictionary per slot</a></h3>
+<p>The first optimization is a dictionary per slot (16,384 of them in total), where each dictionary stores data for a given slot. With this simplification, the cost of maintaining additional metadata for the mapping of slot to key is no longer required in Valkey 8. To iterate over all the keys in a given slot, the engine simply finds out the dictionary for a given slot and traverse all the entries in it. This reduces the memory usage per dictionary entry by 16 bytes with a small memory overhead around 1 MB per node. As cluster mode is generally used for storing large amount of keys, avoiding the additional overhead per key allows users to store more number of keys in the same amount of memory.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/dictionary_in_cluster_mode_8.0.png" alt="Figure 4 Dictionary in cluster mode (Valkey 8.0) with multiple key value pair" /></p>
+<p>A few of the interesting challenges that comes up with the above improvements are supporting existing use cases which were optimized with a single dictionary for the entire keyspace. The usecases are:</p>
+<ul>
+<li><a rel="external" href="https://valkey.io/commands/scan/">Iterating the entire keyspace</a> - Command like <code>SCAN</code> to iterate over the entire keyspace.</li>
+<li><a rel="external" href="https://valkey.io/topics/lru-cache/">Random key for eviction</a> - The server does random sampling of the keyspace to find ideal candidate for eviction.</li>
+<li><a rel="external" href="https://valkey.io/commands/randomkey/">Finding a random key</a> - Commands like <code>RANDOMKEY</code> retrieve a random key from the database.</li>
+</ul>
+<p>In order to efficiently implement these functions, we need to be able to both find non-empty slots, to skip over empty slots during scanning, and be able to select a random slot weighted by the number of keys that it owns. These requirements require a data structure which provides the following functionality:</p>
+<ol>
+<li>Modify value for a given slot - If a key gets added or removed, increment or decrement the value for that given slot by 1 respectively.</li>
+<li>Cumulative frequency until each slot - For a given number representing a key between 1 and the total number of keys, return the slot which covers the particular key.</li>
+</ol>
+<p>If approached naively, the former and latter operation would take O(1) and O(N) respectively. However, we want to minimize the latter operation’s time complexity and minimally avoid in the former. Hence, a <a rel="external" href="https://www.topcoder.com/thrive/articles/Binary%20Indexed%20Trees">binary indexed tree (BIT) or fenwick tree</a> which provides the above functionality with a minimal memory overhead (~1 MB per node) and the time complexity is also bounded to O(M log N) for both the operations where M = number of modification(s) and N = number of slots. This enables skipping over empty slots efficiently while iterating over the keyspace as well as finding a slot for a given key index in logarithmic time via binary search over the cumulative sum maintained by the BIT.</p>
+<p>Another interesting side effect is on the rehashing operation. Rehashing is CPU intensive. By default, a limited number of buckets are allocated in a dictionary and it expands/shrinks dynamically based on usage. While undergoing rehashing, all the data needs to be moved from an old dictionary to a new dictionary. With Valkey 7.2, a global dictionary being shared across all the slots, all the keys get stored under a single dictionary and each time the fill factor (number of keys / number of buckets) goes above 1, the dictionary needs to move to a larger dictionary (multiple of 2) and move a large amount of keys. As this operation is performed on the fly, it causes an increase in latency for regular command operations while it's ongoing. With the per-slot dictionary optimization, the impact of rehashing is localized to the specific dictionary undergoing the process and only a subset of keys needs to be moved.</p>
+<p>Overall, with this new approach, the benefits are:</p>
+<ol>
+<li>Removes additional memory overhead in cluster mode: Get rid of two pointers (16 bytes) per key to keep the mapping of slot to keys.</li>
+<li>With the rehashing operation spread out across dictionaries, CPU utilization is also spread out.</li>
+</ol>
+<h3 id="optimization-2-key-embedding-into-dictionary-entry">Optimization 2 - <a rel="external" href="https://github.com/valkey-io/valkey/pull/541">Key embedding into dictionary entry</a></h3>
+<p>After the dictionary per slot change, the memory layout of dictionary entry in cluster mode is the following, there are three pointers (key, value, and next). The key pointer points to a SDS (<a rel="external" href="https://github.com/antirez/sds/blob/master/README.md">simple dynamic string</a>) which contains the actual key data. As a key is immutable, without bringing in much complexity, it can be embedded into the dictionary entry which has the same lifetime as the former.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/key_embedding.png" alt="Figure 5 Key data storage in 7.2 (left) and 8.0 (right)" /></p>
+<p>With this new approach, the overall benefits are:</p>
+<ol>
+<li>Reduces 8 bytes additional memory overhead per key.</li>
+<li>Removes an additional memory lookup for key: With access of dictionary entry, the additional random pointer access for key is no longer required leading to better cache locality and overall better performance.</li>
+</ol>
+<h3 id="benchmarking">Benchmarking</h3>
+<h4 id="setup">Setup</h4>
+<p>A single shard cluster is setup with 1 primary and 2 replica(s). Each node runs with different version to highlight the memory improvements with each optimization introduced between 7.2 to 8.0 and to signify that no additional configuration is required to achieve the memory efficiency.</p>
+<ul>
+<li>Node A: Primary running on port 6379 with <a rel="external" href="https://github.com/valkey-io/valkey/commit/ad0a24c7421d3a8ea76cf44b56001e3b3b6ed545">Valkey 7.2 version</a></li>
+<li>Node B: Replica 1 running on port 6380 with <a rel="external" href="https://github.com/valkey-io/valkey/commit/1ea49e5845a11250a13273c725720822c26860f1">optimization 1 - dictionary per slot</a></li>
+<li>Node C: Replica 2 running on port 6381 with <a rel="external" href="https://github.com/valkey-io/valkey/commit/a323dce8900341328114b86a92078c50cec0d9b8">optimization 1 - dictionary per slot and optimization 2 - key embedding</a> - Includes all memory efficiency optimization in Valkey 8.</li>
+</ul>
+<h4 id="synthetic-data-generation-using-valkey-benchmark-utility">Synthetic data generation using <a rel="external" href="https://valkey.io/topics/benchmark/">valkey-benchmark utility</a></h4>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>src/valkey-benchmark \</span></span>
+<span class="giallo-l"><span> -t set \</span></span>
+<span class="giallo-l"><span> -n 10000000 \</span></span>
+<span class="giallo-l"><span> -r 10000000 \</span></span>
+<span class="giallo-l"><span> -d 16</span></span></code></pre><h4 id="memory-usage">Memory Usage</h4>
+<ul>
+<li>Node A</li>
+</ul>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; DBSIZE # command to retrieve number of keys.</span></span>
+<span class="giallo-l"><span>(integer) 6318941</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; INFO MEMORY # command to retrieve statistics about memory usage</span></span>
+<span class="giallo-l"><span># Memory</span></span>
+<span class="giallo-l"><span>used_memory:727339288</span></span>
+<span class="giallo-l"><span>used_memory_human:693.64M</span></span></code></pre>
+<ul>
+<li>Node B</li>
+</ul>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6380&gt; DBSIZE # command to retrieve number of keys.</span></span>
+<span class="giallo-l"><span>(integer) 6318941</span></span>
+<span class="giallo-l"><span>127.0.0.1:6380&gt; INFO MEMORY # command to retrieve statistics about memory usage</span></span>
+<span class="giallo-l"><span># Memory</span></span>
+<span class="giallo-l"><span>used_memory:627851888</span></span>
+<span class="giallo-l"><span>used_memory_human:598.77M</span></span></code></pre>
+<ul>
+<li>Node C</li>
+</ul>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6381&gt; DBSIZE # command to retrieve number of keys.</span></span>
+<span class="giallo-l"><span>(integer) 6318941</span></span>
+<span class="giallo-l"><span>127.0.0.1:6381&gt; INFO MEMORY # command to retrieve statistics about memory usage</span></span>
+<span class="giallo-l"><span># Memory</span></span>
+<span class="giallo-l"><span>used_memory:577300952</span></span>
+<span class="giallo-l"><span>used_memory_human:550.56M</span></span></code></pre><h4 id="overall-improvement">Overall Improvement</h4>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/memory_usage_comparison.png" alt="Figure 6 Overall memory usage with benchmark data" /></p>
+<h4 id="with-dictionary-per-slot-change-memory-usage-reduced-from-693-64-mb-to-598-77-mb-with-the-same-dataset">With dictionary per slot change memory usage reduced from 693.64 MB to 598.77 MB with the same dataset</h4>
+<ul>
+<li><strong>Percentage Drop 1</strong>: ((693.64 - 598.77) / 693.64) * 100 = (94.87 / 693.64) * 100 ≈ 13.68%</li>
+</ul>
+<h4 id="further-with-key-embedding-memory-usage-reduced-from-598-77-mb-to-550-56-mb-with-the-same-dataset">Further with key embedding, memory usage reduced from 598.77 MB to 550.56 MB with the same dataset</h4>
+<ul>
+<li><strong>Percentage Drop 2</strong>: ((598.77 - 550.56) / 598.77) * 100 = (48.21 / 598.77) * 100 ≈ 8.05%</li>
+</ul>
+<h4 id="overall-drop-from-693-64-mb-to-550-56-mb">Overall Drop: From 693.64 MB to 550.56 MB</h4>
+<ul>
+<li><strong>Overall Percentage Drop</strong>: ((693.64 - 550.56) / 693.64) * 100 = (143.08 / 693.64) * 100 ≈ 20.63%</li>
+</ul>
+<p>So, the drop in percentage is approximately <strong>20.63% in overall memory usage on a given node on upgrade from Valkey 7.2 to Valkey 8.0</strong>.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Through the memory efficiency achieved by introducing dictionary per slot and key embedding into dictionary entry, users should have additional capacity to store more keys per node in Valkey 8.0 (up to 20%, but it will vary based on the workload). For users, upgrading from Valkey 7.2 to Valkey 8.0, the improvement should be observed automatically and no configuration changes are required.
+Give it a try by spinning up a <a rel="external" href="https://valkey.io/download/">Valkey cluster</a> and join us in the <a rel="external" href="https://github.com/valkey-io/valkey/">community</a> to provide feedback. Further, there is an ongoing discussion around overhauling the main dictionary with a more compact memory layout and introduce an open addressing scheme which will significantly improve memory efficiency. More details can be found in <a rel="external" href="https://github.com/valkey-io/valkey/issues/169">Issue 169: Re-thinking the main hash table</a>.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/hpatro.jpeg" alt="photo of Harkrishn Patro" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Harkrishn Patro</h4>
+    
+    <a target="_blank" href="https://github.com/hpatro"><i class="icon icon-github-square"></i> @hpatro</a>
+    
+    <p>Harkrishn is passionate about distributed systems, databases, anything related to data.</p>
+<p>In his spare time, Harkrishn loves to play badminton or go for a hike with friends and family. He also watches lots of horror movies (with half-open eyes) to keep his loving wife, Pooja, company.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-memory-efficiency-8-0/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-memory-efficiency-8-0/&title=Storing%20more%20with%20less%3A%20Memory%20Efficiency%20in%20Valkey%208&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-memory-efficiency-8-0/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/unlock-one-million-rps/">&laquo; Unlock 1 Million RPS: Experience Triple the Speed with Valkey</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/unlock-one-million-rps-part2/">Unlock 1 Million RPS: Experience Triple the Speed with Valkey - part 2 &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

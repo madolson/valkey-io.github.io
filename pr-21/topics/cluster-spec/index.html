@@ -1,0 +1,2511 @@
+
+
+
+
+
+
+    
+    
+    
+    
+        
+     
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey Documentation &middot; Cluster specification</title>
+    <meta name="title" property="og:title" content="Valkey Documentation: Cluster specification">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+
+    <div class="styled-title">
+        <h1 class="page-title">Documentation: Cluster specification</h1>
+    </div>
+
+
+<div class="left-aside-bg">
+    <div class="left-aside">
+        <main>
+            
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item">
+            <a href="/valkey-io.github.io/pr-21/topics/" class="breadcrumb-link">Topics</a>
+        </li>
+        
+        <li class="breadcrumb-item">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="" width="8" height="10"/>
+            
+            Cluster
+            
+        </li>
+        
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            Cluster specification
+        </li>
+    </ul>
+</nav>
+
+            <div class="main-inner">
+                
+<p>Welcome to the <strong>Valkey Cluster Specification</strong>. Here you'll find information
+about the algorithms and design rationales of Valkey Cluster.</p>
+<h2 id="main-properties-and-rationales-of-the-design">Main properties and rationales of the design</h2>
+<h3 id="valkey-cluster-goals">Valkey Cluster goals</h3>
+<p>Valkey Cluster is a distributed implementation of Valkey with the following goals in order of importance in the design:</p>
+<ul>
+<li>High performance and linear scalability up to 2000 nodes. There are no proxies, asynchronous replication is used, and no merge operations are performed on values.</li>
+<li>Acceptable degree of write safety: the system tries (in a best-effort way) to retain all the writes originating from clients connected with the majority of the primary nodes. Usually there are small windows where acknowledged writes can be lost. Windows to lose acknowledged writes are larger when clients are in a minority partition.</li>
+<li>Availability: Valkey Cluster is able to survive partitions where the majority of the primary nodes are reachable and there is at least one reachable replica for every primary node that is no longer reachable. Moreover using <em>replicas migration</em>, primaries no longer replicated by any replica will receive one from a primary which is covered by multiple replicas.</li>
+</ul>
+<h3 id="implemented-subset">Implemented subset</h3>
+<p>Valkey Cluster implements all the single key commands available in the
+non-distributed version of Valkey. Commands performing complex multi-key
+operations like set unions and intersections are implemented for cases where
+all of the keys involved in the operation hash to the same slot.</p>
+<p>Valkey Cluster implements a concept called <strong>hash tags</strong> that can be used
+to force certain keys to be stored in the same hash slot. However, during
+manual resharding, multi-key operations may become unavailable for some time
+while single-key operations are always available.</p>
+<p>Starting with version 9.0, Valkey cluster supports multiple databases, similar to standalone mode but with some additional restrictions.
+You can enable multi-database support using the <code>cluster-databases</code> setting (default value is <code>1</code>).</p>
+<h2 id="client-and-server-roles-in-the-valkey-cluster-protocol">Client and Server roles in the Valkey cluster protocol</h2>
+<p>In Valkey Cluster, nodes are responsible for holding the data,
+and taking the state of the cluster, including mapping keys to the right nodes.
+Cluster nodes are also able to auto-discover other nodes, detect non-working
+nodes, and promote replica nodes to primary when needed in order
+to continue to operate when a failure occurs.</p>
+<p>To perform their tasks all the cluster nodes are connected using a
+TCP bus and a binary protocol, called the <strong>Valkey Cluster Bus</strong>.
+Every node is connected to every other node in the cluster using the cluster
+bus. Nodes use a gossip protocol to propagate information about the cluster
+in order to discover new nodes, to send ping packets to make sure all the
+other nodes are working properly, and to send cluster messages needed to
+signal specific conditions. The cluster bus is also used in order to
+propagate Pub/Sub messages across the cluster and to orchestrate manual
+failovers when requested by users (manual failovers are failovers which
+are not initiated by the Valkey Cluster failure detector, but by the
+system administrator directly).</p>
+<p>Since cluster nodes are not able to proxy requests, clients may be redirected
+to other nodes using redirection errors <code>-MOVED</code> and <code>-ASK</code>.
+The client is in theory free to send requests to all the nodes in the cluster,
+getting redirected if needed, so the client is not required to hold the
+state of the cluster. However clients that are able to cache the map between
+keys and nodes can improve the performance in a sensible way.</p>
+<h3 id="write-safety">Write safety</h3>
+<p>Valkey Cluster uses asynchronous replication between nodes, and <strong>last failover wins</strong> implicit merge function. This means that the last elected primary dataset eventually replaces all the other replicas. There is always a window of time when it is possible to lose writes during partitions. However these windows are very different in the case of a client that is connected to the majority of primaries, and a client that is connected to the minority of primaries.</p>
+<p>Valkey Cluster tries harder to retain writes that are performed by clients connected to the majority of primaries, compared to writes performed in the minority side.
+The following are examples of scenarios that lead to loss of acknowledged
+writes received in the majority partitions during failures:</p>
+<ol>
+<li>
+<p>A write may reach a primary, but while the primary may be able to reply to the client, the write may not be propagated to replicas via the asynchronous replication used between primary and replica nodes. If the primary dies without the write reaching the replicas, the write is lost forever if the primary is unreachable for a long enough period that one of its replicas is promoted. This is usually hard to observe in the case of a total, sudden failure of a primary node since primaries try to reply to clients (with the acknowledge of the write) and replicas (propagating the write) at about the same time. However it is a real world failure mode.</p>
+</li>
+<li>
+<p>Another theoretically possible failure mode where writes are lost is the following:</p>
+</li>
+</ol>
+<ul>
+<li>A primary is unreachable because of a partition.</li>
+<li>It gets failed over by one of its replicas.</li>
+<li>After some time it may be reachable again.</li>
+<li>A client with an out-of-date routing table may write to the old primary before it is converted into a replica (of the new primary) by the cluster.</li>
+</ul>
+<p>The second failure mode is unlikely to happen because primary nodes are unable to communicate with the majority of the other primaries for enough time to be failed over will no longer accept writes, and when the partition is fixed writes are still refused for a small amount of time to allow other nodes to inform about configuration changes. This failure mode also requires that the client's routing table has not yet been updated.</p>
+<p>Writes targeting the minority side of a partition have a larger window in which to get lost. For example, Valkey Cluster loses a non-trivial number of writes on partitions where there is a minority of primaries and at least one or more clients, since all the writes sent to the primaries may potentially get lost if the primaries are failed over in the majority side.</p>
+<p>Specifically, for a primary to be failed over it must be unreachable by the majority of primaries for at least <code>NODE_TIMEOUT</code>, so if the partition is fixed before that time, no writes are lost. When the partition lasts for more than <code>NODE_TIMEOUT</code>, all the writes performed in the minority side up to that point may be lost. However the minority side of a Valkey Cluster will start refusing writes as soon as <code>NODE_TIMEOUT</code> time has elapsed without contact with the majority, so there is a maximum window after which the minority becomes no longer available. Hence, no writes are accepted or lost after that time.</p>
+<h3 id="availability">Availability</h3>
+<p>Valkey Cluster is not available in the minority side of the partition. In the majority side of the partition assuming that there are at least the majority of primaries and a replica for every unreachable primary, the cluster becomes available again after <code>NODE_TIMEOUT</code> time plus a few more seconds required for a replica to get elected and failover its primary (failovers are usually executed in a matter of 1 or 2 seconds).</p>
+<p>This means that Valkey Cluster is designed to survive failures of a few nodes in the cluster, but it is not a suitable solution for applications that require availability in the event of large net splits.</p>
+<p>In the example of a cluster composed of N primary nodes where every node has a single replica, the majority side of the cluster will remain available as long as a single node is partitioned away, and will remain available with a probability of <code>1-(1/(N*2-1))</code> when two nodes are partitioned away (after the first node fails we are left with <code>N*2-1</code> nodes in total, and the probability of the only primary without a replica to fail is <code>1/(N*2-1))</code>.</p>
+<p>For example, in a cluster with 5 nodes and a single replica per node, there is a <code>1/(5*2-1) = 11.11%</code> probability that after two nodes are partitioned away from the majority, the cluster will no longer be available.</p>
+<p>Thanks to a Valkey Cluster feature called <strong>replicas migration</strong> the Cluster
+availability is improved in many real world scenarios by the fact that
+replicas migrate to orphaned primaries (primaries no longer having replicas).
+So at every successful failure event, the cluster may reconfigure the replicas
+layout in order to better resist the next failure.</p>
+<h3 id="performance">Performance</h3>
+<p>In Valkey Cluster nodes don't proxy commands to the right node in charge for a given key, but instead they redirect clients to the right nodes serving a given portion of the key space.</p>
+<p>Eventually clients obtain an up-to-date representation of the cluster and which node serves which subset of keys, so during normal operations clients directly contact the right nodes in order to send a given command.</p>
+<p>Because of the use of asynchronous replication, nodes do not wait for other nodes' acknowledgment of writes (if not explicitly requested using the <code>WAIT</code> command).</p>
+<p>Also, because multi-key commands are only limited to <em>near</em> keys, data is never moved between nodes except when resharding.</p>
+<p>Normal operations are handled exactly as in the case of a single Valkey instance. This means that in a Valkey Cluster with N primary nodes you can expect the same performance as a single Valkey instance multiplied by N as the design scales linearly. At the same time the query is usually performed in a single round trip, since clients usually retain persistent connections with the nodes, so latency figures are also the same as the single standalone Valkey node case.</p>
+<p>Very high performance and scalability while preserving weak but
+reasonable forms of data safety and availability is the main goal of
+Valkey Cluster.</p>
+<h3 id="why-merge-operations-are-avoided">Why merge operations are avoided</h3>
+<p>The Valkey Cluster design avoids conflicting versions of the same key-value pair in multiple nodes as in the case of the Valkey data model this is not always desirable. Values in Valkey are often very large; it is common to see lists or sorted sets with millions of elements. Also data types are semantically complex. Transferring and merging these kind of values can be a major bottleneck and/or may require the non-trivial involvement of application-side logic, additional memory to store meta-data, and so forth.</p>
+<p>There are no strict technological limits here. CRDTs or synchronously replicated
+state machines can model complex data types similar to Valkey. However, the
+actual run time behavior of such systems would not be similar to Valkey Cluster.
+Valkey Cluster was designed in order to cover the exact use cases of the
+non-clustered Valkey deployment.</p>
+<h2 id="overview-of-valkey-cluster-main-components">Overview of Valkey Cluster main components</h2>
+<h3 id="key-distribution-model">Key distribution model</h3>
+<p>The cluster's key space is split into 16384 slots, effectively setting an upper limit
+for the cluster size of 16384 primary nodes (however, the suggested max size of
+nodes is on the order of ~ 1000 nodes).</p>
+<p>Each primary node in a cluster handles a subset of the 16384 hash slots.
+The cluster is <strong>stable</strong> when there is no cluster reconfiguration in
+progress (i.e. where hash slots are being moved from one node to another).
+When the cluster is stable, a single hash slot will be served by a single node
+(however the serving node can have one or more replicas that will replace it in the case of net splits or failures,
+and that can be used in order to scale read operations where reading stale data is acceptable).</p>
+<p>The base algorithm used to map keys to hash slots is the following
+(read the next paragraph for the hash tag exception to this rule):</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>HASH_SLOT = CRC16(key) mod 16384</span></span></code></pre>
+<p>The CRC16 is specified as follows:</p>
+<ul>
+<li>Name: XMODEM (also known as ZMODEM or CRC-16/ACORN)</li>
+<li>Width: 16 bit</li>
+<li>Poly: 1021 (That is actually x^16 + x^12 + x^5 + 1)</li>
+<li>Initialization: 0000</li>
+<li>Reflect Input byte: False</li>
+<li>Reflect Output CRC: False</li>
+<li>Xor constant to output CRC: 0000</li>
+<li>Output for "123456789": 31C3</li>
+</ul>
+<p>14 out of 16 CRC16 output bits are used (this is why there is
+a modulo 16384 operation in the formula above).</p>
+<p>In our tests CRC16 behaved remarkably well in distributing different kinds of
+keys evenly across the 16384 slots.</p>
+<p><strong>Note</strong>: A reference implementation of the CRC16 algorithm used is available in the Appendix A of this document.</p>
+<h3 id="hash-tags">Hash tags</h3>
+<p>There is an exception for the computation of the hash slot that is used in order
+to implement <strong>hash tags</strong>. Hash tags are a way to ensure that multiple keys
+are allocated in the same hash slot. This is used in order to implement
+multi-key operations in Valkey Cluster.</p>
+<p>To implement hash tags, the hash slot for a key is computed in a
+slightly different way in certain conditions.
+If the key contains a "{...}" pattern only the substring between
+<code>{</code> and <code>}</code> is hashed in order to obtain the hash slot. However since it is
+possible that there are multiple occurrences of <code>{</code> or <code>}</code> the algorithm is
+well specified by the following rules:</p>
+<ul>
+<li>IF the key contains a <code>{</code> character.</li>
+<li>AND IF there is a <code>}</code> character to the right of <code>{</code>.</li>
+<li>AND IF there are one or more characters between the first occurrence of <code>{</code> and the first occurrence of <code>}</code>.</li>
+</ul>
+<p>Then instead of hashing the key, only what is between the first occurrence of <code>{</code> and the following first occurrence of <code>}</code> is hashed.</p>
+<p>Examples:</p>
+<ul>
+<li>The two keys <code>{user1000}.following</code> and <code>{user1000}.followers</code> will hash to the same hash slot since only the substring <code>user1000</code> will be hashed in order to compute the hash slot.</li>
+<li>For the key <code>foo{}{bar}</code> the whole key will be hashed as usually since the first occurrence of <code>{</code> is followed by <code>}</code> on the right without characters in the middle.</li>
+<li>For the key <code>foo{{bar}}zap</code> the substring <code>{bar</code> will be hashed, because it is the substring between the first occurrence of <code>{</code> and the first occurrence of <code>}</code> on its right.</li>
+<li>For the key <code>foo{bar}{zap}</code> the substring <code>bar</code> will be hashed, since the algorithm stops at the first valid or invalid (without bytes inside) match of <code>{</code> and <code>}</code>.</li>
+<li>What follows from the algorithm is that if the key starts with <code>{}</code>, it is guaranteed to be hashed as a whole. This is useful when using binary data as key names.</li>
+</ul>
+<h4 id="glob-style-patterns">Glob-style patterns</h4>
+<p>Commands accepting a glob-style pattern, including <code>KEYS</code>, <code>SCAN</code> and <code>SORT</code>, are optimized for patterns that imply a single slot.
+This means that if all keys that can match a pattern must belong to a specific slot, only this slot is searched for keys matching the pattern.
+The pattern slot optimization is introduced in Valkey 8.0.</p>
+<p>The optimization kicks in when the pattern meets the following conditions:</p>
+<ul>
+<li>the pattern contains a hashtag,</li>
+<li>there are no wildcards or escape characters before the hashtag, and</li>
+<li>the hashtag within curly braces doesn't contain any wildcards or escape characters.</li>
+</ul>
+<p>For example, <code>SCAN 0 MATCH {abc}*</code> can successfully recognize the hashtag and scans only the slot corresponding to <code>abc</code>.
+However, the patterns <code>*{abc}</code>, <code>{a*c}</code>, or <code>{a\*bc}</code> cannot recognize the hashtag, so all slots need to be scanned.</p>
+<h4 id="hash-slot-example-code">Hash slot example code</h4>
+<p>Adding the hash tags exception, the following is an implementation of the <code>HASH_SLOT</code> function in Ruby and C language.</p>
+<p>Ruby example code:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>def HASH_SLOT(key)</span></span>
+<span class="giallo-l"><span>    s = key.index &quot;{&quot;</span></span>
+<span class="giallo-l"><span>    if s</span></span>
+<span class="giallo-l"><span>        e = key.index &quot;}&quot;,s+1</span></span>
+<span class="giallo-l"><span>        if e &amp;&amp; e != s+1</span></span>
+<span class="giallo-l"><span>            key = key[s+1..e-1]</span></span>
+<span class="giallo-l"><span>        end</span></span>
+<span class="giallo-l"><span>    end</span></span>
+<span class="giallo-l"><span>    crc16(key) % 16384</span></span>
+<span class="giallo-l"><span>end</span></span></code></pre>
+<p>C example code:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>unsigned int HASH_SLOT(char *key, int keylen) {</span></span>
+<span class="giallo-l"><span>    int s, e; /* start-end indexes of { and } */</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    /* Search the first occurrence of &#39;{&#39;. */</span></span>
+<span class="giallo-l"><span>    for (s = 0; s &lt; keylen; s++)</span></span>
+<span class="giallo-l"><span>        if (key[s] == &#39;{&#39;) break;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    /* No &#39;{&#39; ? Hash the whole key. This is the base case. */</span></span>
+<span class="giallo-l"><span>    if (s == keylen) return crc16(key,keylen) &amp; 16383;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    /* &#39;{&#39; found? Check if we have the corresponding &#39;}&#39;. */</span></span>
+<span class="giallo-l"><span>    for (e = s+1; e &lt; keylen; e++)</span></span>
+<span class="giallo-l"><span>        if (key[e] == &#39;}&#39;) break;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    /* No &#39;}&#39; or nothing between {} ? Hash the whole key. */</span></span>
+<span class="giallo-l"><span>    if (e == keylen || e == s+1) return crc16(key,keylen) &amp; 16383;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    /* If we are here there is both a { and a } on its right. Hash</span></span>
+<span class="giallo-l"><span>     * what is in the middle between { and }. */</span></span>
+<span class="giallo-l"><span>    return crc16(key+s+1,e-s-1) &amp; 16383;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="cluster-node-attributes">Cluster node attributes</h3>
+<p>Every node has a unique name in the cluster. The node name is the
+hex representation of a 160 bit random number, obtained the first time a
+node is started (usually using /dev/urandom).
+The node will save its ID in the node configuration file, and will use the
+same ID forever, or at least as long as the node configuration file is not
+deleted by the system administrator, or a <em>hard reset</em> is requested
+via the <code>CLUSTER RESET</code> command.</p>
+<p>The node ID is used to identify every node across the whole cluster.
+It is possible for a given node to change its IP address without any need
+to also change the node ID. The cluster is also able to detect the change
+in IP/port and reconfigure using the gossip protocol running over the cluster
+bus.</p>
+<p>The node ID is not the only information associated with each node, but is
+the only one that is always globally consistent. Every node has also the
+following set of information associated. Some information is about the
+cluster configuration detail of this specific node, and is eventually
+consistent across the cluster. Some other information, like the last time
+a node was pinged, is instead local to each node.</p>
+<p>Every node maintains the following information about other nodes that it is
+aware of in the cluster: The node ID, IP and port of the node, a set of
+flags, what is the primary of the node if it is flagged as <code>replica</code>, last time
+the node was pinged and the last time the pong was received, the current
+<em>configuration epoch</em> of the node (explained later in this specification),
+the link state and finally the set of hash slots served.</p>
+<p>A detailed <a href="/valkey-io.github.io/pr-21/commands/cluster-nodes">explanation of all the node fields</a> is described in the <code>CLUSTER NODES</code> documentation.</p>
+<p>The <code>CLUSTER NODES</code> command can be sent to any node in the cluster and provides the state of the cluster and the information for each node according to the local view the queried node has of the cluster.</p>
+<p>The following is sample output of the <code>CLUSTER NODES</code> command sent to a primary
+node in a small cluster of three nodes.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>$ valkey-cli cluster nodes</span></span>
+<span class="giallo-l"><span>d1861060fe6a534d42d8a19aeb36600e18785e04 127.0.0.1:6379 myself - 0 1318428930 1 connected 0-1364</span></span>
+<span class="giallo-l"><span>3886e65cc906bfd9b1f7e7bde468726a052d1dae 127.0.0.1:6380 master - 1318428930 1318428931 2 connected 1365-2729</span></span>
+<span class="giallo-l"><span>d289c575dcbc4bdd2931585fd4339089e461a27d 127.0.0.1:6381 master - 1318428931 1318428931 3 connected 2730-4095</span></span></code></pre>
+<p>In the above listing the different fields are in order: node id, address:port, flags, last ping sent, last pong received, configuration epoch, link state, slots. Details about the above fields will be covered as soon as we talk of specific parts of Valkey Cluster.</p>
+<h3 id="the-cluster-bus">The cluster bus</h3>
+<p>Every Valkey Cluster node has an additional TCP port for receiving
+incoming connections from other Valkey Cluster nodes. This port will be derived by adding 10000 to the data port or it can be specified with the cluster-port config.</p>
+<p>Example 1:</p>
+<p>If a Valkey node is listening for client connections on port 6379,
+and you do not add cluster-port parameter in valkey.conf,
+the Cluster bus port 16379 will be opened.</p>
+<p>Example 2:</p>
+<p>If a Valkey node is listening for client connections on port 6379,
+and you set cluster-port 20000 in valkey.conf,
+the Cluster bus port 20000 will be opened.</p>
+<p>Node-to-node communication happens exclusively using the Cluster bus and
+the Cluster bus protocol: a binary protocol composed of frames
+of different types and sizes. The Cluster bus binary protocol is not
+publicly documented since it is not intended for external software devices
+to talk with Valkey Cluster nodes using this protocol. However you can
+obtain more details about the Cluster bus protocol by reading the
+<code>cluster.h</code> and <code>cluster.c</code> files in the Valkey Cluster source code.</p>
+<h3 id="cluster-topology">Cluster topology</h3>
+<p>Valkey Cluster is a full mesh where every node is connected with every other node using a TCP connection.</p>
+<p>In a cluster of N nodes, every node has N-1 outgoing TCP connections, and N-1 incoming connections.</p>
+<p>These TCP connections are kept alive all the time and are not created on demand.
+When a node expects a pong reply in response to a ping in the cluster bus, before waiting long enough to mark the node as unreachable, it will try to
+refresh the connection with the node by reconnecting from scratch.</p>
+<p>While Valkey Cluster nodes form a full mesh, <strong>nodes use a gossip protocol and
+a configuration update mechanism in order to avoid exchanging too many
+messages between nodes during normal conditions</strong>, so the number of messages
+exchanged is not exponential.</p>
+<h3 id="node-handshake">Node handshake</h3>
+<p>Nodes always accept connections on the cluster bus port, and even reply to
+pings when received, even if the pinging node is not trusted.
+However, all other packets will be discarded by the receiving node if the
+sending node is not considered part of the cluster.</p>
+<p>A node will accept another node as part of the cluster only in two ways:</p>
+<ul>
+<li>
+<p>If a node presents itself with a <code>MEET</code> message (<code>CLUSTER MEET</code> command). A meet message is exactly
+like a <code>PING</code> message, but forces the receiver to accept the node as part of
+the cluster. Nodes will send <code>MEET</code> messages to other nodes <strong>only if</strong> the system administrator requests this via <code>CLUSTER MEET ip port</code>.</p>
+</li>
+<li>
+<p>A node will also register another node as part of the cluster if a node that is already trusted will gossip about this other node. So if A knows B, and B knows C, eventually B will send gossip messages to A about C. When this happens, A will register C as part of the network, and will try to connect with C.</p>
+</li>
+</ul>
+<p>This means that as long as we join nodes in any connected graph, they'll eventually form a fully connected graph automatically. This means that the cluster is able to auto-discover other nodes, but only if there is a trusted relationship that was forced by the system administrator.</p>
+<p>This mechanism makes the cluster more robust but prevents different Valkey clusters from accidentally mixing after change of IP addresses or other network related events.</p>
+<h2 id="redirection-and-resharding">Redirection and resharding</h2>
+<h3 id="moved-redirection">MOVED Redirection</h3>
+<p>A Valkey client is free to send queries to every node in the cluster, including
+replica nodes. The node will analyze the query, and if it is acceptable
+(that is, only a single key is mentioned in the query, or the multiple keys
+mentioned are all to the same hash slot) it will lookup what
+node is responsible for the hash slot where the key or keys belong.</p>
+<p>If the hash slot is served by the node, the query is simply processed, otherwise
+the node will check its internal hash slot to node map, and will reply
+to the client with a MOVED error, like in the following example:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>GET x</span></span>
+<span class="giallo-l"><span>-MOVED 3999 127.0.0.1:6381</span></span></code></pre>
+<p>The error includes the hash slot of the key (3999) and the endpoint:port of the instance that can serve the query.
+The client needs to reissue the query to the specified node's endpoint address and port.
+The endpoint can be either an IP address, a hostname, or it can be empty (e.g. <code>-MOVED 3999 :6380</code>).
+An empty endpoint indicates that the server node has an unknown endpoint, and the client should send the next request to the same endpoint as the current request but with the provided port.</p>
+<p>The endpoint can be an IPv6 address, which can contain multiple colons.
+Here, an IPv6 address is <em>not</em> enclosed in square brackets as it would be in other contexts such as URIs.
+To properly split the string <code>endpoint:port</code> into <code>endpoint</code> and <code>port</code>, a cluster client needs to locate the <em>last</em> colon.</p>
+<p>Note that even if the client waits a long time before reissuing the query,
+and in the meantime the cluster configuration changed, the destination node
+will reply again with a MOVED error if the hash slot 3999 is now served by
+another node. The same happens if the contacted node had no updated information.</p>
+<p>So while from the point of view of the cluster nodes are identified by
+IDs we try to simplify our interface with the client just exposing a map
+between hash slots and Valkey nodes identified by endpoint:port pairs.</p>
+<p>The client is not required to, but should try to memorize that hash slot
+3999 is served by 127.0.0.1:6381. This way once a new command needs to
+be issued it can compute the hash slot of the target key and have a
+greater chance of choosing the right node.</p>
+<p>An alternative is to just refresh the whole client-side cluster layout
+using the <code>CLUSTER SHARDS</code>, or the deprecated <code>CLUSTER SLOTS</code>, command
+when a MOVED redirection is received. When a redirection is encountered, it
+is likely multiple slots were reconfigured rather than just one, so updating
+the client configuration as soon as possible is often the best strategy.</p>
+<p>Note that when the Cluster is stable (no ongoing changes in the configuration),
+eventually all the clients will obtain a map of hash slots -&gt; nodes, making
+the cluster efficient, with clients directly addressing the right nodes
+without redirections, proxies or other single point of failure entities.</p>
+<p>A client <strong>must be also able to handle -ASK redirections</strong> that are described
+later in this document, otherwise it is not a complete Valkey Cluster client.</p>
+<h3 id="live-resharding">Live resharding</h3>
+<h4 id="atomic-slot-migration">Atomic slot migration</h4>
+<p>Valkey 9.0 introduced a server-side mechanism for live resharding called
+<a href="/valkey-io.github.io/pr-21/topics/atomic-slot-migration">atomic slot migration</a>, which is the recommended method.</p>
+<p>When compared to legacy slot migration, atomic slot migration allows you to
+perform live resharding faster, with higher reliability, and less client-side
+impact. Atomic slot migration is started using the <code>CLUSTER MIGRATESLOTS</code> command.</p>
+<p>You can find more details about atomic slot migration in the following pages:</p>
+<ul>
+<li><a href="/valkey-io.github.io/pr-21/topics/atomic-slot-migration">Atomic slot migration overview</a></li>
+<li><a href="/valkey-io.github.io/pr-21/commands/cluster-migrateslots"><code>CLUSTER MIGRATESLOTS</code> command documentation</a></li>
+<li><a href="/valkey-io.github.io/pr-21/commands/cluster-getslotmigrations"><code>CLUSTER GETSLOTMIGRATIONS</code> command documentation</a></li>
+<li><a href="/valkey-io.github.io/pr-21/commands/cluster-cancelslotmigrations"><code>CLUSTER CANCELSLOTMIGRATIONS</code> command documentation</a></li>
+</ul>
+<h4 id="legacy-slot-migration">Legacy slot migration</h4>
+<p>Valkey Cluster also supports a legacy, client-driven mechanism to add and remove nodes while the cluster
+is running. Adding or removing a node is abstracted into the same
+operation: moving a hash slot from one node to another. This means
+that the same basic mechanism can be used in order to rebalance the cluster, add
+or remove nodes, and so forth.</p>
+<ul>
+<li>To add a new node to the cluster an empty node is added to the cluster and some set of hash slots are moved from existing nodes to the new node.</li>
+<li>To remove a node from the cluster the hash slots assigned to that node are moved to other existing nodes.</li>
+<li>To rebalance the cluster a given set of hash slots are moved between nodes.</li>
+</ul>
+<p>The core of the implementation is the ability to move hash slots around.
+From a practical point of view a hash slot is just a set of keys, so
+what Valkey Cluster really does during <em>resharding</em> is to move keys from
+an instance to another instance. Moving a hash slot means moving all the keys
+that happen to hash into this hash slot.</p>
+<p>To understand how this works we need to show the <code>CLUSTER</code> subcommands
+that are used to manipulate the slots translation table in a Valkey Cluster node.</p>
+<p>The following subcommands are available (among others not useful in this case):</p>
+<ul>
+<li><code>CLUSTER ADDSLOTS</code> slot1 [slot2] ... [slotN]</li>
+<li><code>CLUSTER DELSLOTS</code> slot1 [slot2] ... [slotN]</li>
+<li><code>CLUSTER ADDSLOTSRANGE</code> start-slot1 end-slot1 [start-slot2 end-slot2] ... [start-slotN end-slotN]</li>
+<li><code>CLUSTER DELSLOTSRANGE</code> start-slot1 end-slot1 [start-slot2 end-slot2] ... [start-slotN end-slotN]</li>
+<li><code>CLUSTER SETSLOT</code> slot NODE node</li>
+<li><code>CLUSTER SETSLOT</code> slot MIGRATING node</li>
+<li><code>CLUSTER SETSLOT</code> slot IMPORTING node</li>
+</ul>
+<p>The first four commands, <code>ADDSLOTS</code>, <code>DELSLOTS</code>, <code>ADDSLOTSRANGE</code> and <code>DELSLOTSRANGE</code>, are simply used to assign
+(or remove) slots to a Valkey node. Assigning a slot means to tell a given
+primary node that it will be in charge of storing and serving content for
+the specified hash slot.</p>
+<p>After the hash slots are assigned they will propagate across the cluster
+using the gossip protocol, as specified later in the
+<em>configuration propagation</em> section.</p>
+<p>The <code>ADDSLOTS</code> and <code>ADDSLOTSRANGE</code> commands are usually used when a new cluster is created
+from scratch to assign each primary node a subset of all the 16384 hash
+slots available.</p>
+<p>The <code>DELSLOTS</code>  and <code>DELSLOTSRANGE</code> are mainly used for manual modification of a cluster configuration
+or for debugging tasks: in practice it is rarely used.</p>
+<p>The <code>SETSLOT</code> subcommand is used to assign a slot to a specific node ID if
+the <code>SETSLOT &lt;slot&gt; NODE</code> form is used. Otherwise the slot can be set in the
+two special states <code>MIGRATING</code> and <code>IMPORTING</code>. Those two special states
+are used in order to migrate a hash slot from one node to another.</p>
+<ul>
+<li>When a slot is set as MIGRATING, the node will accept all queries that
+are about this hash slot, but only if the key in question
+exists, otherwise the query is forwarded using a <code>-ASK</code> redirection to the
+node that is target of the migration.</li>
+<li>When a slot is set as IMPORTING, the node will accept all queries that
+are about this hash slot, but only if the request is
+preceded by an <code>ASKING</code> command. If the <code>ASKING</code> command was not given
+by the client, the query is redirected to the real hash slot owner via
+a <code>-MOVED</code> redirection error, as would happen normally.</li>
+</ul>
+<p>Let's make this clearer with an example of hash slot migration.
+Assume that we have two Valkey primary nodes, called A and B.
+We want to move hash slot 8 from A to B, so we issue commands like this:</p>
+<ul>
+<li>We send B: CLUSTER SETSLOT 8 IMPORTING A</li>
+<li>We send A: CLUSTER SETSLOT 8 MIGRATING B</li>
+</ul>
+<p>All the other nodes will continue to point clients to node "A" every time
+they are queried with a key that belongs to hash slot 8, so what happens
+is that:</p>
+<ul>
+<li>All queries about existing keys are processed by "A".</li>
+<li>All queries about non-existing keys in A are processed by "B", because "A" will redirect clients to "B".</li>
+</ul>
+<p>This way we no longer create new keys in "A".
+In the meantime, <code>valkey-cli</code> used during reshardings
+and Valkey Cluster configuration will migrate existing keys in
+hash slot 8 from A to B.
+This is performed using the following command:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>CLUSTER GETKEYSINSLOT slot count</span></span></code></pre>
+<p>The above command will return <code>count</code> keys in the specified hash slot.
+For keys returned, <code>valkey-cli</code> sends node "A" a <code>MIGRATE</code> command, that
+will migrate the specified keys from A to B in an atomic way (both instances
+are locked for the time (usually very small time) needed to migrate keys so
+there are no race conditions). This is how <code>MIGRATE</code> works:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>MIGRATE target_host target_port &quot;&quot; target_database id timeout KEYS key1 key2 ...</span></span></code></pre>
+<p><code>MIGRATE</code> will connect to the target instance, send a serialized version of
+the key, and once an OK code is received, the old key from its own dataset
+will be deleted. From the point of view of an external client a key exists
+either in A or B at any given time.</p>
+<p>In Valkey Cluster there is no need to specify a database other than 0, but
+<code>MIGRATE</code> is a general command that can be used for other tasks not
+involving Valkey Cluster.
+<code>MIGRATE</code> is optimized to be as fast as possible even when moving complex
+keys such as long lists, but in Valkey Cluster reconfiguring the
+cluster where big keys are present is not considered a wise procedure if
+there are latency constraints in the application using the database.</p>
+<p>When the migration process is finally finished, the <code>SETSLOT &lt;slot&gt; NODE &lt;node-id&gt;</code> command is sent to the two nodes involved in the migration in order to
+set the slots to their normal state again. The same command is usually
+sent to all other nodes to avoid waiting for the natural
+propagation of the new configuration across the cluster.</p>
+<h4 id="replication-of-cluster-setslot">Replication of <code>CLUSTER SETSLOT</code></h4>
+<p>Starting from Valkey 8.0, the <code>CLUSTER SETSLOT</code> command is replicated if the replicas are running Valkey version 8.0+.
+The primary node waits up to 2 seconds, by default, for all healthy replicas to acknowledge the replication.
+If not all health replicas acknowledge the replication within this time frame, the primary aborts the command,
+and the client receives a <code>NOREPLICAS Not enough good replicas to write</code> error.
+Operators can retry the command or customize the timeout using the <code>TIMEOUT</code> parameter to further increase the
+reliability of live resharding:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>CLUSTER SETSLOT slot [MIGRATING|IMPORTING|NODE] node-id [TIMEOUT timeout]</span></span></code></pre>
+<p>The <code>timeout</code> is specified in seconds, where a value of 0 indicates an indefinite wait time.</p>
+<p>Replicating the slot information and ensuring acknowledgement from health replicas significantly reduces
+the likelihood of losing replication states if the primary fails after executing the command.
+For example, consider a scenario where the target primary node <code>B</code> is finalizing a slot migration.
+Before the <code>SETSLOT</code> command is replicated to its replica node <code>B’</code>, <code>B</code> might send a cluster <code>PONG</code>
+message to the source primary node <code>A</code>, promoting <code>A</code> to relinquish its ownership of the slot in question.
+If <code>B</code> crashes right after this point, the replica node <code>B’</code>, which could be elected as the new primary,
+would not be aware of the slot ownership transfer without the successful replication of <code>SETSLOT</code>.
+This would leave the slot without an owner, leading to potential data loss and cluster topology inconsistency.</p>
+<h4 id="election-in-empty-shards">Election in empty shards</h4>
+<p>Starting from Valkey 8.0, Valkey clusters introduce the ability to elect a primary in empty shards.
+This behavior ensures that even when a shard is in the process of receiving its first slot,
+a primary can be elected. This prevents scenarios where there would be no primary available in the
+empty shard to handle redirected requests from the official slot owner,
+thereby maintaining availability during the live resharding.</p>
+<h3 id="ask-redirection">ASK redirection</h3>
+<p>In the previous section, we briefly talked about ASK redirection. Why can't
+we simply use MOVED redirection? Because while MOVED means that
+we think the hash slot is permanently served by a different node and the
+next queries should be tried against the specified node. ASK means to
+send only the next query to the specified node.</p>
+<p>This is needed because the next query about hash slot 8 can be about a
+key that is still in A, so we always want the client to try A and
+then B if needed. Since this happens only for one hash slot out of 16384
+available, the performance hit on the cluster is acceptable.</p>
+<p>We need to force that client behavior, so to make sure
+that clients will only try node B after A was tried, node B will only
+accept queries of a slot that is set as IMPORTING if the client sends the
+ASKING command before sending the query.</p>
+<p>Basically the ASKING command sets a one-time flag on the client that forces
+a node to serve a query about an IMPORTING slot.</p>
+<p>The full semantics of ASK redirection from the point of view of the client is as follows:</p>
+<ul>
+<li>If ASK redirection is received, send only the query that was redirected to the specified node but continue sending subsequent queries to the old node.</li>
+<li>Start the redirected query with the ASKING command.</li>
+<li>Don't yet update local client tables to map hash slot 8 to B.</li>
+</ul>
+<p>Once hash slot 8 migration is completed, A will send a MOVED message and
+the client may permanently map hash slot 8 to the new endpoint and port pair.
+Note that if a buggy client performs the map earlier this is not
+a problem since it will not send the ASKING command before issuing the query,
+so B will redirect the client to A using a MOVED redirection error.</p>
+<p>Slots migration is explained in similar terms but with different wording
+(for the sake of redundancy in the documentation) in the <code>CLUSTER SETSLOT</code>
+command documentation.</p>
+<p>Starting from Valkey 8.0, when the primary in either the source or target shard fails during live resharding,
+the primary in the other shard will automatically attempt to update its migrating/importing state to correctly pair
+with the newly elected primary. If this update is successful, the ASK redirection will continue functioning without
+requiring administrator intervention. In the event that slot migration fails, administrators can manually resume
+the interrupted slot migration by running the command <code>valkey-cli --cluster fix &lt;ip:port&gt;</code>.</p>
+<p>Additionally, since Valkey 8.0, replicas are now able to return <code>ASK</code> redirects during slot migrations.
+This capability was previously unavailable, as replicas were not aware of ongoing slot migrations in earlier versions.
+See the <a href="/valkey-io.github.io/pr-21/commands/readonly">READONLY</a> command.</p>
+<h3 id="client-connections-and-redirection-handling">Client connections and redirection handling</h3>
+<p>To be efficient, Valkey Cluster clients maintain a map of the current slot
+configuration. However, this configuration is not <em>required</em> to be up to date.
+When contacting the wrong node results in a redirection, the client
+can update its internal slot map accordingly.</p>
+<p>Clients usually need to fetch a complete list of slots and mapped node
+addresses in two different situations:</p>
+<ul>
+<li>At startup, to populate the initial slots configuration</li>
+<li>When the client receives a <code>MOVED</code> redirection</li>
+</ul>
+<p>Note that a client may handle the <code>MOVED</code> redirection by updating just the
+moved slot in its table; however this is usually not efficient because often
+the configuration of multiple slots will be modified at once. For example, if a
+replica is promoted to primary, all of the slots served by the old primary will
+be remapped). It is much simpler to react to a <code>MOVED</code> redirection by
+fetching the full map of slots to nodes from scratch.</p>
+<p>Client can issue a <code>CLUSTER SLOTS</code> command to retrieve an array of slot
+ranges and the associated primary and replica nodes serving the specified ranges.</p>
+<p>The following is an example of output of <code>CLUSTER SLOTS</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:7000&gt; cluster slots</span></span>
+<span class="giallo-l"><span>1) 1) (integer) 5461</span></span>
+<span class="giallo-l"><span>   2) (integer) 10922</span></span>
+<span class="giallo-l"><span>   3) 1) &quot;127.0.0.1&quot;</span></span>
+<span class="giallo-l"><span>      2) (integer) 7001</span></span>
+<span class="giallo-l"><span>   4) 1) &quot;127.0.0.1&quot;</span></span>
+<span class="giallo-l"><span>      2) (integer) 7004</span></span>
+<span class="giallo-l"><span>2) 1) (integer) 0</span></span>
+<span class="giallo-l"><span>   2) (integer) 5460</span></span>
+<span class="giallo-l"><span>   3) 1) &quot;127.0.0.1&quot;</span></span>
+<span class="giallo-l"><span>      2) (integer) 7000</span></span>
+<span class="giallo-l"><span>   4) 1) &quot;127.0.0.1&quot;</span></span>
+<span class="giallo-l"><span>      2) (integer) 7003</span></span>
+<span class="giallo-l"><span>3) 1) (integer) 10923</span></span>
+<span class="giallo-l"><span>   2) (integer) 16383</span></span>
+<span class="giallo-l"><span>   3) 1) &quot;127.0.0.1&quot;</span></span>
+<span class="giallo-l"><span>      2) (integer) 7002</span></span>
+<span class="giallo-l"><span>   4) 1) &quot;127.0.0.1&quot;</span></span>
+<span class="giallo-l"><span>      2) (integer) 7005</span></span></code></pre>
+<p>The first two sub-elements of every element of the returned array are the
+start and end slots of the range. The additional elements represent address-port
+pairs. The first address-port pair is the primary serving the slot, and the
+additional address-port pairs are the replicas serving the same slot. Replicas
+will be listed only when not in an error condition (i.e., when their FAIL flag is not set).</p>
+<p>The first element in the output above says that slots from 5461 to 10922
+(start and end included) are served by 127.0.0.1:7001, and it is possible
+to scale read-only load contacting the replica at 127.0.0.1:7004.</p>
+<p><code>CLUSTER SLOTS</code> is not guaranteed to return ranges that cover the full
+16384 slots if the cluster is misconfigured, so clients should initialize the
+slots configuration map filling the target nodes with NULL objects, and
+report an error if the user tries to execute commands about keys
+that belong to unassigned slots.</p>
+<p>Before returning an error to the caller when a slot is found to
+be unassigned, the client should try to fetch the slots configuration
+again to check if the cluster is now configured properly.</p>
+<h3 id="multi-keys-operations">Multi-keys operations</h3>
+<p>Using hash tags, clients are free to use multi-key operations.
+For example the following operation is valid:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>MSET {user:1000}.name Angela {user:1000}.surname White</span></span></code></pre>
+<p>Multi-key operations may become unavailable when a resharding of the
+hash slot the keys belong to is in progress.</p>
+<p>More specifically, even during a resharding the multi-key operations targeting
+keys that all exist and all still hash to the same slot (either the source or
+destination node) are still available.</p>
+<p>Operations on keys that don't exist or are - during the resharding - split
+between the source and destination nodes, will generate a <code>-TRYAGAIN</code> error.
+The client can try the operation after some time, or report back the error.</p>
+<p>As soon as migration of the specified hash slot has terminated, all
+multi-key operations are available again for that hash slot.</p>
+<h3 id="scaling-reads-using-replica-nodes">Scaling reads using replica nodes</h3>
+<p>Normally replica nodes will redirect clients to the authoritative primary for
+the hash slot involved in a given command, however clients can use replicas
+in order to scale reads using the <code>READONLY</code> command.</p>
+<p><code>READONLY</code> tells a Valkey Cluster replica node that the client is ok reading
+possibly stale data and is not interested in running write queries.</p>
+<p>When the connection is in readonly mode, the cluster will send a redirection
+to the client only if the operation involves keys not served
+by the replica's primary node. This may happen because:</p>
+<ol>
+<li>The client sent a command about hash slots never served by the primary of this replica.</li>
+<li>The cluster was reconfigured (for example resharded) and the replica is no longer able to serve commands for a given hash slot.</li>
+</ol>
+<p>When this happens the client should update its hash slot map as explained in
+the previous sections.</p>
+<p>The readonly state of the connection can be cleared using the <code>READWRITE</code> command.</p>
+<h2 id="fault-tolerance">Fault Tolerance</h2>
+<h3 id="heartbeat-and-gossip-messages">Heartbeat and gossip messages</h3>
+<p>Valkey Cluster nodes continuously exchange ping and pong packets. Those two kinds of packets have the same structure, and both carry important configuration information. The only actual difference is the message type field. We'll refer to the sum of ping and pong packets as <em>heartbeat packets</em>.</p>
+<p>Usually nodes send ping packets that will trigger the receivers to reply with pong packets. However this is not necessarily true. It is possible for nodes to just send pong packets to send information to other nodes about their configuration, without triggering a reply. This is useful, for example, in order to broadcast a new configuration as soon as possible.</p>
+<p>Usually a node will ping a few random nodes every second so that the total number of ping packets sent (and pong packets received) by each node is a constant amount regardless of the number of nodes in the cluster.</p>
+<p>However every node makes sure to ping every other node that hasn't sent a ping or received a pong for longer than half the <code>NODE_TIMEOUT</code> time. Before <code>NODE_TIMEOUT</code> has elapsed, nodes also try to reconnect the TCP link with another node to make sure nodes are not believed to be unreachable only because there is a problem in the current TCP connection.</p>
+<p>The number of messages globally exchanged can be sizable if <code>NODE_TIMEOUT</code> is set to a small figure and the number of nodes (N) is very large, since every node will try to ping every other node for which they don't have fresh information every half the <code>NODE_TIMEOUT</code> time.</p>
+<p>For example in a 100 node cluster with a node timeout set to 60 seconds, every node will try to send 99 pings every 30 seconds, with a total amount of pings of 3.3 per second. Multiplied by 100 nodes, this is 330 pings per second in the total cluster.</p>
+<p>There are ways to lower the number of messages, however there have been no
+reported issues with the bandwidth currently used by Valkey Cluster failure
+detection, so for now the obvious and direct design is used. Note that even
+in the above example, the 330 packets per second exchanged are evenly
+divided among 100 different nodes, so the traffic each node receives
+is acceptable.</p>
+<h3 id="heartbeat-packet-content">Heartbeat packet content</h3>
+<p>Ping and pong packets contain a header that is common to all types of packets (for instance packets to request a failover vote), and a special gossip section that is specific to Ping and Pong packets.</p>
+<p>The common header has the following information:</p>
+<ul>
+<li>Node ID, a 160 bit pseudorandom string that is assigned the first time a node is created and remains the same for all the life of a Valkey Cluster node.</li>
+<li>The <code>currentEpoch</code> and <code>configEpoch</code> fields of the sending node that are used to mount the distributed algorithms used by Valkey Cluster (this is explained in detail in the next sections). If the node is a replica the <code>configEpoch</code> is the last known <code>configEpoch</code> of its primary.</li>
+<li>The node flags, indicating if the node is a replica, a primary, and other single-bit node information.</li>
+<li>A bitmap of the hash slots served by the sending node, or if the node is a replica, a bitmap of the slots served by its primary.</li>
+<li>The sender TCP base port that is the port used by Valkey to accept client commands.</li>
+<li>The cluster port that is the port used by Valkey for node-to-node communication.</li>
+<li>The state of the cluster from the point of view of the sender (down or ok).</li>
+<li>The primary node ID of the sending node, if it is a replica.</li>
+</ul>
+<p>Ping and pong packets also contain a gossip section. This section offers to the receiver a view of what the sender node thinks about other nodes in the cluster. The gossip section only contains information about a few random nodes among the set of nodes known to the sender. The number of nodes mentioned in a gossip section is proportional to the cluster size.</p>
+<p>For every node added in the gossip section the following fields are reported:</p>
+<ul>
+<li>Node ID.</li>
+<li>IP and port of the node.</li>
+<li>Node flags.</li>
+</ul>
+<p>Gossip sections allow receiving nodes to get information about the state of other nodes from the point of view of the sender. This is useful both for failure detection and to discover other nodes in the cluster.</p>
+<h3 id="failure-detection">Failure detection</h3>
+<p>Valkey Cluster failure detection is used to recognize when a primary or replica node is no longer reachable by the majority of nodes and then respond by promoting a replica to the role of primary. When replica promotion is not possible the cluster is put in an error state to stop receiving queries from clients.</p>
+<p>As already mentioned, every node takes a list of flags associated with other known nodes. There are two flags that are used for failure detection that are called <code>PFAIL</code> and <code>FAIL</code>. <code>PFAIL</code> means <em>Possible failure</em>, and is a non-acknowledged failure type. <code>FAIL</code> means that a node is failing and that this condition was confirmed by a majority of primaries within a fixed amount of time.</p>
+<p><strong>PFAIL flag:</strong></p>
+<p>A node flags another node with the <code>PFAIL</code> flag when the node is not reachable for more than <code>NODE_TIMEOUT</code> time. Both primary and replica nodes can flag another node as <code>PFAIL</code>, regardless of its type.</p>
+<p>The concept of non-reachability for a Valkey Cluster node is that we have an <strong>active ping</strong> (a ping that we sent for which we have yet to get a reply) pending for longer than <code>NODE_TIMEOUT</code>. For this mechanism to work the <code>NODE_TIMEOUT</code> must be large compared to the network round trip time. In order to add reliability during normal operations, nodes will try to reconnect with other nodes in the cluster as soon as half of the <code>NODE_TIMEOUT</code> has elapsed without a reply to a ping. This mechanism ensures that connections are kept alive so broken connections usually won't result in false failure reports between nodes.</p>
+<p><strong>FAIL flag:</strong></p>
+<p>The <code>PFAIL</code> flag alone is just local information every node has about other nodes, but it is not sufficient to trigger a replica promotion. For a node to be considered down the <code>PFAIL</code> condition needs to be escalated to a <code>FAIL</code> condition.</p>
+<p>As outlined in the node heartbeats section of this document, every node sends gossip messages to every other node including the state of a few random known nodes. Every node eventually receives a set of node flags for every other node. This way every node has a mechanism to signal other nodes about failure conditions they have detected.</p>
+<p>A <code>PFAIL</code> condition is escalated to a <code>FAIL</code> condition when the following set of conditions are met:</p>
+<ul>
+<li>Some node, that we'll call A, has another node B flagged as <code>PFAIL</code>.</li>
+<li>Node A collected, via gossip sections, information about the state of B from the point of view of the majority of primaries in the cluster.</li>
+<li>The majority of primaries signaled the <code>PFAIL</code> or <code>FAIL</code> condition within <code>NODE_TIMEOUT * FAIL_REPORT_VALIDITY_MULT</code> time. (The validity factor is set to 2 in the current implementation, so this is just two times the <code>NODE_TIMEOUT</code> time).</li>
+</ul>
+<p>If all the above conditions are true, Node A will:</p>
+<ul>
+<li>Mark the node as <code>FAIL</code>.</li>
+<li>Send a <code>FAIL</code> message (as opposed to a <code>FAIL</code> condition within a heartbeat message) to all the reachable nodes.</li>
+</ul>
+<p>The <code>FAIL</code> message will force every receiving node to mark the node in <code>FAIL</code> state, whether or not it already flagged the node in <code>PFAIL</code> state.</p>
+<p>Note that <em>the FAIL flag is mostly one way</em>. That is, a node can go from <code>PFAIL</code> to <code>FAIL</code>, but a <code>FAIL</code> flag can only be cleared in the following situations:</p>
+<ul>
+<li>The node is already reachable and is a replica. In this case the <code>FAIL</code> flag can be cleared as replicas are not failed over.</li>
+<li>The node is already reachable and is a primary not serving any slot. In this case the <code>FAIL</code> flag can be cleared as primaries without slots do not really participate in the cluster and are waiting to be configured in order to join the cluster.</li>
+<li>The node is already reachable and is a primary, but a long time (N times the <code>NODE_TIMEOUT</code>) has elapsed without any detectable replica promotion. It's better for it to rejoin the cluster and continue in this case.</li>
+</ul>
+<p>It is useful to note that while the <code>PFAIL</code> -&gt; <code>FAIL</code> transition uses a form of agreement, the agreement used is weak:</p>
+<ol>
+<li>Nodes collect views of other nodes over some time period, so even if the majority of primary nodes need to "agree", actually this is just state that we collected from different nodes at different times and we are not sure, nor we require, that at a given moment the majority of primaries agreed. However we discard failure reports which are old, so the failure was signaled by the majority of primaries within a window of time.</li>
+<li>While every node detecting the <code>FAIL</code> condition will force that condition on other nodes in the cluster using the <code>FAIL</code> message, there is no way to ensure the message will reach all the nodes. For instance a node may detect the <code>FAIL</code> condition and because of a partition will not be able to reach any other node.</li>
+</ol>
+<p>However the Valkey Cluster failure detection has a liveness requirement: eventually all the nodes should agree about the state of a given node. There are two cases that can originate from split brain conditions. Either some minority of nodes believe the node is in <code>FAIL</code> state, or a minority of nodes believe the node is not in <code>FAIL</code> state. In both the cases eventually the cluster will have a single view of the state of a given node:</p>
+<p><strong>Case 1</strong>: If a majority of primaries have flagged a node as <code>FAIL</code>, because of failure detection and the <em>chain effect</em> it generates, every other node will eventually flag the primary as <code>FAIL</code>, since in the specified window of time enough failures will be reported.</p>
+<p><strong>Case 2</strong>: When only a minority of primaries have flagged a node as <code>FAIL</code>, the replica promotion will not happen (as it uses a more formal algorithm that makes sure everybody knows about the promotion eventually) and every node will clear the <code>FAIL</code> state as per the <code>FAIL</code> state clearing rules above (i.e. no promotion after N times the <code>NODE_TIMEOUT</code> has elapsed).</p>
+<p><strong>The <code>FAIL</code> flag is only used as a trigger to run the safe part of the algorithm</strong> for the replica promotion. In theory a replica may act independently and start a replica promotion when its primary is not reachable, and wait for the primaries to refuse to provide the acknowledgment if the primary is actually reachable by the majority. However the added complexity of the <code>PFAIL -&gt; FAIL</code> state, the weak agreement, and the <code>FAIL</code> message forcing the propagation of the state in the shortest amount of time in the reachable part of the cluster, have practical advantages. Because of these mechanisms, usually all the nodes will stop accepting writes at about the same time if the cluster is in an error state. This is a desirable feature from the point of view of applications using Valkey Cluster. Also erroneous election attempts initiated by replicas that can't reach its primary due to local problems (the primary is otherwise reachable by the majority of other primary nodes) are avoided.</p>
+<h2 id="configuration-handling-propagation-and-failovers">Configuration handling, propagation, and failovers</h2>
+<h3 id="cluster-current-epoch">Cluster current epoch</h3>
+<p>Valkey Cluster uses a concept similar to the Raft algorithm "term". In Valkey Cluster the term is called epoch instead, and it is used in order to give incremental versioning to events. When multiple nodes provide conflicting information, it becomes possible for another node to understand which state is the most up to date.</p>
+<p>The <code>currentEpoch</code> is a 64 bit unsigned number.</p>
+<p>At node creation every Valkey Cluster node, both replicas and primary nodes, set the <code>currentEpoch</code> to 0.</p>
+<p>Every time a packet is received from another node, if the epoch of the sender (part of the cluster bus messages header) is greater than the local node epoch, the <code>currentEpoch</code> is updated to the sender epoch.</p>
+<p>Because of these semantics, eventually all the nodes will agree to the greatest <code>currentEpoch</code> in the cluster.</p>
+<p>This information is used when the state of the cluster is changed and a node seeks agreement in order to perform some action.</p>
+<p>Currently this happens only during replica promotion, as described in the next section. Basically the epoch is a logical clock for the cluster and dictates that given information wins over one with a smaller epoch.</p>
+<h3 id="configuration-epoch">Configuration epoch</h3>
+<p>Every primary always advertises its <code>configEpoch</code> in ping and pong packets along with a bitmap advertising the set of slots it serves.</p>
+<p>The <code>configEpoch</code> is set to zero in primaries when a new node is created.</p>
+<p>A new <code>configEpoch</code> is created during replica election. Replicas trying to replace
+failing primaries increment their epoch and try to get authorization from
+a majority of primaries. When a replica is authorized, a new unique <code>configEpoch</code>
+is created and the replica turns into a primary using the new <code>configEpoch</code>.</p>
+<p>As explained in the next sections the <code>configEpoch</code> helps to resolve conflicts when different nodes claim divergent configurations (a condition that may happen because of network partitions and node failures).</p>
+<p>Replica nodes also advertise the <code>configEpoch</code> field in ping and pong packets, but in the case of replicas the field represents the <code>configEpoch</code> of its primary as of the last time they exchanged packets. This allows other instances to detect when a replica has an old configuration that needs to be updated (primary nodes will not grant votes to replicas with an old configuration).</p>
+<p>Every time the <code>configEpoch</code> changes for some known node, it is permanently stored in the nodes.conf file by all the nodes that receive this information. The same also happens for the <code>currentEpoch</code> value. These two variables are guaranteed to be saved and <code>fsync-ed</code> to disk when updated before a node continues its operations.</p>
+<p>The <code>configEpoch</code> values generated using a simple algorithm during failovers
+are guaranteed to be new, incremental, and unique.</p>
+<h3 id="replica-election-and-promotion">Replica election and promotion</h3>
+<p>Replica election and promotion is handled by replica nodes, with the help of the primary nodes that vote for the replica to promote.
+A replica election happens when a primary is in <code>FAIL</code> state from the point of view of at least one of its replicas that has the prerequisites in order to become a primary.</p>
+<p>In order for a replica to promote itself to primary, it needs to start an election and win it. All the replicas for a given primary can start an election if the primary is in <code>FAIL</code> state, however only one replica will win the election and promote itself to primary.</p>
+<p>A replica starts an election when the following conditions are met:</p>
+<ul>
+<li>The replica's primary is in <code>FAIL</code> state.</li>
+<li>The primary was serving a non-zero number of slots.</li>
+<li>The replica replication link was disconnected from the primary for no longer than a given amount of time, in order to ensure the promoted replica's data is reasonably fresh. This time is user configurable.</li>
+</ul>
+<p>In order to be elected, the first step for a replica is to increment its <code>currentEpoch</code> counter, and request votes from primary instances.</p>
+<p>Votes are requested by the replica by broadcasting a <code>FAILOVER_AUTH_REQUEST</code> packet to every primary node of the cluster. Then it waits for a maximum time of two times the <code>NODE_TIMEOUT</code> for replies to arrive (but always for at least 2 seconds).</p>
+<p>Once a primary has voted for a given replica, replying positively with a <code>FAILOVER_AUTH_ACK</code>, it can no longer vote for another replica of the same primary for a period of <code>NODE_TIMEOUT * 2</code>. In this period it will not be able to reply to other authorization requests for the same primary. This is not needed to guarantee safety, but useful for preventing multiple replicas from getting elected (even if with a different <code>configEpoch</code>) at around the same time, which is usually not wanted.</p>
+<p>A replica discards any <code>AUTH_ACK</code> replies with an epoch that is less than the <code>currentEpoch</code> at the time the vote request was sent. This ensures it doesn't count votes intended for a previous election.</p>
+<p>Once the replica receives ACKs from the majority of primaries, it wins the election.
+Otherwise if the majority is not reached within the period of two times <code>NODE_TIMEOUT</code> (but always at least 2 seconds), the election is aborted and a new one will be tried again after <code>NODE_TIMEOUT * 4</code> (and always at least 4 seconds).</p>
+<h3 id="replica-rank">Replica rank</h3>
+<p>As soon as a primary is in <code>FAIL</code> state, a replica waits a short period of time before trying to get elected. That delay is computed as follows:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>DELAY = 500 milliseconds + random delay between 0 and 500 milliseconds +</span></span>
+<span class="giallo-l"><span>        REPLICA_RANK * 1000 milliseconds.</span></span></code></pre>
+<p>The fixed delay ensures that we wait for the <code>FAIL</code> state to propagate across the cluster, otherwise the replica may try to get elected while the primaries are still unaware of the <code>FAIL</code> state, refusing to grant their vote.</p>
+<p>The random delay is used to desynchronize replicas so they're unlikely to start an election at the same time.</p>
+<p>The <code>REPLICA_RANK</code> is the rank of this replica regarding the amount of replication data it has processed from the primary.
+Replicas exchange messages when the primary is failing in order to establish a (best effort) rank:
+the replica with the most updated replication offset is at rank 0, the second most updated at rank 1, and so forth.
+In this way the most updated replicas try to get elected before others.</p>
+<p>Rank order is not strictly enforced; if a replica of higher rank fails to be
+elected, the others will try shortly.</p>
+<p>Once a replica wins the election, it obtains a new unique and incremental <code>configEpoch</code> which is higher than that of any other existing primary. It starts advertising itself as primary in ping and pong packets, providing the set of served slots with a <code>configEpoch</code> that will win over the past ones.</p>
+<p>In order to speedup the reconfiguration of other nodes, a pong packet is broadcast to all the nodes of the cluster. Currently unreachable nodes will eventually be reconfigured when they receive a ping or pong packet from another node or will receive an <code>UPDATE</code> packet from another node if the information it publishes via heartbeat packets are detected to be out of date.</p>
+<p>The other nodes will detect that there is a new primary serving the same slots served by the old primary but with a greater <code>configEpoch</code>, and will upgrade their configuration. Replicas of the old primary (or the failed over primary if it rejoins the cluster) will not just upgrade the configuration but will also reconfigure to replicate from the new primary. How nodes rejoining the cluster are configured is explained in the next sections.</p>
+<h3 id="masters-reply-to-replica-vote-request">Masters reply to replica vote request</h3>
+<p>In the previous section, we discussed how replicas try to get elected. This section explains what happens from the point of view of a primary that is requested to vote for a given replica.</p>
+<p>Masters receive requests for votes in form of <code>FAILOVER_AUTH_REQUEST</code> requests from replicas.</p>
+<p>For a vote to be granted the following conditions need to be met:</p>
+<ol>
+<li>A primary only votes a single time for a given epoch, and refuses to vote for older epochs: every primary has a lastVoteEpoch field and will refuse to vote again as long as the <code>currentEpoch</code> in the auth request packet is not greater than the lastVoteEpoch. When a primary replies positively to a vote request, the lastVoteEpoch is updated accordingly, and safely stored on disk.</li>
+<li>A primary votes for a replica only if the replica's primary is flagged as <code>FAIL</code>.</li>
+<li>Auth requests with a <code>currentEpoch</code> that is less than the primary <code>currentEpoch</code> are ignored. Because of this the primary reply will always have the same <code>currentEpoch</code> as the auth request. If the same replica asks again to be voted, incrementing the <code>currentEpoch</code>, it is guaranteed that an old delayed reply from the primary can not be accepted for the new vote.</li>
+</ol>
+<p>Example of the issue caused by not using rule number 3:</p>
+<p>Primary <code>currentEpoch</code> is 5, lastVoteEpoch is 1 (this may happen after a few failed elections)</p>
+<ul>
+<li>Replica <code>currentEpoch</code> is 3.</li>
+<li>Replica tries to be elected with epoch 4 (3+1), primary replies with an ok with <code>currentEpoch</code> 5, however the reply is delayed.</li>
+<li>Replica will try to be elected again, at a later time, with epoch 5 (4+1), the delayed reply reaches the replica with <code>currentEpoch</code> 5, and is accepted as valid.</li>
+</ul>
+<ol start="4">
+<li>Primaries don't vote for a replica of the same primary before <code>NODE_TIMEOUT * 2</code> has elapsed if a replica of that primary was already voted for. This is not strictly required as it is not possible for two replicas to win the election in the same epoch. However, in practical terms it ensures that when a replica is elected it has plenty of time to inform the other replicas and avoid the possibility that another replica will win a new election, performing an unnecessary second failover.</li>
+<li>Primaries make no effort to select the best replica in any way. If the replica's primary is in <code>FAIL</code> state and the primary did not vote in the current term, a positive vote is granted. The best replica is the most likely to start an election and win it before the other replicas, since it will usually be able to start the voting process earlier because of its <em>higher rank</em> as explained in the previous section.</li>
+<li>When a primary refuses to vote for a given replica there is no negative response, the request is simply ignored.</li>
+<li>Primaries don't vote for replicas sending a <code>configEpoch</code> that is less than any <code>configEpoch</code> in the primary table for the slots claimed by the replica. Remember that the replica sends the <code>configEpoch</code> of its primary, and the bitmap of the slots served by its primary. This means that the replica requesting the vote must have a configuration for the slots it wants to failover that is newer or equal the one of the primary granting the vote.</li>
+</ol>
+<h3 id="practical-example-of-configuration-epoch-usefulness-during-partitions">Practical example of configuration epoch usefulness during partitions</h3>
+<p>This section illustrates how the epoch concept is used to make the replica promotion process more resistant to partitions.</p>
+<ul>
+<li>A primary is no longer reachable indefinitely. The primary has three replicas A, B, C.</li>
+<li>Replica A wins the election and is promoted to primary.</li>
+<li>A network partition makes A not available for the majority of the cluster.</li>
+<li>Replica B wins the election and is promoted as primary.</li>
+<li>A partition makes B not available for the majority of the cluster.</li>
+<li>The previous partition is fixed, and A is available again.</li>
+</ul>
+<p>At this point B is down and A is available again with a role of primary (actually <code>UPDATE</code> messages would reconfigure it promptly, but here we assume all <code>UPDATE</code> messages were lost). At the same time, replica C will try to get elected in order to fail over B. This is what happens:</p>
+<ol>
+<li>C will try to get elected and will succeed, since for the majority of primaries its primary is actually down. It will obtain a new incremental <code>configEpoch</code>.</li>
+<li>A will not be able to claim to be the primary for its hash slots, because the other nodes already have the same hash slots associated with a higher configuration epoch (the one of B) compared to the one published by A.</li>
+<li>So, all the nodes will upgrade their table to assign the hash slots to C, and the cluster will continue its operations.</li>
+</ol>
+<p>As you'll see in the next sections, a stale node rejoining a cluster
+will usually get notified as soon as possible about the configuration change
+because as soon as it pings any other node, the receiver will detect it
+has stale information and will send an <code>UPDATE</code> message.</p>
+<h3 id="hash-slots-configuration-propagation">Hash slots configuration propagation</h3>
+<p>An important part of Valkey Cluster is the mechanism used to propagate the information about which cluster node is serving a given set of hash slots. This is vital to both the startup of a fresh cluster and the ability to upgrade the configuration after a replica was promoted to serve the slots of its failing primary.</p>
+<p>The same mechanism allows nodes partitioned away for an indefinite amount of
+time to rejoin the cluster in a sensible way.</p>
+<p>There are two ways hash slot configurations are propagated:</p>
+<ol>
+<li>Heartbeat messages. The sender of a ping or pong packet always adds information about the set of hash slots it (or its primary, if it is a replica) serves.</li>
+<li><code>UPDATE</code> messages. Since in every heartbeat packet there is information about the sender <code>configEpoch</code> and set of hash slots served, if a receiver of a heartbeat packet finds the sender information is stale, it will send a packet with new information, forcing the stale node to update its info.</li>
+</ol>
+<p>The receiver of a heartbeat or <code>UPDATE</code> message uses certain simple rules in
+order to update its table mapping hash slots to nodes. When a new Valkey Cluster node is created, its local hash slot table is simply initialized to <code>NULL</code> entries so that each hash slot is not bound or linked to any node. This looks similar to the following:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>0 -&gt; NULL</span></span>
+<span class="giallo-l"><span>1 -&gt; NULL</span></span>
+<span class="giallo-l"><span>2 -&gt; NULL</span></span>
+<span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"><span>16383 -&gt; NULL</span></span></code></pre>
+<p>The first rule followed by a node in order to update its hash slot table is the following:</p>
+<p><strong>Rule 1</strong>: If a hash slot is unassigned (set to <code>NULL</code>), and a known node claims it, I'll modify my hash slot table and associate the claimed hash slots to it.</p>
+<p>So if we receive a heartbeat from node A claiming to serve hash slots 1 and 2 with a configuration epoch value of 3, the table will be modified to:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>0 -&gt; NULL</span></span>
+<span class="giallo-l"><span>1 -&gt; A [3]</span></span>
+<span class="giallo-l"><span>2 -&gt; A [3]</span></span>
+<span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"><span>16383 -&gt; NULL</span></span></code></pre>
+<p>When a new cluster is created, a system administrator needs to manually assign (using the <code>CLUSTER ADDSLOTS</code> command, via the valkey-cli command line tool, or by any other means) the slots served by each primary node only to the node itself, and the information will rapidly propagate across the cluster.</p>
+<p>However this rule is not enough. We know that hash slot mapping can change
+during two events:</p>
+<ol>
+<li>A replica replaces its primary during a failover.</li>
+<li>A slot is resharded from a node to a different one.</li>
+</ol>
+<p>For now let's focus on failovers. When a replica fails over its primary, it obtains
+a configuration epoch which is guaranteed to be greater than the one of its
+primary (and more generally greater than any other configuration epoch
+generated previously). For example node B, which is a replica of A, may failover
+A with configuration epoch of 4. It will start to send heartbeat packets
+(the first time mass-broadcasting cluster-wide) and because of the following
+second rule, receivers will update their hash slot tables:</p>
+<p><strong>Rule 2</strong>: If a hash slot is already assigned, and a known node is advertising it using a <code>configEpoch</code> that is greater than the <code>configEpoch</code> of the primary currently associated with the slot, it'll rebind the hash slot to the new node.</p>
+<p>So after receiving messages from B that claim to serve hash slots 1 and 2 with configuration epoch of 4, the receivers will update their table in the following way:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>0 -&gt; NULL</span></span>
+<span class="giallo-l"><span>1 -&gt; B [4]</span></span>
+<span class="giallo-l"><span>2 -&gt; B [4]</span></span>
+<span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"><span>16383 -&gt; NULL</span></span></code></pre>
+<p>Liveness property: because of the second rule, eventually all nodes in the cluster will agree that the owner of a slot is the one with the greatest <code>configEpoch</code> among the nodes advertising it.</p>
+<p>This mechanism in Valkey Cluster is called <strong>last failover wins</strong>.</p>
+<p>The same happens during resharding. When a node importing a hash slot completes
+the import operation, its configuration epoch is incremented to make sure the
+change will be propagated throughout the cluster.</p>
+<h3 id="update-messages-a-closer-look">UPDATE messages, a closer look</h3>
+<p>With the previous section in mind, it is easier to see how update messages
+work. Node A may rejoin the cluster after some time. It will send heartbeat
+packets where it claims it serves hash slots 1 and 2 with configuration epoch
+of 3. All the receivers with updated information will instead see that
+the same hash slots are associated with node B having a higher configuration
+epoch. Because of this they'll send an <code>UPDATE</code> message to A with the new
+configuration for the slots. A will update its configuration because of the
+<strong>rule 2</strong> above.</p>
+<h3 id="how-nodes-rejoin-the-cluster">How nodes rejoin the cluster</h3>
+<p>The same basic mechanism is used when a node rejoins a cluster.
+Continuing with the example above, node A will be notified
+that hash slots 1 and 2 are now served by B. Assuming that these two were
+the only hash slots served by A, the count of hash slots served by A will
+drop to 0! So A will <strong>reconfigure to be a replica of the new primary</strong>.</p>
+<p>The actual rule followed is a bit more complex than this. In general it may
+happen that A rejoins after a lot of time, in the meantime it may happen that
+hash slots originally served by A are served by multiple nodes, for example
+hash slot 1 may be served by B, and hash slot 2 by C.</p>
+<p>So the actual <em>Valkey Cluster node role switch rule</em> is: <strong>A primary node will change its configuration to replicate (be a replica of) the node that stole its last hash slot</strong>.</p>
+<p>During reconfiguration, eventually the number of served hash slots will drop to zero, and the node will reconfigure accordingly. Note that in the base case this just means that the old primary will be a replica of the replica that replaced it after a failover. However in the general form the rule covers all possible cases.</p>
+<p>Replicas do exactly the same: they reconfigure to replicate the node that
+stole the last hash slot of its former primary.</p>
+<h3 id="replica-migration">Replica migration</h3>
+<p>Valkey Cluster implements a concept called <em>replica migration</em> in order to
+improve the availability of the system. The idea is that in a cluster with
+a primary-replica setup, if the map between replicas and primaries is fixed
+availability is limited over time if multiple independent failures of single
+nodes happen.</p>
+<p>For example in a cluster where every primary has a single replica, the cluster
+can continue operations as long as either the primary or the replica fail, but not
+if both fail the same time. However there is a class of failures that are
+the independent failures of single nodes caused by hardware or software issues
+that can accumulate over time. For example:</p>
+<ul>
+<li>Master A has a single replica A1.</li>
+<li>Master A fails. A1 is promoted as new primary.</li>
+<li>Three hours later A1 fails in an independent manner (unrelated to the failure of A). No other replica is available for promotion since node A is still down. The cluster cannot continue normal operations.</li>
+</ul>
+<p>If the map between primaries and replicas is fixed, the only way to make the cluster
+more resistant to the above scenario is to add replicas to every primary, however
+this is costly as it requires more instances of Valkey to be executed, more
+memory, and so forth.</p>
+<p>An alternative is to create an asymmetry in the cluster, and let the cluster
+layout automatically change over time. For example the cluster may have three
+primaries A, B, C. A and B have a single replica each, A1 and B1. However, the primary
+C is different and has two replicas: C1 and C2.</p>
+<p>Replica migration is the process of automatic reconfiguration of a replica
+in order to <em>migrate</em> to a primary that has no longer coverage (no working
+replicas). With replica migration the scenario mentioned above turns into the
+following:</p>
+<ul>
+<li>Master A fails. A1 is promoted.</li>
+<li>C2 migrates as replica of A1, that is otherwise not backed by any replica.</li>
+<li>Three hours later A1 fails as well.</li>
+<li>C2 is promoted as a new primary to replace A1.</li>
+<li>The cluster can continue the operations.</li>
+</ul>
+<h3 id="replica-migration-algorithm">Replica migration algorithm</h3>
+<p>The migration algorithm does not use any form of agreement since the replica
+layout in a Valkey Cluster is not part of the cluster configuration that needs
+to be consistent and/or versioned with config epochs. Instead it uses an
+algorithm to avoid mass-migration of replicas when a primary is not backed.
+The algorithm guarantees that eventually (once the cluster configuration is
+stable) every primary will be backed by at least one replica.</p>
+<p>This is how the algorithm works. To start we need to define what is a
+<em>good replica</em> in this context: a good replica is a replica not in <code>FAIL</code> state
+from the point of view of a given node.</p>
+<p>The execution of the algorithm is triggered in every replica that detects that
+there is at least a single primary without good replicas. However among all the
+replicas detecting this condition, only a subset should act. This subset is
+actually often a single replica unless different replicas have in a given moment
+a slightly different view of the failure state of other nodes.</p>
+<p>The <em>acting replica</em> is the replica among the primaries with the maximum number
+of attached replicas, that is not in FAIL state and has the smallest node ID.</p>
+<p>So for example if there are 10 primaries with 1 replica each, and 2 primaries with
+5 replicas each, the replica that will try to migrate is - among the 2 primaries
+having 5 replicas - the one with the lowest node ID. Given that no agreement
+is used, it is possible that when the cluster configuration is not stable,
+a race condition occurs where multiple replicas believe themselves to be
+the non-failing replica with the lower node ID (it is unlikely for this to happen
+in practice). If this happens, the result is multiple replicas migrating to the
+same primary, which is harmless. If the race happens in a way that will leave
+the ceding primary without replicas, as soon as the cluster is stable again
+the algorithm will be re-executed again and will migrate a replica back to
+the original primary.</p>
+<p>Eventually every primary will be backed by at least one replica. However,
+the normal behavior is that a single replica migrates from a primary with
+multiple replicas to an orphaned primary.</p>
+<p>The algorithm is controlled by a user-configurable parameter called
+<code>cluster-migration-barrier</code>: the number of good replicas a primary
+must be left with before a replica can migrate away. For example, if this
+parameter is set to 2, a replica can try to migrate only if its primary remains
+with two working replicas.</p>
+<h3 id="configepoch-conflicts-resolution-algorithm">configEpoch conflicts resolution algorithm</h3>
+<p>When new <code>configEpoch</code> values are created via replica promotion during
+failovers, they are guaranteed to be unique.</p>
+<p>However there are two distinct events where new configEpoch values are
+created in an unsafe way, just incrementing the local <code>currentEpoch</code> of
+the local node and hoping there are no conflicts at the same time.
+Both the events are system-administrator triggered:</p>
+<ol>
+<li><code>CLUSTER FAILOVER</code> command with <code>TAKEOVER</code> option is able to manually promote a replica node into a primary <em>without the majority of primaries being available</em>. This is useful, for example, in multi data center setups.</li>
+<li>Migration of slots for cluster rebalancing also generates new configuration epochs inside the local node without agreement for performance reasons.</li>
+</ol>
+<p>Specifically, during manual resharding, when a hash slot is migrated from
+a node A to a node B, the resharding program will force B to upgrade
+its configuration to an epoch which is the greatest found in the cluster,
+plus 1 (unless the node is already the one with the greatest configuration
+epoch), without requiring agreement from other nodes.
+Usually a real world resharding involves moving several hundred hash slots
+(especially in small clusters). Requiring an agreement to generate new
+configuration epochs during resharding, for each hash slot moved, is
+inefficient. Moreover it requires a fsync in each of the cluster nodes
+every time in order to store the new configuration. Because of the way it is
+performed instead, we only need a new config epoch when the first hash slot is moved,
+making it much more efficient in production environments.</p>
+<p>However because of the two cases above, it is possible (though unlikely) to end
+with multiple nodes having the same configuration epoch. A resharding operation
+performed by the system administrator, and a failover happening at the same
+time (plus a lot of bad luck) could cause <code>currentEpoch</code> collisions if
+they are not propagated fast enough.</p>
+<p>Moreover, software bugs and filesystem corruptions can also contribute
+to multiple nodes having the same configuration epoch.</p>
+<p>When primaries serving different hash slots have the same <code>configEpoch</code>, there
+are no issues. It is more important that replicas failing over a primary have
+unique configuration epochs.</p>
+<p>That said, manual interventions or resharding may change the cluster
+configuration in different ways. The Valkey Cluster main liveness property
+requires that slot configurations always converge, so under every circumstance
+we really want all the primary nodes to have a different <code>configEpoch</code>.</p>
+<p>In order to enforce this, <strong>a conflict resolution algorithm</strong> is used in the
+event that two nodes end up with the same <code>configEpoch</code>.</p>
+<ul>
+<li>IF a primary node detects another primary node is advertising itself with
+the same <code>configEpoch</code>.</li>
+<li>AND IF the node has a lexicographically smaller Node ID compared to the other node claiming the same <code>configEpoch</code>.</li>
+<li>THEN it increments its <code>currentEpoch</code> by 1, and uses it as the new <code>configEpoch</code>.</li>
+</ul>
+<p>If there are any set of nodes with the same <code>configEpoch</code>, all the nodes but the one with the greatest Node ID will move forward, guaranteeing that, eventually, every node will pick a unique configEpoch regardless of what happened.</p>
+<p>This mechanism also guarantees that after a fresh cluster is created, all
+nodes start with a different <code>configEpoch</code> (even if this is not actually
+used) since <code>valkey-cli</code> makes sure to use <code>CLUSTER SET-CONFIG-EPOCH</code> at startup.
+However if for some reason a node is left misconfigured, it will update
+its configuration to a different configuration epoch automatically.</p>
+<h3 id="node-resets">Node resets</h3>
+<p>Nodes can be software reset (without restarting them) in order to be reused
+in a different role or in a different cluster. This is useful in normal
+operations, in testing, and in cloud environments where a given node can
+be reprovisioned to join a different set of nodes to enlarge or create a new
+cluster.</p>
+<p>In Valkey Cluster nodes are reset using the <code>CLUSTER RESET</code> command. The
+command is provided in two variants:</p>
+<ul>
+<li><code>CLUSTER RESET SOFT</code></li>
+<li><code>CLUSTER RESET HARD</code></li>
+</ul>
+<p>The command must be sent directly to the node to reset. If no reset type is
+provided, a soft reset is performed.</p>
+<p>The following is a list of operations performed by a reset:</p>
+<ol>
+<li>Soft and hard reset: If the node is a replica, it is turned into a primary, and its dataset is discarded. If the node is a primary and contains keys the reset operation is aborted.</li>
+<li>Soft and hard reset: All the slots are released, and the manual failover state is reset.</li>
+<li>Soft and hard reset: All the other nodes in the nodes table are removed, so the node no longer knows any other node.</li>
+<li>Hard reset only: <code>currentEpoch</code>, <code>configEpoch</code>, and <code>lastVoteEpoch</code> are set to 0.</li>
+<li>Hard reset only: the Node ID is changed to a new random ID.</li>
+</ol>
+<p>Master nodes with non-empty data sets can't be reset (since normally you want to reshard data to the other nodes). However, under special conditions when this is appropriate (e.g. when a cluster is totally destroyed with the intent of creating a new one), <code>FLUSHALL</code> must be executed before proceeding with the reset.</p>
+<h3 id="removing-nodes-from-a-cluster">Removing nodes from a cluster</h3>
+<p>It is possible to practically remove a node from an existing cluster by
+resharding all its data to other nodes (if it is a primary node) and
+shutting it down. However, the other nodes will still remember its node
+ID and address, and will attempt to connect with it.</p>
+<p>For this reason, when a node is removed we want to also remove its entry
+from all the other nodes tables. This is accomplished by using the
+<code>CLUSTER FORGET &lt;node-id&gt;</code> command.</p>
+<p>The command does two things:</p>
+<ol>
+<li>It removes the node with the specified node ID from the nodes table.</li>
+<li>It sets a 60 second ban which prevents a node with the same node ID from being re-added.</li>
+</ol>
+<p>The second operation is needed because Valkey Cluster uses gossip in order to auto-discover nodes, so removing the node X from node A, could result in node B gossiping about node X to A again. Because of the 60 second ban, the Valkey Cluster administration tools have 60 seconds in order to remove the node from all the nodes, preventing the re-addition of the node due to auto discovery.</p>
+<p>Further information is available in the <code>CLUSTER FORGET</code> documentation.</p>
+<h2 id="publish-subscribe">Publish/Subscribe</h2>
+<p>In a Valkey Cluster, clients can subscribe to every node, and can also
+publish to every other node. The cluster will make sure that published
+messages are forwarded as needed.</p>
+<p>The clients can send SUBSCRIBE to any node and can also send PUBLISH to any node.
+It will simply broadcast each published message to all other nodes.</p>
+<p>Redis OSS 7.0 and later features sharded pub/sub, in which shard channels are assigned to slots by the same algorithm used to assign keys to slots.
+A shard message must be sent to a node that owns the slot the shard channel is hashed to.
+The cluster makes sure the published shard messages are forwarded to all nodes in the shard, so clients can subscribe to a shard channel by connecting to either the primary responsible for the slot, or to any of its replicas.</p>
+<h2 id="appendix">Appendix</h2>
+<h3 id="appendix-a-crc16-reference-implementation-in-ansi-c">Appendix A: CRC16 reference implementation in ANSI C</h3>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>/*</span></span>
+<span class="giallo-l"><span> * Copyright 2001-2010 Georges Menie (www.menie.org)</span></span>
+<span class="giallo-l"><span> * Copyright 2010 Salvatore Sanfilippo (adapted to Redis coding style)</span></span>
+<span class="giallo-l"><span> * All rights reserved.</span></span>
+<span class="giallo-l"><span> * Redistribution and use in source and binary forms, with or without</span></span>
+<span class="giallo-l"><span> * modification, are permitted provided that the following conditions are met:</span></span>
+<span class="giallo-l"><span> *</span></span>
+<span class="giallo-l"><span> *     * Redistributions of source code must retain the above copyright</span></span>
+<span class="giallo-l"><span> *       notice, this list of conditions and the following disclaimer.</span></span>
+<span class="giallo-l"><span> *     * Redistributions in binary form must reproduce the above copyright</span></span>
+<span class="giallo-l"><span> *       notice, this list of conditions and the following disclaimer in the</span></span>
+<span class="giallo-l"><span> *       documentation and/or other materials provided with the distribution.</span></span>
+<span class="giallo-l"><span> *     * Neither the name of the University of California, Berkeley nor the</span></span>
+<span class="giallo-l"><span> *       names of its contributors may be used to endorse or promote products</span></span>
+<span class="giallo-l"><span> *       derived from this software without specific prior written permission.</span></span>
+<span class="giallo-l"><span> *</span></span>
+<span class="giallo-l"><span> * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS&#39;&#39; AND ANY</span></span>
+<span class="giallo-l"><span> * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED</span></span>
+<span class="giallo-l"><span> * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE</span></span>
+<span class="giallo-l"><span> * DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY</span></span>
+<span class="giallo-l"><span> * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES</span></span>
+<span class="giallo-l"><span> * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;</span></span>
+<span class="giallo-l"><span> * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND</span></span>
+<span class="giallo-l"><span> * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</span></span>
+<span class="giallo-l"><span> * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS</span></span>
+<span class="giallo-l"><span> * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span></span>
+<span class="giallo-l"><span> */</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>/* CRC16 implementation according to CCITT standards.</span></span>
+<span class="giallo-l"><span> *</span></span>
+<span class="giallo-l"><span> * Note by @antirez: this is actually the XMODEM CRC 16 algorithm, using the</span></span>
+<span class="giallo-l"><span> * following parameters:</span></span>
+<span class="giallo-l"><span> *</span></span>
+<span class="giallo-l"><span> * Name                       : &quot;XMODEM&quot;, also known as &quot;ZMODEM&quot;, &quot;CRC-16/ACORN&quot;</span></span>
+<span class="giallo-l"><span> * Width                      : 16 bit</span></span>
+<span class="giallo-l"><span> * Poly                       : 1021 (That is actually x^16 + x^12 + x^5 + 1)</span></span>
+<span class="giallo-l"><span> * Initialization             : 0000</span></span>
+<span class="giallo-l"><span> * Reflect Input byte         : False</span></span>
+<span class="giallo-l"><span> * Reflect Output CRC         : False</span></span>
+<span class="giallo-l"><span> * Xor constant to output CRC : 0000</span></span>
+<span class="giallo-l"><span> * Output for &quot;123456789&quot;     : 31C3</span></span>
+<span class="giallo-l"><span> */</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>static const uint16_t crc16tab[256]= {</span></span>
+<span class="giallo-l"><span>    0x0000,0x1021,0x2042,0x3063,0x4084,0x50a5,0x60c6,0x70e7,</span></span>
+<span class="giallo-l"><span>    0x8108,0x9129,0xa14a,0xb16b,0xc18c,0xd1ad,0xe1ce,0xf1ef,</span></span>
+<span class="giallo-l"><span>    0x1231,0x0210,0x3273,0x2252,0x52b5,0x4294,0x72f7,0x62d6,</span></span>
+<span class="giallo-l"><span>    0x9339,0x8318,0xb37b,0xa35a,0xd3bd,0xc39c,0xf3ff,0xe3de,</span></span>
+<span class="giallo-l"><span>    0x2462,0x3443,0x0420,0x1401,0x64e6,0x74c7,0x44a4,0x5485,</span></span>
+<span class="giallo-l"><span>    0xa56a,0xb54b,0x8528,0x9509,0xe5ee,0xf5cf,0xc5ac,0xd58d,</span></span>
+<span class="giallo-l"><span>    0x3653,0x2672,0x1611,0x0630,0x76d7,0x66f6,0x5695,0x46b4,</span></span>
+<span class="giallo-l"><span>    0xb75b,0xa77a,0x9719,0x8738,0xf7df,0xe7fe,0xd79d,0xc7bc,</span></span>
+<span class="giallo-l"><span>    0x48c4,0x58e5,0x6886,0x78a7,0x0840,0x1861,0x2802,0x3823,</span></span>
+<span class="giallo-l"><span>    0xc9cc,0xd9ed,0xe98e,0xf9af,0x8948,0x9969,0xa90a,0xb92b,</span></span>
+<span class="giallo-l"><span>    0x5af5,0x4ad4,0x7ab7,0x6a96,0x1a71,0x0a50,0x3a33,0x2a12,</span></span>
+<span class="giallo-l"><span>    0xdbfd,0xcbdc,0xfbbf,0xeb9e,0x9b79,0x8b58,0xbb3b,0xab1a,</span></span>
+<span class="giallo-l"><span>    0x6ca6,0x7c87,0x4ce4,0x5cc5,0x2c22,0x3c03,0x0c60,0x1c41,</span></span>
+<span class="giallo-l"><span>    0xedae,0xfd8f,0xcdec,0xddcd,0xad2a,0xbd0b,0x8d68,0x9d49,</span></span>
+<span class="giallo-l"><span>    0x7e97,0x6eb6,0x5ed5,0x4ef4,0x3e13,0x2e32,0x1e51,0x0e70,</span></span>
+<span class="giallo-l"><span>    0xff9f,0xefbe,0xdfdd,0xcffc,0xbf1b,0xaf3a,0x9f59,0x8f78,</span></span>
+<span class="giallo-l"><span>    0x9188,0x81a9,0xb1ca,0xa1eb,0xd10c,0xc12d,0xf14e,0xe16f,</span></span>
+<span class="giallo-l"><span>    0x1080,0x00a1,0x30c2,0x20e3,0x5004,0x4025,0x7046,0x6067,</span></span>
+<span class="giallo-l"><span>    0x83b9,0x9398,0xa3fb,0xb3da,0xc33d,0xd31c,0xe37f,0xf35e,</span></span>
+<span class="giallo-l"><span>    0x02b1,0x1290,0x22f3,0x32d2,0x4235,0x5214,0x6277,0x7256,</span></span>
+<span class="giallo-l"><span>    0xb5ea,0xa5cb,0x95a8,0x8589,0xf56e,0xe54f,0xd52c,0xc50d,</span></span>
+<span class="giallo-l"><span>    0x34e2,0x24c3,0x14a0,0x0481,0x7466,0x6447,0x5424,0x4405,</span></span>
+<span class="giallo-l"><span>    0xa7db,0xb7fa,0x8799,0x97b8,0xe75f,0xf77e,0xc71d,0xd73c,</span></span>
+<span class="giallo-l"><span>    0x26d3,0x36f2,0x0691,0x16b0,0x6657,0x7676,0x4615,0x5634,</span></span>
+<span class="giallo-l"><span>    0xd94c,0xc96d,0xf90e,0xe92f,0x99c8,0x89e9,0xb98a,0xa9ab,</span></span>
+<span class="giallo-l"><span>    0x5844,0x4865,0x7806,0x6827,0x18c0,0x08e1,0x3882,0x28a3,</span></span>
+<span class="giallo-l"><span>    0xcb7d,0xdb5c,0xeb3f,0xfb1e,0x8bf9,0x9bd8,0xabbb,0xbb9a,</span></span>
+<span class="giallo-l"><span>    0x4a75,0x5a54,0x6a37,0x7a16,0x0af1,0x1ad0,0x2ab3,0x3a92,</span></span>
+<span class="giallo-l"><span>    0xfd2e,0xed0f,0xdd6c,0xcd4d,0xbdaa,0xad8b,0x9de8,0x8dc9,</span></span>
+<span class="giallo-l"><span>    0x7c26,0x6c07,0x5c64,0x4c45,0x3ca2,0x2c83,0x1ce0,0x0cc1,</span></span>
+<span class="giallo-l"><span>    0xef1f,0xff3e,0xcf5d,0xdf7c,0xaf9b,0xbfba,0x8fd9,0x9ff8,</span></span>
+<span class="giallo-l"><span>    0x6e17,0x7e36,0x4e55,0x5e74,0x2e93,0x3eb2,0x0ed1,0x1ef0</span></span>
+<span class="giallo-l"><span>};</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>uint16_t crc16(const char *buf, int len) {</span></span>
+<span class="giallo-l"><span>    int counter;</span></span>
+<span class="giallo-l"><span>    uint16_t crc = 0;</span></span>
+<span class="giallo-l"><span>    for (counter = 0; counter &lt; len; counter++)</span></span>
+<span class="giallo-l"><span>            crc = (crc&lt;&lt;8) ^ crc16tab[((crc&gt;&gt;8) ^ *buf++)&amp;0x00FF];</span></span>
+<span class="giallo-l"><span>    return crc;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+
+            </div>
+        </main>
+        <aside>
+            
+
+
+
+
+
+<nav class="docs-menu" aria-label="Documentation">
+    <ul class="docs-menu-sections">
+        <li>
+            <details>
+                <summary>Getting started</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/introduction/">Introduction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/quickstart/">Quick start guide</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/installation/">Installation</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/faq/">FAQ</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/migration/">Migration from Redis to Valkey</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-bundle/">Valkey Bundle</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        
+<li>
+    <details>
+        <summary>Command reference</summary>
+        <ul>
+            <li><a href="/valkey-io.github.io/pr-21/commands/">All commands</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bitmap">Bitmap</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bloom">Bloom filter</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#cluster">Cluster</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#connection">Connection</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#generic">Generic</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#geo">Geospatial indices</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hash">Hash</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hyperloglog">HyperLogLog</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#json">JSON</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#list">List</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#pubsub">Pub/Sub</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#scripting">Scripting and Functions</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#search">Search</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#server">Server</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#set">Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#sorted-set">Sorted Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#stream">Stream</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#string">String</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#transactions">Transactions</a></li>
+        </ul>
+    </details>
+</li>
+
+        <li>
+            <details>
+                <summary>Data types</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/data-types/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/strings/">Strings</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Strings commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Strings commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/append/">APPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decr/">DECR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decrby/">DECRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delex/">DELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delifeq/">DELIFEQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/get/">GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getdel/">GETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getex/">GETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getrange/">GETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getset/">GETSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incr/">INCR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrby/">INCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrbyfloat/">INCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lcs/">LCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mget/">MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mset/">MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetex/">MSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetnx/">MSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psetex/">PSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/set/">SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setex/">SETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setnx/">SETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setrange/">SETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/strlen/">STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/substr/">SUBSTR</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/lists/">Lists</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Lists commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Lists commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmove/">BLMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmpop/">BLMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blpop/">BLPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpop/">BRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpoplpush/">BRPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lindex/">LINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/linsert/">LINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/llen/">LLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmove/">LMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmpop/">LMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpop/">LPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpos/">LPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpush/">LPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpushx/">LPUSHX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrange/">LRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrem/">LREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lset/">LSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ltrim/">LTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpop/">RPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpoplpush/">RPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpush/">RPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpushx/">RPUSHX</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sets/">Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/sadd/">SADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scard/">SCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiff/">SDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiffstore/">SDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinter/">SINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sintercard/">SINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinterstore/">SINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sismember/">SISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smembers/">SMEMBERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smismember/">SMISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smove/">SMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spop/">SPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srandmember/">SRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srem/">SREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sscan/">SSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunion/">SUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunionstore/">SUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hashes/">Hashes</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hashes commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hashes commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hdel/">HDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexists/">HEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpire/">HEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpireat/">HEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpiretime/">HEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hget/">HGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetall/">HGETALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetdel/">HGETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetex/">HGETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrby/">HINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrbyfloat/">HINCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hkeys/">HKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hlen/">HLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmget/">HMGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmset/">HMSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpersist/">HPERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpire/">HPEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpireat/">HPEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpiretime/">HPEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpttl/">HPTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hrandfield/">HRANDFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hscan/">HSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hset/">HSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetex/">HSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetnx/">HSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hstrlen/">HSTRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/httl/">HTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hvals/">HVALS</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sorted-sets/">Sorted Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sorted Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sorted Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzmpop/">BZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmax/">BZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmin/">BZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zadd/">ZADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcard/">ZCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcount/">ZCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiff/">ZDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiffstore/">ZDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zincrby/">ZINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinter/">ZINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zintercard/">ZINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinterstore/">ZINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zlexcount/">ZLEXCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmpop/">ZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmscore/">ZMSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmax/">ZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmin/">ZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrandmember/">ZRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrange/">ZRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebylex/">ZRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebyscore/">ZRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangestore/">ZRANGESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrank/">ZRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrem/">ZREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebylex/">ZREMRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyrank/">ZREMRANGEBYRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyscore/">ZREMRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrange/">ZREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebylex/">ZREVRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebyscore/">ZREVRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrank/">ZREVRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscan/">ZSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscore/">ZSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunion/">ZUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunionstore/">ZUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/streams-intro/">Streams</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Streams commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Streams commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/xack/">XACK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xackdel/">XACKDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xadd/">XADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xautoclaim/">XAUTOCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xclaim/">XCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdel/">XDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdelex/">XDELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup/">XGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-create/">XGROUP CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-createconsumer/">XGROUP CREATECONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-delconsumer/">XGROUP DELCONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-destroy/">XGROUP DESTROY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-help/">XGROUP HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-setid/">XGROUP SETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo/">XINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-consumers/">XINFO CONSUMERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-groups/">XINFO GROUPS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-help/">XINFO HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-stream/">XINFO STREAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xlen/">XLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xpending/">XPENDING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrange/">XRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xread/">XREAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xreadgroup/">XREADGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrevrange/">XREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xsetid/">XSETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xtrim/">XTRIM</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/geospatial/">Geospatial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Geospatial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Geospatial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/geoadd/">GEOADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geodist/">GEODIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geohash/">GEOHASH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geopos/">GEOPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius/">GEORADIUS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember/">GEORADIUSBYMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember_ro/">GEORADIUSBYMEMBER_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius_ro/">GEORADIUS_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearch/">GEOSEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearchstore/">GEOSEARCHSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitmaps/">Bitmaps</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitmaps commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitmaps commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitcount/">BITCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitop/">BITOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitpos/">BITPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getbit/">GETBIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setbit/">SETBIT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitfields/">Bitfields</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitfields commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitfields commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield/">BITFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield_ro/">BITFIELD_RO</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hyperloglogs/">HyperLogLog</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">HyperLogLog commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="HyperLogLog commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfadd/">PFADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfcount/">PFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfdebug/">PFDEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfmerge/">PFMERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfselftest/">PFSELFTEST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bloomfilters/">Bloom Filters <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bloom Filters commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bloom Filters commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.add/">BF.ADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.card/">BF.CARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.exists/">BF.EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.info/">BF.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.insert/">BF.INSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.load/">BF.LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.madd/">BF.MADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.mexists/">BF.MEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.reserve/">BF.RESERVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-json/">JSON <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">JSON commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="JSON commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrappend/">JSON.ARRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrindex/">JSON.ARRINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrinsert/">JSON.ARRINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrlen/">JSON.ARRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrpop/">JSON.ARRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrtrim/">JSON.ARRTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.clear/">JSON.CLEAR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.debug/">JSON.DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.del/">JSON.DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.forget/">JSON.FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.get/">JSON.GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.merge/">JSON.MERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mget/">JSON.MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mset/">JSON.MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.numincrby/">JSON.NUMINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.nummultby/">JSON.NUMMULTBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objkeys/">JSON.OBJKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objlen/">JSON.OBJLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.resp/">JSON.RESP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.set/">JSON.SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strappend/">JSON.STRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strlen/">JSON.STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.toggle/">JSON.TOGGLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.type/">JSON.TYPE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Application development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/keyspace/">Keyspace</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Keyspace commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Keyspace commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/copy/">COPY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dbsize/">DBSIZE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/del/">DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dump/">DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exists/">EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expire/">EXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expireat/">EXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expiretime/">EXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushall/">FLUSHALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushdb/">FLUSHDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/keys/">KEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/migrate/">MIGRATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/move/">MOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object/">OBJECT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-encoding/">OBJECT ENCODING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-freq/">OBJECT FREQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-help/">OBJECT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-idletime/">OBJECT IDLETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-refcount/">OBJECT REFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/persist/">PERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpire/">PEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpireat/">PEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpiretime/">PEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pttl/">PTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/randomkey/">RANDOMKEY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rename/">RENAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/renamenx/">RENAMENX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/restore/">RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scan/">SCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort/">SORT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort_ro/">SORT_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/swapdb/">SWAPDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/touch/">TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ttl/">TTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/type/">TYPE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unlink/">UNLINK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/wait/">WAIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/waitaof/">WAITAOF</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/pipelining/">Pipelining</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/transactions/">Transactions</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Transactions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Transactions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/discard/">DISCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exec/">EXEC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/multi/">MULTI</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unwatch/">UNWATCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/watch/">WATCH</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/pubsub/">Pub/Sub</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Pub/Sub commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Pub/Sub commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/psubscribe/">PSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/publish/">PUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub/">PUBSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-channels/">PUBSUB CHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-help/">PUBSUB HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numpat/">PUBSUB NUMPAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numsub/">PUBSUB NUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardchannels/">PUBSUB SHARDCHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardnumsub/">PUBSUB SHARDNUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/punsubscribe/">PUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spublish/">SPUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ssubscribe/">SSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/subscribe/">SUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunsubscribe/">SUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unsubscribe/">UNSUBSCRIBE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/notifications/">Keyspace notifications</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Patterns and tutorials</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lru-cache/">Key eviction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/client-side-caching/">Client-side caching</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/distlock/">Distributed Locks</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/indexing/">Secondary indexing</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/twitter-clone/">Patterns example</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Scripting and functions</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/programmability/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Scripting and functions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Scripting and functions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval/">EVAL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha/">EVALSHA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha_ro/">EVALSHA_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval_ro/">EVAL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall/">FCALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall_ro/">FCALL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function/">FUNCTION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-delete/">FUNCTION DELETE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-dump/">FUNCTION DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-flush/">FUNCTION FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-help/">FUNCTION HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-kill/">FUNCTION KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-list/">FUNCTION LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-load/">FUNCTION LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-restore/">FUNCTION RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-stats/">FUNCTION STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script/">SCRIPT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-debug/">SCRIPT DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-exists/">SCRIPT EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-flush/">SCRIPT FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-help/">SCRIPT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-kill/">SCRIPT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-load/">SCRIPT LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-show/">SCRIPT SHOW</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/eval-intro/">Scripting with Lua</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/functions-intro/">Functions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lua-api/">Lua API reference</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldb/">Debugging Lua scripts</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Search <span class="docs-menu-badge">module</span></summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/search/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Search commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Search commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.aggregate/">FT.AGGREGATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.create/">FT.CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.cursor/">FT.CURSOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.dropindex/">FT.DROPINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.hybrid/">FT.HYBRID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.info/">FT.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.search/">FT.SEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft._list/">FT._LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-query/">Queries</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-expressions/">Aggregation expressions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-data-formats/">Data formats</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-configurables/">Configuration</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-monitoring/">Metrics and configurations</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-observables/">INFO SEARCH metrics</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Administration</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/server/">The Valkey server</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cli/">CLI</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey.conf/">Configuration</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Configuration commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Configuration commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/config/">CONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-get/">CONFIG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-help/">CONFIG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-resetstat/">CONFIG RESETSTAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-rewrite/">CONFIG REWRITE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-set/">CONFIG SET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/persistence/">Persistence</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Persistence commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Persistence commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgrewriteaof/">BGREWRITEAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgsave/">BGSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lastsave/">LASTSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/save/">SAVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/replication/">Replication</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Replication commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Replication commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/failover/">FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psync/">PSYNC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replconf/">REPLCONF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replicaof/">REPLICAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/role/">ROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slaveof/">SLAVEOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sync/">SYNC</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel/">High availability with Valkey Sentinel</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/admin/">Administration</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/clients/">Client handling</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Client handling commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Client handling commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/auth/">AUTH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client/">CLIENT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-caching/">CLIENT CACHING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-capa/">CLIENT CAPA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getname/">CLIENT GETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getredir/">CLIENT GETREDIR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-help/">CLIENT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-id/">CLIENT ID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-import-source/">CLIENT IMPORT-SOURCE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-info/">CLIENT INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-kill/">CLIENT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-list/">CLIENT LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-evict/">CLIENT NO-EVICT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-touch/">CLIENT NO-TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-pause/">CLIENT PAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-reply/">CLIENT REPLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setinfo/">CLIENT SETINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setname/">CLIENT SETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-tracking/">CLIENT TRACKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-trackinginfo/">CLIENT TRACKINGINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unblock/">CLIENT UNBLOCK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unpause/">CLIENT UNPAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/echo/">ECHO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hello/">HELLO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ping/">PING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/quit/">QUIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/reset/">RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/select/">SELECT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/signals/">Signal handling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ARM/">ARM support</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/RDMA/">RDMA experimental support</a>
+</li>
+
+                    <li>
+                        <details class="docs-menu-other-commands">
+                            <summary>Other commands</summary>
+                            <ul class="docs-menu-commands" aria-label="Administration commands">
+                                <li><a href="/valkey-io.github.io/pr-21/commands/debug/">DEBUG</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/info/">INFO</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/lolwut/">LOLWUT</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/monitor/">MONITOR</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/restore-asking/">RESTORE-ASKING</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/shutdown/">SHUTDOWN</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/time/">TIME</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details open>
+                <summary>Cluster</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-tutorial/">Cluster tutorial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Cluster tutorial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Cluster tutorial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/asking/">ASKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster/">CLUSTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslots/">CLUSTER ADDSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslotsrange/">CLUSTER ADDSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-bumpepoch/">CLUSTER BUMPEPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-cancelslotmigrations/">CLUSTER CANCELSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-count-failure-reports/">CLUSTER COUNT-FAILURE-REPORTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-countkeysinslot/">CLUSTER COUNTKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslots/">CLUSTER DELSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslotsrange/">CLUSTER DELSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-failover/">CLUSTER FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-flushslots/">CLUSTER FLUSHSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-forget/">CLUSTER FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getkeysinslot/">CLUSTER GETKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getslotmigrations/">CLUSTER GETSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-help/">CLUSTER HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-info/">CLUSTER INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-keyslot/">CLUSTER KEYSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-links/">CLUSTER LINKS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-meet/">CLUSTER MEET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-migrateslots/">CLUSTER MIGRATESLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myid/">CLUSTER MYID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myshardid/">CLUSTER MYSHARDID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-nodes/">CLUSTER NODES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicas/">CLUSTER REPLICAS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicate/">CLUSTER REPLICATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-reset/">CLUSTER RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-saveconfig/">CLUSTER SAVECONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-set-config-epoch/">CLUSTER SET-CONFIG-EPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-setslot/">CLUSTER SETSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-shards/">CLUSTER SHARDS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slaves/">CLUSTER SLAVES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slot-stats/">CLUSTER SLOT-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slots/">CLUSTER SLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-syncslots/">CLUSTER SYNCSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/clusterscan/">CLUSTERSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readonly/">READONLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readwrite/">READWRITE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-spec/" class="docs-menu-current" aria-current="page">Cluster specification</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/atomic-slot-migration/">Atomic slot migration</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Security</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/security/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/acl/">ACL</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">ACL commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="ACL commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl/">ACL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-cat/">ACL CAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-delrole/">ACL DELROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-deluser/">ACL DELUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-digest/">ACL DIGEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-dryrun/">ACL DRYRUN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-genpass/">ACL GENPASS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getrole/">ACL GETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getuser/">ACL GETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-help/">ACL HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-list/">ACL LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-load/">ACL LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-log/">ACL LOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-roles/">ACL ROLES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-save/">ACL SAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setrole/">ACL SETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setuser/">ACL SETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-users/">ACL USERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-whoami/">ACL WHOAMI</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/tls/">TLS</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldap/">LDAP authentication <span class="docs-menu-badge">module</span></a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Performance and troubleshooting</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/problems/">Troubleshooting Valkey</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/memory-optimization/">Memory optimization</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Memory optimization commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Memory optimization commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory/">MEMORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-doctor/">MEMORY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-help/">MEMORY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-malloc-stats/">MEMORY MALLOC-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-purge/">MEMORY PURGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-stats/">MEMORY STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-usage/">MEMORY USAGE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency-monitor/">Latency monitoring</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Latency monitoring commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Latency monitoring commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency/">LATENCY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-doctor/">LATENCY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-graph/">LATENCY GRAPH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-help/">LATENCY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-histogram/">LATENCY HISTOGRAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-history/">LATENCY HISTORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-latest/">LATENCY LATEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-reset/">LATENCY RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency/">Diagnosing latency issues</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Diagnosing latency issues commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Diagnosing latency issues commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog/">COMMANDLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-get/">COMMANDLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-help/">COMMANDLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-len/">COMMANDLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-reset/">COMMANDLOG RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog/">SLOWLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-get/">SLOWLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-help/">SLOWLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-len/">SLOWLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-reset/">SLOWLOG RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hotkeys/">Hot key tracking</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hot key tracking commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hot key tracking commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys/">HOTKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-get/">HOTKEYS GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-help/">HOTKEYS HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-reset/">HOTKEYS RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/benchmark/">Benchmarking tool</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/performance-on-cpu/">CPU profiling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/debugging/">Debugging</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/mass-insertion/">Bulk loading</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Module development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/modules-intro/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Module development commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Module development commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/module/">MODULE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-help/">MODULE HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-list/">MODULE LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-load/">MODULE LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-loadex/">MODULE LOADEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-unload/">MODULE UNLOAD</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-native-types/">Modules API for native types</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-blocking-ops/">Modules and blocking commands</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-api-ref/">Modules API reference</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Client development</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/protocol/">Serialization protocol specification</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/command-arguments/">Command arguments</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Command arguments commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Command arguments commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/command/">COMMAND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-count/">COMMAND COUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-docs/">COMMAND DOCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeys/">COMMAND GETKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeysandflags/">COMMAND GETKEYSANDFLAGS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-help/">COMMAND HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-info/">COMMAND INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-list/">COMMAND LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/key-specs/">Command key specifications</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/command-tips/">Command tips</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel-clients/">Sentinel client spec</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>About Valkey</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/releases/">Releases and versioning schema</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/history/">History</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+    </ul>
+</nav>
+
+
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/cluster-spec.md">Update this Page on GitHub!</a>
+</div>
+
+        </aside>
+    </div>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-07.webp" />
+    
+    
+
+    <meta name="description" content="When Valkey metrics look fine but your app is failing, the problem is often connection storms, retry floods, and fleet-wide coordination." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Managing Connection Storms in Valkey at Scale</title>
+    <meta name="title" property="og:title" content="Valkey: Managing Connection Storms in Valkey at Scale">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-07.webp" alt="Managing Connection Storms in Valkey at Scale" class="feature-img">
+
+
+<h1>Managing Connection Storms in Valkey at Scale</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+  
+  2026-06-10
+  
+    &middot; 
+    
+      
+      
+      <em>Allen Helton</em>
+    
+  
+</div>
+<p>The alerts are firing. Users cannot complete requests. The cache dashboard shows CPU normal, memory normal, hit rate normal, p99 within SLA. The Valkey node metrics are all green. The cluster topology has not changed. Yet the application is still failing.</p>
+<p>This is one of the more disorienting situations in distributed systems. The component everyone assumes is the culprit is behaving perfectly, and the system is broken anyway. The failure is not in the cache itself. It is in how the cache interacts with everything around it: the clients, the connection pools, the proxies, and the retry logic baked into client libraries that were never designed to account for a fleet of thousands of service instances all responding to the same transient error at the same millisecond.</p>
+<p>At extreme scale, the hardest failures rarely come from a single component breaking. They come from <em>thousands of systems reacting to the same failure at the same moment</em>.</p>
+<p>At <a rel="external" href="https://unlockedconf.io">Unlocked San Jose</a> earlier this year, <a rel="external" href="https://www.linkedin.com/in/yang-yang-b32703162/">Yang Yang</a> and <a rel="external" href="https://www.linkedin.com/in/chipkernel/">Shawn Wang</a> from Uber and <a rel="external" href="https://www.linkedin.com/in/ovaiskhan/">Ovais Khan</a> from Snap each walked through what operating cache infrastructure at extreme scale teaches you. Uber runs roughly 1 billion RPS across 2,000 clusters. Snap recently completed a migration of 350 cache clusters off a long-lived Redis fork to Valkey. Neither talk was primarily about throughput. Both were about the failure modes that benchmarks never surface, and the safety mechanisms they use to prevent outages.</p>
+<h2 id="benchmarks-do-not-model-your-retry-behavior">Benchmarks do not model your retry behavior</h2>
+<p>There is a specific failure mode called a <a rel="external" href="https://www.gomomento.com/blog/understanding-the-nxm-problem-in-distributed-caches/">connection storm</a>. It's a classic example of a system doing exactly what it was designed to do and making everything worse.</p>
+<p>Uber's microservices run many instances, each using a client with a connection pool per Valkey node. Under normal conditions this is efficient and fast. Then a node becomes briefly unavailable due to a network hiccup, a host reboot, or a momentary resource spike. The client detects the I/O error, closes the connection, and creates a new one. That is correct behavior for a single client.</p>
+<p>The problem is that this happens across hundreds or thousands of instances simultaneously. Every instance that touched that node in the last few hundred milliseconds sees the same error. Every one of them closes its connection and immediately sends new connection requests to the already-stressed node. TCP handshakes, TLS negotiation, and authentication all land at once. The node, which might have recovered in seconds, instead hits 100% CPU and stops responding.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/managing-connection-storms-in-valkey-at-scale/managing_connection_storms_1.webp" alt="Connection storm diagram: many client instances simultaneously error, close, and reconnect to one Valkey node, driving it to 100% CPU and feeding a retry loop." /></p>
+<p>The retry behavior that protects a single client destroys the cluster at fleet scale. Benchmarks never capture this because they do not model thousands of clients responding to shared state simultaneously.</p>
+<p>Uber's immediate fix was to use <a rel="external" href="https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-using-iptables-on-ubuntu-14-04"><code>iptables</code> rules</a> to cut traffic to the impacted node before the feedback loop completed. Stopping the amplification gives the node space to recover without a continuing flood of new connection attempts.</p>
+<p>The longer-term fix was structural. Upgrading their client from Go Redis v8 to v9 removed the aggressive connection reaping behavior that made the storm so severe. Adding per-node client-side rate limiters and circuit breakers meant that even if a node degraded, the client fleet could no longer amplify that degradation into an outage.</p>
+<h2 id="how-valkey-responds-to-connection-storms">How Valkey responds to connection storms</h2>
+<p>This is where Valkey's architecture becomes directly relevant to the connection storm failure mode. The problem during a storm is that TLS handshakes and socket polling are expensive operations that compete with command execution on the main thread.</p>
+<p>Valkey 8.0 significantly <a rel="external" href="https://valkey.io/blog/valkey-8-0-0-rc1/#performance">overhauled I/O threading</a>, allowing the main thread and I/O threads to operate concurrently. I/O threads handle reading and parsing commands, writing responses, polling for I/O events via <code>epoll_wait</code>, and memory deallocation. Previously, <code>epoll_wait</code> alone consumed more than <a rel="external" href="https://valkey.io/blog/unlock-one-million-rps/#high-level-design">20% of main thread time</a>. Offloading it frees the main thread to spend more cycles executing commands rather than managing I/O.</p>
+<p>The payoff showed up directly in the benchmarks. Against Valkey 7.2, throughput rose roughly 230% and average latency dropped 69.8%, measured with sequential <a rel="external" href="https://valkey.io/commands/set/"><code>SET</code></a> commands on a single large instance.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/managing-connection-storms-in-valkey-at-scale/managing_connection_storms_2.webp" alt="Bar chart comparing Valkey 7.2 and 8.0. Throughput rises from 360K to 1.19M SET requests per second, a 230% increase; average latency falls from 1.792ms to 0.542ms, a 69.8% decrease." /></p>
+<p>The main thread is the bottleneck during a storm, which is exactly what this threading work frees up. Valkey 8.1 went further, <a rel="external" href="https://valkey.io/blog/valkey-8-1-0-ga/#i-o-threads-improvements">offloading TLS negotiation to I/O threads</a>. That change alone improved the rate of accepting new connections by around 300%, directly addressing the scenario where a burst of new connections during a storm previously blocked the main thread from serving existing ones. The same release also offloaded <code>SSL_pending()</code> and <code>ERR_clear_error()</code> calls to I/O threads, producing a measured 10% improvement in <code>SET</code> throughput and 22% in <a rel="external" href="https://valkey.io/commands/get/"><code>GET</code></a> throughput for TLS workloads.</p>
+<p>To configure I/O threading, the key parameter is <code>io-threads</code>. One important detail: the count includes the main thread. Setting <code>io-threads 6</code> launches 5 dedicated I/O threads plus the main thread. The Valkey 9.0 <a rel="external" href="https://valkey.io/blog/1-billion-rps/#benchmarking">large cluster benchmark</a> used the following configuration on 8-core r7g.2xlarge nodes, pinning 2 cores to interrupt affinity and assigning the remaining 6 to Valkey:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># valkey.conf</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">cluster-enabled</span><span style="color: #A5D6FF;"> yes</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">cluster-config-file</span><span style="color: #A5D6FF;"> nodes.conf</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">cluster-require-full-coverage</span><span style="color: #A5D6FF;"> no</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">cluster-allow-reads-when-down</span><span style="color: #A5D6FF;"> yes</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">io-threads</span><span style="color: #79C0FF;"> 6</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">maxmemory</span><span style="color: #A5D6FF;"> 50gb</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">save</span><span style="color: #A5D6FF;"> &quot;&quot;</span></span></code></pre>
+<p>That setup achieved over 1 billion <code>SET</code> requests per second across a 2,000-node cluster, with throughput scaling nearly linearly with primary count. For production sizing, the practical starting point is <code>io-threads</code> equal to the available core count minus 1 to 2, with the remainder reserved for OS and interrupt handling.</p>
+<h3 id="a-proxy-is-not-automatically-a-safety-net">A proxy is not automatically a safety net</h3>
+<p>Uber's architecture includes a custom L4 proxy between application instances and the cache clusters. During the migration, their team found a second form of connection storm originating at the proxy layer.</p>
+<p>During bursts of new connections, the proxy becomes a bottleneck. TLS setup, memory allocation for new connection state, and file descriptor management all compete for resources. Existing connections slow down. Slower connections trigger application timeouts. Timeouts trigger more retries. More retries create more new connections. The same feedback loop, one layer upstream.</p>
+<p>This is where proxy design makes all the difference. A thin proxy that only forwards requests moves the failure mode behind a smaller number of ingress points. But a <a rel="external" href="https://www.gomomento.com/blog/why-large-cache-systems-need-routing-layers/">well-designed routing layer</a> does the opposite. By multiplexing many client connections into a small, stable set of backend connections, it shifts connection count from multiplicative to roughly linear and decouples backend connection pressure from client-side deployment churn. When application pods restart, they reconnect to long-lived routing nodes and the backend never sees the storm. The same component that amplifies a storm when built carelessly is one of the most effective tools for absorbing it when built well.</p>
+<p>Uber addressed their proxy bottleneck by adding fairness algorithms to explicitly prioritize traffic from established connections over new ones. Under pressure, the proxy serves the work it has already committed to before taking on new work.</p>
+<p>A proxy that explicitly delays new connections while existing ones flow smoothly may look worse in a benchmark, but it behaves far better during an incident. Accepting less work is often more reliable than accepting all work slowly.</p>
+<h3 id="where-the-storms-really-come-from">Where the storms really come from</h3>
+<p>Both of these storms are downstream of a structural issue: <em>too many connections.</em></p>
+<p>At Uber, each stateless service instance maintains a pool of <code>p</code> connections per Valkey node. If <code>n</code> instances are running, each node sees <code>n x p</code> connections. For a large service with thousands of instances and a pool size of even 5 to 10, a single node can see tens of thousands of connections under normal operation. During a retry storm, that number spikes sharply.</p>
+<p>This is not a misuse of the system. It is what direct-connect architectures look like at scale. The surface area for connection-related failure grows with every new service instance and every node added to the cluster.</p>
+<p>Uber's mitigations focused on reducing the effective connection rate through client-side caching for hot keys to reduce round trips, request deduplication, and batching operations like hash-field deletions into multi-key commands. They also looked at I/O multiplexing through Java's Lettuce client (also available in <a rel="external" href="https://glide.valkey.io/concepts/architecture/async-execution/#rust-core-multiplexing">Valkey GLIDE</a>), which lets a single connection carry many concurrent requests and directly reduces the <code>p</code> in the <code>n x p</code> equation. Fewer connections per node means fewer to reestablish when retries amplify, which shrinks the blast radius of a connection storm.</p>
+<p>But there's a tradeoff. Multiplexing many requests onto a single connection introduces head-of-line blocking. So a single slow command can stall the requests queued behind it on the same connection. It's most pronounced when a single multiplexed connection fans out across multiple clusters, where one slow node can hold up traffic bound for healthy ones.</p>
+<p>For Uber's workload the connection-fanout reduction outweighed that risk, and the Lettuce results were enough to push them toward evaluating the same multiplexing capability for their Go clients. New client libraries with multiplexing are now part of their Cache Platform 2.0 roadmap.</p>
+<h2 id="build-the-safeguards-before-you-need-them">Build the safeguards before you need them</h2>
+<p>Snap moved 350 cache clusters off KeyDB, a multithreaded Redis 6.2 fork, to Valkey without application teams noticing the change. A proxy abstraction in front of their clusters made that possible. Application code kept using the same APIs while the backend swapped underneath.</p>
+<p>But the interesting part of the story is what they built to make the migration safe.</p>
+<h3 id="load-shedding-at-95-cpu">Load shedding at 95% CPU</h3>
+<p>When a cluster's CPU utilization crosses 95%, Snap throttles write requests. This sounds counterintuitive at first, but it is a textbook case of load shedding: deliberately dropping or degrading some work to keep the system as a whole alive.</p>
+<p>The power grid that supplies electricity to your house does the same thing. When demand threatens to exceed supply, utilities trigger controlled brownouts, intentionally reducing service to some customers because a partial, managed reduction is vastly preferable to an uncontrolled cascade that takes the entire grid down.</p>
+<p>The cache cluster faces the same choice. At 100% CPU, administrative commands no longer reach the cluster. Administrators cannot reconfigure it, diagnose it, or intervene. Throttling writes at 95% is the brownout: it deliberately degrades write throughput while the system is still controllable, preserving the headroom that operators and automation need to respond before the cluster becomes unreachable.</p>
+<p>Snap is working to <a rel="external" href="https://github.com/valkey-io/valkey/issues/1688">contribute this behavior</a> to the Valkey project. The maintainers are working with the team on polishing the idea and requirements around it.</p>
+<h3 id="replication-buffer-management-and-dual-channel-replication">Replication buffer management and dual-channel replication</h3>
+<p>For high-memory workloads, Snap measured how quickly replication buffers filled during full syncs. In the traditional single-channel replication model, the primary buffers all new write commands in its Client Output Buffer (COB) while the RDB snapshot is being transferred. If the COB fills before the transfer completes, the replica is disconnected and the process starts over, resulting in a full-sync loop that never completes. From the outside it looks like slow replication, but in reality, it is an infinite retry cycle.</p>
+<p>Valkey 8.0 introduced <a rel="external" href="https://valkey.io/blog/valkey-8-0-0-rc1/#replication">dual-channel replication</a> to address this directly. Rather than a single connection handling both the RDB transfer and the incremental command stream, dual-channel replication opens a dedicated RDB channel for bulk data while maintaining a separate main channel for streaming updates. The replica buffers incremental updates locally while loading the snapshot and applies them once loading completes. COB pressure on the primary drops substantially because the primary no longer needs to buffer the entire write stream for the duration of a large sync. In scenarios with heavy read commands, sync time can be cut by up to 50%.</p>
+<p>Dual-channel replication has been available since Valkey 8.0, with one important detail: it engages only when diskless sync is enabled on the primary. With diskless sync off, replication falls back to the ordinary disk-based path and COB pressure stays on the primary. Both flags can be toggled at runtime without a restart, which makes it straightforward to validate against a live workload before committing:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># valkey.conf</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">repl-diskless-sync</span><span style="color: #A5D6FF;"> yes</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">dual-channel-replication-enabled</span><span style="color: #A5D6FF;"> yes</span></span></code></pre>
+<p>Replication progress during dual-channel sync is observable via <code>INFO replication</code>. The fields <code>replicas_repl_buffer_size</code> and <code>replicas_repl_buffer_peak</code> show accumulated replication stream data in bytes on the replica side, since with dual-channel replication that buffer now lives on the replica rather than the primary.</p>
+<p>Snap's operational approach layered on top of this: they measured buffer fill rates under realistic write load, selected a 15-minute threshold as safe for migration, and applied write throttling before buffers reached capacity. Now the intervention happens before the failure, instead of in response to it.</p>
+<h2 id="the-principle-underneath-it-all">The principle underneath it all</h2>
+<p>These failure modes and their mitigations are variations on the idea that systems that hold up under pressure are the ones that make deliberate choices about what to do before they are overwhelmed.</p>
+<p>Uber's <code>iptables</code> approach does not help a node that is already at 100% CPU. It prevents the feedback loop from reaching 100% by stopping retry amplification early. Snap's write throttling does not kick in when the cluster is already unmanageable. It preserves management access by acting at 95%. The replication buffer threshold is configured before the first migration starts, not after a sync loop incident. This functionality is also <a rel="external" href="https://github.com/valkey-io/valkey/issues/1649">being considered by the Valkey team</a>.</p>
+<p>Valkey's architectural trajectory follows the same principle. I/O threading in 8.0 freed the main thread from socket polling. TLS offload in 8.1 removed a critical bottleneck in new connection acceptance. Dual-channel replication in 8.0 moved COB pressure off the primary. The cluster bus reconnection throttle in 9.0 prevented surviving nodes from overwhelming themselves during mass failure events. All of these are deliberate choices to keep the system manageable under load, not just fast in a benchmark.</p>
+<h2 id="what-to-carry-out-of-this">What to carry out of this</h2>
+<p>Werner Vogels famously said "<em>Everything fails, all the time.</em>" A benchmark measures the happy path, the ceiling you reach when nothing is going wrong. But how does your system behave when something goes wrong? When one node slows down and thousands of clients react in the same millisecond.</p>
+<p>Every technique helps you decide what to do before you are overwhelmed. Cut traffic to a degrading node before retries amplify into a storm. Prioritize established connections so the work already in flight survives the burst. Shed write load at 95% to keep the cluster reachable for the operators who have to save it. Enable dual-channel replication before a sync loop turns a large workload into an outage. These don't make your system faster, but they do make it survivable.</p>
+<p>That is the difference between a catastrophic outage and graceful degradation, and it is usually the difference between a team that planned for the failure and one that did not. Uber and Snap learned these lessons the hard way, in production, often in the hours after an outage. The point is not to copy their exact mitigations into your own system. The <code>iptables</code> rule, the 95% threshold, the 15-minute buffer window are all specific to their workloads. The point is to help you remember that failure is constant. So find where your system amplifies it, and decide your response before the incident, not during it.</p>
+<p>The benchmark tells you the ceiling. The safety net determines how far you fall when you exceed it, and whether recovery is possible.</p>
+<p><em>To go deeper, watch the <a rel="external" href="https://unlockedconf.io/san-jose-replays">Unlocked session replays</a> and read the Valkey 8.0, 8.1, and 9.0 release posts linked throughout this article. Be sure to review your own client, proxy, and replication failure modes before they become production incidents.</em></p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/allenhelton.png" alt="photo of Allen Helton" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Allen Helton</h4>
+    
+    <a target="_blank" href="https://github.com/allenheltondev"><i class="icon icon-github-square"></i> @allenheltondev</a>
+    
+    <p>Allen is an Ecosystem Engineer at Momento. He comes from over a decade of experience working in the public sector tech industry where he played a key role in advancing the adoption of modern technology in the space. Allen has a passion for API-first development, developer experience, and autonomous AI agents.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/managing-connection-storms-in-valkey-at-scale/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/managing-connection-storms-in-valkey-at-scale/&title=Managing%20Connection%20Storms%20in%20Valkey%20at%20Scale&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/managing-connection-storms-in-valkey-at-scale/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/momento/">&laquo; Caching up with the Community: A Conversation with Daniela Miao on Valkey and Momento</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/unlockedconference-recap/">Unlocked Seattle: The Best Systems Let You Sleep At Night  &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

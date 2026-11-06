@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-02.webp" />
+    
+    
+
+    <meta name="description" content="A horizontal tour of the AI inference stack - semantic caching, KV cache offload, hybrid retrieval, admission control, and observability - and the Valkey primitives each layer maps to." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; How modern AI workloads map to Valkey primitives</title>
+    <meta name="title" property="og:title" content="Valkey: How modern AI workloads map to Valkey primitives">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-02.webp" alt="How modern AI workloads map to Valkey primitives" class="feature-img">
+
+
+<h1>How modern AI workloads map to Valkey primitives</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2026-08-05
+  
+    &middot; 
+    
+      
+      
+      <em>Kristiyan Ivanov</em>
+    
+  
+</div>
+<p>Modern AI inference stacks have split into layers, and each layer needs memory-speed access to something. Semantic caching needs <a rel="external" href="https://valkey.io/topics/search/">vector similarity</a> over recent prompts. Inference engines need a place to park KV tensors between requests. Retrieval-augmented generation (RAG) pipelines need filtered retrieval in a single round trip. The layer in front of all of it needs counters and rate limits that hold up under concurrent load.</p>
+<p>Valkey 8.x and <a rel="external" href="https://valkey.io/blog/valkey-search-1_2/">Valkey Search 1.2</a> cover all of these natively, but the coverage usually gets discussed one vertical at a time. A recent post on this blog walked through <a rel="external" href="https://valkey.io/blog/ai-agent-memory-with-valkey-and-mem0/">agent memory with Mem0</a> in depth - one workload, end to end. This post is the horizontal tour. Each section describes a workload, why it needs memory-speed access, and which Valkey primitive maps to it. The goal is a mental map of where Valkey fits across the AI stack, not a tutorial for any single piece.</p>
+<p>Here is the whole map, which the rest of the post walks through one layer at a time:</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/modern-ai-workloads-mapping-to-valkey/ai-workloads-map.png" alt="The AI inference stack mapped to Valkey primitives: admission control, exact-match and semantic caching, KV cache offload, the inference engine, and hybrid retrieval, with observability instrumenting the cache and retrieval layers." /></p>
+<h2 id="response-caching-exact-match-and-semantic-on-the-same-substrate">Response caching: exact-match and semantic on the same substrate</h2>
+<p>Response caching for LLM applications gets framed as a choice between two systems. It is better understood as two points on a spectrum, and both run on the same Valkey instance.</p>
+<p><strong>Exact-match caching</strong> applies when the request is deterministic: temperature 0, fixed model, identical inputs. Tool results are the cleanest case - a weather lookup for the same city within a five-minute window does not need a second API call, and an LLM call with <code>temperature: 0</code> and byte-identical messages does not need a second inference. The pattern is canonical serialization of the request parameters, a hash, and vanilla <a rel="external" href="https://valkey.io/commands/set/"><code>SET</code></a> / <a rel="external" href="https://valkey.io/commands/get/"><code>GET</code></a> with a TTL:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #FF7B72;">import</span><span> hashlib, json</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> cache_key</span><span>(params:</span><span style="color: #79C0FF;"> dict</span><span>) -&gt;</span><span style="color: #79C0FF;"> str</span><span>:</span></span>
+<span class="giallo-l"><span>    canonical</span><span style="color: #FF7B72;"> =</span><span> json.dumps(params,</span><span style="color: #FFA657;"> sort_keys</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">True</span><span>,</span><span style="color: #FFA657;"> separators</span><span style="color: #FF7B72;">=</span><span>(</span><span style="color: #A5D6FF;">&quot;,&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;:&quot;</span><span>))</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    return</span><span style="color: #A5D6FF;"> &quot;llm:&quot;</span><span style="color: #FF7B72;"> +</span><span> hashlib.sha256(canonical.encode()).hexdigest()</span></span></code></pre><pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>SET llm:9f86d08... &quot;{\&quot;response\&quot;: \&quot;...\&quot;}&quot; EX 3600</span></span>
+<span class="giallo-l"><span>GET llm:9f86d08...</span></span></code></pre>
+<p>The only subtlety is the canonicalization. Key order, float formatting, and tool schema serialization all have to be deterministic, or two semantically identical requests hash to different keys and your hit rate quietly halves. Tool definitions belong in the hash - a request with different available tools is a different request, even if the messages match.</p>
+<p><strong>Semantic caching</strong> applies when the inputs are near-duplicates rather than duplicates: "What's the capital of France?" and "Capital city of France?" should hit the same cached answer. This is a vector similarity problem, and it runs on the <a rel="external" href="https://valkey.io/topics/search/"><code>valkey-search</code></a> module. The index is HNSW over the prompt embedding with COSINE distance:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.CREATE semcache ON HASH PREFIX 1 semcache: SCHEMA</span></span>
+<span class="giallo-l"><span>    prompt TEXT</span></span>
+<span class="giallo-l"><span>    response TEXT NOINDEX</span></span>
+<span class="giallo-l"><span>    category TAG</span></span>
+<span class="giallo-l"><span>    embedding VECTOR HNSW 6 TYPE FLOAT32 DIM 1536 DISTANCE_METRIC COSINE</span></span></code></pre>
+<p>A lookup embeds the incoming prompt and runs a KNN query:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.SEARCH semcache &quot;*=&gt;[KNN 1 @embedding $vec AS score]&quot;</span></span>
+<span class="giallo-l"><span>    PARAMS 2 vec &lt;float32 bytes&gt; DIALECT 2</span></span></code></pre>
+<p>If the best candidate's distance is below a threshold, serve the cached response. That sentence hides the hard part. In practice, a single global threshold is the primary production failure mode. A threshold tight enough to avoid wrong answers on paraphrase-sensitive content (legal, pricing, anything with negation) is loose enough to miss obvious near-duplicates on chatty content, and vice versa. Two techniques help. First, per-category thresholds: tag entries at store time and tune the threshold per category instead of globally. Second, confidence bands: below a tight threshold, serve directly; above a loose threshold, miss; in the band between, escalate to a cheaper verification step such as a rerank over the top-k candidates or a small-model judge call. The band turns a binary decision into a triage, and it is the difference between a cache you can trust and one you disable after the first incident.</p>
+<p>When to reach for which: exact-match for tool results, deterministic completions, and anything where a false positive is unacceptable - provided the traffic actually contains exact repetition, since byte-identical requests are what the hash matches on; semantic for user-facing prompts where near-duplicate traffic is high and a verification band is in place. Most production systems want both, checked in that order - exact first because it is a single <code>GET</code>, semantic second because it costs an embedding call.</p>
+<h2 id="kv-cache-offload-for-inference-engines">KV cache offload for inference engines</h2>
+<p>One layer below response caching sits a different kind of cache entirely. When a transformer processes a prompt, it builds key/value tensors for every token during prefill. For long contexts, prefill dominates time-to-first-token - and a large fraction of that work is redundant, because production traffic shares prefixes. The same system prompt, the same retrieved documents, the same few-shot examples appear across thousands of requests.</p>
+<p>Inference engines such as vLLM and SGLang already reuse KV for shared prefixes within a single instance's GPU memory. The problem is capacity and locality. GPU HBM (high-bandwidth memory) is small, so KV gets evicted under load, and a prefix computed on one replica is invisible to the others. KV cache offload solves this by treating the KV tensors as cacheable data with a storage hierarchy behind them: GPU memory, then local CPU memory, then a remote tier shared across the fleet.</p>
+<p><a rel="external" href="https://github.com/LMCache/LMCache">LMCache</a> is a popular connector layer that implements this for vLLM and SGLang, and it supports RESP-compatible backends as the remote tier - which means Valkey works as the shared KV store across inference replicas. The configuration is a storage URL, not application code:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="yaml"><span class="giallo-l"><span style="color: #8B949E;"># lmcache configuration (illustrative)</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">chunk_size</span><span>:</span><span style="color: #79C0FF;"> 256</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">local_cpu</span><span>:</span><span style="color: #79C0FF;"> true</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">remote_url</span><span>:</span><span style="color: #A5D6FF;"> &quot;valkey://valkey-host:6379&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">remote_serde</span><span>:</span><span style="color: #A5D6FF;"> &quot;naive&quot;</span></span></code></pre>
+<p>The workload profile is unusual by Valkey standards: values are large binary blobs (serialized tensors, often hundreds of KB to MB per chunk), reads and writes are bursty, and the access pattern is sequential within a request. What makes it viable is RESP throughput and Valkey 8's I/O threading - moving tensor chunks is a bandwidth problem, and the <a rel="external" href="https://valkey.io/blog/unlock-one-million-rps/">multi-threaded I/O path introduced in 8.0</a> is what lets a single instance saturate the network link rather than a single core.</p>
+<p>The framing worth keeping: Valkey is not competing with GPU memory here. It is the memory tier between the inference engine and slower storage - fast enough that fetching a cached prefix beats recomputing it, shared so that one replica's prefill work benefits the whole fleet. For long-context workloads with prefix reuse, this is frequently the largest single TTFT win available without touching the model.</p>
+<h2 id="hybrid-retrieval-beyond-agent-memory">Hybrid retrieval beyond agent memory</h2>
+<p>Retrieval runs during inference, after a cache miss has fallen through to the model and the model needs to fetch context or tool results to answer. The Mem0 post on this blog covered one instance of a general pattern: scoped vector retrieval, where a query combines semantic similarity with hard filters in a single round trip. Agent memory scopes by <code>user_id</code> and <code>run_id</code>. The general shape applies far more broadly, and <a rel="external" href="https://valkey.io/blog/valkey-search-1_2/">Valkey Search 1.2</a> widened what fits in that single round trip: vector similarity, tag filters, numeric ranges, full-text matching, and aggregations.</p>
+<p>Consider RAG with multi-tenant data and freshness requirements. The index carries the filterable attributes alongside the vector:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.CREATE docs ON HASH PREFIX 1 doc: SCHEMA</span></span>
+<span class="giallo-l"><span>    content TEXT</span></span>
+<span class="giallo-l"><span>    tenant TAG</span></span>
+<span class="giallo-l"><span>    published NUMERIC</span></span>
+<span class="giallo-l"><span>    embedding VECTOR HNSW 6 TYPE FLOAT32 DIM 1536 DISTANCE_METRIC COSINE</span></span></code></pre>
+<p>And the retrieval is one query, not three systems stitched together in application code:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.SEARCH docs</span></span>
+<span class="giallo-l"><span>    &quot;@tenant:{acme} @published:[1717200000 +inf] =&gt;[KNN 10 @embedding $vec AS score]&quot;</span></span>
+<span class="giallo-l"><span>    PARAMS 2 vec &lt;float32 bytes&gt; DIALECT 2</span></span></code></pre>
+<p>The same shape covers recommendation queries with business constraints (vector similarity over product embeddings, tag filter on availability, numeric range on price) and hybrid search where lexical and semantic signals combine - full-text matching narrows the candidate set, KNN ranks it, or the application blends both scores.</p>
+<p>Why this matters architecturally: the common alternative is a vector database for similarity, a relational store for the filters, and application code that over-fetches from one and post-filters against the other. That pattern has two failure modes. Over-fetching wastes the latency budget, and post-filtering after a fixed-k ANN search silently degrades recall - if you fetch 10 nearest neighbors and 9 belong to the wrong tenant, the user gets one result. Pushing the filter into the search engine, which selects an execution strategy based on filter selectivity, keeps recall intact and the round trip singular. The Mem0 post's storage-layer analysis covers why this matters under mutation-heavy load; the point here is that the same property serves every retrieval workload in the stack, not just memory.</p>
+<p>Aggregations close the loop for analytics-shaped questions over the same index - distribution of retrieval scores by tenant, document counts by category and recency bucket - without exporting the corpus to a separate analytical store.</p>
+<h2 id="admission-control-token-budgets-rate-limiting-dedup">Admission control: token budgets, rate limiting, dedup</h2>
+<p>In front of the LLM sits the layer that decides which requests are allowed to spend tokens at all - the least glamorous layer of the stack, and it runs entirely on primitives that predate the AI workload by a decade. It applies to any team managing token cost across its own tenants or users against a provider API, not only inference providers. It earns a section anyway, because "AI infrastructure" is not only the exotic new stuff, and because token-denominated cost makes admission control a correctness problem rather than a politeness problem.</p>
+<p>Token budgets are atomic counters, and the unit is tokens rather than requests. The subtlety is ordering. If you check the budget before dispatch but only increment after the response, concurrent in-flight requests all clear the same check and blow past the cap together - the counter is atomic, but admission is not. The fix is to reserve an estimated cost before dispatch, then reconcile against actual usage once the response returns. Because <a rel="external" href="https://valkey.io/commands/incrby/"><code>INCRBY</code></a> returns the post-increment total, the reservation and the check are a single atomic step:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span># before dispatch: reserve an estimated cost and read the running total in one step</span></span>
+<span class="giallo-l"><span>INCRBY budget:org_42:2026-06 2000</span></span>
+<span class="giallo-l"><span># expire at the next calendar-month boundary, not a fixed 31-day TTL:</span></span>
+<span class="giallo-l"><span>EXPIRE budget:org_42:2026-06 &lt;seconds_until_next_month&gt; NX</span></span>
+<span class="giallo-l"><span># if the returned total is over the cap, reject and hand the reservation back:</span></span>
+<span class="giallo-l"><span>DECRBY budget:org_42:2026-06 2000</span></span>
+<span class="giallo-l"><span># after the response: reconcile the estimate against actual usage (the delta may be negative)</span></span>
+<span class="giallo-l"><span>INCRBY budget:org_42:2026-06 -146</span></span></code></pre>
+<p>Every concurrent request sees its own reservation reflected in the total the reserve returns, so no two clear the same check. Two caveats keep this honest. First, it is a reservation budget, not a hard cap: because reservations are estimates, in-flight requests can still overshoot the configured cap by up to the sum of outstanding estimates, so reserve a conservative upper bound or define explicit overdraft behavior. Second, the key names a calendar month, so expire it to the next month boundary rather than a fixed 31-day TTL, and gate the post-response reconciliation on the key still existing (the <code>NX</code> on <a rel="external" href="https://valkey.io/commands/expire/"><code>EXPIRE</code></a> pins the window without a read-modify-write, but a late <code>INCRBY</code> after the window has rolled over would otherwise recreate a fresh counter for a closed month).</p>
+<p>Sliding-window rate limits handle the per-minute shape that LLM providers enforce and that you likely want to mirror per tenant. A sorted set keyed by timestamp, trimmed, written, and counted in one <a rel="external" href="https://valkey.io/commands/multi/"><code>MULTI</code></a> block:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>MULTI</span></span>
+<span class="giallo-l"><span>ZREMRANGEBYSCORE rl:user_7 0 &lt;now_ms - 60000&gt;</span></span>
+<span class="giallo-l"><span>ZADD rl:user_7 &lt;now_ms&gt; &lt;request_id&gt;</span></span>
+<span class="giallo-l"><span>ZCARD rl:user_7</span></span>
+<span class="giallo-l"><span>PEXPIRE rl:user_7 60000</span></span>
+<span class="giallo-l"><span>EXEC</span></span></code></pre>
+<p>The block records the request and returns the window count atomically; the application reads the <code>ZCARD</code> reply after <code>EXEC</code> and rejects when it exceeds the limit. Note that a rejected request still occupies a slot until it ages out of the window - usually acceptable, and arguably desirable under a retry storm, since hammering a saturated limit keeps it saturated. If rejected requests must not consume the window, the check has to happen server-side before the add, which is what a short Lua script via <a rel="external" href="https://valkey.io/commands/eval/"><code>EVAL</code></a> is for.</p>
+<p>Deduplication covers the retry storm case: a client times out waiting on a slow completion, retries, and now two identical expensive requests are in flight. A Bloom filter via the <a rel="external" href="https://valkey.io/blog/introducing-bloom-filters/"><code>valkey-bloom</code></a> module answers "have we seen this request hash recently" in constant space:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>BF.ADD inflight 9f86d08...</span></span></code></pre>
+<p><a rel="external" href="https://valkey.io/commands/bf.add/"><code>BF.ADD</code></a> returns 1 when the hash is new and 0 when it has (probably) been seen, so a single round trip both checks and registers the request - no separate <code>BF.EXISTS</code> needed. A false positive means one request gets needlessly deduplicated against the exact-match cache from the response caching section; a false negative cannot happen. For workloads where that asymmetry is acceptable, the memory savings over a plain set are substantial at high request volumes.</p>
+<p>None of this is novel, and that is the point. The admission layer for AI workloads is well-understood primitives applied to a new cost model, and it shares an instance with the caching layers above it.</p>
+<h2 id="operational-observability-for-ai-query-shapes">Operational observability for AI query shapes</h2>
+<p>These workloads come with query shapes that existing dashboards were not built around, and the monitoring primitives exist because the workload primitives do.</p>
+<p>Hit rate needs to be a distribution, not a number. A semantic cache reporting 40% aggregate hits may be running 85% on FAQ-shaped traffic and 5% on long-tail prompts, and the aggregate hides which threshold needs tuning. Counters per category (a <a rel="external" href="https://valkey.io/commands/hincrby/"><code>HINCRBY</code></a> per lookup outcome into a stats hash) cost almost nothing and make the breakdown queryable.</p>
+<p>Similarity score histograms are the leading indicator for threshold drift. Recording the KNN distance of every lookup's best candidate, hit or miss, shows the distribution shifting before the hit rate moves - a new traffic pattern, a changed embedding model, or accumulating stale entries all show up as the histogram's shape changing. This is the single most useful signal for operating the confidence bands from the response caching section.</p>
+<p><a rel="external" href="https://valkey.io/commands/ft.search/"><code>FT.SEARCH</code></a> latency and indexing health need separate eyes. Query latency tells you about the read path; <a rel="external" href="https://valkey.io/commands/ft.info/"><code>FT.INFO</code></a> exposes index state, and under mutation-heavy load (the agent memory pattern, or a semantic cache with aggressive TTLs) the indexing backlog is what degrades first. A growing mutation queue precedes recall problems and read-after-write surprises.</p>
+<p>Slowlog patterns shift for vector and hybrid workloads. The entries worth watching are not always the slow ones - embedding payloads make <code>FT.SEARCH</code> requests and <code>HSET</code> writes large, and slowlog's execution-time threshold misses them entirely. This is exactly the gap <a rel="external" href="https://valkey.io/commands/commandlog-get/"><code>COMMANDLOG</code></a> (8.1+) closes: alongside slow execution it tracks large request and large reply payloads, so the bandwidth problems surface as loggable events rather than unexplained tail latency. A <a rel="external" href="https://valkey.io/blog/valkey-tooling-primitives/">previous post on this blog</a> covers COMMANDLOG and its sibling primitives in depth. KNN queries with low-selectivity filters are the other recurring signature, usually fixable by reordering the query or tagging the data better.</p>
+<h2 id="the-map-briefly">The map, briefly</h2>
+<p>Following the request path, the stack looks like this. Admission control gates traffic with counters, windows, and Bloom filters - vanilla Valkey. Exact-match response caching catches deterministic repeats with <code>SET</code> / <code>GET</code> and careful hashing - vanilla Valkey. Semantic caching catches near-duplicates with HNSW vector search and threshold triage - <code>valkey-search</code>. KV cache offload reuses prefill work across an inference fleet - RESP throughput and I/O threading, via LMCache. Retrieval combines vectors with filters, text, and aggregations in one round trip - Valkey Search 1.2. And all of it generates operational signals that the observability surface can capture.</p>
+<p>The primitives these AI workloads need already exist in Valkey; the work is knowing which primitive maps to which layer. None of these layers is exotic individually. The useful realization is that they share a substrate. A team running Valkey for session storage already operates the infrastructure that the admission and exact-match layers need; adding <code>valkey-search</code> extends the same instance to the semantic and retrieval layers. For agent memory specifically, the <a rel="external" href="https://valkey.io/blog/ai-agent-memory-with-valkey-and-mem0/">Mem0 deep dive</a> covers one vertical of this map end to end. The rest of the map is shorter to traverse than it looks.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/kivanow.png" alt="photo of Kristiyan Ivanov" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Kristiyan Ivanov</h4>
+    
+    <a target="_blank" href="https://github.com/KIvanow"><i class="icon icon-github-square"></i> @KIvanow</a>
+    
+    <p>Kristiyan Ivanov is the founder of BetterDB, a Valkey-native observability platform. He previously served as Engineering Manager at Redis, where he led Redis Insight, Redis for VS Code, and other developer tools. He has contributed to several Valkey repositories, including Valkey Admin.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/modern-ai-workloads-mapping-to-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/modern-ai-workloads-mapping-to-valkey/&title=How%20modern%20AI%20workloads%20map%20to%20Valkey%20primitives&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/modern-ai-workloads-mapping-to-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/unlocked-healthy-opps/">&laquo; The Power of Community: Driving Innovation across the Valkey Ecosystem</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/">Reducing Memory Overhead in Valkey 9.1 &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

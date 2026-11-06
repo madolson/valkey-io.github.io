@@ -1,0 +1,2062 @@
+
+
+
+
+
+
+
+
+    
+    
+    
+        
+    
+    
+    
+
+
+
+
+
+
+
+    
+    
+    
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey Command &middot; FT.HYBRID</title>
+    <meta name="title" property="og:title" content="Valkey Command: FT.HYBRID">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+    
+        <div class="styled-title">
+            <h1 class="page-title">FT.HYBRID </h1>
+        </div>
+    
+
+<div class="left-aside-bg">
+    <div class="left-aside">
+        <main>
+            
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ul class="breadcrumb-list">
+        
+        <li class="breadcrumb-item">
+            <a href="/valkey-io.github.io/pr-21/topics/" class="breadcrumb-link">Topics</a>
+        </li>
+        <li class="breadcrumb-item">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="" width="8" height="10"/>
+            
+            <a href="/valkey-io.github.io/pr-21/topics/search/" class="breadcrumb-link">Search</a>
+            
+        </li>
+        
+        
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="" width="8" height="10"/>
+            FT.HYBRID
+        </li>
+    </ul>
+</nav>
+
+            <div class="main-inner">
+                
+
+    <dl>
+        <dt>Usage:</dt>
+        <dd>
+            <code>
+             FT.HYBRID
+            
+            
+            
+          index  
+        
+           
+         SEARCH   
+        
+          query  
+        
+        [   
+         SCORER   
+        
+          scorer_name  
+         ]
+        
+        [   
+         YIELD_SCORE_AS   
+        
+          search_score_alias  
+         ]
+         
+        
+           
+         VSIM   
+        
+          vector_field  
+        
+          vector_param  
+        
+        [   
+         KNN   
+        
+          knn_count  
+        
+        [   
+         K   
+        
+          k_value  
+         ]
+        
+        [   
+         EF_RUNTIME   
+        
+          ef_runtime_value  
+         ]
+        
+        [   
+         SHARD_K_RATIO   
+        
+          shard_k_ratio_value  
+         ]
+         ]
+        
+        [   
+         FILTER   
+        
+        [  vsim_filter_count  ]
+        
+          vsim_filter_expression  
+        
+        [   
+         POLICY   
+        
+        〈   
+         ADHOC    |
+        
+           
+         BATCHES   
+        
+        [   
+         BATCH_SIZE   
+        
+          vsim_batch_size_value  
+         ]
+         
+         〉
+         ]
+         ]
+        
+        [   
+         YIELD_SCORE_AS   
+        
+          vsim_score_alias  
+         ]
+         
+        
+        [   
+         COMBINE   
+        
+        〈   
+           
+         RRF   
+        
+          rrf_count  
+        
+        [   
+         CONSTANT   
+        
+          constant_value  
+         ]
+        
+        [   
+         WINDOW   
+        
+          window_value  
+         ]
+        
+        [   
+         YIELD_SCORE_AS   
+        
+          combine_score_alias  
+         ]
+          |
+        
+           
+         LINEAR   
+        
+          linear_count  
+        
+        [   
+         ALPHA   
+        
+          alpha_value  
+        
+         BETA   
+        
+          beta_value  
+         ]
+        
+        [   
+         WINDOW   
+        
+          window_value  
+         ]
+        
+        [   
+         YIELD_SCORE_AS   
+        
+          combine_score_alias  
+         ]
+          |
+        
+           
+         FUNCTION   
+        
+          function_count  
+        
+         EXPR   
+        
+          expr_value  
+        
+        [   
+         WINDOW   
+        
+          window_value  
+         ]
+        
+        [   
+         YIELD_SCORE_AS   
+        
+          combine_score_alias  
+         ]
+         
+         〉
+         ]
+        
+        [ LOAD  
+         *    |
+        
+           
+          count  
+        
+           
+          field  
+        
+        [   
+         AS   
+        
+          alias  
+         ]
+         
+        
+            [    
+          field  
+        
+        [   
+         AS   
+        
+          alias  
+         ]
+          ... ]
+         
+         ]
+        
+        [ PARAMS  
+          count  
+        
+           
+          name  
+        
+          value  
+         
+        
+            [    
+          name  
+        
+          value  
+          ... ]
+         ]
+        
+        [   
+         TIMEOUT   
+        
+          timeout_ms  
+         ]
+        
+        [ DIALECT DIALECT  ]
+        
+        [ APPLY  
+          expression  
+        
+         AS   
+        
+          field  
+         ]
+        
+            [ [ APPLY  
+          expression  
+        
+         AS   
+        
+          field  
+         ] ... ]
+        
+        [ FILTER FILTER  ]
+        
+            [ [ FILTER FILTER  ] ... ]
+        
+        [ GROUPBY  
+          count  
+        
+          field  
+        
+            [   field   ... ]
+        
+        [ REDUCE  
+        〈   
+         COUNT    |
+        
+         COUNT_DISTINCT    |
+        
+         SUM    |
+        
+         MIN    |
+        
+         MAX    |
+        
+         AVG    |
+        
+         STDDEV    |
+        
+         TOLIST    |
+        
+         FIRST_VALUE    |
+        
+         RANDOM_SAMPLE   
+         〉
+        
+          count  
+        
+        [  expression  ]
+        
+            [ [  expression  ] ... ]
+        
+        [   
+         AS   
+        
+          name  
+         ]
+         ]
+        
+            [ [ REDUCE  
+        〈   
+         COUNT    |
+        
+         COUNT_DISTINCT    |
+        
+         SUM    |
+        
+         MIN    |
+        
+         MAX    |
+        
+         AVG    |
+        
+         STDDEV    |
+        
+         TOLIST    |
+        
+         FIRST_VALUE    |
+        
+         RANDOM_SAMPLE   
+         〉
+        
+          count  
+        
+        [  expression  ]
+        
+            [ [  expression  ] ... ]
+        
+        [   
+         AS   
+        
+          name  
+         ]
+         ] ... ]
+         ]
+        
+            [ [ GROUPBY  
+          count  
+        
+          field  
+        
+            [   field   ... ]
+        
+        [ REDUCE  
+        〈   
+         COUNT    |
+        
+         COUNT_DISTINCT    |
+        
+         SUM    |
+        
+         MIN    |
+        
+         MAX    |
+        
+         AVG    |
+        
+         STDDEV    |
+        
+         TOLIST    |
+        
+         FIRST_VALUE    |
+        
+         RANDOM_SAMPLE   
+         〉
+        
+          count  
+        
+        [  expression  ]
+        
+            [ [  expression  ] ... ]
+        
+        [   
+         AS   
+        
+          name  
+         ]
+         ]
+        
+            [ [ REDUCE  
+        〈   
+         COUNT    |
+        
+         COUNT_DISTINCT    |
+        
+         SUM    |
+        
+         MIN    |
+        
+         MAX    |
+        
+         AVG    |
+        
+         STDDEV    |
+        
+         TOLIST    |
+        
+         FIRST_VALUE    |
+        
+         RANDOM_SAMPLE   
+         〉
+        
+          count  
+        
+        [  expression  ]
+        
+            [ [  expression  ] ... ]
+        
+        [   
+         AS   
+        
+          name  
+         ]
+         ] ... ]
+         ] ... ]
+        
+        [ SORTBY  
+          count  
+        
+          sort_params  
+        
+            [   sort_params   ... ]
+        
+        [ MAX max  ]
+         ]
+        
+        [ LIMIT  
+          offset  
+        
+          count  
+         ]
+        
+            [ [ LIMIT  
+          offset  
+        
+          count  
+         ] ... ]
+        
+        [ WITHCURSOR  
+        [ COUNT count  ]
+        
+        [ MAXIDLE maxidle  ]
+         ]
+        
+            
+            </code>
+        </dd>
+    </dl>
+    
+    <dl>
+        <dt>Complexity:</dt>
+        <dd>O(N+M) where N is the complexity of the SEARCH arm and M is the complexity of the VSIM arm.</dd>
+    </dl>
+    
+    
+    <dl>
+        
+            <dt>Module:</dt>
+            <dd><a href=https://github.com/valkey-io/valkey-search>valkey-search</a></dd>
+        
+    </dl>
+    <dl>
+        <dt>Since module version:</dt>
+        <dd>1.3.0-RC1</dd>
+    </dl>
+    
+    
+    
+    <dl>
+        <dt>ACL Categories:</dt>
+        <dd>
+            
+                @read, 
+            
+                @slow, 
+            
+                @search
+            
+        </dd>
+    </dl>
+    
+
+
+
+
+
+
+<p>The <code>FT.HYBRID</code> command runs two searches over one index and combines their results into a single ranked list.</p>
+<p>The first search is the <code>SEARCH</code> arm: a text, tag or numeric query, scored for relevance the way <code>FT.SEARCH</code> scores one. The second is the <code>VSIM</code> arm: a vector similarity search, scored by distance. Each arm ranks its own matches independently.</p>
+<p>The two ranked lists are then fused into one. Fusion is what makes this a hybrid search rather than two searches: a document that both arms found is rewarded for appearing in both, and the <code>COMBINE</code> clause decides how the two arms' scores are weighed against each other.</p>
+<p>The fused list is then fed through the same processing stages as <code>FT.AGGREGATE</code>, so the result can be projected, filtered, grouped, sorted and trimmed before it is returned.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.HYBRID &lt;index-name&gt;</span></span>
+<span class="giallo-l"><span>    SEARCH &lt;query&gt; [SCORER &lt;scorer&gt;] [YIELD_SCORE_AS &lt;alias&gt;]</span></span>
+<span class="giallo-l"><span>    VSIM &lt;field&gt; &lt;vector&gt; [KNN &lt;count&gt; [K &lt;k&gt;] [EF_RUNTIME &lt;ef&gt;] [SHARD_K_RATIO &lt;ratio&gt;]]</span></span>
+<span class="giallo-l"><span>                          [FILTER [&lt;count&gt;] &lt;expression&gt;</span></span>
+<span class="giallo-l"><span>                            [POLICY (ADHOC | BATCHES [BATCH_SIZE &lt;n&gt;])]]</span></span>
+<span class="giallo-l"><span>                          [YIELD_SCORE_AS &lt;alias&gt;]</span></span>
+<span class="giallo-l"><span>    [COMBINE</span></span>
+<span class="giallo-l"><span>      ( RRF      &lt;count&gt; [CONSTANT &lt;c&gt;] [WINDOW &lt;w&gt;] [YIELD_SCORE_AS &lt;alias&gt;]</span></span>
+<span class="giallo-l"><span>      | LINEAR   &lt;count&gt; [ALPHA &lt;a&gt; BETA &lt;b&gt;] [WINDOW &lt;w&gt;] [YIELD_SCORE_AS &lt;alias&gt;]</span></span>
+<span class="giallo-l"><span>      | FUNCTION &lt;count&gt; EXPR &lt;expression&gt; [WINDOW &lt;w&gt;] [YIELD_SCORE_AS &lt;alias&gt;]</span></span>
+<span class="giallo-l"><span>      )]</span></span>
+<span class="giallo-l"><span>    [DIALECT &lt;dialect&gt;]</span></span>
+<span class="giallo-l"><span>    [LOAD * | LOAD &lt;count&gt; &lt;field&gt; [AS &lt;alias&gt;] [&lt;field&gt; [AS &lt;alias&gt;] ...]]</span></span>
+<span class="giallo-l"><span>    [PARAMS &lt;count&gt; &lt;name&gt; &lt;value&gt; [ &lt;name&gt; &lt;value&gt; ...]]</span></span>
+<span class="giallo-l"><span>    [TIMEOUT &lt;timeout&gt;]</span></span>
+<span class="giallo-l"><span>    [WITHCURSOR [COUNT &lt;count&gt;] [MAXIDLE &lt;maxidle&gt;]]</span></span>
+<span class="giallo-l"><span>    (</span></span>
+<span class="giallo-l"><span>      | APPLY &lt;expression&gt; AS &lt;field&gt;</span></span>
+<span class="giallo-l"><span>      | FILTER &lt;expression&gt;</span></span>
+<span class="giallo-l"><span>      | GROUPBY &lt;count&gt; &lt;field&gt; [&lt;field&gt; ... ] [[REDUCE &lt;reducer&gt; &lt;count&gt; [&lt;expression&gt; [&lt;expression&gt; ...]]] [ REDUCE ...]]</span></span>
+<span class="giallo-l"><span>      | LIMIT &lt;offset&gt; &lt;count&gt;</span></span>
+<span class="giallo-l"><span>      | SORTBY &lt;count&gt; &lt;expression&gt; [ASC | DESC] [&lt;expression&gt; [ASC | DESC] ...] [MAX &lt;num&gt;]</span></span>
+<span class="giallo-l"><span>    )*</span></span></code></pre>
+<ul>
+<li><code>&lt;index-name&gt;</code> (required): The index to query. Both arms search the same index.</li>
+<li><code>SEARCH &lt;query&gt;</code> (required): The non-vector arm. <code>&lt;query&gt;</code> is any query the search parser accepts, see <a href="/valkey-io.github.io/pr-21/topics/search-query">Search - query language</a>. A vector query is rejected here — the vector search is the <code>VSIM</code> clause's job.
+<ul>
+<li><code>SCORER &lt;scorer&gt;</code> (optional): The relevance scorer for this arm. The only supported scorer is <code>BM25STD</code>, which is also the default.</li>
+<li><code>YIELD_SCORE_AS &lt;alias&gt;</code> (optional): Emits this arm's score under <code>&lt;alias&gt;</code>, making it available to <code>COMBINE FUNCTION</code> and to the processing stages.</li>
+</ul>
+</li>
+<li><code>VSIM &lt;field&gt; &lt;vector&gt;</code> (required): The vector arm. <code>&lt;field&gt;</code> is a declared vector attribute and <code>&lt;vector&gt;</code> is a binary blob, supplied through <code>PARAMS</code>.
+<ul>
+<li><code>KNN &lt;count&gt; [K &lt;k&gt;] [EF_RUNTIME &lt;ef&gt;] [SHARD_K_RATIO &lt;ratio&gt;]</code> (optional): The vector search parameters. <code>&lt;count&gt;</code> is a count of the arguments that follow within the block, not a count of parameters. <code>K</code> is the number of nearest neighbors to retrieve, between 1 and 10000, and defaults to 10. Omitting the whole block, or writing <code>KNN 0</code>, is the same as taking every default. <code>EF_RUNTIME</code> tunes the HNSW search breadth. <code>SHARD_K_RATIO</code> is accepted for compatibility and ignored.</li>
+<li><code>FILTER [&lt;count&gt;] &lt;expression&gt; [POLICY ...]</code> (optional): Restricts which documents the vector search considers. The filter decides membership only; this arm's score remains the vector distance. Without <code>POLICY</code>, the existing count-optional form remains supported. A policy must be inside a counted FILTER block, where <code>&lt;count&gt;</code> includes the expression and every policy token. <code>POLICY ADHOC</code> forces exact filter-first execution. <code>POLICY BATCHES</code> forces vector-search-first execution with inline filtering. A wildcard expression (<code>FILTER 3 * POLICY ...</code>) has no restriction to apply, so both policies use standard unfiltered KNN, matching Redis. Policy values are literal command tokens, not <code>PARAMS</code> references. <code>EF_RUNTIME</code> is rejected with <code>ADHOC</code> and accepted with <code>BATCHES</code>. <code>BATCH_SIZE &lt;n&gt;</code> is accepted only after <code>POLICY BATCHES</code>; its value remains unsupported and is ignored. See <a href="/valkey-io.github.io/pr-21/topics/search-query">Search - query language</a></li>
+<li><code>YIELD_SCORE_AS &lt;alias&gt;</code> (optional): As for the <code>SEARCH</code> arm.</li>
+</ul>
+</li>
+<li><code>COMBINE</code> (optional): How the two arms' results are fused. Defaults to <code>RRF</code> with its own defaults when the clause is absent. In every form, <code>&lt;count&gt;</code> is a count of the arguments that follow within the clause, not a count of sub-arguments; sub-arguments may appear in any order. See <a href="https://madolson.github.io/valkey-io.github.io/pr-21/commands/ft.hybrid/#fusion-methods">Fusion methods</a> below.</li>
+<li><code>DIALECT &lt;dialect&gt;</code> (optional): Specifies your dialect. The only supported dialect is 2.</li>
+<li><code>LOAD * | LOAD &lt;count&gt; &lt;field&gt; [AS &lt;alias&gt;] [...]</code> (optional): Which fields of the matched keys are loaded into the working set, exactly as for <code>FT.AGGREGATE</code>. Without a <code>LOAD</code> clause the result carries the key, the fused score, and any per-arm scores that were named. <code>AS &lt;alias&gt;</code> requires <code>search.emulate-release</code> to be at least <code>1.3.0</code>; below that the <code>AS</code> keyword is read as another field name and the load fails.</li>
+<li><code>PARAMS &lt;count&gt; &lt;name&gt; &lt;value&gt; [...]</code> (optional): <code>&lt;count&gt;</code> is the number of arguments, i.e. twice the number of name/value pairs. Used to supply the <code>VSIM</code> query vector. A <code>$name</code> reference inside either arm's query text is not substituted — the same limitation <code>FT.SEARCH</code> and <code>FT.AGGREGATE</code> have.</li>
+<li><code>TIMEOUT &lt;timeout&gt;</code> (optional): A timeout for the command, in milliseconds, between 1 and 60000.</li>
+<li><code>WITHCURSOR [COUNT &lt;count&gt;] [MAXIDLE &lt;maxidle&gt;]</code> (optional): Returns at most <code>&lt;count&gt;</code> records and saves the remaining records in a cursor, which is read with <a href="/valkey-io.github.io/pr-21/commands/ft.cursor"><code>FT.CURSOR</code></a>, exactly as for <a href="/valkey-io.github.io/pr-21/commands/ft.aggregate"><code>FT.AGGREGATE</code></a>. <code>&lt;count&gt;</code> must be between 1 and <code>search.cursor-max-count</code>, the default is 1000. <code>&lt;maxidle&gt;</code> is the number of milliseconds the cursor may go unread before it is destroyed; it must be between 1 and <code>search.cursor-max-idle-ms</code>, the default is 300000. <code>WITHCURSOR</code> may appear anywhere among the clauses that follow <code>SEARCH</code>, <code>VSIM</code> and <code>COMBINE</code>, and ends any of those three clauses the way <code>LOAD</code> does. If it is given more than once, the last one is used. A cursor is no exception to the cancellation rules: a query cancelled by its <code>TIMEOUT</code> is an error, as it is without <code>WITHCURSOR</code>.</li>
+<li><code>APPLY</code>, <code>FILTER</code>, <code>GROUPBY</code>, <code>LIMIT</code>, <code>SORTBY</code> (optional): The <code>FT.AGGREGATE</code> processing stages, applied to the fused list in the order written. See <a href="/valkey-io.github.io/pr-21/commands/ft.aggregate#processing-stages">FT.AGGREGATE</a> for what each stage does.</li>
+</ul>
+<h1 id="result">Result</h1>
+<p>The output is an array. The first element is a scalar that repeats the number of records returned and carries no other information — in particular it is not the total number of matches. The remainder is one element per record.</p>
+<p>Each record is an array of field/value pairs. Without a <code>LOAD</code> clause every record carries <code>__key</code> and the fused score, under <code>__score</code> or under the alias given by <code>COMBINE ... YIELD_SCORE_AS</code>. A <code>LOAD</code> clause replaces those two implicit columns with the fields it names: load <code>@__key</code> to keep the key, and name the fused score with <code>COMBINE ... YIELD_SCORE_AS</code> to keep it. Per-arm scores appear under their own <code>YIELD_SCORE_AS</code> aliases either way.</p>
+<p>If <code>WITHCURSOR</code> is specified the output is a two element array, as for <code>FT.AGGREGATE</code>. The first element is an array whose first element is the number of records returned, followed by one element for each returned record. The second element is the cursor id to pass to <a href="/valkey-io.github.io/pr-21/commands/ft.cursor"><code>FT.CURSOR READ</code></a>, or 0 if all records were returned, in which case no cursor is created. The cursor pages through the records the command would have returned without <code>WITHCURSOR</code>, so the default <code>LIMIT</code> of 10 described below still applies.</p>
+<p>Unlike <code>FT.AGGREGATE</code>, which returns every record, <code>FT.HYBRID</code> returns at most 10 records when the command writes no <code>LIMIT</code> clause. An explicit <code>LIMIT</code> stays where it is written in the pipeline; only the default is appended, so it runs after every other stage.</p>
+<h1 id="fusion-methods">Fusion methods</h1>
+<p>Fusion sees each arm's results ranked best-first, and every arm's score in the same direction: higher is better. The <code>VSIM</code> arm's distance is converted to a similarity before fusion, so a nearer document scores higher.</p>
+<h2 id="rrf">RRF</h2>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>COMBINE RRF &lt;count&gt; [CONSTANT &lt;c&gt;] [WINDOW &lt;w&gt;] [YIELD_SCORE_AS &lt;alias&gt;]</span></span></code></pre>
+<p>Reciprocal Rank Fusion scores a document by its <em>rank</em> in each arm rather than by the arm's score, which makes it insensitive to the two arms producing scores on entirely different scales. A document at rank <code>r</code> in an arm contributes <code>1 / (c + r + 1)</code>, and the contributions from both arms are summed.</p>
+<ul>
+<li><code>CONSTANT &lt;c&gt;</code> (optional, default <code>60</code>): The <code>c</code> above. A larger constant flattens the difference between ranks. Must be a non-negative finite number; fractional values are honored.</li>
+<li><code>WINDOW &lt;w&gt;</code> (optional, default <code>20</code>): How many of each arm's top results take part in fusion.</li>
+</ul>
+<p>This is the default method: a command with no <code>COMBINE</code> clause fuses with <code>RRF</code> using these defaults.</p>
+<h2 id="linear">LINEAR</h2>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>COMBINE LINEAR &lt;count&gt; [ALPHA &lt;a&gt; BETA &lt;b&gt;] [WINDOW &lt;w&gt;] [YIELD_SCORE_AS &lt;alias&gt;]</span></span></code></pre>
+<p>A weighted sum of the arms' raw scores: <code>a * search_score + b * vector_similarity</code>. A document absent from an arm contributes nothing from it.</p>
+<ul>
+<li><code>ALPHA &lt;a&gt;</code> (optional, default <code>0.3</code>): The weight applied to the <code>SEARCH</code> arm.</li>
+<li><code>BETA &lt;b&gt;</code> (optional, default <code>0.7</code>): The weight applied to the <code>VSIM</code> arm.</li>
+<li><code>WINDOW &lt;w&gt;</code> (optional, default <code>20</code>): As for <code>RRF</code>.</li>
+</ul>
+<p>The two weights are optional together, not individually. Writing neither takes the defaults above, so <code>COMBINE LINEAR 0</code> fuses exactly as <code>COMBINE LINEAR 4 ALPHA 0.3 BETA 0.7</code> does. Writing exactly one is an error: the other is not defaulted for it, because a half-written pair is much more likely to be a typo than a request for a default.</p>
+<p>Any finite value is accepted, including negative values and values greater than 1.</p>
+<p>The scores are used as they stand, with no per-arm normalization. Normalizing would make a document's fused score depend on which <em>other</em> documents happened to come back in the same arm, so the same document against the same query would score differently as the corpus around it changed. Use <code>ALPHA</code> and <code>BETA</code> to balance the arms instead.</p>
+<h2 id="function">FUNCTION</h2>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>COMBINE FUNCTION &lt;count&gt; EXPR &lt;expression&gt; [WINDOW &lt;w&gt;] [YIELD_SCORE_AS &lt;alias&gt;]</span></span></code></pre>
+<p>The fused score is whatever your expression computes from the arms' scores. This is a valkey-search extension.</p>
+<ul>
+<li><code>EXPR &lt;expression&gt;</code> (required): An expression over the per-arm scores. See <a href="/valkey-io.github.io/pr-21/topics/search-expressions">Search - expressions</a> for the syntax.</li>
+<li><code>WINDOW &lt;w&gt;</code> (optional): Defaults to the widest window allowed rather than to 20, because a user expression is normally expected to see every candidate.</li>
+</ul>
+<p>Each arm's score is reachable from the expression three ways: by the arm's own <code>YIELD_SCORE_AS</code> alias, by position as <code>@__arm0_score</code> and <code>@__arm1_score</code>, and — for the standard two-arm shape — as <code>@__search_score</code> and <code>@__vector_score</code>.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.HYBRID idx</span></span>
+<span class="giallo-l"><span>  SEARCH &quot;@title:running shoes&quot; YIELD_SCORE_AS s</span></span>
+<span class="giallo-l"><span>  VSIM @embedding $q KNN 2 K 10 YIELD_SCORE_AS v</span></span>
+<span class="giallo-l"><span>  COMBINE FUNCTION 4 EXPR &quot;@s * 10 + @v&quot; YIELD_SCORE_AS score</span></span>
+<span class="giallo-l"><span>  PARAMS 2 q &lt;blob&gt;</span></span></code></pre>
+<p>An arm that did not return a given document has no score for it, and an expression that reads a missing arm score evaluates to 0 for that document as a whole — not merely for that term. <code>@v * 0 + 100</code> yields 0, not 100, for a document the vector arm did not return. Guard with <code>exists(@alias)</code>, which is 0 for a missing score and 1 otherwise, if such a document should keep a non-zero fused score.</p>
+<h2 id="window">WINDOW</h2>
+<p><code>WINDOW</code> bounds how many of each arm's top results take part in fusion. It is a per-arm count, so with two arms the fused list can hold up to twice the window before the processing stages run.</p>
+<p><code>WINDOW 0</code> means "as wide as allowed" and resolves to the ceiling set by the <code>search.max-combine-window</code> configuration, which defaults to 1,000,000. Values above that ceiling are rejected.</p>
+<p>The ceiling bounds a window the command asks for, and the window <code>FUNCTION</code> takes when it asks for none. It does not clamp the RRF and LINEAR default of 20: lowering the configuration below 20 rejects an explicit <code>WINDOW 20</code> while leaving the default untouched.</p>
+<h1 id="score-naming">Score naming</h1>
+<p>The fused score is emitted under <code>__score</code> unless <code>COMBINE ... YIELD_SCORE_AS</code> names it otherwise.</p>
+<p><code>__key</code> is reserved and cannot be used as a score alias anywhere.</p>
+<p><code>__score</code> cannot be used by <code>COMBINE ... YIELD_SCORE_AS</code> when the command has no <code>LOAD</code> clause, because that is already the name of the default score column; give the score a different name, or add a <code>LOAD</code> clause. A per-arm <code>YIELD_SCORE_AS</code> cannot use <code>__score</code> at all, with or without a <code>LOAD</code> clause, since it would collide with the fused score's own column.</p>
+<h1 id="notes">Notes</h1>
+<ul>
+<li><strong><code>VSIM RANGE</code> is not implemented.</strong> The clause parses, so a command written for another engine is checked rather than misread, but executing one returns an error. Use <code>KNN</code>.</li>
+<li><strong><code>POLICY</code> is active inside a counted VSIM <code>FILTER</code>.</strong> <code>ADHOC</code> forces exact filter-first execution and <code>BATCHES</code> forces vector-search-first execution with inline filtering. Other values, duplicate declarations, and placement outside the counted FILTER block are rejected.</li>
+<li><strong><code>BATCH_SIZE</code> is accepted but ignored.</strong> It is valid only after <code>POLICY BATCHES</code>; fixed-size batch iteration is tracked separately.</li>
+<li><strong><code>NOCONTENT</code> is rejected.</strong> <code>FT.HYBRID</code> always returns records; a query wanting keys only can ask for no <code>LOAD</code> clause.</li>
+<li><strong><code>FT.HYBRID</code> cannot run inside <code>MULTI</code>/<code>EXEC</code> or a Lua script</strong>, and is unavailable when the reader thread pool is disabled. All three force synchronous execution, which cannot revalidate the two arms' results against concurrent writes.</li>
+</ul>
+
+
+
+
+<h3>History</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Version</th>
+            <th>Change</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+        
+        <tr>
+            <td>1.3.0-RC1</td>
+            <td><p>Hybrid search combining text/filter and vector arms</p>
+</td>
+        </tr>
+        
+
+    </tbody>
+</table>
+
+
+
+            </div>
+        </main>
+        <aside>
+            
+
+
+
+
+
+
+
+<nav class="docs-menu" aria-label="Documentation">
+    <ul class="docs-menu-sections">
+        <li>
+            <details>
+                <summary>Getting started</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/introduction/">Introduction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/quickstart/">Quick start guide</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/installation/">Installation</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/faq/">FAQ</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/migration/">Migration from Redis to Valkey</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-bundle/">Valkey Bundle</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        
+<li>
+    <details>
+        <summary>Command reference</summary>
+        <ul>
+            <li><a href="/valkey-io.github.io/pr-21/commands/">All commands</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bitmap">Bitmap</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bloom">Bloom filter</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#cluster">Cluster</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#connection">Connection</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#generic">Generic</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#geo">Geospatial indices</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hash">Hash</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hyperloglog">HyperLogLog</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#json">JSON</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#list">List</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#pubsub">Pub/Sub</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#scripting">Scripting and Functions</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#search">Search</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#server">Server</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#set">Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#sorted-set">Sorted Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#stream">Stream</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#string">String</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#transactions">Transactions</a></li>
+        </ul>
+    </details>
+</li>
+
+        <li>
+            <details>
+                <summary>Data types</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/data-types/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/strings/">Strings</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Strings commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Strings commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/append/">APPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decr/">DECR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decrby/">DECRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delex/">DELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delifeq/">DELIFEQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/get/">GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getdel/">GETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getex/">GETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getrange/">GETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getset/">GETSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incr/">INCR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrby/">INCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrbyfloat/">INCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lcs/">LCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mget/">MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mset/">MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetex/">MSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetnx/">MSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psetex/">PSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/set/">SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setex/">SETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setnx/">SETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setrange/">SETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/strlen/">STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/substr/">SUBSTR</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/lists/">Lists</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Lists commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Lists commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmove/">BLMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmpop/">BLMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blpop/">BLPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpop/">BRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpoplpush/">BRPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lindex/">LINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/linsert/">LINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/llen/">LLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmove/">LMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmpop/">LMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpop/">LPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpos/">LPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpush/">LPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpushx/">LPUSHX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrange/">LRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrem/">LREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lset/">LSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ltrim/">LTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpop/">RPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpoplpush/">RPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpush/">RPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpushx/">RPUSHX</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sets/">Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/sadd/">SADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scard/">SCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiff/">SDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiffstore/">SDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinter/">SINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sintercard/">SINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinterstore/">SINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sismember/">SISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smembers/">SMEMBERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smismember/">SMISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smove/">SMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spop/">SPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srandmember/">SRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srem/">SREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sscan/">SSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunion/">SUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunionstore/">SUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hashes/">Hashes</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hashes commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hashes commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hdel/">HDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexists/">HEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpire/">HEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpireat/">HEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpiretime/">HEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hget/">HGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetall/">HGETALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetdel/">HGETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetex/">HGETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrby/">HINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrbyfloat/">HINCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hkeys/">HKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hlen/">HLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmget/">HMGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmset/">HMSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpersist/">HPERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpire/">HPEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpireat/">HPEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpiretime/">HPEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpttl/">HPTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hrandfield/">HRANDFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hscan/">HSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hset/">HSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetex/">HSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetnx/">HSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hstrlen/">HSTRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/httl/">HTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hvals/">HVALS</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sorted-sets/">Sorted Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sorted Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sorted Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzmpop/">BZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmax/">BZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmin/">BZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zadd/">ZADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcard/">ZCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcount/">ZCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiff/">ZDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiffstore/">ZDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zincrby/">ZINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinter/">ZINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zintercard/">ZINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinterstore/">ZINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zlexcount/">ZLEXCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmpop/">ZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmscore/">ZMSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmax/">ZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmin/">ZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrandmember/">ZRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrange/">ZRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebylex/">ZRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebyscore/">ZRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangestore/">ZRANGESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrank/">ZRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrem/">ZREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebylex/">ZREMRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyrank/">ZREMRANGEBYRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyscore/">ZREMRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrange/">ZREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebylex/">ZREVRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebyscore/">ZREVRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrank/">ZREVRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscan/">ZSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscore/">ZSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunion/">ZUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunionstore/">ZUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/streams-intro/">Streams</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Streams commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Streams commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/xack/">XACK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xackdel/">XACKDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xadd/">XADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xautoclaim/">XAUTOCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xclaim/">XCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdel/">XDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdelex/">XDELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup/">XGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-create/">XGROUP CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-createconsumer/">XGROUP CREATECONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-delconsumer/">XGROUP DELCONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-destroy/">XGROUP DESTROY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-help/">XGROUP HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-setid/">XGROUP SETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo/">XINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-consumers/">XINFO CONSUMERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-groups/">XINFO GROUPS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-help/">XINFO HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-stream/">XINFO STREAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xlen/">XLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xpending/">XPENDING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrange/">XRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xread/">XREAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xreadgroup/">XREADGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrevrange/">XREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xsetid/">XSETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xtrim/">XTRIM</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/geospatial/">Geospatial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Geospatial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Geospatial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/geoadd/">GEOADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geodist/">GEODIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geohash/">GEOHASH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geopos/">GEOPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius/">GEORADIUS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember/">GEORADIUSBYMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember_ro/">GEORADIUSBYMEMBER_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius_ro/">GEORADIUS_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearch/">GEOSEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearchstore/">GEOSEARCHSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitmaps/">Bitmaps</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitmaps commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitmaps commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitcount/">BITCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitop/">BITOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitpos/">BITPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getbit/">GETBIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setbit/">SETBIT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitfields/">Bitfields</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitfields commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitfields commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield/">BITFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield_ro/">BITFIELD_RO</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hyperloglogs/">HyperLogLog</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">HyperLogLog commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="HyperLogLog commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfadd/">PFADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfcount/">PFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfdebug/">PFDEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfmerge/">PFMERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfselftest/">PFSELFTEST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bloomfilters/">Bloom Filters <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bloom Filters commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bloom Filters commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.add/">BF.ADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.card/">BF.CARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.exists/">BF.EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.info/">BF.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.insert/">BF.INSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.load/">BF.LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.madd/">BF.MADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.mexists/">BF.MEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.reserve/">BF.RESERVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-json/">JSON <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">JSON commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="JSON commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrappend/">JSON.ARRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrindex/">JSON.ARRINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrinsert/">JSON.ARRINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrlen/">JSON.ARRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrpop/">JSON.ARRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrtrim/">JSON.ARRTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.clear/">JSON.CLEAR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.debug/">JSON.DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.del/">JSON.DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.forget/">JSON.FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.get/">JSON.GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.merge/">JSON.MERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mget/">JSON.MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mset/">JSON.MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.numincrby/">JSON.NUMINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.nummultby/">JSON.NUMMULTBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objkeys/">JSON.OBJKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objlen/">JSON.OBJLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.resp/">JSON.RESP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.set/">JSON.SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strappend/">JSON.STRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strlen/">JSON.STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.toggle/">JSON.TOGGLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.type/">JSON.TYPE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Application development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/keyspace/">Keyspace</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Keyspace commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Keyspace commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/copy/">COPY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dbsize/">DBSIZE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/del/">DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dump/">DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exists/">EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expire/">EXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expireat/">EXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expiretime/">EXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushall/">FLUSHALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushdb/">FLUSHDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/keys/">KEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/migrate/">MIGRATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/move/">MOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object/">OBJECT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-encoding/">OBJECT ENCODING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-freq/">OBJECT FREQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-help/">OBJECT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-idletime/">OBJECT IDLETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-refcount/">OBJECT REFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/persist/">PERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpire/">PEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpireat/">PEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpiretime/">PEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pttl/">PTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/randomkey/">RANDOMKEY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rename/">RENAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/renamenx/">RENAMENX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/restore/">RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scan/">SCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort/">SORT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort_ro/">SORT_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/swapdb/">SWAPDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/touch/">TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ttl/">TTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/type/">TYPE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unlink/">UNLINK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/wait/">WAIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/waitaof/">WAITAOF</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/pipelining/">Pipelining</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/transactions/">Transactions</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Transactions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Transactions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/discard/">DISCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exec/">EXEC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/multi/">MULTI</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unwatch/">UNWATCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/watch/">WATCH</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/pubsub/">Pub/Sub</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Pub/Sub commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Pub/Sub commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/psubscribe/">PSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/publish/">PUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub/">PUBSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-channels/">PUBSUB CHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-help/">PUBSUB HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numpat/">PUBSUB NUMPAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numsub/">PUBSUB NUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardchannels/">PUBSUB SHARDCHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardnumsub/">PUBSUB SHARDNUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/punsubscribe/">PUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spublish/">SPUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ssubscribe/">SSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/subscribe/">SUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunsubscribe/">SUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unsubscribe/">UNSUBSCRIBE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/notifications/">Keyspace notifications</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Patterns and tutorials</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lru-cache/">Key eviction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/client-side-caching/">Client-side caching</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/distlock/">Distributed Locks</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/indexing/">Secondary indexing</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/twitter-clone/">Patterns example</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Scripting and functions</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/programmability/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Scripting and functions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Scripting and functions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval/">EVAL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha/">EVALSHA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha_ro/">EVALSHA_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval_ro/">EVAL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall/">FCALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall_ro/">FCALL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function/">FUNCTION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-delete/">FUNCTION DELETE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-dump/">FUNCTION DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-flush/">FUNCTION FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-help/">FUNCTION HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-kill/">FUNCTION KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-list/">FUNCTION LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-load/">FUNCTION LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-restore/">FUNCTION RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-stats/">FUNCTION STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script/">SCRIPT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-debug/">SCRIPT DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-exists/">SCRIPT EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-flush/">SCRIPT FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-help/">SCRIPT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-kill/">SCRIPT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-load/">SCRIPT LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-show/">SCRIPT SHOW</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/eval-intro/">Scripting with Lua</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/functions-intro/">Functions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lua-api/">Lua API reference</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldb/">Debugging Lua scripts</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details open>
+                <summary>Search <span class="docs-menu-badge">module</span></summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/search/" class="docs-menu-related">Overview</a>
+    
+<details class="docs-menu-commands-toggle" open>
+    <summary><span class="sr-only">Search commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Search commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.aggregate/">FT.AGGREGATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.create/">FT.CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.cursor/">FT.CURSOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.dropindex/">FT.DROPINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.hybrid/" class="docs-menu-current" aria-current="page">FT.HYBRID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.info/">FT.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.search/">FT.SEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft._list/">FT._LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-query/">Queries</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-expressions/">Aggregation expressions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-data-formats/">Data formats</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-configurables/">Configuration</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-monitoring/">Metrics and configurations</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-observables/">INFO SEARCH metrics</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Administration</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/server/">The Valkey server</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cli/">CLI</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey.conf/">Configuration</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Configuration commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Configuration commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/config/">CONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-get/">CONFIG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-help/">CONFIG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-resetstat/">CONFIG RESETSTAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-rewrite/">CONFIG REWRITE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-set/">CONFIG SET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/persistence/">Persistence</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Persistence commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Persistence commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgrewriteaof/">BGREWRITEAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgsave/">BGSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lastsave/">LASTSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/save/">SAVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/replication/">Replication</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Replication commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Replication commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/failover/">FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psync/">PSYNC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replconf/">REPLCONF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replicaof/">REPLICAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/role/">ROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slaveof/">SLAVEOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sync/">SYNC</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel/">High availability with Valkey Sentinel</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/admin/">Administration</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/clients/">Client handling</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Client handling commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Client handling commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/auth/">AUTH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client/">CLIENT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-caching/">CLIENT CACHING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-capa/">CLIENT CAPA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getname/">CLIENT GETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getredir/">CLIENT GETREDIR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-help/">CLIENT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-id/">CLIENT ID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-import-source/">CLIENT IMPORT-SOURCE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-info/">CLIENT INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-kill/">CLIENT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-list/">CLIENT LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-evict/">CLIENT NO-EVICT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-touch/">CLIENT NO-TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-pause/">CLIENT PAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-reply/">CLIENT REPLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setinfo/">CLIENT SETINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setname/">CLIENT SETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-tracking/">CLIENT TRACKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-trackinginfo/">CLIENT TRACKINGINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unblock/">CLIENT UNBLOCK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unpause/">CLIENT UNPAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/echo/">ECHO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hello/">HELLO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ping/">PING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/quit/">QUIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/reset/">RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/select/">SELECT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/signals/">Signal handling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ARM/">ARM support</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/RDMA/">RDMA experimental support</a>
+</li>
+
+                    <li>
+                        <details class="docs-menu-other-commands">
+                            <summary>Other commands</summary>
+                            <ul class="docs-menu-commands" aria-label="Administration commands">
+                                <li><a href="/valkey-io.github.io/pr-21/commands/debug/">DEBUG</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/info/">INFO</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/lolwut/">LOLWUT</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/monitor/">MONITOR</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/restore-asking/">RESTORE-ASKING</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/shutdown/">SHUTDOWN</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/time/">TIME</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Cluster</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-tutorial/">Cluster tutorial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Cluster tutorial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Cluster tutorial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/asking/">ASKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster/">CLUSTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslots/">CLUSTER ADDSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslotsrange/">CLUSTER ADDSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-bumpepoch/">CLUSTER BUMPEPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-cancelslotmigrations/">CLUSTER CANCELSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-count-failure-reports/">CLUSTER COUNT-FAILURE-REPORTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-countkeysinslot/">CLUSTER COUNTKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslots/">CLUSTER DELSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslotsrange/">CLUSTER DELSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-failover/">CLUSTER FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-flushslots/">CLUSTER FLUSHSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-forget/">CLUSTER FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getkeysinslot/">CLUSTER GETKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getslotmigrations/">CLUSTER GETSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-help/">CLUSTER HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-info/">CLUSTER INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-keyslot/">CLUSTER KEYSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-links/">CLUSTER LINKS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-meet/">CLUSTER MEET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-migrateslots/">CLUSTER MIGRATESLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myid/">CLUSTER MYID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myshardid/">CLUSTER MYSHARDID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-nodes/">CLUSTER NODES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicas/">CLUSTER REPLICAS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicate/">CLUSTER REPLICATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-reset/">CLUSTER RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-saveconfig/">CLUSTER SAVECONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-set-config-epoch/">CLUSTER SET-CONFIG-EPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-setslot/">CLUSTER SETSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-shards/">CLUSTER SHARDS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slaves/">CLUSTER SLAVES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slot-stats/">CLUSTER SLOT-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slots/">CLUSTER SLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-syncslots/">CLUSTER SYNCSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/clusterscan/">CLUSTERSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readonly/">READONLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readwrite/">READWRITE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-spec/">Cluster specification</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/atomic-slot-migration/">Atomic slot migration</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Security</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/security/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/acl/">ACL</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">ACL commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="ACL commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl/">ACL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-cat/">ACL CAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-delrole/">ACL DELROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-deluser/">ACL DELUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-digest/">ACL DIGEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-dryrun/">ACL DRYRUN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-genpass/">ACL GENPASS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getrole/">ACL GETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getuser/">ACL GETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-help/">ACL HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-list/">ACL LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-load/">ACL LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-log/">ACL LOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-roles/">ACL ROLES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-save/">ACL SAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setrole/">ACL SETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setuser/">ACL SETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-users/">ACL USERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-whoami/">ACL WHOAMI</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/tls/">TLS</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldap/">LDAP authentication <span class="docs-menu-badge">module</span></a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Performance and troubleshooting</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/problems/">Troubleshooting Valkey</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/memory-optimization/">Memory optimization</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Memory optimization commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Memory optimization commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory/">MEMORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-doctor/">MEMORY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-help/">MEMORY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-malloc-stats/">MEMORY MALLOC-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-purge/">MEMORY PURGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-stats/">MEMORY STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-usage/">MEMORY USAGE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency-monitor/">Latency monitoring</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Latency monitoring commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Latency monitoring commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency/">LATENCY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-doctor/">LATENCY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-graph/">LATENCY GRAPH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-help/">LATENCY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-histogram/">LATENCY HISTOGRAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-history/">LATENCY HISTORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-latest/">LATENCY LATEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-reset/">LATENCY RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency/">Diagnosing latency issues</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Diagnosing latency issues commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Diagnosing latency issues commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog/">COMMANDLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-get/">COMMANDLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-help/">COMMANDLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-len/">COMMANDLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-reset/">COMMANDLOG RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog/">SLOWLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-get/">SLOWLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-help/">SLOWLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-len/">SLOWLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-reset/">SLOWLOG RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hotkeys/">Hot key tracking</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hot key tracking commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hot key tracking commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys/">HOTKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-get/">HOTKEYS GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-help/">HOTKEYS HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-reset/">HOTKEYS RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/benchmark/">Benchmarking tool</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/performance-on-cpu/">CPU profiling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/debugging/">Debugging</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/mass-insertion/">Bulk loading</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Module development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/modules-intro/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Module development commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Module development commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/module/">MODULE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-help/">MODULE HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-list/">MODULE LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-load/">MODULE LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-loadex/">MODULE LOADEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-unload/">MODULE UNLOAD</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-native-types/">Modules API for native types</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-blocking-ops/">Modules and blocking commands</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-api-ref/">Modules API reference</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Client development</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/protocol/">Serialization protocol specification</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/command-arguments/">Command arguments</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Command arguments commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Command arguments commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/command/">COMMAND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-count/">COMMAND COUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-docs/">COMMAND DOCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeys/">COMMAND GETKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeysandflags/">COMMAND GETKEYSANDFLAGS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-help/">COMMAND HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-info/">COMMAND INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-list/">COMMAND LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/key-specs/">Command key specifications</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/command-tips/">Command tips</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel-clients/">Sentinel client spec</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>About Valkey</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/releases/">Releases and versioning schema</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/history/">History</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+    </ul>
+</nav>
+
+
+
+        </aside>
+    </div>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="Learn about the new Valkey JSON with some real-world examples and application." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Introducing Enhanced JSON Capabilities in Valkey</title>
+    <meta name="title" property="og:title" content="Valkey: Introducing Enhanced JSON Capabilities in Valkey">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Introducing Enhanced JSON Capabilities in Valkey</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2025-06-30
+  
+    &middot; 
+    
+      
+      
+      <em>Roshan Khatri</em>
+    
+  
+</div>
+<p>JSON is a ubiquitous format for semi-structured data, and developers often expect native support across their technology stack, including in-memory stores like Valkey. Previously, working with JSON in Valkey required serializing entire objects as strings or flattening them into Hashes, limiting nesting. These workarounds added complexity and made updates harder than they should be.</p>
+<p>That changes with the general availability of native JSON support in Valkey. You can now store, query, and update JSON documents directly, without manual parsing or transformation. This brings a cleaner model to working with semi-structured data and makes your code easier to write and maintain. Valkey JSON is fully compatible with <strong>Valkey 8.0 and above</strong>. It is also compliant with <strong>RFC7159</strong> and <strong>ECMA-404</strong>, adhering to widely accepted JSON standards which ensures consistent handling JSON data.</p>
+<p>In this blog, we'll guide you through setting up the Valkey JSON module and demonstrate how to use it for some common workloads.</p>
+<h2 id="core-capabilities-and-performance">Core Capabilities and Performance</h2>
+<p>Valkey JSON supports six data types-<strong>null, boolean, number, string, object, and array</strong>—allowing developers to represent complex, nested data structures without the constraints of traditional string serialization. Unlike other composite types, JSON objects and arrays in Valkey can contain any combination of the six value types, enabling deeply nested data models to be stored natively.</p>
+<p>Internally, Valkey JSON utilizes an optimized <strong>binary tree-like format</strong>, which enables rapid traversal and manipulation of substructures without requiring the full document to be rewritten. This structure allows operations on specific paths to be efficient. Path-based commands like <code>JSON.GET</code>, <code>JSON.SET</code>, and <code>JSON.DEL</code> allow targeted interactions with specific elements, supporting multiple paths within a single operation. Additionally, Valkey JSON integrates with Valkey’s Access Control Lists (ACLs), introducing a <code>@json</code> command category to allow granular permissions alongside existing data types.</p>
+<h2 id="getting-started-with-valkey-json">Getting Started with Valkey JSON</h2>
+<p>Let’s walk through a practical example using Valkey JSON with the <a rel="external" href="https://hub.docker.com/r/valkey/valkey-bundle"><code>valkey-bundle</code></a> Docker image.</p>
+<h3 id="installation-and-setup">Installation and Setup</h3>
+<p>Valkey JSON comes pre-loaded in the <code>valkey-bundle</code>, which also includes other modules such as <a rel="external" href="https://github.com/valkey-io/valkey-bloom">valkey-bloom</a>, <a rel="external" href="https://github.com/valkey-io/valkey-search">valkey-search</a> and <a rel="external" href="https://github.com/valkey-io/valkey-ldap">valkey-ldap</a> loaded on Valkey.</p>
+<h4 id="start-a-valkey-bundle-instance">Start a Valkey bundle instance</h4>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>docker run --name my-valkey-bundle -d valkey/valkey-bundle</span></span></code></pre>
+<p>This will start a docker container of Valkey with JSON module already loaded.</p>
+<h4 id="connect-with-valkey-cli">Connect with valkey-cli</h4>
+<p>To connect to your running instance using the built-in valkey-cli:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>docker run -it --rm valkey/valkey-bundle valkey-cli</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt;</span></span></code></pre>
+<p>We will now verify the modules are loaded and Valkey JSON is one of them:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; MODULE LIST</span></span>
+<span class="giallo-l"><span>.</span></span>
+<span class="giallo-l"><span>.</span></span>
+<span class="giallo-l"><span>3) 1) &quot;name&quot;</span></span>
+<span class="giallo-l"><span>   2) &quot;json&quot;</span></span>
+<span class="giallo-l"><span>   3) &quot;ver&quot;</span></span>
+<span class="giallo-l"><span>   4) (integer) 10010</span></span>
+<span class="giallo-l"><span>   5) &quot;path&quot;</span></span>
+<span class="giallo-l"><span>   6) &quot;/usr/lib/valkey/libjson.so&quot;</span></span>
+<span class="giallo-l"><span>   7) &quot;args&quot;</span></span>
+<span class="giallo-l"><span>   8) (empty array)</span></span>
+<span class="giallo-l"><span>.</span></span></code></pre>
+<p>You’re now ready to work with JSON in Valkey!</p>
+<h3 id="basic-json-operations">Basic JSON Operations</h3>
+<p>Let’s take a real world example where you want to store a <strong>list of users</strong> in a single key like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; JSON.SET users $ &#39;[{&quot;name&quot;:&quot;Alice&quot;,&quot;email&quot;:&quot;alice@example.com&quot;,&quot;city&quot;:&quot;Seattle&quot;,&quot;state&quot;:&quot;WA&quot;},{&quot;name&quot;:&quot;Bob&quot;,&quot;email&quot;:&quot;bob@example.com&quot;,&quot;city&quot;:&quot;Bellevue&quot;,&quot;state&quot;:&quot;WA&quot;},{&quot;name&quot;:&quot;Charlie&quot;,&quot;email&quot;:&quot;charlie@example.com&quot;,&quot;city&quot;:&quot;Austin&quot;,&quot;state&quot;:&quot;TX&quot;}]&#39;</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>This command stores a JSON array of user objects at the root path <code>$</code> under the key <code>users</code>. You can visualize it like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span> [</span></span>
+<span class="giallo-l"><span>   {</span></span>
+<span class="giallo-l"><span>     &quot;name&quot;: &quot;Alice&quot;,</span></span>
+<span class="giallo-l"><span>     &quot;email&quot;: &quot;alice@example.com&quot;,</span></span>
+<span class="giallo-l"><span>     &quot;city&quot;: &quot;Seattle&quot;, </span></span>
+<span class="giallo-l"><span>     &quot;state&quot;: &quot;WA&quot;</span></span>
+<span class="giallo-l"><span>   },</span></span>
+<span class="giallo-l"><span>   {</span></span>
+<span class="giallo-l"><span>     &quot;name&quot;: &quot;Bob&quot;,</span></span>
+<span class="giallo-l"><span>     &quot;email&quot;: &quot;bob@example.com&quot;,</span></span>
+<span class="giallo-l"><span>     &quot;city&quot;: &quot;Bellevue&quot;, </span></span>
+<span class="giallo-l"><span>     &quot;state&quot;: &quot;WA&quot;</span></span>
+<span class="giallo-l"><span>   },</span></span>
+<span class="giallo-l"><span>   {</span></span>
+<span class="giallo-l"><span>     &quot;name&quot;: &quot;Charlie&quot;,</span></span>
+<span class="giallo-l"><span>     &quot;email&quot;: &quot;charlie@example.com&quot;,</span></span>
+<span class="giallo-l"><span>     &quot;city&quot;: &quot;Austin&quot;, </span></span>
+<span class="giallo-l"><span>     &quot;state&quot;: &quot;TX&quot;</span></span>
+<span class="giallo-l"><span>   }</span></span>
+<span class="giallo-l"><span> ]</span></span></code></pre>
+<p>Next, let’s say you want to fetch all the users in this list.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt;JSON.GET users</span></span>
+<span class="giallo-l"><span>&quot;[{\&quot;name\&quot;:\&quot;Alice\&quot;,\&quot;email\&quot;:\&quot;alice@example.com\&quot;,\&quot;city\&quot;:\&quot;Seattle\&quot;,\&quot;state\&quot;:\&quot;WA\&quot;},</span></span>
+<span class="giallo-l"><span>{\&quot;name\&quot;:\&quot;Bob\&quot;,\&quot;email\&quot;:\&quot;bob@example.com\&quot;,\&quot;city\&quot;:\&quot;Bellevue\&quot;,\&quot;state\&quot;:\&quot;WA\&quot;},</span></span>
+<span class="giallo-l"><span>{\&quot;name\&quot;:\&quot;Charlie\&quot;,\&quot;email\&quot;:\&quot;charlie@example.com\&quot;,\&quot;city\&quot;:\&quot;Austin\&quot;,\&quot;state\&quot;:\&quot;TX\&quot;}]&quot;</span></span></code></pre>
+<p>Now we will retrieve only the cities associated with each user:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt;JSON.GET users $[*].city</span></span>
+<span class="giallo-l"><span>&quot;[\&quot;Seattle\&quot;,\&quot;Bellevue\&quot;,\&quot;Austin\&quot;]&quot;</span></span></code></pre><h2 id="advanced-json-queries">Advanced JSON Queries</h2>
+<p>Valkey JSON supports <a rel="external" href="https://goessner.net/articles/JsonPath/">JSONPath</a> expressions.
+JSONPath is a query language for JSON documents, similar to XPath for XML. It allows users to select and extract specific data from a JSON document using a path-like expression.</p>
+<p>Let us look at some filtering using JSONPath.</p>
+<h4 id="retrieve-all-users-from-washington-state">Retrieve all users from Washington State</h4>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt;JSON.GET users &#39;$[?(@.state==&quot;WA&quot;)]&#39;</span></span>
+<span class="giallo-l"><span>&quot;[{\&quot;name\&quot;:\&quot;Alice\&quot;,\&quot;email\&quot;:\&quot;alice@example.com\&quot;,\&quot;city\&quot;:\&quot;Seattle\&quot;,\&quot;state\&quot;:\&quot;WA\&quot;},</span></span>
+<span class="giallo-l"><span>{\&quot;name\&quot;:\&quot;Bob\&quot;,\&quot;email\&quot;:\&quot;bob@example.com\&quot;,\&quot;city\&quot;:\&quot;Bellevue\&quot;,\&quot;state\&quot;:\&quot;WA\&quot;}]&quot;</span></span></code></pre>
+<p>Here, JSONPath syntax is used to filter data from a JSON document.
+Let's break it down on how that works:</p>
+<ul>
+<li><code>$</code> represents the root of the JSON document</li>
+<li><code>[...]</code> indicates we're working with an array</li>
+<li><code>?()</code> is a filter expression that applies a condition</li>
+<li><code>@</code> refers to the current object being processed in the array</li>
+<li><code>.state</code> accesses the "state" property of the current object</li>
+<li><code>=="WA"</code> checks if that property equals the string "WA"</li>
+</ul>
+<h3 id="multi-path-queries">Multi-Path Queries</h3>
+<p>Below we retrieve the names of users from WA and those from other states:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; JSON.GET users &#39;$[?(@.state==&quot;WA&quot;)].name&#39;</span></span>
+<span class="giallo-l"><span>&quot;[\&quot;Charlie\&quot;]&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; JSON.GET users &#39;$[?(@.state!=&quot;WA&quot;)].name&#39;</span></span>
+<span class="giallo-l"><span>&quot;[\&quot;Alice\&quot;,\&quot;Bob\&quot;]&quot;</span></span></code></pre><h4 id="we-can-also-get-the-emails-of-users-from-seattle-or-austin">We can also get the emails of users from Seattle or Austin</h4>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; JSON.GET users &#39;$[?(@.city==&quot;Seattle&quot; || @.city==&quot;Austin&quot;)].email&#39;</span></span>
+<span class="giallo-l"><span>&quot;[\&quot;alice@example.com\&quot;,\&quot;charlie@example.com\&quot;]&quot;</span></span></code></pre><h3 id="key-use-cases-for-with-valkey-json">Key Use Cases for with Valkey JSON</h3>
+<h4 id="per-user-event-counters-for-ad-or-notification-delivery">Per-User Event Counters for Ad or Notification Delivery</h4>
+<p>Valkey JSON can be used for tracking per-user counters for ad impressions, push notifications, or message deliveries. An ad platform may store a JSON document per user with nested metadata for each campaign — including impression counts, last delivery timestamps, and click history. In-place updates using <code>JSON.NUMINCRBY</code> or <code>JSON.SET</code> on specific paths (e.g., <code>$.ad_campaigns.ad_123.count</code>). This reduces network I/O and latency while ensuring atomicity. Microservices can also retrieve only the required subfields using JSONPath queries, like <code>$.ad_campaigns.ad_123.lastSeen</code>, allowing for efficient real-time decisioning.</p>
+<h3 id="shared-reference-metadata-store-for-microservices">Shared Reference Metadata Store for Microservices</h3>
+<p>Across games, e-commerce platforms, or internal developer tools, multiple microservices often need fast access to consistent, structured reference data. This can include things like product attributes, game character metadata, tax codes, or ID mappings — which are naturally stored as JSON documents. Valkey JSON can be used for centralizing this reference data in-memory. We can store JSON documents using <code>JSON.SET</code>, and services can retrieve targeted subfields using path expressions like <code>$.items[?(@.rarity=="epic")]</code> or <code>$.idToName["1234"]</code>. Updates happen in bulk during patch releases or deployment cycles, but reads are constant and latency-sensitive. By keeping this metadata in Valkey, services avoid making remote API calls or parsing local files, achieving very low lookup time even under load.</p>
+<h3 id="identity-graph-and-profile-storage-at-scale">Identity Graph and Profile Storage at Scale</h3>
+<p>For organization operating large-scale identity platforms — such as those in fintech, healthtech, or fraud detection — managing complex user or entity profiles is a core requirement. These profiles often include deeply nested data like names, contact info, document verification, scores, and historical activity. Valkey JSON allows each profile to be stored as a single JSON document and updated atomically as new data arrives, without needing to rewrite the entire object. Queries like <code>$.email</code>, <code>$.history[-1]</code>, or <code>$.risk.score</code> can be executed efficiently. This architecture supports concurrent reads and writes per second and can scale to multi-terabyte datasets using a mix of memory and persistent storage.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Before Valkey JSON, developers often had to write extra serialization code, split JSON documents across keys, make additional round trips, or rely on external document stores alongside Valkey. Now, with native JSON commands, you can store, query, and update rich, nested structures directly in-memory and in real time. This removes architectural complexity, reduces latency, and extends Valkey’s high-performance design to modern, document-centric use cases.</p>
+<p>Explore Valkey JSON in more depth and start building with it today!</p>
+<p>See the following resources for details and ways to contribute:</p>
+<ul>
+<li><a rel="external" href="https://valkey.io/topics/valkey-json/">Valkey Official Documentation</a> to learn more.</li>
+<li><a rel="external" href="https://github.com/valkey-io/valkey-json">Valkey JSON GitHub Repository</a> for issues or feature requests.</li>
+<li><a rel="external" href="https://hub.docker.com/r/valkey/valkey-bundle">Valkey Bundle</a> to start building with Valkey JSON.</li>
+</ul>
+<p>Happy coding!</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/roshkhatri.jpeg" alt="photo of Roshan Khatri" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Roshan Khatri</h4>
+    
+    <a target="_blank" href="https://github.com/roshkhatri"><i class="icon icon-github-square"></i> @roshkhatri</a>
+    
+    <p>Roshan Khatri is a software engineer at AWS, passionate about building resilient, high-performance systems and simplifying infrastructure through automation.</p>
+<p>Outside of work, he enjoys travelling exploring new countries, diving into aviation tech, has deep love for aviation, and occasionally getting way too excited about benchmarking graphs.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-enhanced-json-capabilities-in-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-enhanced-json-capabilities-in-valkey/&title=Introducing%20Enhanced%20JSON%20Capabilities%20in%20Valkey&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-enhanced-json-capabilities-in-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/">&laquo; valkey-bundle: One stop shop for real-time applications</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-search/">Introducing Vector Search To Valkey &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

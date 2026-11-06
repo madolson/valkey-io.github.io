@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/valkey-helm.webp" />
+    
+    
+
+    <meta name="description" content="A guide on why the new Valkey Helm chart exists, how it helps, and how to migrate from Bitnami." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Valkey Helm: The new way to deploy Valkey on Kubernetes</title>
+    <meta name="title" property="og:title" content="Valkey: Valkey Helm: The new way to deploy Valkey on Kubernetes">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/valkey-helm.webp" alt="Valkey Helm: The new way to deploy Valkey on Kubernetes" class="feature-img">
+
+
+<h1>Valkey Helm: The new way to deploy Valkey on Kubernetes</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2026-01-06
+  
+    &middot; 
+    
+      
+      
+      <em>Silvio Gissi</em>,
+    
+      
+      
+      <em>Mahesh Cherukumilli</em>
+    
+  
+</div>
+<p>Last year, Bitnami changed how it publishes and supports many container images and Helm charts (see <a rel="external" href="https://github.com/bitnami/charts/issues/35164">charts issue #35164</a>, <a rel="external" href="https://github.com/bitnami/charts/issues/36215">charts issue #36215</a>, and the <a rel="external" href="https://news.broadcom.com/app-dev/broadcom-introduces-bitnami-secure-images-for-production-ready-containerized-applications">Bitnami Secure Images announcement</a>). Some images move behind new terms, and older tags may not be available as before.</p>
+<p>If your pipelines pull Bitnami charts or images during deploys, you may experience significant operational issues: rollouts can fail with <code>ImagePullBackOff</code> or auth/404 errors, clusters can drift when staging keeps old cached images while production can't pull or resolve a different tag, and "invisible" upgrades can occur when a moved tag points to a new digest. During incidents, rollbacks may slow down or fail entirely because the old image isn't fetchable.</p>
+<p>To reduce the impact on Valkey deployments, the community created an official, project-maintained Helm chart (request: <a rel="external" href="https://github.com/valkey-io/valkey/issues/2371">issue #2371</a>, chart: <a rel="external" href="https://github.com/valkey-io/valkey-helm">valkey-helm</a>). With the official chart, you can pin chart and image versions, keep <code>values.yaml</code> in code, and upgrade on your schedule without depending on vendor policy changes.</p>
+<h2 id="why-a-valkey-maintained-chart-helps">Why a Valkey maintained chart helps</h2>
+<p>With the official chart, you control exactly which versions you deploy, without third-party vendor policies forcing unexpected changes. Pin a chart release from the Valkey repo (for example <code>--version 0.9.2</code> from <a rel="external" href="https://github.com/valkey-io/valkey-helm">https://github.com/valkey-io/valkey-helm</a>) and lock the Valkey image tag in your <code>values.yaml</code>. Because the chart follows Valkey releases and docs, you can bump versions in a pull request, test in staging, then promote the same versions to production.</p>
+<h2 id="capabilities-in-the-valkey-helm-chart">Capabilities in the Valkey Helm Chart</h2>
+<p>The official Valkey Helm chart supports the following:</p>
+<ul>
+<li>
+<p><strong>Standalone instance</strong> - Deploy a single Valkey instance with or without data persistence, perfect for simple caching layers and development environments.</p>
+</li>
+<li>
+<p><strong>Replicated read-heavy workloads</strong> - Use a primary-replica topology with separate read and read-write endpoints, distributing read traffic across all replica instances while routing writes to the primary node.</p>
+</li>
+<li>
+<p><strong>ACL-based authentication</strong> - Enable authentication using Access Control Lists for fine-grained user permissions and password-based authentication.</p>
+</li>
+<li>
+<p><strong>TLS encryption</strong> - Enable TLS for encrypted client-server and replica-primary communication, protecting data in transit.</p>
+</li>
+<li>
+<p><strong>Metrics</strong> - Collect Valkey metrics by enabling the Prometheus exporter.</p>
+</li>
+</ul>
+<p>For details on how to configure these capabilities and customize your deployment, see the <a rel="external" href="https://github.com/valkey-io/valkey-helm/tree/main/valkey">chart README</a>.</p>
+<h2 id="migrating-from-bitnami-to-the-official-valkey-chart">Migrating from Bitnami to the Official Valkey Chart</h2>
+<p>Because of differences in how the two charts structure resources, labels, and StatefulSets, you can't upgrade in-place from Bitnami. The charts use incompatible naming conventions and resource management approaches. Instead, deploy the official Valkey chart alongside your existing Bitnami installation and migrate the data. Plan for a brief maintenance window to ensure all writes are fully replicated before switching your applications to the new endpoints.</p>
+<h3 id="before-you-migrate">Before You Migrate</h3>
+<p>Review the <a rel="external" href="https://github.com/valkey-io/valkey-helm/tree/main/valkey">official chart documentation</a> to understand configuration options and match your current Bitnami settings. Bitnami's default configuration deploys one primary with three replicas, protected by a randomly-generated password and without TLS. The migration steps below will configure the official chart the same way — adjust the chart parameters to match your current deployment.</p>
+<p>Ensure you are using Bitnami Valkey chart version 2.0.0 or higher. That release updated service names and labels from <code>master</code> to <code>primary</code> for consistency with current terminology, and the migration steps below assumes that naming convention.</p>
+<p>The following commands should be executed from a Bash shell. You'll need <code>kubectl</code> configured to access your Kubernetes cluster, <code>helm</code> to install the new chart, and the standard utilities <code>grep</code> and <code>base64</code>.</p>
+<h3 id="step-1-find-existing-pods-services-and-namespace">Step 1: Find existing pods, services and namespace</h3>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># List all pods in all namespaces with app name &#39;valkey&#39;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> get pods</span><span style="color: #79C0FF;"> --all-namespaces -l</span><span style="color: #A5D6FF;"> app.kubernetes.io/name=valkey</span><span style="color: #79C0FF;"> -o</span><span style="color: #A5D6FF;"> custom-columns=Pod:.metadata.name,Namespace:.metadata.namespace,Instance:.metadata.labels.app</span><span style="color: #FF7B72;">\\</span><span style="color: #A5D6FF;">.kubernetes</span><span style="color: #FF7B72;">\\</span><span style="color: #A5D6FF;">.io</span><span style="color: #FF7B72;">\\</span><span style="color: #A5D6FF;">/instance</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># * Sample Output *</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Pod                                 Namespace   Instance</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># valkey-bitnami-primary-0            apps-test   valkey-bitnami</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># valkey-bitnami-replicas-0           apps-test   valkey-bitnami</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># valkey-bitnami-replicas-1           apps-test   valkey-bitnami</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># valkey-bitnami-replicas-2           apps-test   valkey-bitnami</span></span></code></pre>
+<p>Replace values below with the namespace and instance above:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">export</span><span> NAMESPACE</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;apps-test&quot;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">export</span><span> INSTANCE</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;valkey-bitnami&quot;</span></span></code></pre>
+<p>Save current environment details to be used for replication:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># Identify the name of the current primary service</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">export</span><span> SVCPRIMARY</span><span style="color: #FF7B72;">=</span><span>$(</span><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> get service</span><span style="color: #79C0FF;"> -n</span><span> $NAMESPACE</span><span style="color: #79C0FF;"> -l</span><span style="color: #A5D6FF;"> app.kubernetes.io/instance=</span><span>$INSTANCE</span><span style="color: #A5D6FF;">,app.kubernetes.io/name=valkey,app.kubernetes.io/component=primary</span><span style="color: #79C0FF;"> -o</span><span style="color: #A5D6FF;"> jsonpath=&#39;{.items[0].metadata.name}&#39;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Fetch the default user password</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">export</span><span> PASS</span><span style="color: #FF7B72;">=</span><span>$(</span><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> get secret</span><span style="color: #79C0FF;"> -n</span><span style="color: #A5D6FF;"> apps-test</span><span style="color: #79C0FF;"> -l</span><span style="color: #A5D6FF;"> app.kubernetes.io/name=valkey,app.kubernetes.io/instance=valkey-bitnami</span><span style="color: #79C0FF;"> -o</span><span style="color: #A5D6FF;"> jsonpath=&#39;{.items[0].data.valkey-password}&#39;</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;">  base64</span><span style="color: #79C0FF;"> -d</span><span>)</span></span></code></pre><h3 id="step-2-deploy-a-new-valkey-server">Step 2: Deploy a new Valkey server</h3>
+<p>Choose an instance name for the new deployment. It must be different from the current instance to avoid overwriting resources.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">export</span><span> NEWINSTANCE</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;valkey&quot;</span></span></code></pre>
+<p>Add the official Helm chart repository:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">helm</span><span style="color: #A5D6FF;"> repo add valkey https://valkey.io/valkey-helm/</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">helm</span><span style="color: #A5D6FF;"> repo update</span></span></code></pre>
+<p>Create a <code>values.yaml</code> file that matches your current deployment, for details on the configuration options, check the chart <a rel="external" href="https://github.com/valkey-io/valkey-helm/tree/main/valkey">README</a> and <a rel="external" href="https://github.com/valkey-io/valkey-helm/blob/main/valkey/values.yaml">values.yaml</a>. The script below will generate a file that matches the default Bitnami Valkey configuration:</p>
+<p><strong>Note</strong>: The example below provides the password as plain-text for simplicity. In production, store the password in a Kubernetes Secret and reference it using the <code>auth.usersExistingSecret</code> setting.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">cat</span><span style="color: #FF7B72;"> &lt;&lt;</span><span> EOF</span><span style="color: #FF7B72;"> &gt;</span><span style="color: #A5D6FF;"> values.yaml</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">auth:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  enabled: true</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  aclUsers:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    default:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">      password: &quot;</span><span>$PASS</span><span style="color: #A5D6FF;">&quot;</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">      permissions: &quot;~* &amp;* +@all&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">replica:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  enabled: true</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  replicas: 3</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  persistence:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    size: 8Gi</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">valkeyConfig: |</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  appendonly yes</span></span>
+<span class="giallo-l"><span>EOF</span></span></code></pre>
+<p>Install the new Valkey instance:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">helm</span><span style="color: #A5D6FF;"> install</span><span style="color: #79C0FF;"> -n</span><span> $NAMESPACE $NEWINSTANCE</span><span style="color: #A5D6FF;"> valkey/valkey</span><span style="color: #79C0FF;"> -f</span><span style="color: #A5D6FF;"> values.yaml</span></span></code></pre>
+<p>Check it is running as expected:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># List new pods and ensure they are in &#39;Running&#39; state</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> get pods</span><span style="color: #79C0FF;"> -n</span><span> $NAMESPACE</span><span style="color: #79C0FF;"> -l</span><span style="color: #A5D6FF;"> app.kubernetes.io/instance=</span><span>$NEWINSTANCE</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># * Sample Output *</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># NAME       READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># valkey-0   1/1     Running   0          2m33s</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># valkey-1   1/1     Running   0          2m16s</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># valkey-2   1/1     Running   0          2m4s</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># valkey-3   1/1     Running   0          103s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Check that server is responding to CLI commands</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> exec</span><span style="color: #79C0FF;"> -n</span><span> $NAMESPACE $NEWINSTANCE</span><span style="color: #A5D6FF;">-0</span><span style="color: #79C0FF;"> -c</span><span style="color: #A5D6FF;"> valkey</span><span style="color: #79C0FF;"> --</span><span style="color: #A5D6FF;"> valkey-cli</span><span style="color: #79C0FF;"> -a</span><span> $PASS</span><span style="color: #79C0FF;"> --no-auth-warning</span><span style="color: #A5D6FF;"> ping</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># * Sample Output *</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># PONG</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Check that the current instance is reachable from the new instance</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> exec</span><span style="color: #79C0FF;"> -n</span><span> $NAMESPACE $NEWINSTANCE</span><span style="color: #A5D6FF;">-0</span><span style="color: #79C0FF;"> -c</span><span style="color: #A5D6FF;"> valkey</span><span style="color: #79C0FF;"> --</span><span style="color: #A5D6FF;"> valkey-cli</span><span style="color: #79C0FF;"> -a</span><span> $PASS</span><span style="color: #79C0FF;"> -h</span><span> $SVCPRIMARY</span><span style="color: #79C0FF;"> --no-auth-warning</span><span style="color: #A5D6FF;"> ping</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># * Sample Output *</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># PONG</span></span></code></pre>
+<p>Create shell aliases to call the Valkey CLI on the new and current instances:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">alias</span><span> new-valkey-cli</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;kubectl exec -n </span><span>$NAMESPACE $NEWINSTANCE</span><span style="color: #A5D6FF;">-0 -c valkey -- valkey-cli -a </span><span>$PASS</span><span style="color: #A5D6FF;"> --no-auth-warning&quot;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">alias</span><span> current-valkey-cli</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;kubectl exec -n </span><span>$NAMESPACE $NEWINSTANCE</span><span style="color: #A5D6FF;">-0 -c valkey -- valkey-cli -a </span><span>$PASS</span><span style="color: #A5D6FF;"> -h </span><span>$SVCPRIMARY</span><span style="color: #A5D6FF;"> --no-auth-warning&quot;</span></span></code></pre><h3 id="step-3-enable-replication">Step 3: Enable replication</h3>
+<p>Replicate data from current instance and ensure it is replicating:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># Configure password to connect to existing Valkey instance</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">new-valkey-cli</span><span style="color: #A5D6FF;"> config set primaryauth</span><span> $PASS</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># * Sample Output *</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Configure new instance to replicate data from the current instance</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">new-valkey-cli</span><span style="color: #A5D6FF;"> replicaof</span><span> $SVCPRIMARY</span><span style="color: #79C0FF;"> 6379</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># * Sample Output *</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Check status of replication, it should return a &#39;slave&#39; role and master_link_status as &#39;up&#39;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">new-valkey-cli</span><span style="color: #A5D6FF;"> info replication</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> grep</span><span style="color: #A5D6FF;"> &#39;^\(role\|master_host\|master_link_status\)&#39;</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># * Sample Output *</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># role:slave</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># master_host:valkey-bitnami-primary</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># master_link_status:up</span></span></code></pre><h3 id="step-4-enter-maintenance-window">Step 4: Enter maintenance window</h3>
+<p>Pause all clients connecting to the Valkey server deployed using Bitnami's chart. The failover process will pause client writes, ensure changes are replicated, and promote the new instance to primary:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># Retrieve the new instance Pod IP</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">export</span><span> PODPRIMARY</span><span style="color: #FF7B72;">=</span><span>$(</span><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> get pod</span><span style="color: #79C0FF;"> -n</span><span> $NAMESPACE $NEWINSTANCE</span><span style="color: #A5D6FF;">-0</span><span style="color: #79C0FF;"> -o</span><span style="color: #A5D6FF;"> jsonpath=&#39;{.status.podIP&#39;}</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Initiate failover</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">current-valkey-cli</span><span style="color: #A5D6FF;"> failover to</span><span> $PODPRIMARY</span><span style="color: #79C0FF;"> 6379</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># * Sample Output *</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Check that instance role is &#39;master&#39;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">new-valkey-cli</span><span style="color: #A5D6FF;"> info</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> grep</span><span style="color: #A5D6FF;"> &#39;^role:&#39;</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># * Sample Output *</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># role:master</span></span></code></pre><h3 id="step-5-switch-clients-to-new-endpoints">Step 5: Switch clients to new endpoints</h3>
+<p>Update all clients to use the new Valkey read-write and read-only endpoints which are exposed as services. To list the service endpoints:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #79C0FF;">echo</span><span style="color: #A5D6FF;"> &quot;Read-Write (primary): </span><span>$NEWINSTANCE</span><span style="color: #A5D6FF;">.</span><span>$NAMESPACE</span><span style="color: #A5D6FF;">.svc.cluster.local&quot;</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">echo</span><span style="color: #A5D6FF;"> &quot;Read-only (all instances): </span><span>$NEWINSTANCE</span><span style="color: #A5D6FF;">-read.</span><span>$NAMESPACE</span><span style="color: #A5D6FF;">.svc.cluster.local&quot;</span></span></code></pre><h2 id="what-s-next-for-valkey-helm">What's next for Valkey Helm?</h2>
+<p>The chart <a rel="external" href="https://github.com/valkey-io/valkey-helm/milestones">milestones</a> outlines the planned improvements for the official Valkey Helm chart, which is being actively developed in the open at the <a rel="external" href="https://github.com/valkey-io/valkey-helm">valkey-io/valkey-helm</a> repository. High-availability via Sentinel for automated failover is the next upcoming feature <a rel="external" href="https://github.com/valkey-io/valkey-helm/issues/22">#22</a>, alongside more control over data persistence <a rel="external" href="https://github.com/valkey-io/valkey-helm/issues/88">#88</a>, followed by Cluster support <a rel="external" href="https://github.com/valkey-io/valkey-helm/issues/18">#18</a>.</p>
+<h2 id="get-started-today">Get started today</h2>
+<p>If you currently rely on Bitnami, test this chart in a dev cluster and try your normal workflows. The official Valkey Helm chart provides a stable, community-maintained path forward that puts you in control of your deployment lifecycle.</p>
+<p>If something is missing or you encounter issues, the Valkey community is here to help. Open an issue at <a rel="external" href="https://github.com/valkey-io/valkey-helm/issues">valkey-io/valkey-helm</a> or reach out on the <a rel="external" href="https://valkey-oss-developer.slack.com/archives/C09JZ6N2AAV">#valkey-helm</a> Slack channel. Your feedback helps ensure the chart grows in the right direction for the entire community.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/sgissi.jpg" alt="photo of Silvio Gissi" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Silvio Gissi</h4>
+    
+    <a target="_blank" href="https://github.com/sgissi"><i class="icon icon-github-square"></i> @sgissi</a>
+    
+    <p>Silvio Gissi is a Technical Account Manager at AWS and open-source enthusiast who serves as one of the maintainers of the Valkey Helm chart. His work helps teams deploy Valkey in Kubernetes environments. When he's not contributing to open source, Silvio enjoys playing guitar.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/maheshcherukumilli.jpg" alt="photo of Mahesh Cherukumilli" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Mahesh Cherukumilli</h4>
+    
+    <a target="_blank" href="https://github.com/cherukum-Amazon"><i class="icon icon-github-square"></i> @cherukum-Amazon</a>
+    
+    <p>Mahesh Cherukumilli is an engineering leader passionate about large-scale distributed systems and high-performance databases. He sets strategy and builds high-performing teams that align architecture with business outcomes and deliver reliable, at-scale infrastructure.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-helm-chart/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-helm-chart/&title=Valkey%20Helm%3A%20The%20new%20way%20to%20deploy%20Valkey%20on%20Kubernetes&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-helm-chart/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/properly-secure-your-valkey-deployment/">&laquo; How to Properly Secure Your Valkey Deployment</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/2025-year-end/">Valkey 2025 Year-End Review: Reflecting on Progress and Looking Ahead &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

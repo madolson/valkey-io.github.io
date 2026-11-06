@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-01.webp" />
+    
+    
+
+    <meta name="description" content="An introductory example using Bitnami&#39;s Valkey chart" />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Using Bitnami&#39;s Valkey chart</title>
+    <meta name="title" property="og:title" content="Valkey: Using Bitnami&#39;s Valkey chart">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-01.webp" alt="Using Bitnami&#39;s Valkey chart" class="feature-img">
+
+
+<h1>Using Bitnami&#39;s Valkey chart</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="How-to">How-to</span>
+  
+  2024-07-09
+  
+    &middot; 
+    
+      
+      
+      <em>Rafael Ríos Saavedra</em>
+    
+  
+</div>
+<blockquote>
+<p><strong>Due to changes in the <a rel="external" href="https://github.com/bitnami/charts/issues/35164">Bitnami catalog</a></strong>, the contents of this blog post are, as of September 2025, likely out-of-date and the helm chart <strong>does not represent an operational best practice</strong> without a subscription. This post is preserved for historical reference only. You can track work towards a project-provided Helm chart at <a rel="external" href="https://github.com/valkey-io/valkey/issues/2371">valkey-io/valkey#2371</a>.</p>
+</blockquote>
+<p>Valkey is a high-performance key/value datastore that supports workloads such as caching, and message queues, supporting many data types including strings, numbers, hashes, bitmaps, and more. Valkey can run in standalone or cluster mode for replication and high availability.</p>
+<p><a rel="external" href="https://bitnami.com/">Bitnami</a> offers a number of secure, up-to-date, and easy to deploy charts for a number of popular open source applications.</p>
+<p>This blog will serve as a walkthrough on how you can deploy and use the <a rel="external" href="https://github.com/bitnami/charts/tree/main/bitnami/valkey">Bitnami Helm chart for Valkey</a>.</p>
+<h1 id="assumptions-and-prerequisites">Assumptions and prerequisites</h1>
+<p>Before starting the deployment, make sure that you have the following prerequisites:</p>
+<ul>
+<li>An operational Kubernetes cluster.</li>
+<li>An installed and configured kubectl CLI and Helm v3.x package manager. If you need help with these steps, check our article “<a rel="external" href="https://docs.bitnami.com/kubernetes/get-started-kubernetes#step-3-install-kubectl-command-line">Learn how to install kubectl and Helm v3.x.</a>”</li>
+<li>Optional: Access to <a rel="external" href="https://app-catalog.vmware.com/catalog">VMware Tanzu Application Catalog</a>.</li>
+</ul>
+<h1 id="deploying-the-bitnami-package-for-the-valkey-helm-chart">Deploying the Bitnami package for the Valkey Helm chart</h1>
+<p>The sections below describe the steps to configure the deployment, get and deploy the Bitnami-package Valkey Helm chart, and obtain its external IP address to access the service.</p>
+<h2 id="getting-and-deploying-the-bitnami-package-for-valkey-helm-chart">Getting and deploying the Bitnami package for Valkey Helm chart</h2>
+<p>You can deploy the <a rel="external" href="https://github.com/bitnami/charts/blob/main/LICENSE.md">community</a> Bitnami-packaged Valkey Helm chart from the open source Bitnami Application Catalog. Alternatively, if you have access to an enterprise Tanzu Application Catalog instance, it can also be deployed from there.</p>
+<h3 id="deploying-the-open-source-version-of-the-chart-through-bitnami-application-catalog">Deploying the open source version of the chart through Bitnami Application Catalog</h3>
+<p>To deploy the chart in its namespace, run the following commands:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> kubectl create namespace valkey</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> helm install myvalkey oci://registry-1.docker.io/bitnamicharts/valkey</span><span style="color: #79C0FF;"> --set</span><span style="color: #A5D6FF;"> auth.enabled=</span><span style="color: #79C0FF;">true --set</span><span style="color: #A5D6FF;"> auth.password=test_pwd</span><span style="color: #79C0FF;"> --namespace</span><span style="color: #A5D6FF;"> valkey</span></span></code></pre><h3 id="deploying-the-enterprise-version-of-the-chart-through-tanzu-application-catalog">Deploying the enterprise version of the chart through Tanzu Application Catalog</h3>
+<p>The following steps describe navigating the Tanzu Application Catalog and getting the instructions to deploy Valkey in your cluster. This example shows a Valkey chart built using Ubuntu 22 as the base OS image, but feel free to customize the chart depending on your needs.</p>
+<ol>
+<li>Navigate to <a rel="external" href="https://app-catalog.vmware.com">app-catalog.vmware.com</a> and sign in to your catalog with your VMware account.
+<img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/using-bitnami-valkey-chart/images/using-bitnami-valkey-chart_1.png" alt="Tanzu Library" /></li>
+<li>In the My Applications section, search for Valkey and request it for your catalog. It is supported by Photon, Ubuntu, RHEL UBI, and Debian Linux distributions. On the next screen, you will find the instructions for deploying the chart on your cluster. Make sure that your cluster is up and running.</li>
+<li>Execute <strong>kubectl cluster-info</strong>, then run the commands you will find in the Consume your Helm chart section.</li>
+</ol>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/using-bitnami-valkey-chart/images/using-bitnami-valkey-chart_2.png" alt="Tanzu Application Catalog" /></p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/using-bitnami-valkey-chart/images/using-bitnami-valkey-chart_3.png" alt="Bitnami Package Content" /></p>
+<p>After this, the steps for deploying the chart will be the same as the ones described in the following sections to deploy its community version.</p>
+<h2 id="obtaining-the-external-ip-address-and-logging-into-valkey">Obtaining the external IP address and logging into Valkey</h2>
+<p>Wait for the deployment to complete and check that all <em>myvalkey</em> pods are Running.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> kubectl get pods,svc</span><span style="color: #79C0FF;"> -n</span><span style="color: #A5D6FF;"> valkey</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">NAME</span><span style="color: #A5D6FF;">                      READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">pod/myvalkey-master-0</span><span style="color: #A5D6FF;">     1/1     Running</span><span style="color: #79C0FF;">   0</span><span style="color: #A5D6FF;">          4m41s</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">pod/myvalkey-replicas-0</span><span style="color: #A5D6FF;">   1/1     Running</span><span style="color: #79C0FF;">   0</span><span style="color: #A5D6FF;">          4m41s</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">pod/myvalkey-replicas-1</span><span style="color: #A5D6FF;">   1/1     Running</span><span style="color: #79C0FF;">   0</span><span style="color: #A5D6FF;">          3m59s</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">pod/myvalkey-replicas-2</span><span style="color: #A5D6FF;">   1/1     Running</span><span style="color: #79C0FF;">   0</span><span style="color: #A5D6FF;">          3m32s</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FFA657;">NAME</span><span style="color: #A5D6FF;">                        TYPE        CLUSTER-IP      EXTERNAL-IP   PORT</span><span>(</span><span style="color: #FFA657;">S</span><span>)</span><span style="color: #A5D6FF;">    AGE</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">service/myvalkey-headless</span><span style="color: #A5D6FF;">   ClusterIP   None</span><span style="color: #FF7B72;">            &lt;</span><span style="color: #A5D6FF;">non</span><span>e</span><span style="color: #FF7B72;">&gt;</span><span style="color: #A5D6FF;">        6379/TCP   4m41s</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">service/myvalkey-master</span><span style="color: #A5D6FF;">     ClusterIP</span><span style="color: #79C0FF;">   10.110.225.33</span><span style="color: #FF7B72;">   &lt;</span><span style="color: #A5D6FF;">non</span><span>e</span><span style="color: #FF7B72;">&gt;</span><span style="color: #A5D6FF;">        6379/TCP   4m41s</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">service/myvalkey-replicas</span><span style="color: #A5D6FF;">   ClusterIP</span><span style="color: #79C0FF;">   10.98.176.69</span><span style="color: #FF7B72;">    &lt;</span><span style="color: #A5D6FF;">non</span><span>e</span><span style="color: #FF7B72;">&gt;</span><span style="color: #A5D6FF;">        6379/TCP   4m41s</span></span></code></pre><h2 id="connecting-using-valkey-s-cli-client">Connecting using Valkey’s CLI client</h2>
+<p>To connect to the server, you can deploy a client pod.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> export VALKEY_PASSWORD=test_pwd</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> kubectl run</span><span style="color: #79C0FF;"> --namespace</span><span style="color: #A5D6FF;"> valkey valkey-client</span><span style="color: #79C0FF;"> --restart=</span><span style="color: #A5D6FF;">&#39;Never&#39;</span><span style="color: #79C0FF;">  --env</span><span style="color: #A5D6FF;"> VALKEY_PASSWORD=</span><span>$VALKEY_PASSWORD</span><span style="color: #79C0FF;">  --image</span><span style="color: #A5D6FF;"> docker.io/bitnami/valkey:7.2.5-debian-12-r5</span><span style="color: #79C0FF;"> --command --</span><span style="color: #A5D6FF;"> sleep infinity</span></span></code></pre>
+<p>You are now ready to attach to the pod and interact with the server using the CLI client.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> kubectl exec</span><span style="color: #79C0FF;"> --tty -i</span><span style="color: #A5D6FF;"> valkey-client</span><span style="color: #79C0FF;"> --namespace</span><span style="color: #A5D6FF;"> valkey</span><span style="color: #79C0FF;"> --</span><span style="color: #A5D6FF;"> bash</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> REDISCLI_AUTH=&quot;</span><span>$VALKEY_PASSWORD</span><span style="color: #A5D6FF;">&quot; valkey-cli</span><span style="color: #79C0FF;"> -h</span><span style="color: #A5D6FF;"> myvalkey-master</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">myvalkey-master:6379</span><span>&gt;</span><span style="color: #A5D6FF;"> set test_key &quot;test_value&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">OK</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">myvalkey-master:6379</span><span>&gt;</span><span style="color: #A5D6FF;"> get test_key</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">&quot;test_value&quot;</span></span></code></pre><h2 id="using-a-python-environment">Using a Python environment</h2>
+<p>The next example explains how to connect to Valkey using a Python script. To run the script, first, it is needed to provide a Python environment and install Python’s Redis package.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> kubectl run</span><span style="color: #79C0FF;"> -it</span><span style="color: #A5D6FF;">  python-redis</span><span style="color: #79C0FF;"> --image=bitnami/python --</span><span style="color: #A5D6FF;"> bash</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">root@python-redis:/app#</span><span style="color: #A5D6FF;"> pip install redis</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Collecting</span><span style="color: #A5D6FF;"> redis</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Downloading</span><span style="color: #A5D6FF;"> redis-5.0.6-py3-none-any.whl.metadata</span><span> (9.3</span><span style="color: #A5D6FF;"> kB</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Downloading</span><span style="color: #A5D6FF;"> redis-5.0.6-py3-none-any.whl</span><span> (252</span><span style="color: #A5D6FF;"> kB</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span><span style="color: #A5D6FF;"> 252.0/252.0 kB</span><span style="color: #79C0FF;"> 942.1</span><span style="color: #A5D6FF;"> kB/s eta 0:00:00</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Installing</span><span style="color: #A5D6FF;"> collected packages: redis</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Successfully</span><span style="color: #A5D6FF;"> installed redis-5.0.6</span></span></code></pre>
+<p>You are now ready to run the script.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">root@python-redis:/app#</span><span style="color: #A5D6FF;"> python</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Python</span><span style="color: #79C0FF;"> 3.12.4</span><span> (main,</span><span style="color: #A5D6FF;"> Jun</span><span style="color: #79C0FF;">  7</span><span style="color: #A5D6FF;"> 2024, 04:30:17</span><span>) [GCC 12.2.0] on linux</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Type</span><span style="color: #A5D6FF;"> &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span><span style="color: #FFA657;"> import</span><span style="color: #A5D6FF;"> redis</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span><span style="color: #FFA657;"> creds_provider</span><span style="color: #A5D6FF;"> = redis.UsernamePasswordCredentialProvider</span><span>(</span><span style="color: #FFA657;">&quot;&quot;,</span><span style="color: #A5D6FF;"> &quot;test_pwd&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span><span style="color: #FFA657;"> user_connection</span><span style="color: #A5D6FF;"> = redis.Redis</span><span>(host</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;myvalkey-master.valkey&quot;,</span><span> port</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">6379,</span><span> credential_provider</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">creds_provider</span><span>)</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span><span style="color: #D2A8FF;"> user_connection.ping</span><span>()</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">True</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span><span style="color: #FFA657;"> user_connection.set(&#39;foo_key&#39;,</span><span style="color: #A5D6FF;"> &#39;bar&#39;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">True</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span><span style="color: #FFA657;"> user_connection.get(&#39;foo_key&#39;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">b&#39;bar&#39;</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span><span style="color: #FFA657;"> user_connection.hset(&#39;user-session:123&#39;,</span><span style="color: #A5D6FF;"> mapping={</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">...</span><span style="color: #A5D6FF;">     &#39;name&#39;: &#39;John&#39;,</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">...</span><span style="color: #A5D6FF;">     &quot;surname&quot;: &#39;Smith&#39;,</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">...</span><span style="color: #A5D6FF;">     &quot;company&quot;: &#39;Redis&#39;,</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">...</span><span style="color: #A5D6FF;">     &quot;age&quot;:</span><span style="color: #79C0FF;"> 29</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">...</span><span style="color: #A5D6FF;"> }</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">4</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span></span>
+<span class="giallo-l"><span>&gt;&gt;&gt;</span><span style="color: #FFA657;"> user_connection.hgetall(&#39;user-session:123&#39;</span><span>)</span></span>
+<span class="giallo-l"><span>{b&#39;name&#39;: b&#39;John&#39;, b&#39;surname&#39;: b&#39;Smith&#39;, b&#39;company&#39;: b&#39;Redis&#39;, b&#39;age&#39;: b&#39;29&#39;}</span></span></code></pre><h2 id="using-valkey-as-a-cache-for-wordpress">Using Valkey as a cache for WordPress</h2>
+<p>Valkey can also work as an object cache for a WordPress deployment. The following steps will show you how to set up this scenario.</p>
+<p>First, it is needed to create the configuration for the WordPress deployment, in this case, Valkey’s parameters and the user credential for the site administrator are set.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> cat</span><span style="color: #FF7B72;"> &gt;</span><span style="color: #A5D6FF;"> settings.yaml</span><span style="color: #FF7B72;"> &lt;&lt;</span><span>EOF</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">wordpressPassword: &quot;wp_pwd&quot;</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">wordpressExtraConfigContent: |</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  define( &#39;WP_REDIS_HOST&#39;, &#39;myvalkey-master.valkey&#39; );</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  define( &#39;WP_REDIS_PORT&#39;, 6379 );</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  define( &#39;WP_REDIS_PASSWORD&#39;, &#39;test_pwd&#39; );</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  define( &#39;WP_REDIS_PREFIX&#39;, &#39;wp_redis&#39; );</span></span>
+<span class="giallo-l"><span>EOF</span></span></code></pre>
+<p>Once you have the settings parameters, it is time to deploy WordPress in its namespace</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> kubectl create namespace wordpress</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> helm install mywp bitnami/wordpress</span><span style="color: #79C0FF;"> -f</span><span style="color: #A5D6FF;"> settings.yaml</span><span style="color: #79C0FF;"> --namespace</span><span style="color: #A5D6FF;"> wordpress</span></span></code></pre>
+<p>Wait for the deployment to complete and check that the service has been assigned an external IP</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> kubectl get svc</span><span style="color: #79C0FF;"> --namespace</span><span style="color: #A5D6FF;"> wordpress</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">NAME</span><span style="color: #A5D6FF;">                   TYPE         CLUSTER-IP     EXTERNAL-IP  PORT</span><span>(</span><span style="color: #FFA657;">S</span><span>)</span><span style="color: #A5D6FF;">         AGE</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">service/mywp-mariadb</span><span style="color: #A5D6FF;">   ClusterIP</span><span style="color: #79C0FF;">    10.106.11.191</span><span style="color: #FF7B72;">  &lt;</span><span style="color: #A5D6FF;">non</span><span>e</span><span style="color: #FF7B72;">&gt;</span><span style="color: #A5D6FF;">       3306/TCP                    74s</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">service/mywp-wordpress</span><span style="color: #A5D6FF;"> LoadBalancer</span><span style="color: #79C0FF;"> 10.100.136.181 192.168.49.50</span><span style="color: #A5D6FF;">   80:31116/TCP,443:31119/TCP   74s</span></span></code></pre>
+<p>Using the external IP, browse to the admin page and log in using the previously set credentials.</p>
+<p>You will be able to see the WordPress administrator UI where you can search for <code>Redis Object Cache</code> plugin, and then install and activate it. After enabling it, wait for some metrics to appear:</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/using-bitnami-valkey-chart/images/using-bitnami-valkey-chart_4.png" alt="Redis Object Cache Metrics" /></p>
+<p>This is only a drop in the bucket of what can be done with Valkey. Thereafter you could easily integrate Valkey into your projects.</p>
+<h1 id="support-and-resources">Support and resources</h1>
+<p>The Bitnami package for Valkey is available in both the community version, through the <a rel="external" href="https://github.com/bitnami/charts/tree/main/bitnami/valkey/#installing-the-chart">Bitnami GitHub repository</a>, as well as the enterprise version, <a rel="external" href="https://app-catalog.vmware.com/catalog/f1242d16-218e-4773-8856-adcb2b2006e9/branch/1542f88a-71c4-42ed-b79c-89bd2063ac9a">Tanzu Application Catalog</a>. Learn more about the differences between these two catalogs in this <a rel="external" href="https://tanzu.vmware.com/content/blog/open-source-vs-enterprise-edition-of-vmware-bitnami-application-catalog">blog post</a>.</p>
+<p>To solve the problems you may have with the Bitnami community packages—including deployment support, operational support, and bug fixes—please open an issue in the Bitnami <a rel="external" href="https://github.com/bitnami/charts">Helm charts</a> or <a rel="external" href="https://github.com/bitnami/containers">containers</a> GitHub repositories. Also, if you want to contribute to the catalog, feel free to send us a <a rel="external" href="https://github.com/bitnami/containers/pulls">pull request</a>, and the team will check it and guide you in the process for a successful merge.</p>
+<p>If you are interested in learning more about the Tanzu Application Catalog in general, check out the <a rel="external" href="https://tanzu.vmware.com/application-catalog">product webpage</a>.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/rafariossaa.jpeg" alt="photo of Rafael Ríos Saavedra" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Rafael Ríos Saavedra</h4>
+    
+    <a target="_blank" href="https://github.com/rafariossaa"><i class="icon icon-github-square"></i> @rafariossaa</a>
+    
+    <p>Rafael is an Engineer part of the Tanzu Application Catalog team at VMware by Broadcom. He started as a System Engineer and over the last few years he became part of the Bitnami family, creating new assets and bringing his expertise to the team.</p>
+<p>In his spare time, Rafael enjoys learning new things, 3D printing, electronics and tinkering with whatever he can get his hands on.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/using-bitnami-valkey-chart/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/using-bitnami-valkey-chart/&title=Using%20Bitnami%27s%20Valkey%20chart&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/using-bitnami-valkey-chart/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/whats-new-june-2024/">&laquo; What&#39;s new in Valkey for June 2024</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-0-0-rc1/">Valkey 8.0: Delivering Enhanced Performance and Reliability &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

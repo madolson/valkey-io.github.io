@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="A starting point for monitoring Valkey with Prometheus: two exporters, per-pod and cluster-wide metrics." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Valkey Metrics in Prometheus: redis_exporter and BetterDB</title>
+    <meta name="title" property="og:title" content="Valkey: Valkey Metrics in Prometheus: redis_exporter and BetterDB">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Valkey Metrics in Prometheus: redis_exporter and BetterDB</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="How-to">How-to</span>
+  
+  2026-09-22
+  
+    &middot; 
+    
+      
+      
+      <em>Edith Puclla</em>,
+    
+      
+      
+      <em>Kristiyan Ivanov</em>
+    
+  
+</div>
+<p>Everything you need to monitor Valkey is already in the Prometheus ecosystem.
+This post is about how <a rel="external" href="https://github.com/prometheus-operator/kube-prometheus">kube-prometheus</a>, <a rel="external" href="https://github.com/oliver006/redis_exporter">redis_exporter</a>, and <a rel="external" href="https://github.com/BetterDB-inc/monitor">BetterDB</a> Monitor come together to give you a complete picture of a running Valkey cluster, one tool per observability dimension.</p>
+<p><em>Here's the one-minute version.</em></p>
+<div id="valkey-video" style="max-width: 315px; margin: 0 auto; position: relative; cursor: pointer;"
+     onclick="this.innerHTML='&lt;iframe src=\'https://www.youtube.com/embed/0lPlmuK-aTw?autoplay=1\' title=\'Exporting Valkey metrics to Prometheus\' style=\'width:100%;aspect-ratio:9/16;border:0;\' allow=\'autoplay; encrypted-media; picture-in-picture\' allowfullscreen&gt;&lt;/iframe&gt;'">
+  <img src="video-cover.png" alt="Exporting Valkey metrics to Prometheus"
+       style="width: 100%; aspect-ratio: 9/16; object-fit: cover; display: block;">
+</div>
+<p>A Valkey cluster has two distinct observability dimensions: what's happening inside each individual pod, and what's happening across the cluster as a whole. That's where running two complementary exporters side by side makes sense.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-prometheus-exporters/valkey-two-exporters.png" alt="Valkey Two Exporters" /></p>
+<h2 id="two-exporters-and-one-prometheus">Two Exporters and One Prometheus</h2>
+<p><strong>redis_exporter</strong> is the established Prometheus exporter for Valkey and Redis. In <strong>Kubernetes</strong>, the Valkey Operator runs it as a sidecar in every Valkey pod, so you get per-pod metrics on port <code>9121</code> at the standard <code>/metrics</code> path: memory, connected clients, command throughput, uptime. Because it runs alongside each instance, you can see exactly which shard is under pressure. Prometheus discovers it via a PodMonitor, not a ServiceMonitor, since the sidecar has no Kubernetes Service of its own.</p>
+<p><strong>BetterDB</strong> takes a different approach. It connects to the Valkey headless service, auto-detects cluster mode, and discovers the cluster topology automatically, exposing a single metrics endpoint at <code>/api/prometheus/metrics</code>  with cluster-level and per-slot statistics.</p>
+<p>Together, they give you both dimensions, pod-level detail from redis_exporter, cluster-level operational insight from BetterDB, flowing into a single Prometheus instance.</p>
+<h2 id="what-you-can-query">What You Can Query</h2>
+<p>Once both exporters are running, you query them side by side in Prometheus using PromQL.</p>
+<p>From <strong>redis_exporter</strong>, one series per pod:</p>
+<ul>
+<li><code>redis_memory_used_bytes</code></li>
+<li><code>redis_connected_clients</code></li>
+<li><code>redis_commands_processed_total</code></li>
+</ul>
+<p>One flag is worth knowing about: <code>--append-instance-role-label</code> adds an <code>instance_role</code> label of master or replica, making it easy to separate primaries from replicas in a query or alert.</p>
+<p>From <strong>BetterDB</strong>, <code>cluster-wide</code> and <code>per-slot</code>:</p>
+<ul>
+<li><code>betterdb_commandlog_large_request</code></li>
+<li><code>betterdb_commandlog_large_reply</code></li>
+<li><code>betterdb_slowlog_pattern_count</code></li>
+<li><code>betterdb_acl_denied</code></li>
+<li><code>betterdb_cluster_slot_keys</code></li>
+<li><code>betterdb_cluster_slot_reads_total</code></li>
+<li><code>betterdb_cluster_slot_writes_total</code>, and</li>
+<li><code>per-slot</code> statistics from <code>CLUSTER SLOT-STATS</code> that redis_exporter has no equivalent for. Finding your hottest slot is one query: topk(10, rate(<code>betterdb_cluster_slot_writes_total</code>[5m]))</li>
+</ul>
+<p>The <strong>commandlog</strong> metrics require Valkey 8.1+ (they have no Redis equivalent), slot statistics require Valkey 8.0+ with <code>cluster-slot-stats-enabled</code>, and <code>betterdb_acl_denied</code> requires <a rel="external" href="https://valkey.io/commands/acl-log/"><code>ACL LOG</code></a> (available since version 6).</p>
+<h2 id="licensing">Licensing</h2>
+<p><a rel="external" href="https://github.com/prometheus/prometheus">Prometheus</a>, <a rel="external" href="https://github.com/prometheus-community/helm-charts">kube-prometheus-stack</a>, <a rel="external" href="https://github.com/oliver006/redis_exporter"><code>redis_exporter</code></a>, and the <a rel="external" href="https://github.com/valkey-io/valkey-operator">Valkey operator</a> are all open source. <a rel="external" href="https://github.com/BetterDB-inc/monitor">BetterDB Monitor</a> is open core: the  Prometheus endpoint used here is MIT-licensed and free to use, while additional features require a commercial agreement for production use.</p>
+<h2 id="what-s-next">What's next?</h2>
+<p>Valkey is growing fast and the open source ecosystem around it is already there.</p>
+<p>Try either exporter against your own cluster and share your experience in the <a rel="external" href="https://valkey.io/slack/">Valkey Slack</a>. For the full configuration and a closer look at each exporter, see <a rel="external" href="https://valkey.io/blog/monitoring-valkey-with-prometheus/">Monitoring Valkey with Prometheus</a>.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/edithpuclla.png" alt="photo of Edith Puclla" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Edith Puclla</h4>
+    
+    <a target="_blank" href="https://github.com/edithturn"><i class="icon icon-github-square"></i> @edithturn</a>
+    
+    <p>Edith Puclla is Percona's Technical Educator for Valkey, where she creates technical content, videos, demos, and learning resources to help users and the community better understand Valkey and open source data infrastructure.</p>
+<p>Originally from Peru and now living in the United Kingdom, Edith studied Computer Engineering and has worked across software development, DevOps, and technology education. She is a CNCF Ambassador and Docker Captain, and has supported open source communities for more than seven years through talks, mentoring, content creation, event organization, documentation, and community initiatives.</p>
+<p>Outside of work, Edith enjoys running and loves to spend time with her family!</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/kivanow.png" alt="photo of Kristiyan Ivanov" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Kristiyan Ivanov</h4>
+    
+    <a target="_blank" href="https://github.com/KIvanow"><i class="icon icon-github-square"></i> @KIvanow</a>
+    
+    <p>Kristiyan Ivanov is the founder of BetterDB, a Valkey-native observability platform. He previously served as Engineering Manager at Redis, where he led Redis Insight, Redis for VS Code, and other developer tools. He has contributed to several Valkey repositories, including Valkey Admin.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-prometheus-exporters/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-prometheus-exporters/&title=Valkey%20Metrics%20in%20Prometheus%3A%20redis_exporter%20and%20BetterDB&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-prometheus-exporters/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/keeping-up-with-ai-valkey-security/">&laquo; Keeping up with AI: Valkey security in 2026</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/browsing-a-valkey-keyspace-safely/">Browsing a Valkey keyspace safely: SCAN, INFO, and a read-only ACL user &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

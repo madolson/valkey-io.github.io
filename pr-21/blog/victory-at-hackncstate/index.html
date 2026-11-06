@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="HackNCState hackathon experience by the winning team" />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Victory at HackNC State: Innovating for the Telecom Industry with Valkey</title>
+    <meta name="title" property="og:title" content="Valkey: Victory at HackNC State: Innovating for the Telecom Industry with Valkey">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Victory at HackNC State: Innovating for the Telecom Industry with Valkey</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Events">Events</span>
+  
+  2026-04-15
+  
+    &middot; 
+    
+      
+      
+      <em>Ahmed Hassan</em>,
+    
+      
+      
+      <em>Nolan Witt</em>,
+    
+      
+      
+      <em>Rameez Malik</em>,
+    
+      
+      
+      <em>Tristan Curtis</em>
+    
+  
+</div>
+<p>The telecommunications industry is facing growing trust challenges as communication networks become targets for increasingly sophisticated fraud.</p>
+<p>On February 14-15, 2026, 371 students and 15 teams came together at <a rel="external" href="https://hackncstate.org/">HackNC State 2026</a> to tackle this challenge within 24 hours. The Valkey project, under <a rel="external" href="https://www.linuxfoundation.org/">The Linux Foundation</a>, invited the participants to compete in an API challenge choosing from the proposed topics or design a novel use case for an ultra fast in-memory, open source database.</p>
+<p>Among many impressive teams, Team Catphish rose to the occasion. They earned the “Best Use of Valkey API” award for developing a voice identity layer to help telecom providers detect and prevent fraud.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/victory-at-hackncstate/image2.png" alt="hackncstate1" /></p>
+<h1 id="insights-from-the-winners-the-24-hour-sprint">Insights from the Winners: The-24 Hour sprint</h1>
+<p>The following reflections were authored by Team Catphish winners: <em>Ahmed Hassan, Nolan Witt, Rameez Malik, Tristan Curtis</em></p>
+<h2 id="the-problem-the-team-chose-and-why"><strong>The Problem the Team Chose and Why</strong></h2>
+<p>The idea for Catphish started with a simple observation: voice cloning technology has become remarkably convincing. Modern tools such as ElevenLabs can reproduce human speech patterns so accurately that distinguishing between a real voice and a synthetic one is becoming increasingly difficult.</p>
+<p>During the team’s initial brainstorming session, the discussion quickly turned to the growing number of scams involving cloned voices. One scenario stood out. Imagine receiving a phone call that sounds exactly like a family member asking for urgent help, when in reality the voice has been generated by AI. Incidents like this are no longer hypothetical. AI-powered voice scams have already caused millions of dollars in losses as attackers impersonate relatives, executives, or banking customers.</p>
+<p>Traditional voice authentication systems attempt to answer a single question: “Does this voice match the registered user?” However, this approach leaves a major vulnerability. If an attacker can generate a convincing voice clone, the system may still accept it as legitimate.</p>
+<p>The team realized that most systems focus on verifying the sound of the voice but rarely verify whether the speaker actually understands what they are saying. Humans naturally interpret instructions and respond to them, while many text-to-speech systems simply read the text they are given.</p>
+<p>This insight led to the core idea behind Catphish. Instead of only verifying who is speaking, the system also verifies how they respond to dynamic prompts. By testing a user’s cognitive response rather than only their vocal characteristics, the system can better distinguish between a real human speaker and an AI-generated voice.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/victory-at-hackncstate/image1.png" alt="hackncstate2" /></p>
+<h2 id="the-24-hour-strategy"><strong>The 24 Hour Strategy</strong></h2>
+<p>Building with Valkey (Technical Decisions, Architecture, and API Usage)
+Hackathons move quickly, so within the first few hours, the team began defining the system architecture and development plan.</p>
+<p>Ahmed mapped out the overall user flow and created lo-fi wireframes so the team could visualize the MVP and understand how users would interact with the authentication process.</p>
+<p>Around the same time, Tristan suggested using Valkey for storage. Initially, there were some doubts, since many hackathon teams default to traditional relational databases. After testing Valkey locally, however, the advantages quickly became clear. Its in-memory architecture allowed voice data and session information to be retrieved almost instantly, which is critical for real-time authentication systems.</p>
+<p>With the infrastructure decision made, development moved quickly. Nolan researched existing voice authentication approaches and explored how they could be implemented within the scope of a 24-hour project. That research helped shape the system’s two-layer authentication model.</p>
+<p>The first layer verifies the speaker’s identity using voice embeddings generated from recorded audio. These embeddings capture unique vocal characteristics that can be compared against previously enrolled samples.
+The second layer verifies cognitive understanding using dynamic prompts. Instead of asking users to read a fixed phrase such as “The sky is blue,” the system generates instructions like “Count from one to five.” A human naturally responds with the sequence of numbers, while a text-to-speech system often reads the instruction itself word-for-word. This behavioral difference helps the system detect AI-generated voices.
+To support the system, Valkey was used to store several types of data, including voice embeddings for enrolled users, session data for authentication attempts, time-limited challenge prompts, API keys for tenant authentication, and rate-limiting counters.</p>
+<p>Because Valkey is a key-value store, development was extremely fast. The team did not need to design schemas or run database migrations, which allowed them to focus on implementing the core authentication logic.
+Valkey’s low-latency access also ensured that retrieving voice embeddings occurred in milliseconds. For a pipeline that includes audio recording, AI processing, and verification scoring, minimizing database latency was critical for maintaining a responsive user experience.</p>
+<p>As the core system began to take shape, the team also considered how organizations might deploy the technology. Rameez proposed positioning Catphish as a B2B API service using a redirect-based flow similar to authentication or payment links used by companies like Stripe. Instead of verifying identity through a traditional two-factor authentication code sent by SMS or an authenticator app, users would be redirected to a voice verification page. First-time users enroll their voice, and future logins compare the recorded voice with the stored embedding while also verifying the cognitive prompt response.</p>
+<h2 id="challenges-the-team-faced"><strong>Challenges the Team Faced</strong></h2>
+<p>One of the biggest challenges was designing prompts that could reliably distinguish between human responses and AI-generated speech.</p>
+<p>The team experimented with several prompt formats during development. Some prompts were too simple and could easily be reproduced by text-to-speech systems, while others were overly complex and risked frustrating legitimate users. Accessibility was also an important consideration since prompts needed to remain understandable for a wide range of users.</p>
+<p>Eventually, the team converged on multi-step cognitive prompts that are simple for humans but difficult for AI systems to interpret. These prompts combine small tasks such as saying a number, spelling a word, or responding to a short instruction. This approach became the system’s strongest signal for detecting synthetic voices.</p>
+<p>Another challenge involved balancing security and usability. Voice verification relies on similarity scoring between embeddings, and selecting the right threshold is critical. If the threshold is too strict, legitimate users may be rejected. If it is too permissive, attackers may succeed. After testing several configurations, the team settled on an approximate similarity threshold of 85 percent.</p>
+<p>Maintaining real-time performance was another challenge. The authentication pipeline includes several processing steps, including audio capture, embedding generation, speech analysis, database lookups, and verification scoring. Each step needed to be optimized to prevent noticeable delays during login. Valkey’s fast in-memory access played a key role in keeping the system responsive.</p>
+<h2 id="demo-time-and-lessons-learned"><strong>Demo Time and Lessons Learned</strong></h2>
+<p>By the final hours of the hackathon, the team had a working demonstration of the Catphish system. The demo simulated a banking login environment.
+When users attempted to sign in, they were redirected to the Catphish verification page, where they recorded their voice and responded to a dynamic prompt.
+If the voice embedding matched the enrolled user and the prompt was answered correctly, authentication succeeded. If the system detected either a mismatched voice or an AI-generated response, the login attempt was rejected.
+The demonstration helped illustrate the potential real-world applications of the system. Industries such as banking, healthcare, telecommunications, and enterprise software could integrate voice verification as an additional authentication factor to help prevent identity fraud.
+The hackathon also produced several important lessons. First, infrastructure choices matter. Using Valkey significantly reduced development friction and allowed the team to build a real-time system without spending time configuring complex databases. Second, AI can help detect AI-generated content. Models trained to analyze speech patterns can identify subtle signals that may not be obvious to humans. Finally, identity verification is evolving. Traditional methods such as two-factor authentication codes sent via SMS or generated by authenticator apps are increasingly vulnerable, and approaches that combine voice authentication with behavioral analysis may become an important component of future security systems.</p>
+<h1 id="get-involved">Get Involved</h1>
+<p>To learn more and explore ways to get involved in the community:
+If you would like to contribute to the mission, please consider joining the <a rel="external" href="https://valkey.io/community/">Valkey community here</a>, where community members contribute and shape the future of the Valkey project.
+Valkey is moving fast and the easiest way to stay ahead is to <a rel="external" href="https://valkey.io/blog/valkey-newsletter-new/#email-signup">subscribe to the official Valkey newsletter</a>. You can also follow along on Valkey social channels for the latest Valkey community news, event recaps, and project developments (<a rel="external" href="https://www.linkedin.com/company/valkey/">LinkedIn</a>, <a rel="external" href="https://x.com/valkey_io">X</a>, and <a rel="external" href="https://bsky.app/profile/valkeyio.bsky.social">BlueSky</a>).</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/ahassan.png" alt="photo of Ahmed Hassan" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Ahmed Hassan</h4>
+    
+    <a target="_blank" href="https://github.com/AhmedOHassan"><i class="icon icon-github-square"></i> @AhmedOHassan</a>
+    
+    <p>Ahmed Hassan is a Master of Computer Science student at North Carolina State University, where he also earned his Bachelor’s degree in Computer Science. He currently works as an L2 Desktop Support specialist at LexisNexis, supporting enterprise systems in large-scale technical environments. He previously gained industry experience as a Software Engineer Intern, where he played a key role in developing an AI-powered project estimating platform and deploying scalable cloud infrastructure. Outside of academics and work, he enjoys building full-stack applications, exploring robotics and artificial intelligence, and building LEGO sets.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/nwitt.png" alt="photo of Nolan Witt" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Nolan Witt</h4>
+    
+    <a target="_blank" href="https://github.com/nolanwitt"><i class="icon icon-github-square"></i> @nolanwitt</a>
+    
+    <p>Nolan Witt is a Computer Science student at North Carolina State University in an accelerated Bachelor's/Master's program. He previously worked as a Software Engineering Intern at LexisNexis, where he developed middleware and API integrations for diagnostics on StateNet. Outside of academics, he enjoys creating ML applications for personal projects, experimenting with Linux configurations, and following American football.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/rmalik.jpeg" alt="photo of Rameez Malik" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Rameez Malik</h4>
+    
+    <a target="_blank" href="https://github.com/RameezMilk"><i class="icon icon-github-square"></i> @RameezMilk</a>
+    
+    <p>Rameez Malik is a Master of Computer Science student at North Carolina State University, where he also earned his Bachelor’s degree in Computer Science. He has experience as an AI Automation Intern at Axiom Workspace, a CRM-focused startup building an all-in-one alternative to modern enterprise platforms. There, he led the integration of AI into enterprise workflows and developed microservices within a .NET ecosystem that power LLM-driven web search automation. Outside of academics, he enjoys intellectual conversations that lie at the intersection of biotechnology and startups, with a dedicated passion for fitness.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/tristancurtis.png" alt="photo of Tristan Curtis" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Tristan Curtis</h4>
+    
+    <a target="_blank" href="https://github.com/tmc3221"><i class="icon icon-github-square"></i> @tmc3221</a>
+    
+    <p>Undergraduate Computer Science and Math Student</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/victory-at-hackncstate/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/victory-at-hackncstate/&title=Victory%20at%20HackNC%20State%3A%20Innovating%20for%20the%20Telecom%20Industry%20with%20Valkey&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/victory-at-hackncstate/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/spring-data-valkey/">&laquo; Announcing Spring Data Valkey: A New Season for High-Performance Spring Applications</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-at-laracon-india-2026/">Valkey Meets Laravel: Bridging Open Source Communities at Laracon India 2026 &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

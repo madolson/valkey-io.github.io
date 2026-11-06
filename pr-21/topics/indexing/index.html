@@ -1,0 +1,1991 @@
+
+
+
+
+
+
+    
+    
+    
+    
+        
+     
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey Documentation &middot; Secondary indexing</title>
+    <meta name="title" property="og:title" content="Valkey Documentation: Secondary indexing">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+
+    <div class="styled-title">
+        <h1 class="page-title">Documentation: Secondary indexing</h1>
+    </div>
+
+
+<div class="left-aside-bg">
+    <div class="left-aside">
+        <main>
+            
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item">
+            <a href="/valkey-io.github.io/pr-21/topics/" class="breadcrumb-link">Topics</a>
+        </li>
+        
+        <li class="breadcrumb-item">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="" width="8" height="10"/>
+            
+            Patterns and tutorials
+            
+        </li>
+        
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            Secondary indexing
+        </li>
+    </ul>
+</nav>
+
+            <div class="main-inner">
+                
+<p>Valkey is not exactly a key-value store, since values can be complex data structures. However it has an external key-value shell: at API level data is addressed by the key name. It is fair to say that, natively, Valkey only offers <em>primary key access</em>. However since Valkey is a data structures server, its capabilities can be used for indexing, in order to create secondary indexes of different kinds, including composite (multi-column) indexes.</p>
+<p>This document explains how it is possible to create indexes in Valkey using the following data structures:</p>
+<ul>
+<li>Sorted sets to create secondary indexes by ID or other numerical fields.</li>
+<li>Sorted sets with lexicographical ranges for creating more advanced secondary indexes, composite indexes and graph traversal indexes.</li>
+<li>Sets for creating random indexes.</li>
+<li>Lists for creating simple iterable indexes and last N items indexes.</li>
+</ul>
+<p>Implementing and maintaining indexes with Valkey is an advanced topic, so most
+users that need to perform complex queries on data should understand if they
+are better served by a relational store. However often, especially in caching
+scenarios, there is the explicit need to store indexed data into Valkey in order to speedup common queries which require some form of indexing in order to be executed.</p>
+<h1 id="simple-numerical-indexes-with-sorted-sets">Simple numerical indexes with sorted sets</h1>
+<p>The simplest secondary index you can create with Valkey is by using the
+sorted set data type, which is a data structure representing a set of
+elements ordered by a floating point number which is the <em>score</em> of
+each element. Elements are ordered from the smallest to the highest score.</p>
+<p>Since the score is a double precision float, indexes you can build with
+vanilla sorted sets are limited to things where the indexing field is a number
+within a given range.</p>
+<p>The two commands to build these kind of indexes are <code>ZADD</code> and
+<code>ZRANGE</code> with the <code>BYSCORE</code> argument to respectively add items and retrieve items within a
+specified range.</p>
+<p>For instance, it is possible to index a set of person names by their
+age by adding element to a sorted set. The element will be the name of the
+person and the score will be the age.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 25 Manuel</span></span>
+<span class="giallo-l"><span>ZADD myindex 18 Anna</span></span>
+<span class="giallo-l"><span>ZADD myindex 35 Jon</span></span>
+<span class="giallo-l"><span>ZADD myindex 67 Helen</span></span></code></pre>
+<p>In order to retrieve all persons with an age between 20 and 40, the following
+command can be used:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex 20 40 BYSCORE</span></span>
+<span class="giallo-l"><span>1) &quot;Manuel&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;Jon&quot;</span></span></code></pre>
+<p>By using the <strong>WITHSCORES</strong> option of <code>ZRANGE</code> it is also possible
+to obtain the scores associated with the returned elements.</p>
+<p>The <code>ZCOUNT</code> command can be used in order to retrieve the number of elements
+within a given range, without actually fetching the elements, which is also
+useful, especially given the fact the operation is executed in logarithmic
+time regardless of the size of the range.</p>
+<p>Ranges can be inclusive or exclusive, please refer to the <code>ZRANGE</code>
+command documentation for more information.</p>
+<p><strong>Note</strong>: Using the <code>ZRANGE</code> with the <code>BYSCORE</code> and <code>REV</code> arguments, it is possible to query a range in
+reversed order, which is often useful when data is indexed in a given
+direction (ascending or descending) but we want to retrieve information
+the other way around.</p>
+<h2 id="using-objects-ids-as-associated-values">Using objects IDs as associated values</h2>
+<p>In the above example we associated names to ages. However in general we
+may want to index some field of an object which is stored elsewhere.
+Instead of using the sorted set value directly to store the data associated
+with the indexed field, it is possible to store just the ID of the object.</p>
+<p>For example I may have Hashes representing users. Each user is
+represented by a single key, directly accessible by ID:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>HSET user:1 id 1 username antirez ctime 1444809424 age 38</span></span>
+<span class="giallo-l"><span>HSET user:2 id 2 username maria ctime 1444808132 age 42</span></span>
+<span class="giallo-l"><span>HSET user:3 id 3 username jballard ctime 1443246218 age 33</span></span></code></pre>
+<p>If I want to create an index in order to query users by their age, I
+could do:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD user.age.index 38 1</span></span>
+<span class="giallo-l"><span>ZADD user.age.index 42 2</span></span>
+<span class="giallo-l"><span>ZADD user.age.index 33 3</span></span></code></pre>
+<p>This time the value associated with the score in the sorted set is the
+ID of the object. So once I query the index with <code>ZRANGE</code> with the <code>BYSCORE</code> argument, I'll
+also have to retrieve the information I need with <code>HGETALL</code> or similar
+commands. The obvious advantage is that objects can change without touching
+the index, as long as we don't change the indexed field.</p>
+<p>In the next examples we'll almost always use IDs as values associated with
+the index, since this is usually the more sounding design, with a few
+exceptions.</p>
+<h2 id="updating-simple-sorted-set-indexes">Updating simple sorted set indexes</h2>
+<p>Often we index things which change over time. In the above
+example, the age of the user changes every year. In such a case it would
+make sense to use the birth date as index instead of the age itself,
+but there are other cases where we simply want some field to change from
+time to time, and the index to reflect this change.</p>
+<p>The <code>ZADD</code> command makes updating simple indexes a very trivial operation
+since re-adding back an element with a different score and the same value
+will simply update the score and move the element at the right position,
+so if the user <code>antirez</code> turned 39 years old, in order to update the
+data in the hash representing the user, and in the index as well, we need
+to execute the following two commands:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>HSET user:1 age 39</span></span>
+<span class="giallo-l"><span>ZADD user.age.index 39 1</span></span></code></pre>
+<p>The operation may be wrapped in a <code>MULTI</code>/<code>EXEC</code> transaction in order to
+make sure both fields are updated or none.</p>
+<h2 id="turning-multi-dimensional-data-into-linear-data">Turning multi dimensional data into linear data</h2>
+<p>Indexes created with sorted sets are able to index only a single numerical
+value. Because of this you may think it is impossible to index something
+which has multiple dimensions using this kind of indexes, but actually this
+is not always true. If you can efficiently represent something
+multi-dimensional in a linear way, they it is often possible to use a simple
+sorted set for indexing.</p>
+<p>For example the <a href="/valkey-io.github.io/pr-21/commands/geoadd">Valkey geo indexing API</a> uses a sorted
+set to index places by latitude and longitude using a technique called
+<a rel="external" href="https://en.wikipedia.org/wiki/Geohash">Geo hash</a>. The sorted set score
+represents alternating bits of longitude and latitude, so that we map the
+linear score of a sorted set to many small <em>squares</em> in the earth surface.
+By doing an 8+1 style center plus neighborhoods search it is possible to
+retrieve elements by radius.</p>
+<h2 id="limits-of-the-score">Limits of the score</h2>
+<p>Sorted set elements scores are double precision floats. It means that
+they can represent different decimal or integer values with different
+errors, because they use an exponential representation internally.
+However what is interesting for indexing purposes is that the score is
+always able to represent without any error numbers between -9007199254740992
+and 9007199254740992, which is <code>-/+ 2^53</code>.</p>
+<p>When representing much larger numbers, you need a different form of indexing
+that is able to index numbers at any precision, called a lexicographical
+index.</p>
+<h1 id="lexicographical-indexes">Lexicographical indexes</h1>
+<p>Sorted Sets have an interesting property. When elements are added
+with the same score, they are sorted lexicographically, comparing the
+strings as binary data with the <code>memcmp()</code> function.</p>
+<p>For people that don't know the C language nor the <code>memcmp</code> function, what
+it means is that elements with the same score are sorted comparing the
+raw values of their bytes, byte after byte. If the first byte is the same,
+the second is checked and so forth. If the common prefix of two strings is
+the same then the longer string is considered the greater of the two,
+so "foobar" is greater than "foo".</p>
+<p>There are commands such as <code>ZRANGE</code> and <code>ZLEXCOUNT</code> that
+are able to query and count ranges in a lexicographically fashion, assuming
+they are used with sorted sets where all the elements have the same score.</p>
+<p>This Valkey feature is basically equivalent to a <code>b-tree</code> data structure which
+is often used in order to implement indexes with traditional databases.
+As you can guess, because of this, it is possible to use this Valkey data
+structure in order to implement pretty fancy indexes.</p>
+<p>Before we dive into using lexicographical indexes, let's check how
+sorted sets behave in this special mode of operation. Since we need to
+add elements with the same score, we'll always use the special score of
+zero.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 0 baaa</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 abbb</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 aaaa</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 bbbb</span></span></code></pre>
+<p>Fetching all the elements from the sorted set immediately reveals that they
+are ordered lexicographically.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex 0 -1</span></span>
+<span class="giallo-l"><span>1) &quot;aaaa&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;abbb&quot;</span></span>
+<span class="giallo-l"><span>3) &quot;baaa&quot;</span></span>
+<span class="giallo-l"><span>4) &quot;bbbb&quot;</span></span></code></pre>
+<p>Now we can use <code>ZRANGE</code> with the <code>BYLEX</code> argument in order to perform range queries.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex [a (b BYLEX</span></span>
+<span class="giallo-l"><span>1) &quot;aaaa&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;abbb&quot;</span></span></code></pre>
+<p>Note that in the range queries we prefixed the <code>min</code> and <code>max</code> elements
+identifying the range with the special characters <code>[</code> and <code>(</code>.
+This prefixes are mandatory, and they specify if the elements
+of the range are inclusive or exclusive. So the range <code>[a (b</code> means give me
+all the elements lexicographically between <code>a</code> inclusive and <code>b</code> exclusive,
+which are all the elements starting with <code>a</code>.</p>
+<p>There are also two more special characters indicating the infinitely negative
+string and the infinitely positive string, which are <code>-</code> and <code>+</code>.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex [b + BYLEX</span></span>
+<span class="giallo-l"><span>1) &quot;baaa&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;bbbb&quot;</span></span></code></pre>
+<p>That's it basically. Let's see how to use these features to build indexes.</p>
+<h2 id="a-first-example-completion">A first example: completion</h2>
+<p>An interesting application of indexing is completion. Completion is what
+happens when you start typing your query into a search engine: the user
+interface will anticipate what you are likely typing, providing common
+queries that start with the same characters.</p>
+<p>A naive approach to completion is to just add every single query we
+get from the user into the index. For example if the user searches <code>banana</code>
+we'll just do:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 0 banana</span></span></code></pre>
+<p>And so forth for each search query ever encountered. Then when we want to
+complete the user input, we execute a range query using <code>ZRANGE</code> with the <code>BYLEX</code> argument.
+Imagine the user is typing "bit" inside the search form, and we want to
+offer possible search keywords starting for "bit". We send Valkey a command
+like that:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex &quot;[bit&quot; &quot;[bit\xff&quot; BYLEX</span></span></code></pre>
+<p>Basically we create a range using the string the user is typing right now
+as start, and the same string plus a trailing byte set to 255, which is <code>\xff</code> in the example, as the end of the range. This way we get all the strings that start for the string the user is typing.</p>
+<p>Note that we don't want too many items returned, so we may use the <strong>LIMIT</strong> option in order to reduce the number of results.</p>
+<h2 id="adding-frequency-into-the-mix">Adding frequency into the mix</h2>
+<p>The above approach is a bit naive, because all the user searches are the same
+in this way. In a real system we want to complete strings according to their
+frequency: very popular searches will be proposed with a higher probability
+compared to search strings typed very rarely.</p>
+<p>In order to implement something which depends on the frequency, and at the
+same time automatically adapts to future inputs, by purging searches that
+are no longer popular, we can use a very simple <em>streaming algorithm</em>.</p>
+<p>To start, we modify our index in order to store not just the search term,
+but also the frequency the term is associated with. So instead of just adding
+<code>banana</code> we add <code>banana:1</code>, where 1 is the frequency.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 0 banana:1</span></span></code></pre>
+<p>We also need logic in order to increment the index if the search term
+already exists in the index, so what we'll actually do is something like
+that:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex &quot;[banana:&quot; + BYLEX LIMIT 0 1</span></span>
+<span class="giallo-l"><span>1) &quot;banana:1&quot;</span></span></code></pre>
+<p>This will return the single entry of <code>banana</code> if it exists. Then we
+can increment the associated frequency and send the following two
+commands:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZREM myindex 0 banana:1</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 banana:2</span></span></code></pre>
+<p>Note that because it is possible that there are concurrent updates, the
+above three commands should be send via a <a href="/valkey-io.github.io/pr-21/commands/eval">Lua script</a>
+instead, so that the Lua script will atomically get the old count and
+re-add the item with incremented score.</p>
+<p>So the result will be that, every time a user searches for <code>banana</code> we'll
+get our entry updated.</p>
+<p>There is more: our goal is to just have items searched very frequently.
+So we need some form of purging. When we actually query the index
+in order to complete the user input, we may see something like that:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex &quot;[banana:&quot; + BYLEX LIMIT 0 10</span></span>
+<span class="giallo-l"><span>1) &quot;banana:123&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;banaooo:1&quot;</span></span>
+<span class="giallo-l"><span>3) &quot;banned user:49&quot;</span></span>
+<span class="giallo-l"><span>4) &quot;banning:89&quot;</span></span></code></pre>
+<p>Apparently nobody searches for "banaooo", for example, but the query was
+performed a single time, so we end presenting it to the user.</p>
+<p>This is what we can do. Out of the returned items, we pick a random one,
+decrement its score by one, and re-add it with the new score.
+However if the score reaches 0, we simply remove the item from the list.
+You can use much more advanced systems, but the idea is that the index in
+the long run will contain top searches, and if top searches will change over
+the time it will adapt automatically.</p>
+<p>A refinement to this algorithm is to pick entries in the list according to
+their weight: the higher the score, the less likely entries are picked
+in order to decrement its score, or evict them.</p>
+<h2 id="normalizing-strings-for-case-and-accents">Normalizing strings for case and accents</h2>
+<p>In the completion examples we always used lowercase strings. However
+reality is much more complex than that: languages have capitalized names,
+accents, and so forth.</p>
+<p>One simple way do deal with this issues is to actually normalize the
+string the user searches. Whatever the user searches for "Banana",
+"BANANA" or "Ba'nana" we may always turn it into "banana".</p>
+<p>However sometimes we may like to present the user with the original
+item typed, even if we normalize the string for indexing. In order to
+do this, what we do is to change the format of the index so that instead
+of just storing <code>term:frequency</code> we store <code>normalized:frequency:original</code>
+like in the following example:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 0 banana:273:Banana</span></span></code></pre>
+<p>Basically we add another field that we'll extract and use only for
+visualization. Ranges will always be computed using the normalized strings
+instead. This is a common trick which has multiple applications.</p>
+<h2 id="adding-auxiliary-information-in-the-index">Adding auxiliary information in the index</h2>
+<p>When using a sorted set in a direct way, we have two different attributes
+for each object: the score, which we use as an index, and an associated
+value. When using lexicographical indexes instead, the score is always
+set to 0 and basically not used at all. We are left with a single string,
+which is the element itself.</p>
+<p>Like we did in the previous completion examples, we are still able to
+store associated data using separators. For example we used the colon in
+order to add the frequency and the original word for completion.</p>
+<p>In general we can add any kind of associated value to our indexing key.
+In order to use a lexicographical index to implement a simple key-value store
+we just store the entry as <code>key:value</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 0 mykey:myvalue</span></span></code></pre>
+<p>And search for the key with:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex [mykey: + BYLEX LIMIT 0 1</span></span>
+<span class="giallo-l"><span>1) &quot;mykey:myvalue&quot;</span></span></code></pre>
+<p>Then we extract the part after the colon to retrieve the value.
+However a problem to solve in this case is collisions. The colon character
+may be part of the key itself, so it must be chosen in order to never
+collide with the key we add.</p>
+<p>Since lexicographical ranges in Valkey are binary safe you can use any
+byte or any sequence of bytes. However if you receive untrusted user
+input, it is better to use some form of escaping in order to guarantee
+that the separator will never happen to be part of the key.</p>
+<p>For example if you use two null bytes as separator <code>"\0\0"</code>, you may
+want to always escape null bytes into two bytes sequences in your strings.</p>
+<h2 id="numerical-padding">Numerical padding</h2>
+<p>Lexicographical indexes may look like good only when the problem at hand
+is to index strings. Actually it is very simple to use this kind of index
+in order to perform indexing of arbitrary precision numbers.</p>
+<p>In the ASCII character set, digits appear in the order from 0 to 9, so
+if we left-pad numbers with leading zeroes, the result is that comparing
+them as strings will order them by their numerical value.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 0 00324823481:foo</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 12838349234:bar</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 00000000111:zap</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>ZRANGE myindex 0 -1</span></span>
+<span class="giallo-l"><span>1) &quot;00000000111:zap&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;00324823481:foo&quot;</span></span>
+<span class="giallo-l"><span>3) &quot;12838349234:bar&quot;</span></span></code></pre>
+<p>We effectively created an index using a numerical field which can be as
+big as we want. This also works with floating point numbers of any precision
+by making sure we left pad the numerical part with leading zeroes and the
+decimal part with trailing zeroes like in the following list of numbers:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>    01000000000000.11000000000000</span></span>
+<span class="giallo-l"><span>    01000000000000.02200000000000</span></span>
+<span class="giallo-l"><span>    00000002121241.34893482930000</span></span>
+<span class="giallo-l"><span>    00999999999999.00000000000000</span></span></code></pre><h2 id="using-numbers-in-binary-form">Using numbers in binary form</h2>
+<p>Storing numbers in decimal may use too much memory. An alternative approach
+is just to store numbers, for example 128 bit integers, directly in their
+binary form. However for this to work, you need to store the numbers in
+<em>big endian format</em>, so that the most significant bytes are stored before
+the least significant bytes. This way when Valkey compares the strings with
+<code>memcmp()</code>, it will effectively sort the numbers by their value.</p>
+<p>Keep in mind that data stored in binary format is less observable for
+debugging, harder to parse and export. So it is definitely a trade off.</p>
+<h1 id="composite-indexes">Composite indexes</h1>
+<p>So far we explored ways to index single fields. However we all know that
+SQL stores are able to create indexes using multiple fields. For example
+I may index products in a very large store by room number and price.</p>
+<p>I need to run queries in order to retrieve all the products in a given
+room having a given price range. What I can do is to index each product
+in the following way:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 0 0056:0028.44:90</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 0034:0011.00:832</span></span></code></pre>
+<p>Here the fields are <code>room:price:product_id</code>. I used just four digits padding
+in the example for simplicity. The auxiliary data (the product ID) does not
+need any padding.</p>
+<p>With an index like that, to get all the products in room 56 having a price
+between 10 and 30 dollars is very easy. We can just run the following
+command:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex [0056:0010.00 [0056:0030.00 BYLEX</span></span></code></pre>
+<p>The above is called a composed index. Its effectiveness depends on the
+order of the fields and the queries I want to run. For example the above
+index cannot be used efficiently in order to get all the products having
+a specific price range regardless of the room number. However I can use
+the primary key in order to run queries regardless of the price, like
+<em>give me all the products in room 44</em>.</p>
+<p>Composite indexes are very powerful, and are used in traditional stores
+in order to optimize complex queries. In Valkey they could be useful both
+to implement a very fast in-memory Valkey index of something stored into
+a traditional data store, or in order to directly index Valkey data.</p>
+<h1 id="updating-lexicographical-indexes">Updating lexicographical indexes</h1>
+<p>The value of the index in a lexicographical index can get pretty fancy
+and hard or slow to rebuild from what we store about the object. So one
+approach to simplify the handling of the index, at the cost of using more
+memory, is to also take alongside to the sorted set representing the index
+a hash mapping the object ID to the current index value.</p>
+<p>So for example, when we index we also add to a hash:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>MULTI</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 0056:0028.44:90</span></span>
+<span class="giallo-l"><span>HSET index.content 90 0056:0028.44:90</span></span>
+<span class="giallo-l"><span>EXEC</span></span></code></pre>
+<p>This is not always needed, but simplifies the operations of updating
+the index. In order to remove the old information we indexed for the object
+ID 90, regardless of the <em>current</em> fields values of the object, we just
+have to retrieve the hash value by object ID and <code>ZREM</code> it in the sorted
+set view.</p>
+<h1 id="representing-and-querying-graphs-using-a-hexastore">Representing and querying graphs using a hexastore</h1>
+<p>One cool thing about composite indexes is that they are handy in order
+to represent graphs, using a data structure which is called
+<a rel="external" href="https://www.vldb.org/pvldb/vol1/1453965.pdf">Hexastore</a>.</p>
+<p>The hexastore provides a representation for relations between objects,
+formed by a <em>subject</em>, a <em>predicate</em> and an <em>object</em>.
+A simple relation between objects could be:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>antirez is-friend-of matteocollina</span></span></code></pre>
+<p>In order to represent this relation I can store the following element
+in my lexicographical index:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 0 spo:antirez:is-friend-of:matteocollina</span></span></code></pre>
+<p>Note that I prefixed my item with the string <strong>spo</strong>. It means that
+the item represents a subject,predicate,object relation.</p>
+<p>In can add 5 more entries for the same relation, but in a different order:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZADD myindex 0 sop:antirez:matteocollina:is-friend-of</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 ops:matteocollina:is-friend-of:antirez</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 osp:matteocollina:antirez:is-friend-of</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 pso:is-friend-of:antirez:matteocollina</span></span>
+<span class="giallo-l"><span>ZADD myindex 0 pos:is-friend-of:matteocollina:antirez</span></span></code></pre>
+<p>Now things start to be interesting, and I can query the graph in many
+different ways. For example, who are all the people <code>antirez</code>
+<em>is friend of</em>?</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex &quot;[spo:antirez:is-friend-of:&quot; &quot;[spo:antirez:is-friend-of:\xff&quot; BYLEX</span></span>
+<span class="giallo-l"><span>1) &quot;spo:antirez:is-friend-of:matteocollina&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;spo:antirez:is-friend-of:wonderwoman&quot;</span></span>
+<span class="giallo-l"><span>3) &quot;spo:antirez:is-friend-of:spiderman&quot;</span></span></code></pre>
+<p>Or, what are all the relationships <code>antirez</code> and <code>matteocollina</code> have where
+the first is the subject and the second is the object?</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>ZRANGE myindex &quot;[sop:antirez:matteocollina:&quot; &quot;[sop:antirez:matteocollina:\xff&quot; BYLEX</span></span>
+<span class="giallo-l"><span>1) &quot;sop:antirez:matteocollina:is-friend-of&quot;</span></span>
+<span class="giallo-l"><span>2) &quot;sop:antirez:matteocollina:was-at-conference-with&quot;</span></span>
+<span class="giallo-l"><span>3) &quot;sop:antirez:matteocollina:talked-with&quot;</span></span></code></pre>
+<p>By combining different queries, I can ask fancy questions. For example:
+<em>Who are all my friends that, like beer, live in Barcelona, and matteocollina consider friends as well?</em>
+To get this information I start with an <code>spo</code> query to find all the people
+I'm friend with. Then for each result I get I perform an <code>spo</code> query
+to check if they like beer, removing the ones for which I can't find
+this relation. I do it again to filter by city. Finally I perform an <code>ops</code>
+query to find, of the list I obtained, who is considered friend by
+matteocollina.</p>
+<p>Make sure to check <a rel="external" href="https://nodejsconfit.levelgraph.io/">Matteo Collina's slides about Levelgraph</a> in order to better understand these ideas.</p>
+<h1 id="multi-dimensional-indexes">Multi dimensional indexes</h1>
+<p>A more complex type of index is an index that allows you to perform queries
+where two or more variables are queried at the same time for specific
+ranges. For example I may have a data set representing persons age and
+salary, and I want to retrieve all the people between 50 and 55 years old
+having a salary between 70000 and 85000.</p>
+<p>This query may be performed with a multi column index, but this requires
+us to select the first variable and then scan the second, which means we
+may do a lot more work than needed. It is possible to perform these kinds of
+queries involving multiple variables using different data structures.
+For example, multi-dimensional trees such as <em>k-d trees</em> or <em>r-trees</em> are
+sometimes used. Here we'll describe a different way to index data into
+multiple dimensions, using a representation trick that allows us to perform
+the query in a very efficient way using Valkey lexicographical ranges.</p>
+<p>Let's say we have points in the space, which represent our data samples, where <code>x</code> and <code>y</code> are our coordinates. The max value of both variables is 400.</p>
+<p>In the next figure, the blue box represents our query. We want all the points where <code>x</code> is between 50 and 100, and where <code>y</code> is between 100 and 300.</p>
+<p><img src="/valkey-io.github.io/pr-21/topics/2idx_0.png" alt="Points in the space" /></p>
+<p>In order to represent data that makes these kinds of queries fast to perform,
+we start by padding our numbers with 0. So for example imagine we want to
+add the point 10,25 (x,y) to our index. Given that the maximum range in the
+example is 400 we can just pad to three digits, so we obtain:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>x = 010</span></span>
+<span class="giallo-l"><span>y = 025</span></span></code></pre>
+<p>Now what we do is to interleave the digits, taking the leftmost digit
+in x, and the leftmost digit in y, and so forth, in order to create a single
+number:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>001205</span></span></code></pre>
+<p>This is our index, however in order to more easily reconstruct the original
+representation, if we want (at the cost of space), we may also add the
+original values as additional columns:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>001205:10:25</span></span></code></pre>
+<p>Now, let's reason about this representation and why it is useful in the
+context of range queries. For example let's take the center of our blue
+box, which is at <code>x=75</code> and <code>y=200</code>. We can encode this number as we did
+earlier by interleaving the digits, obtaining:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>027050</span></span></code></pre>
+<p>What happens if we substitute the last two digits respectively with 00 and 99?
+We obtain a range which is lexicographically continuous:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>027000 to 027099</span></span></code></pre>
+<p>What this maps to is to a square representing all values where the <code>x</code>
+variable is between 70 and 79, and the <code>y</code> variable is between 200 and 209.
+To identify this specific area, we can write random points in that interval.</p>
+<p><img src="/valkey-io.github.io/pr-21/topics/2idx_1.png" alt="Small area" /></p>
+<p>So the above lexicographic query allows us to easily query for points in
+a specific square in the picture. However the square may be too small for
+the box we are searching, so that too many queries are needed.
+So we can do the same but instead of replacing the last two digits with 00
+and 99, we can do it for the last four digits, obtaining the following
+range:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>020000 029999</span></span></code></pre>
+<p>This time the range represents all the points where <code>x</code> is between 0 and 99
+and <code>y</code> is between 200 and 299. Drawing random points in this interval
+shows us this larger area.</p>
+<p><img src="/valkey-io.github.io/pr-21/topics/2idx_2.png" alt="Large area" /></p>
+<p>So now our area is too big for our query, and still our search box is
+not completely included. We need more granularity, but we can easily obtain
+it by representing our numbers in binary form. This time, when we replace
+digits instead of getting squares which are ten times bigger, we get squares
+which are just two times bigger.</p>
+<p>Our numbers in binary form, assuming we need just 9 bits for each variable
+(in order to represent numbers up to 400 in value) would be:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>x = 75  -&gt; 001001011</span></span>
+<span class="giallo-l"><span>y = 200 -&gt; 011001000</span></span></code></pre>
+<p>So by interleaving digits, our representation in the index would be:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>000111000011001010:75:200</span></span></code></pre>
+<p>Let's see what are our ranges as we substitute the last 2, 4, 6, 8, ...
+bits with 0s ad 1s in the interleaved representation:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>2 bits: x between 74 and 75, y between 200 and 201 (range=2)</span></span>
+<span class="giallo-l"><span>4 bits: x between 72 and 75, y between 200 and 203 (range=4)</span></span>
+<span class="giallo-l"><span>6 bits: x between 72 and 79, y between 200 and 207 (range=8)</span></span>
+<span class="giallo-l"><span>8 bits: x between 64 and 79, y between 192 and 207 (range=16)</span></span></code></pre>
+<p>And so forth. Now we have definitely better granularity!
+As you can see substituting N bits from the index gives us
+search boxes of side <code>2^(N/2)</code>.</p>
+<p>So what we do is check the dimension where our search box is smaller,
+and check the nearest power of two to this number. Our search box
+was 50,100 to 100,300, so it has a width of 50 and a height of 200.
+We take the smaller of the two, 50, and check the nearest power of two
+which is 64. 64 is 2^6, so we would work with indexes obtained replacing
+the latest 12 bits from the interleaved representation (so that we end
+replacing just 6 bits of each variable).</p>
+<p>However single squares may not cover all our search, so we may need more.
+What we do is to start with the left bottom corner of our search box,
+which is 50,100, and find the first range by substituting the last 6 bits
+in each number with 0. Then we do the same with the right top corner.</p>
+<p>With two trivial nested for loops where we increment only the significant
+bits, we can find all the squares between these two. For each square we
+convert the two numbers into our interleaved representation, and create
+the range using the converted representation as our start, and the same
+representation but with the latest 12 bits turned on as end range.</p>
+<p>For each square found we perform our query and get the elements inside,
+removing the elements which are outside our search box.</p>
+<p>Turning this into code is simple. Here is a Ruby example:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="ruby"><span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> spacequery</span><span>(x0,y0,x1,y1,exp)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    bits</span><span style="color: #FF7B72;">=</span><span>exp</span><span style="color: #FF7B72;">*</span><span style="color: #79C0FF;">2</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    x_start</span><span style="color: #FF7B72;"> =</span><span> x0</span><span style="color: #FF7B72;">/</span><span>(</span><span style="color: #79C0FF;">2</span><span style="color: #FF7B72;">**</span><span>exp)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    x_end</span><span style="color: #FF7B72;"> =</span><span> x1</span><span style="color: #FF7B72;">/</span><span>(</span><span style="color: #79C0FF;">2</span><span style="color: #FF7B72;">**</span><span>exp)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    y_start</span><span style="color: #FF7B72;"> =</span><span> y0</span><span style="color: #FF7B72;">/</span><span>(</span><span style="color: #79C0FF;">2</span><span style="color: #FF7B72;">**</span><span>exp)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    y_end</span><span style="color: #FF7B72;"> =</span><span> y1</span><span style="color: #FF7B72;">/</span><span>(</span><span style="color: #79C0FF;">2</span><span style="color: #FF7B72;">**</span><span>exp)</span></span>
+<span class="giallo-l"><span>    (x_start..x_end).</span><span style="color: #D2A8FF;">each</span><span>{|x|</span></span>
+<span class="giallo-l"><span>        (y_start..y_end).</span><span style="color: #D2A8FF;">each</span><span>{|y|</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">            x_range_start</span><span style="color: #FF7B72;"> =</span><span> x</span><span style="color: #FF7B72;">*</span><span>(</span><span style="color: #79C0FF;">2</span><span style="color: #FF7B72;">**</span><span>exp)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">            x_range_end</span><span style="color: #FF7B72;"> =</span><span> x_range_start </span><span style="color: #FF7B72;">|</span><span> ((</span><span style="color: #79C0FF;">2</span><span style="color: #FF7B72;">**</span><span>exp)</span><span style="color: #FF7B72;">-</span><span style="color: #79C0FF;">1</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">            y_range_start</span><span style="color: #FF7B72;"> =</span><span> y</span><span style="color: #FF7B72;">*</span><span>(</span><span style="color: #79C0FF;">2</span><span style="color: #FF7B72;">**</span><span>exp)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">            y_range_end</span><span style="color: #FF7B72;"> =</span><span> y_range_start </span><span style="color: #FF7B72;">|</span><span> ((</span><span style="color: #79C0FF;">2</span><span style="color: #FF7B72;">**</span><span>exp)</span><span style="color: #FF7B72;">-</span><span style="color: #79C0FF;">1</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">            puts</span><span style="color: #A5D6FF;"> &quot;</span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">x</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;">,</span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">y</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;"> x from </span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">x_range_start</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;"> to </span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">x_range_end</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;">, y from </span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">y_range_start</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;"> to </span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">y_range_end</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;">            # Turn it into interleaved form for ZRANGE query.</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">            # We assume we need 9 bits for each integer, so the final</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">            # interleaved representation will be 18 bits.</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">            xbin</span><span style="color: #FF7B72;"> =</span><span> x_range_start.</span><span style="color: #D2A8FF;">to_s</span><span>(</span><span style="color: #79C0FF;">2</span><span>).</span><span style="color: #D2A8FF;">rjust</span><span>(</span><span style="color: #79C0FF;">9</span><span>,</span><span style="color: #A5D6FF;">&#39;0&#39;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">            ybin</span><span style="color: #FF7B72;"> =</span><span> y_range_start.</span><span style="color: #D2A8FF;">to_s</span><span>(</span><span style="color: #79C0FF;">2</span><span>).</span><span style="color: #D2A8FF;">rjust</span><span>(</span><span style="color: #79C0FF;">9</span><span>,</span><span style="color: #A5D6FF;">&#39;0&#39;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">            s</span><span style="color: #FF7B72;"> =</span><span> xbin.</span><span style="color: #D2A8FF;">split</span><span>(</span><span style="color: #A5D6FF;">&quot;&quot;</span><span>).</span><span style="color: #D2A8FF;">zip</span><span>(ybin.</span><span style="color: #D2A8FF;">split</span><span>(</span><span style="color: #A5D6FF;">&quot;&quot;</span><span>)).</span><span style="color: #D2A8FF;">flatten</span><span>.</span><span style="color: #D2A8FF;">compact</span><span>.</span><span style="color: #D2A8FF;">join</span><span>(</span><span style="color: #A5D6FF;">&quot;&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">            # Now that we have the start of the range, calculate the end</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">            # by replacing the specified number of bits from 0 to 1.</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">            e</span><span style="color: #FF7B72;"> =</span><span> s[</span><span style="color: #79C0FF;">0</span><span>..</span><span style="color: #FF7B72;">-</span><span>(bits</span><span style="color: #FF7B72;">+</span><span style="color: #79C0FF;">1</span><span>)]</span><span style="color: #FF7B72;">+</span><span>(</span><span style="color: #A5D6FF;">&quot;1&quot;</span><span style="color: #FF7B72;">*</span><span>bits)</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">            puts</span><span style="color: #A5D6FF;"> &quot;ZRANGE myindex [</span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">s</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;"> [</span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">e</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;"> BYLEX&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">spacequery</span><span>(</span><span style="color: #79C0FF;">50</span><span>,</span><span style="color: #79C0FF;">100</span><span>,</span><span style="color: #79C0FF;">100</span><span>,</span><span style="color: #79C0FF;">300</span><span>,</span><span style="color: #79C0FF;">6</span><span>)</span></span></code></pre>
+<p>While non immediately trivial this is a very useful indexing strategy that
+in the future may be implemented in Valkey in a native way.
+For now, the good thing is that the complexity may be easily encapsulated
+inside a library that can be used in order to perform indexing and queries.
+One example of such library is <a rel="external" href="https://github.com/antirez/redimension">Redimension</a>, a proof of concept Ruby library which indexes N-dimensional data inside Valkey using the technique described here.</p>
+<h1 id="multi-dimensional-indexes-with-negative-or-floating-point-numbers">Multi dimensional indexes with negative or floating point numbers</h1>
+<p>The simplest way to represent negative values is just to work with unsigned
+integers and represent them using an offset, so that when you index, before
+translating numbers in the indexed representation, you add the absolute value
+of your smaller negative integer.</p>
+<p>For floating point numbers, the simplest approach is probably to convert them
+to integers by multiplying the integer for a power of ten proportional to the
+number of digits after the dot you want to retain.</p>
+<h1 id="non-range-indexes">Non range indexes</h1>
+<p>So far we checked indexes which are useful to query by range or by single
+item. However other Valkey data structures such as Sets or Lists can be used
+in order to build other kind of indexes. They are very commonly used but
+maybe we don't always realize they are actually a form of indexing.</p>
+<p>For instance I can index object IDs into a Set data type in order to use
+the <em>get random elements</em> operation via <code>SRANDMEMBER</code> in order to retrieve
+a set of random objects. Sets can also be used to check for existence when
+all I need is to test if a given item exists or not or has a single boolean
+property or not.</p>
+<p>Similarly lists can be used in order to index items into a fixed order.
+I can add all my items into a List and rotate the list with
+<code>RPOPLPUSH</code> using the same key name as source and destination. This is useful
+when I want to process a given set of items again and again forever in the
+same order. Think of an RSS feed system that needs to refresh the local copy
+periodically.</p>
+<p>Another popular index often used with Valkey is a <strong>capped list</strong>, where items
+are added with <code>LPUSH</code> and trimmed with <code>LTRIM</code>, in order to create a view
+with just the latest N items encountered, in the same order they were
+seen.</p>
+<h1 id="index-inconsistency">Index inconsistency</h1>
+<p>Keeping the index updated may be challenging, in the course of months
+or years it is possible that inconsistencies are added because of software
+bugs, network partitions or other events.</p>
+<p>Different strategies could be used. If the index data is outside Valkey
+<em>read repair</em> can be a solution, where data is fixed in a lazy way when
+it is requested. When we index data which is stored in Valkey itself
+the <code>SCAN</code> family of commands can be used in order to verify, update or
+rebuild the index from scratch, incrementally.</p>
+
+
+            </div>
+        </main>
+        <aside>
+            
+
+
+
+
+
+<nav class="docs-menu" aria-label="Documentation">
+    <ul class="docs-menu-sections">
+        <li>
+            <details>
+                <summary>Getting started</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/introduction/">Introduction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/quickstart/">Quick start guide</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/installation/">Installation</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/faq/">FAQ</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/migration/">Migration from Redis to Valkey</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-bundle/">Valkey Bundle</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        
+<li>
+    <details>
+        <summary>Command reference</summary>
+        <ul>
+            <li><a href="/valkey-io.github.io/pr-21/commands/">All commands</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bitmap">Bitmap</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bloom">Bloom filter</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#cluster">Cluster</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#connection">Connection</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#generic">Generic</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#geo">Geospatial indices</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hash">Hash</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hyperloglog">HyperLogLog</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#json">JSON</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#list">List</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#pubsub">Pub/Sub</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#scripting">Scripting and Functions</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#search">Search</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#server">Server</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#set">Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#sorted-set">Sorted Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#stream">Stream</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#string">String</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#transactions">Transactions</a></li>
+        </ul>
+    </details>
+</li>
+
+        <li>
+            <details>
+                <summary>Data types</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/data-types/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/strings/">Strings</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Strings commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Strings commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/append/">APPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decr/">DECR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decrby/">DECRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delex/">DELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delifeq/">DELIFEQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/get/">GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getdel/">GETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getex/">GETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getrange/">GETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getset/">GETSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incr/">INCR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrby/">INCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrbyfloat/">INCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lcs/">LCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mget/">MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mset/">MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetex/">MSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetnx/">MSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psetex/">PSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/set/">SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setex/">SETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setnx/">SETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setrange/">SETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/strlen/">STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/substr/">SUBSTR</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/lists/">Lists</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Lists commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Lists commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmove/">BLMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmpop/">BLMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blpop/">BLPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpop/">BRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpoplpush/">BRPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lindex/">LINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/linsert/">LINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/llen/">LLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmove/">LMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmpop/">LMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpop/">LPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpos/">LPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpush/">LPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpushx/">LPUSHX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrange/">LRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrem/">LREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lset/">LSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ltrim/">LTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpop/">RPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpoplpush/">RPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpush/">RPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpushx/">RPUSHX</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sets/">Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/sadd/">SADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scard/">SCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiff/">SDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiffstore/">SDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinter/">SINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sintercard/">SINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinterstore/">SINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sismember/">SISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smembers/">SMEMBERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smismember/">SMISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smove/">SMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spop/">SPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srandmember/">SRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srem/">SREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sscan/">SSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunion/">SUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunionstore/">SUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hashes/">Hashes</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hashes commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hashes commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hdel/">HDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexists/">HEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpire/">HEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpireat/">HEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpiretime/">HEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hget/">HGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetall/">HGETALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetdel/">HGETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetex/">HGETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrby/">HINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrbyfloat/">HINCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hkeys/">HKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hlen/">HLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmget/">HMGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmset/">HMSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpersist/">HPERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpire/">HPEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpireat/">HPEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpiretime/">HPEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpttl/">HPTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hrandfield/">HRANDFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hscan/">HSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hset/">HSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetex/">HSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetnx/">HSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hstrlen/">HSTRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/httl/">HTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hvals/">HVALS</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sorted-sets/">Sorted Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sorted Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sorted Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzmpop/">BZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmax/">BZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmin/">BZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zadd/">ZADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcard/">ZCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcount/">ZCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiff/">ZDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiffstore/">ZDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zincrby/">ZINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinter/">ZINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zintercard/">ZINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinterstore/">ZINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zlexcount/">ZLEXCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmpop/">ZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmscore/">ZMSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmax/">ZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmin/">ZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrandmember/">ZRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrange/">ZRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebylex/">ZRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebyscore/">ZRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangestore/">ZRANGESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrank/">ZRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrem/">ZREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebylex/">ZREMRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyrank/">ZREMRANGEBYRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyscore/">ZREMRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrange/">ZREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebylex/">ZREVRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebyscore/">ZREVRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrank/">ZREVRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscan/">ZSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscore/">ZSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunion/">ZUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunionstore/">ZUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/streams-intro/">Streams</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Streams commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Streams commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/xack/">XACK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xackdel/">XACKDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xadd/">XADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xautoclaim/">XAUTOCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xclaim/">XCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdel/">XDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdelex/">XDELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup/">XGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-create/">XGROUP CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-createconsumer/">XGROUP CREATECONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-delconsumer/">XGROUP DELCONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-destroy/">XGROUP DESTROY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-help/">XGROUP HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-setid/">XGROUP SETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo/">XINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-consumers/">XINFO CONSUMERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-groups/">XINFO GROUPS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-help/">XINFO HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-stream/">XINFO STREAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xlen/">XLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xpending/">XPENDING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrange/">XRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xread/">XREAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xreadgroup/">XREADGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrevrange/">XREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xsetid/">XSETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xtrim/">XTRIM</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/geospatial/">Geospatial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Geospatial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Geospatial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/geoadd/">GEOADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geodist/">GEODIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geohash/">GEOHASH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geopos/">GEOPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius/">GEORADIUS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember/">GEORADIUSBYMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember_ro/">GEORADIUSBYMEMBER_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius_ro/">GEORADIUS_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearch/">GEOSEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearchstore/">GEOSEARCHSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitmaps/">Bitmaps</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitmaps commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitmaps commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitcount/">BITCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitop/">BITOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitpos/">BITPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getbit/">GETBIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setbit/">SETBIT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitfields/">Bitfields</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitfields commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitfields commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield/">BITFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield_ro/">BITFIELD_RO</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hyperloglogs/">HyperLogLog</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">HyperLogLog commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="HyperLogLog commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfadd/">PFADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfcount/">PFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfdebug/">PFDEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfmerge/">PFMERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfselftest/">PFSELFTEST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bloomfilters/">Bloom Filters <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bloom Filters commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bloom Filters commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.add/">BF.ADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.card/">BF.CARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.exists/">BF.EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.info/">BF.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.insert/">BF.INSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.load/">BF.LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.madd/">BF.MADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.mexists/">BF.MEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.reserve/">BF.RESERVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-json/">JSON <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">JSON commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="JSON commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrappend/">JSON.ARRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrindex/">JSON.ARRINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrinsert/">JSON.ARRINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrlen/">JSON.ARRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrpop/">JSON.ARRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrtrim/">JSON.ARRTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.clear/">JSON.CLEAR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.debug/">JSON.DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.del/">JSON.DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.forget/">JSON.FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.get/">JSON.GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.merge/">JSON.MERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mget/">JSON.MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mset/">JSON.MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.numincrby/">JSON.NUMINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.nummultby/">JSON.NUMMULTBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objkeys/">JSON.OBJKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objlen/">JSON.OBJLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.resp/">JSON.RESP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.set/">JSON.SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strappend/">JSON.STRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strlen/">JSON.STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.toggle/">JSON.TOGGLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.type/">JSON.TYPE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Application development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/keyspace/">Keyspace</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Keyspace commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Keyspace commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/copy/">COPY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dbsize/">DBSIZE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/del/">DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dump/">DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exists/">EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expire/">EXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expireat/">EXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expiretime/">EXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushall/">FLUSHALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushdb/">FLUSHDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/keys/">KEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/migrate/">MIGRATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/move/">MOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object/">OBJECT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-encoding/">OBJECT ENCODING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-freq/">OBJECT FREQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-help/">OBJECT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-idletime/">OBJECT IDLETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-refcount/">OBJECT REFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/persist/">PERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpire/">PEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpireat/">PEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpiretime/">PEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pttl/">PTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/randomkey/">RANDOMKEY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rename/">RENAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/renamenx/">RENAMENX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/restore/">RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scan/">SCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort/">SORT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort_ro/">SORT_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/swapdb/">SWAPDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/touch/">TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ttl/">TTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/type/">TYPE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unlink/">UNLINK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/wait/">WAIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/waitaof/">WAITAOF</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/pipelining/">Pipelining</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/transactions/">Transactions</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Transactions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Transactions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/discard/">DISCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exec/">EXEC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/multi/">MULTI</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unwatch/">UNWATCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/watch/">WATCH</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/pubsub/">Pub/Sub</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Pub/Sub commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Pub/Sub commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/psubscribe/">PSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/publish/">PUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub/">PUBSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-channels/">PUBSUB CHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-help/">PUBSUB HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numpat/">PUBSUB NUMPAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numsub/">PUBSUB NUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardchannels/">PUBSUB SHARDCHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardnumsub/">PUBSUB SHARDNUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/punsubscribe/">PUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spublish/">SPUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ssubscribe/">SSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/subscribe/">SUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunsubscribe/">SUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unsubscribe/">UNSUBSCRIBE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/notifications/">Keyspace notifications</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details open>
+                <summary>Patterns and tutorials</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lru-cache/">Key eviction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/client-side-caching/">Client-side caching</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/distlock/">Distributed Locks</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/indexing/" class="docs-menu-current" aria-current="page">Secondary indexing</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/twitter-clone/">Patterns example</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Scripting and functions</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/programmability/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Scripting and functions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Scripting and functions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval/">EVAL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha/">EVALSHA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha_ro/">EVALSHA_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval_ro/">EVAL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall/">FCALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall_ro/">FCALL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function/">FUNCTION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-delete/">FUNCTION DELETE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-dump/">FUNCTION DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-flush/">FUNCTION FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-help/">FUNCTION HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-kill/">FUNCTION KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-list/">FUNCTION LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-load/">FUNCTION LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-restore/">FUNCTION RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-stats/">FUNCTION STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script/">SCRIPT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-debug/">SCRIPT DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-exists/">SCRIPT EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-flush/">SCRIPT FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-help/">SCRIPT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-kill/">SCRIPT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-load/">SCRIPT LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-show/">SCRIPT SHOW</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/eval-intro/">Scripting with Lua</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/functions-intro/">Functions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lua-api/">Lua API reference</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldb/">Debugging Lua scripts</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Search <span class="docs-menu-badge">module</span></summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/search/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Search commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Search commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.aggregate/">FT.AGGREGATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.create/">FT.CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.cursor/">FT.CURSOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.dropindex/">FT.DROPINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.hybrid/">FT.HYBRID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.info/">FT.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.search/">FT.SEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft._list/">FT._LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-query/">Queries</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-expressions/">Aggregation expressions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-data-formats/">Data formats</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-configurables/">Configuration</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-monitoring/">Metrics and configurations</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-observables/">INFO SEARCH metrics</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Administration</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/server/">The Valkey server</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cli/">CLI</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey.conf/">Configuration</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Configuration commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Configuration commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/config/">CONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-get/">CONFIG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-help/">CONFIG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-resetstat/">CONFIG RESETSTAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-rewrite/">CONFIG REWRITE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-set/">CONFIG SET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/persistence/">Persistence</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Persistence commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Persistence commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgrewriteaof/">BGREWRITEAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgsave/">BGSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lastsave/">LASTSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/save/">SAVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/replication/">Replication</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Replication commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Replication commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/failover/">FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psync/">PSYNC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replconf/">REPLCONF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replicaof/">REPLICAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/role/">ROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slaveof/">SLAVEOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sync/">SYNC</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel/">High availability with Valkey Sentinel</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/admin/">Administration</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/clients/">Client handling</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Client handling commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Client handling commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/auth/">AUTH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client/">CLIENT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-caching/">CLIENT CACHING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-capa/">CLIENT CAPA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getname/">CLIENT GETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getredir/">CLIENT GETREDIR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-help/">CLIENT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-id/">CLIENT ID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-import-source/">CLIENT IMPORT-SOURCE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-info/">CLIENT INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-kill/">CLIENT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-list/">CLIENT LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-evict/">CLIENT NO-EVICT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-touch/">CLIENT NO-TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-pause/">CLIENT PAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-reply/">CLIENT REPLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setinfo/">CLIENT SETINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setname/">CLIENT SETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-tracking/">CLIENT TRACKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-trackinginfo/">CLIENT TRACKINGINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unblock/">CLIENT UNBLOCK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unpause/">CLIENT UNPAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/echo/">ECHO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hello/">HELLO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ping/">PING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/quit/">QUIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/reset/">RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/select/">SELECT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/signals/">Signal handling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ARM/">ARM support</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/RDMA/">RDMA experimental support</a>
+</li>
+
+                    <li>
+                        <details class="docs-menu-other-commands">
+                            <summary>Other commands</summary>
+                            <ul class="docs-menu-commands" aria-label="Administration commands">
+                                <li><a href="/valkey-io.github.io/pr-21/commands/debug/">DEBUG</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/info/">INFO</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/lolwut/">LOLWUT</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/monitor/">MONITOR</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/restore-asking/">RESTORE-ASKING</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/shutdown/">SHUTDOWN</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/time/">TIME</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Cluster</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-tutorial/">Cluster tutorial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Cluster tutorial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Cluster tutorial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/asking/">ASKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster/">CLUSTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslots/">CLUSTER ADDSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslotsrange/">CLUSTER ADDSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-bumpepoch/">CLUSTER BUMPEPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-cancelslotmigrations/">CLUSTER CANCELSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-count-failure-reports/">CLUSTER COUNT-FAILURE-REPORTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-countkeysinslot/">CLUSTER COUNTKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslots/">CLUSTER DELSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslotsrange/">CLUSTER DELSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-failover/">CLUSTER FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-flushslots/">CLUSTER FLUSHSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-forget/">CLUSTER FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getkeysinslot/">CLUSTER GETKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getslotmigrations/">CLUSTER GETSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-help/">CLUSTER HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-info/">CLUSTER INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-keyslot/">CLUSTER KEYSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-links/">CLUSTER LINKS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-meet/">CLUSTER MEET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-migrateslots/">CLUSTER MIGRATESLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myid/">CLUSTER MYID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myshardid/">CLUSTER MYSHARDID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-nodes/">CLUSTER NODES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicas/">CLUSTER REPLICAS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicate/">CLUSTER REPLICATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-reset/">CLUSTER RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-saveconfig/">CLUSTER SAVECONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-set-config-epoch/">CLUSTER SET-CONFIG-EPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-setslot/">CLUSTER SETSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-shards/">CLUSTER SHARDS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slaves/">CLUSTER SLAVES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slot-stats/">CLUSTER SLOT-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slots/">CLUSTER SLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-syncslots/">CLUSTER SYNCSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/clusterscan/">CLUSTERSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readonly/">READONLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readwrite/">READWRITE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-spec/">Cluster specification</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/atomic-slot-migration/">Atomic slot migration</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Security</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/security/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/acl/">ACL</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">ACL commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="ACL commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl/">ACL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-cat/">ACL CAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-delrole/">ACL DELROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-deluser/">ACL DELUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-digest/">ACL DIGEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-dryrun/">ACL DRYRUN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-genpass/">ACL GENPASS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getrole/">ACL GETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getuser/">ACL GETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-help/">ACL HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-list/">ACL LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-load/">ACL LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-log/">ACL LOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-roles/">ACL ROLES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-save/">ACL SAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setrole/">ACL SETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setuser/">ACL SETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-users/">ACL USERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-whoami/">ACL WHOAMI</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/tls/">TLS</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldap/">LDAP authentication <span class="docs-menu-badge">module</span></a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Performance and troubleshooting</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/problems/">Troubleshooting Valkey</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/memory-optimization/">Memory optimization</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Memory optimization commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Memory optimization commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory/">MEMORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-doctor/">MEMORY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-help/">MEMORY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-malloc-stats/">MEMORY MALLOC-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-purge/">MEMORY PURGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-stats/">MEMORY STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-usage/">MEMORY USAGE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency-monitor/">Latency monitoring</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Latency monitoring commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Latency monitoring commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency/">LATENCY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-doctor/">LATENCY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-graph/">LATENCY GRAPH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-help/">LATENCY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-histogram/">LATENCY HISTOGRAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-history/">LATENCY HISTORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-latest/">LATENCY LATEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-reset/">LATENCY RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency/">Diagnosing latency issues</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Diagnosing latency issues commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Diagnosing latency issues commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog/">COMMANDLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-get/">COMMANDLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-help/">COMMANDLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-len/">COMMANDLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-reset/">COMMANDLOG RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog/">SLOWLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-get/">SLOWLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-help/">SLOWLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-len/">SLOWLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-reset/">SLOWLOG RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hotkeys/">Hot key tracking</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hot key tracking commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hot key tracking commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys/">HOTKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-get/">HOTKEYS GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-help/">HOTKEYS HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-reset/">HOTKEYS RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/benchmark/">Benchmarking tool</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/performance-on-cpu/">CPU profiling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/debugging/">Debugging</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/mass-insertion/">Bulk loading</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Module development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/modules-intro/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Module development commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Module development commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/module/">MODULE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-help/">MODULE HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-list/">MODULE LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-load/">MODULE LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-loadex/">MODULE LOADEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-unload/">MODULE UNLOAD</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-native-types/">Modules API for native types</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-blocking-ops/">Modules and blocking commands</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-api-ref/">Modules API reference</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Client development</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/protocol/">Serialization protocol specification</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/command-arguments/">Command arguments</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Command arguments commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Command arguments commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/command/">COMMAND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-count/">COMMAND COUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-docs/">COMMAND DOCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeys/">COMMAND GETKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeysandflags/">COMMAND GETKEYSANDFLAGS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-help/">COMMAND HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-info/">COMMAND INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-list/">COMMAND LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/key-specs/">Command key specifications</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/command-tips/">Command tips</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel-clients/">Sentinel client spec</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>About Valkey</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/releases/">Releases and versioning schema</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/history/">History</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+    </ul>
+</nav>
+
+
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/indexing.md">Update this Page on GitHub!</a>
+</div>
+
+        </aside>
+    </div>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

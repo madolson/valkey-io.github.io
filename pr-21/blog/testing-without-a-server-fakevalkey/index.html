@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//blog/testing-without-a-server-fakevalkey/images/og.png" />
+    
+    
+
+    <meta name="description" content="FakeValkey runs the Valkey command set inside your Python test process, with no server, container, or network connection.
+Here is how to use it, how it keeps pace with Valkey, and when you still need a real server." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Testing without a server: using FakeValkey, the in-memory test double for Valkey</title>
+    <meta name="title" property="og:title" content="Valkey: Testing without a server: using FakeValkey, the in-memory test double for Valkey">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/blog/testing-without-a-server-fakevalkey/images/hero.svg" alt="Testing without a server: using FakeValkey, the in-memory test double for Valkey" class="feature-img">
+
+
+<h1>Testing without a server: using FakeValkey, the in-memory test double for Valkey</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="How-to">How-to</span>
+  
+  2026-10-26
+  
+    &middot; 
+    
+      
+      
+      <em>Daniel Moran</em>
+    
+  
+</div>
+<p>Every application that talks to Valkey has to answer the same question in its test suite: where does the server come from?
+You can start a real <code>valkey-server</code> in continuous integration (CI), which is accurate but adds a container, a port, and startup time to every run.
+You can mock the client, which is fast, but a mock only knows what you told it, so it drifts from the server without failing a single test.
+A test double sits between the two: an implementation of the server's behavior that runs inside the test process.</p>
+<p>I maintain <a rel="external" href="https://github.com/cunla/fakeredis-py">fakeredis</a>, a pure-Python, in-memory implementation of the Valkey command set that plugs into <a rel="external" href="https://github.com/valkey-io/valkey-py">valkey-py</a> as a client class.
+It has about 40 million <a rel="external" href="https://pypistats.org/packages/fakeredis">downloads per month</a> (September 2026).
+This post covers its <code>FakeValkey</code> class: how to use it, how it keeps pace with Valkey, how to write tests that hold up across Valkey versions, how to check a migration to Valkey with it, and when you should use a real server instead.</p>
+<h2 id="replacing-a-valkey-client-with-fakevalkey">Replacing a Valkey client with FakeValkey</h2>
+<p>Install the package with the <code>valkey</code> extra, which pulls in valkey-py:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">pip</span><span style="color: #A5D6FF;"> install &quot;fakeredis[valkey]&quot;</span></span></code></pre>
+<p><code>FakeValkey</code> is a subclass of <code>valkey.Valkey</code>, so any code that accepts a Valkey client accepts it.
+Commands never leave the process: there is no network connection, and the data lives in Python objects.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #FF7B72;">from</span><span> fakeredis</span><span style="color: #FF7B72;"> import</span><span> FakeValkey</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>client</span><span style="color: #FF7B72;"> =</span><span> FakeValkey()</span></span>
+<span class="giallo-l"><span>client.set(</span><span style="color: #A5D6FF;">&quot;greeting&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;hello&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>client.get(</span><span style="color: #A5D6FF;">&quot;greeting&quot;</span><span>)</span><span style="color: #8B949E;">  # b&#39;hello&#39;</span></span></code></pre>
+<p><code>FakeAsyncValkey</code> does the same for <code>valkey.asyncio.Valkey</code>.
+The examples in this post use version 2.38.0 of the library and valkey-py 6.1.1 on Python 3.14.</p>
+<h2 id="using-fakevalkey-in-a-pytest-suite">Using FakeValkey in a pytest suite</h2>
+<p>Here is a login rate limiter that allows five attempts per user per minute:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> allow_login</span><span>(client, user_id, limit</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">5</span><span>, window</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">60</span><span>):</span></span>
+<span class="giallo-l"><span>    key</span><span style="color: #FF7B72;"> = f</span><span style="color: #A5D6FF;">&quot;login:</span><span style="color: #FF7B72;">{</span><span>user_id</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;">&quot;</span></span>
+<span class="giallo-l"><span>    attempts</span><span style="color: #FF7B72;"> =</span><span> client.incr(key)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> attempts</span><span style="color: #FF7B72;"> ==</span><span style="color: #79C0FF;"> 1</span><span>:</span></span>
+<span class="giallo-l"><span>        client.expire(key, window)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    return</span><span> attempts</span><span style="color: #FF7B72;"> &lt;=</span><span> limit</span></span></code></pre>
+<p>The test passes a <code>FakeValkey</code> where production code passes a real client:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #FF7B72;">import</span><span> fakeredis</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">import</span><span> pytest</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">from</span><span> ratelimit</span><span style="color: #FF7B72;"> import</span><span> allow_login</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">@pytest.fixture</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> valkey_client</span><span>():</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    return</span><span> fakeredis.FakeValkey()</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> test_blocks_the_sixth_attempt</span><span>(valkey_client):</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    for</span><span> _</span><span style="color: #FF7B72;"> in</span><span style="color: #79C0FF;"> range</span><span>(</span><span style="color: #79C0FF;">5</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        assert</span><span> allow_login(valkey_client,</span><span style="color: #A5D6FF;"> &quot;alice&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    assert not</span><span> allow_login(valkey_client,</span><span style="color: #A5D6FF;"> &quot;alice&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    assert</span><span style="color: #79C0FF;"> 0</span><span style="color: #FF7B72;"> &lt;</span><span> valkey_client.ttl(</span><span style="color: #A5D6FF;">&quot;login:alice&quot;</span><span>)</span><span style="color: #FF7B72;"> &lt;=</span><span style="color: #79C0FF;"> 60</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> test_each_test_starts_empty</span><span>(valkey_client):</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    assert</span><span> valkey_client.get(</span><span style="color: #A5D6FF;">&quot;login:alice&quot;</span><span>)</span><span style="color: #FF7B72;"> is</span><span style="color: #79C0FF;"> None</span></span></code></pre>
+<p>pytest reports 0.09 seconds for both tests on an arm64 Linux virtual machine.
+Each <code>FakeValkey</code> instance gets its own in-memory server, so the second test sees none of the keys the first test wrote.</p>
+<p>When two clients need to see the same data, such as a web handler and a background worker, give them one <code>FakeServer</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #FF7B72;">from</span><span> fakeredis</span><span style="color: #FF7B72;"> import</span><span> FakeServer, FakeValkey</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>server</span><span style="color: #FF7B72;"> =</span><span> FakeServer(</span><span style="color: #FFA657;">server_type</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;valkey&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>web</span><span style="color: #FF7B72;"> =</span><span> FakeValkey(</span><span style="color: #FFA657;">server</span><span style="color: #FF7B72;">=</span><span>server)</span></span>
+<span class="giallo-l"><span>worker</span><span style="color: #FF7B72;"> =</span><span> FakeValkey(</span><span style="color: #FFA657;">server</span><span style="color: #FF7B72;">=</span><span>server)</span></span>
+<span class="giallo-l"><span>web.set(</span><span style="color: #A5D6FF;">&quot;job:42&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;queued&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>worker.get(</span><span style="color: #A5D6FF;">&quot;job:42&quot;</span><span>)</span><span style="color: #8B949E;">  # b&#39;queued&#39;</span></span></code></pre>
+<p>If the code under test opens its own connection from a host and port, <a rel="external" href="https://github.com/cunla/fakeredis-py/blob/v2.38.0/docs/valkey-support.md"><code>TcpFakeServer</code></a> serves the same fake over TCP.</p>
+<h2 id="how-fakevalkey-maintains-compatibility-with-valkey">How FakeValkey maintains compatibility with Valkey</h2>
+<p>FakeValkey is only useful while it behaves like the server, and Valkey keeps shipping.
+The library checks itself by running its test suite twice: the client fixture that every test takes is <a rel="external" href="https://github.com/cunla/fakeredis-py/blob/v2.38.0/test/conftest.py#L182-L187">parametrized</a> to yield both a fake client and a client connected to a real server, over protocol versions 2 and 3.
+When the real server is Valkey, the fixtures select <code>FakeValkey</code> and <code>valkey.Valkey</code>, so the same assertion runs against both.
+The <a rel="external" href="https://github.com/cunla/fakeredis-py/blob/v2.38.0/.github/workflows/test.yml#L41-L45">CI matrix</a> runs that suite against the <code>valkey/valkey:9.1</code> and <code>valkey/valkey:8.1.8</code> images.
+A test that applies to some versions only carries a marker such as <code>@pytest.mark.supported_server_versions(min_valkey_ver="9")</code>.</p>
+<p>Seen this way, the suite is an executable specification of observed Valkey behavior.
+A test that passes against Valkey and fails against the fake is a bug report against the fake with the reproduction already attached.</p>
+<h2 id="writing-tests-that-hold-up-across-valkey-versions">Writing tests that hold up across Valkey versions</h2>
+<p>Some behavior that tests depend on is not in the command docs, and the fake has had to match it case by case.
+Each of these cases suggests a habit for your own tests:</p>
+<ul>
+<li><strong>Use <code>server.call()</code> in new Lua scripts.</strong> Valkey 8.0 <a rel="external" href="https://github.com/valkey-io/valkey/blob/8.0.0/src/script_lua.c#L1478-L1486">registers <code>server</code> as the scripting API and keeps <code>redis</code> as an alias</a>, so existing scripts keep working.
+<code>FakeValkey</code> supports the <code>server</code> global from <a rel="external" href="https://github.com/cunla/fakeredis-py/pull/480">version 2.36.0</a>, added by <a rel="external" href="https://github.com/przemub">Przemysław Buczkowski</a>; if a script fails under the fake with <code>attempt to index global 'server' (a nil value)</code>, upgrade the library.</li>
+<li><strong>Assert on the exception class, not the error text.</strong> Messages can change between releases: Valkey 7.2.4 rejects a Lua table passed as a command argument with <a rel="external" href="https://github.com/valkey-io/valkey/blob/7.2.4/src/script_lua.c#L851"><code>Lua redis lib command arguments must be strings or integers</code></a>, and Valkey 9.1.2 with <a rel="external" href="https://github.com/valkey-io/valkey/blob/9.1.2/src/modules/lua/script_lua.c#L729"><code>Command arguments must be strings or integers</code></a>.
+The fake <a rel="external" href="https://github.com/cunla/fakeredis-py/blob/v2.38.0/fakeredis/commands_mixins/scripting_mixin.py#L530-L536">picks the message by <code>server_type</code></a>, but a test that checks only <code>pytest.raises(valkey.ResponseError)</code> passes on every version.</li>
+<li><strong>Catch <code>valkey.ResponseError</code> in code written against valkey-py.</strong> It is a different class from the one redis-py raises, and <code>FakeValkey</code> raises it from <a rel="external" href="https://github.com/cunla/fakeredis-py/issues/402">version 2.31.0</a>, so require at least that version if your code has <code>except valkey.ResponseError</code> blocks.</li>
+<li><strong>Gate version-specific integration tests on <code>valkey_version</code>.</strong> Valkey also reports a <code>redis_version</code> field for compatibility, but it stays at <code>7.2.4</code> in every Valkey release, so it cannot tell 8.1 from 9.1; the library's own fixtures read <code>valkey_version</code>.</li>
+</ul>
+<h2 id="checking-a-migration-to-valkey">Checking a migration to Valkey</h2>
+<p>The library emulates more than one server behind one client interface, so you can run your existing tests against Valkey's behavior before you change any infrastructure.
+Parametrize the client fixture your tests already use:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #FF7B72;">import</span><span> fakeredis</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">import</span><span> pytest</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">@pytest.fixture</span><span>(</span><span style="color: #FFA657;">params</span><span style="color: #FF7B72;">=</span><span>[</span><span style="color: #A5D6FF;">&quot;baseline&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;valkey-server&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;valkey-client&quot;</span><span>])</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> client</span><span>(request):</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> request.param</span><span style="color: #FF7B72;"> ==</span><span style="color: #A5D6FF;"> &quot;baseline&quot;</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        return</span><span> fakeredis.FakeRedis(</span><span style="color: #FFA657;">version</span><span style="color: #FF7B72;">=</span><span>(</span><span style="color: #79C0FF;">8</span><span>,</span><span style="color: #79C0FF;"> 8</span><span>))</span><span style="color: #8B949E;">  # example: use the server version you run today</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> request.param</span><span style="color: #FF7B72;"> ==</span><span style="color: #A5D6FF;"> &quot;valkey-server&quot;</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        return</span><span> fakeredis.FakeRedis(</span><span style="color: #FFA657;">server_type</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;valkey&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    return</span><span> fakeredis.FakeValkey()</span></span></code></pre>
+<p>Each test now runs three times, and each variant emulates one migration step in-process; none of them connects to a real server:</p>
+<ul>
+<li><code>baseline</code> is your starting point: your current client against the fake's emulation of the server version you run today.
+The example uses 8.8; replace <code>(8, 8)</code> with your exact version so the comparison reflects your setup.</li>
+<li><code>valkey-server</code> keeps your current client and switches the fake to Valkey's server behavior, standing in for pointing that client at a Valkey server.</li>
+<li><code>valkey-client</code> also replaces your current client with valkey-py.</li>
+</ul>
+<p>These variants tell you where to look before you migrate; confirm the result against a real Valkey server, as described in the next section.</p>
+<p>Here is code that calls the <code>INCREX</code> command, which the baseline server supports and no generally available Valkey release supports yet.
+Valkey 9.2, currently a release candidate, adds its own <code>INCREX</code>; fakeredis 2.38.0 does not emulate it for <code>server_type="valkey"</code>.
+Running its test against the three variants shows which migration step breaks it.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> count_request</span><span>(client, user_id):</span></span>
+<span class="giallo-l"><span>    value, _</span><span style="color: #FF7B72;"> =</span><span> client.increx(</span><span style="color: #FF7B72;">f</span><span style="color: #A5D6FF;">&quot;requests:</span><span style="color: #FF7B72;">{</span><span>user_id</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;">&quot;</span><span>,</span><span style="color: #FFA657;"> ex</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">60</span><span>,</span><span style="color: #FFA657;"> enx</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">True</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    return</span><span> value</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> test_count_request_sets_the_window_once</span><span>(client):</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    assert</span><span> count_request(client,</span><span style="color: #A5D6FF;"> &quot;alice&quot;</span><span>)</span><span style="color: #FF7B72;"> ==</span><span style="color: #79C0FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    assert</span><span> count_request(client,</span><span style="color: #A5D6FF;"> &quot;alice&quot;</span><span>)</span><span style="color: #FF7B72;"> ==</span><span style="color: #79C0FF;"> 2</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    assert</span><span style="color: #79C0FF;"> 0</span><span style="color: #FF7B72;"> &lt;</span><span> client.ttl(</span><span style="color: #A5D6FF;">&quot;requests:alice&quot;</span><span>)</span><span style="color: #FF7B72;"> &lt;=</span><span style="color: #79C0FF;"> 60</span></span></code></pre>
+<p>This test passes on <code>baseline</code>.
+On <code>valkey-server</code> the fake replies <code>unknown command 'increx'</code>, just as a Valkey 9.1 server rejects the unknown command, and on <code>valkey-client</code> valkey-py has no <code>increx()</code> method.</p>
+<h2 id="when-to-use-a-fake-and-when-to-use-a-real-server">When to use a fake and when to use a real server</h2>
+<p>Use <code>FakeValkey</code> for tests of application logic: code that reads and writes keys, sets expirations, and runs transactions, scripts, and pub/sub, where each test should start empty and finish in milliseconds.
+The <a rel="external" href="https://github.com/cunla/fakeredis-py/tree/v2.38.0/docs/supported-commands">supported commands docs</a> also cover JavaScript Object Notation (JSON), Bloom filter, and time series commands.</p>
+<p>Use a real server for the rest:</p>
+<ul>
+<li><strong>Commands the fake does not implement.</strong> The docs mark each one, for example <a rel="external" href="https://github.com/cunla/fakeredis-py/blob/v2.38.0/docs/supported-commands/Redis/SERVER.md#L171-L177"><code>INFO</code> and <code>LATENCY</code></a>, so <code>client.info()</code> against <code>FakeValkey</code> raises <code>unknown command 'info'</code>.</li>
+<li><strong>Behavior that needs more than one node</strong>, such as replication, failover, and cluster mode.
+The fake runs a single in-process server, and the docs mark the <a rel="external" href="https://github.com/cunla/fakeredis-py/blob/v2.38.0/docs/supported-commands/Redis/CLUSTER.md">cluster commands</a> as not implemented.</li>
+<li><strong>Latency and memory usage.</strong> The fake stores data in Python objects, not in Valkey's data structures, so its numbers say nothing about your server.</li>
+</ul>
+<p>The split I recommend is fakes in unit tests on every commit, plus a smaller set of integration tests against the Valkey version you run in production.</p>
+<h2 id="contributing-command-coverage">Contributing command coverage</h2>
+<p>Each command in the library is one method plus its tests, which makes command coverage a contained first contribution to the Valkey ecosystem.
+Pick a command marked "(not implemented)" in the <a rel="external" href="https://github.com/cunla/fakeredis-py/tree/v2.38.0/docs/supported-commands">supported commands docs</a>, implement it in the matching mixin under <code>fakeredis/commands_mixins/</code>, and add tests that pass against both the fake and a real Valkey server.
+If you find a place where <code>FakeValkey</code> and Valkey disagree, <a rel="external" href="https://github.com/cunla/fakeredis-py/issues">open an issue</a> with the command and your Valkey version; a failing comparison is the most useful kind of bug report I get.</p>
+<h2 id="try-fakevalkey-on-your-own-test-suite">Try FakeValkey on your own test suite</h2>
+<p>A mock checks your code against the replies you wrote into it.
+<code>FakeValkey</code> checks it against an implementation of the Valkey command set, and the project's CI matrix compares that implementation with real Valkey 8.1.8 and 9.1 servers.</p>
+<p>To see what that difference catches in your project, replace one mocked client with a <code>FakeValkey</code> instance and run your tests.
+A test that starts failing has found one of three things: a reply the mock made up, a bug the mock was hiding, or a command the fake does not implement yet.
+The first two are worth fixing in your code; the third is a contained first pull request to the project.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+  </div>
+  <div class="author-info">
+    <h4>Daniel Moran</h4>
+    
+    <a target="_blank" href="https://github.com/cunla"><i class="icon icon-github-square"></i> @cunla</a>
+    
+    <p><strong>Daniel Moran</strong> is a software engineer with more than 20 years of experience and the maintainer of <a rel="external" href="https://github.com/cunla/fakeredis-py">fakeredis</a>, the in-memory test double that includes <code>FakeValkey</code>.
+He is a founding member of <a rel="external" href="https://github.com/django-commons">Django Commons</a> and has built backend and cloud systems at Amazon, Audible, and Dell EMC.</p>
+<p>He runs DSoftware Inc., a consultancy focused on Python / Java  systems.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/testing-without-a-server-fakevalkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/testing-without-a-server-fakevalkey/&title=Testing%20without%20a%20server%3A%20using%20FakeValkey%2C%20the%20in-memory%20test%20double%20for%20Valkey&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/testing-without-a-server-fakevalkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-glide-ruby-client/">&laquo; Introducing the Valkey GLIDE Ruby Client: Now Generally Available!</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/Valkeyconf-closing-keynote/">Valkey&#39;s Next Chapter: Durability and Beyond &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

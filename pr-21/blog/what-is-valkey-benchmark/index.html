@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-05.webp" />
+    
+    
+
+    <meta name="description" content="A practical guide to shaping valkey-benchmark&#39;s default run into a realistic workload simulation" />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Simulating Real Workloads with valkey-benchmark</title>
+    <meta name="title" property="og:title" content="Valkey: Simulating Real Workloads with valkey-benchmark">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-05.webp" alt="Simulating Real Workloads with valkey-benchmark" class="feature-img">
+
+
+<h1>Simulating Real Workloads with valkey-benchmark</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="How-to">How-to</span>
+  
+  2026-08-25
+  
+    &middot; 
+    
+      
+      
+      <em>Dragos Andriciuc</em>
+    
+  
+</div>
+<p>Benchmarking your Valkey deployment allows you to understand how your infrastructure behaves under load and where its limits are. And Valkey leverages this with an easy-to-use tool that allows you to get actionable figures for your deployment and to evaluate that performance.</p>
+<p>This blog post explores the functions of the tool and some common traps you might encounter on your first run.</p>
+<h2 id="what-is-valkey-benchmark">What is <code>valkey-benchmark</code>?</h2>
+<p>Valkey ships with <code>valkey-benchmark</code>, a CLI load-generation tool that simulates multiple clients sending commands at a Valkey deployment on your hardware. The tool helps you answer "how does my server perform under load", and not "how fast is Valkey" in your environment.</p>
+<p>You can use the tool by running <code>valkey-benchmark</code> with no arguments against your local deployment, using multiple client connections to the server to give you a quick benchmark of your system.</p>
+<p>For example, you can run the benchmark with the default configuration against 127.0.0.1:6379:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>valkey-benchmark</span></span></code></pre>
+<p>And the example result is:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>Summary:</span></span>
+<span class="giallo-l"><span>        throughput summary: 67204.30 requests per second</span></span>
+<span class="giallo-l"><span>        latency summary (msec):</span></span>
+<span class="giallo-l"><span>        avg       min       p50       p95       p99       max</span></span>
+<span class="giallo-l"><span>        0.471     0.080     0.343     1.015     1.999    12.007</span></span></code></pre>
+<p><em>NOTE: You need to have a running Valkey deployment before launching the benchmark.</em></p>
+<p>That's a real number, given how simple this default run is, but it's worth asking exactly what it's measuring before you trust it for capacity planning.</p>
+<h3 id="the-default-run-isn-t-your-workload">The default run isn't your workload</h3>
+<p>A bare run like the above result rarely reflects how your system behaves under real load. The 67k req/s hit the same single key. There is no real key-space pressure, no cache-miss behavior and no memory access patterns resembling real-life production environments.</p>
+<p>The actual payload was 3 bytes, which is certainly smaller than anything most applications actually store. With no pipelining, one in-flight request per connection, it resembles a network-bound worst case rather than anything a real pipelining client would produce.</p>
+<p>However, it answers a more focused question that most people assume, "how fast can 50 unpipelined connections hit one key?", not "how will my application perform".</p>
+<p>And the default run is not bad, it's just not representative of a realistic workload.</p>
+<h2 id="three-ways-to-make-your-benchmark-resemble-production">Three ways to make your benchmark resemble production</h2>
+<p>Before diving in, it's worth stating the golden rule of a useful benchmark: compare apples to apples. In this case, you can compare different versions of Valkey on the same workload or the same version of Valkey, but with different options.</p>
+<h3 id="simulate-a-real-keyspace">Simulate a real keyspace</h3>
+<p>By default, <code>valkey-benchmark</code> repeatedly accesses the same key. Most applications operate over thousands or millions of keys. A realistic keyspace introduces cache misses, different memory access patterns, and a workload that more closely resembles production.</p>
+<p>You can generate more realistic keyspace benchmarks using random keys with the <code>-r</code> option:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>valkey-benchmark -t set -r 100000 -n 1000000</span></span></code></pre>
+<p>Instead of repeatedly updating a single key, each operation selects a random key from a space of 100,000 possible keys. After one million requests you end up with roughly 100,000 keys stored, closely resembling an application repeatedly writing into an existing dataset.</p>
+<blockquote>
+<p>On an empty database, the above command produces approximately 100,000 stored keys for a total of about 100mb of data. Existing keys may be overwritten, you can verify this with the <code>DBSIZE</code> command. While 100mb is fine for getting to know the benchmarking tool it could possibly fit into a large L3 cache. Going up to 1,000,000 stored keys will reliably avoid any hardware caches.</p>
+</blockquote>
+<p>The important point isn't the exact number of keys. It is choosing a keyspace that resembles your own application. A session cache, leaderboard, and job queue all exercise memory differently.</p>
+<p>In the above case, the example result is:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>Summary:</span></span>
+<span class="giallo-l"><span>        throughput summary: 103734.44 requests per second</span></span>
+<span class="giallo-l"><span>        latency summary (msec):</span></span>
+<span class="giallo-l"><span>                avg       min       p50       p95       p99       max</span></span>
+<span class="giallo-l"><span>                0.279     0.072     0.231     0.567     1.007     3.615</span></span></code></pre>
+<p><em>NOTE: The exact numbers vary from run to run, the point is the change in what's being tested, not a numeric ranking.</em></p>
+<h3 id="use-realistic-payload-transmissions">Use realistic payload transmissions</h3>
+<p>The default <code>valkey-benchmark</code> stores values that are 3 bytes long. It keeps the benchmark lightweight, but realistically session data, cached API responses and serialized objects are often much larger.</p>
+<p>The payload size often has little effect until you cross a certain threshold once you're pipelining, because 10-byte, 100-byte, and 1000-byte payloads all produce roughly the same throughput when accessing Valkey over an ethernet network, with the effect breaking down once payloads approach the ethernet packet size (~1500 bytes).</p>
+<p>These larger values not only affect memory consumption, but also increase network bandwidth usage requiring more memory to copy and allocate, which expose more performance characteristics than the default payloads.</p>
+<p>You can change the generated value size with the <code>-d</code> option. Combining this with a realistic keyspace (-r) allows you to simulate a workload that is representative of a realistic application rather than the benchmark's default configuration:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>valkey-benchmark -t set -r 100000 -n 1000000 -d 1024</span></span></code></pre><pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>Summary:</span></span>
+<span class="giallo-l"><span>        throughput summary: 111135.80 requests per second</span></span>
+<span class="giallo-l"><span>        latency summary (msec):</span></span>
+<span class="giallo-l"><span>                avg       min       p50       p95       p99       max</span></span>
+<span class="giallo-l"><span>                0.263     0.088     0.215     0.559     1.175     5.119</span></span></code></pre>
+<p>The result numbers show a modest change from adding a 1024-byte payload. A similar effect applies over ethernet networks specifically: 10-byte, 100-byte, and 1000-byte payloads all produce roughly the same throughput, with the effect breaking down near the ethernet packet size (~1500 bytes). Let's see pipelining's actual effect next.</p>
+<h3 id="pipeline-requests-like-a-real-client">Pipeline requests like a real client</h3>
+<p>Most production clients do not wait for every command to finish before sending the next one. Instead, they batch several requests together using pipelining, which reduces the cost of network round trips.</p>
+<p>In Valkey, the default benchmark has pipelining disabled, meaning each connection has only one outstanding request. However, modern applications do not have this type of conservative, network-bound workload.</p>
+<p>Adding even a modest pipeline dramatically changes the picture, and combined with a realistic keyspace and payload size, pipelining provides a much stronger baseline for evaluating your infrastructure:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>valkey-benchmark -t set -r 100000 -n 1000000 -d 1024 -P 16</span></span></code></pre>
+<p>This benchmark measures how efficiently your system processes batches of commands through Valkey. Depending on your workload, throughput can increase several times over by matching the pipelining strategy used by your application.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>Summary:</span></span>
+<span class="giallo-l"><span>        throughput summary: 448631.66 requests per second</span></span>
+<span class="giallo-l"><span>        latency summary (msec):</span></span>
+<span class="giallo-l"><span>                avg       min       p50       p95       p99       max</span></span>
+<span class="giallo-l"><span>                1.632     0.224     1.311     3.455     5.943    13.991</span></span></code></pre>
+<p>The trade-off is that the throughput roughly quadruples, but per-request latency also rises: p50 climbs from 0.215ms to 1.311ms.
+The rise in throughput is expected: Valkey is more efficient at parsing four packets at one time rather than one.
+As for latency, keep in mind that the benchmark sends as much as possible all at once, paired with pipelining, it results in latency spikes from queuing.</p>
+<p>This is exactly why matching your pipeline depth to your actual client matters: a pipeline depth that's unrealistically deep shows great throughput numbers while your real requests wait longer than your application can tolerate.</p>
+<p>Together, these three settings: keyspace size (-r), pipeline depth (-P), and payload size (-d), move <code>valkey-benchmark</code> away from an unrealistic benchmark and toward a workload that more closely resembles production.</p>
+<h2 id="using-the-cluster-argument">Using the <code>--cluster</code> argument</h2>
+<p>If you want to benchmark a Valkey cluster that is automatically sharded across multiple Valkey cluster nodes, use the <code>--cluster</code> argument.</p>
+<p>Compared to a standalone benchmark, two things change:</p>
+<ul>
+<li><code>-c</code> (client connections) must be at least the number of nodes in your cluster; with fewer clients than nodes, some nodes will never get contacted.</li>
+<li>Custom commands need <code>{tag}</code> in the key name, a placeholder that ensures the command routes to the correct node.</li>
+</ul>
+<p>If you also want to stress read replicas, add the <code>--rfr</code> (read-from-replicas) argument, with a mode of <code>no</code>, <code>yes</code>, or <code>all</code>. Use this only with read commands as writes sent to a replica are rejected.</p>
+<p>For example, against a 6-node cluster (3 primaries and 3 replicas), reading from replicas only:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>valkey-benchmark --cluster -h 127.0.0.1 -p 6371 -c 6 -n 100000 --rfr yes get key-{tag}</span></span></code></pre>
+<p><em>NOTE: This example requires an actual Valkey cluster deployment, it does not run against a standalone instance.</em></p>
+<h2 id="putting-it-all-together">Putting it all together</h2>
+<p>Between a realistic keyspace, representative payloads, and pipelining that matches your client, <code>valkey-benchmark</code> can move from a synthetic microbenchmark to something that actually predicts how your application behaves under load. The tool's own goal is reproducibility, so anchor your numbers to a fixed set of options, and compare against your own past runs rather than other benchmark tools.</p>
+<p>Before actually trusting any of the above numbers for planning capacity, run the commands against your own staging environment with values that match your actual traffic. Here's a starting point you can adapt:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>valkey-benchmark -t set,get -r 100000 -d 1024 -P 16 -n 1000000 -q</span></span></code></pre>
+<p><em>NOTE: Add <code>-q</code> for quiet output once you're running this repeatedly rather than reading the full summary each time.</em></p>
+<p>For the full set of options, including <code>--csv</code> for tracking results over time, <code>--dataset</code> for benchmarking against real data files, and more on cluster mode, see the <a rel="external" href="https://valkey.io/topics/benchmark/">Valkey benchmarking tool documentation</a>.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/dragosandriciuc.jpg" alt="photo of Dragos Andriciuc" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Dragos Andriciuc</h4>
+    
+    <a target="_blank" href="https://github.com/Andriciuc"><i class="icon icon-github-square"></i> @Andriciuc</a>
+    
+    <p>Dragos Andriciuc is a Senior Technical Educator for Valkey at Percona where he creates technical content, blogs, and upstream documentation to help users and the community better understand Valkey. A Romanian national based in a small town outside of the capital of Bucharest, he studied Computer Science at Sheffield University and started to work in the technical writing field. He enjoys scuba diving, practicing airsoft, and spending time with his family.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/what-is-valkey-benchmark/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/what-is-valkey-benchmark/&title=Simulating%20Real%20Workloads%20with%20valkey-benchmark&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/what-is-valkey-benchmark/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/">&laquo; Reducing Memory Overhead in Valkey 9.1</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration-acl-requirements/">Analyzing Atomic Slot Migration ACL requirements &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

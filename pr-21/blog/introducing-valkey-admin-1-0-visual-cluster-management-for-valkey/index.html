@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="Valkey Admin is a new open source observability and management tool from the Valkey project that brings cluster visibility, data inspection, and troubleshooting into a single view. It ships as a native desktop application for macOS and Linux, and as a containerized web deployment on Docker and Kubernetes." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Introducing Valkey Admin 1.0: Visual Cluster Management for Valkey</title>
+    <meta name="title" property="og:title" content="Valkey: Introducing Valkey Admin 1.0: Visual Cluster Management for Valkey">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Introducing Valkey Admin 1.0: Visual Cluster Management for Valkey</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2026-05-12
+  
+    &middot; 
+    
+      
+      
+      <em>Rong Zhang</em>,
+    
+      
+      
+      <em>Arseny Kostenko</em>
+    
+  
+</div>
+<p><a rel="external" href="https://github.com/valkey-io/valkey-admin">Valkey Admin</a> is a new open source observability and management tool from the Valkey project that brings cluster visibility, data inspection, and troubleshooting into a single view. It ships as a native desktop application for macOS and Linux, and as a containerized web deployment on Docker and Kubernetes. Valkey Admin provides real-time cluster dashboards, topology visualization with per-node detail, a key browser, hot key identification, and aggregated command logs across the cluster.</p>
+<p>Valkey users today have a mix of trusted tools: <code>valkey-cli</code> for direct inspection, Prometheus and Grafana for metrics, and community GUIs for key browsing and visualization. Each is mature and well-suited to its scope, and combining them is common practice. Putting together a cluster-wide picture still often takes work across shards, dashboards, and terminals. Valkey Admin adds a cluster-wide layer that pulls these signals into one place, designed to complement the tools users already use rather than replace them.</p>
+<p>In this post, we'll walk through what Valkey Admin does, how it detects hot keys, where you can run it, and how to get started.</p>
+<h2 id="what-valkey-admin-does">What Valkey Admin does</h2>
+<p>Valkey Admin organizes its capabilities around three user workflows: observability, inspection, and troubleshooting.</p>
+<p><strong>Observability.</strong> The dashboard shows real-time metrics including memory usage, CPU utilization, hit ratio, and command throughput, streamed over WebSocket, so the view reflects real-time changes without manual refresh. The cluster topology view renders a visual map of shards, primaries, and replicas, showing each node's role, host, and connection status. A disconnected replica or a node that cannot be reached will surface immediately on the map.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/valkey-admin_01-cluster-topology.png" alt="Cluster topology view rendering shards, primaries, and replicas as a connected graph, with each node showing its role, host, and connection status" /></p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/valkey-admin_02-dashboard-view.png" alt="Dashboard view showing real-time cluster metrics including memory usage, CPU utilization, hit ratio, and command throughput streamed over WebSocket" /></p>
+<p><strong>Inspection and interaction.</strong> The key browser lets you browse, search, inspect, and edit keys across seven data types: String, Hash, List, Set, Sorted Set, Stream, and JSON. The browser lets you search by pattern or exact key name, with results capped for responsiveness on large keyspaces. This covers the common tasks of verifying key contents during incident response, checking TTLs, and confirming that application writes landed correctly. The send command panel lets you run any Valkey command with formatted response output and a searchable command history for the current session, for quick command execution and debugging.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/valkey-admin_03-key-type-distribution.png" alt="Key Browser view showing the distribution of keys across data types in the cluster, with counts for String, Hash, List, Set, Sorted Set, Stream, and JSON" /></p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/valkey-admin_04-key-inspection.png" alt="Key Browser inspection panel displaying a selected key&#39;s value, TTL, and metadata, with controls to edit the value and refresh the entry" /></p>
+<p><strong>Troubleshooting.</strong> Hot key detection identifies frequently accessed keys across the cluster (more on this in the next section). Command logs surface slow commands, large requests, and large replies aggregated across the cluster with node attribution, so you can trace latency spikes back to specific shards. Under the hood, Command logs analyze <code>COMMANDLOG</code> output, a Valkey 8.1 feature that tracks slow commands, large requests, and large replies in a single log. A typical triage path: dashboard for anomalies, command logs for the problematic commands, hot key detection to confirm the issue.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/valkey-admin_05-activity-view.png" alt="Activity view combining hot key detection results with command log entries for slow commands, large requests, and large replies, attributed to the originating cluster nodes" /></p>
+<p>These six features (dashboard, cluster topology, key browser, send command, hot key detection, command logs) ship in Valkey Admin 1.0. We welcome feedback on what to build next.</p>
+<h2 id="finding-hot-keys-without-slowing-down-your-cluster">Finding hot keys without slowing down your cluster</h2>
+<p>Hot key detection in Valkey often involves manual steps: knowing which commands to run (<code>CLUSTER SLOT-STATS</code>, <code>MONITOR</code>, <code>OBJECT FREQ</code>), connecting to the right nodes, parsing the output, and correlating results across shards. Valkey Admin picks the lowest-overhead detection method your cluster supports, so you get hot key visibility with minimal load on your cluster. It selects automatically based on server configuration to keep diagnostic load bounded.</p>
+<p>The default approach avoids <code>MONITOR</code>, which intercepts commands processed by the server and streams them back to the client. On a cluster already under pressure, that overhead can make the situation worse.</p>
+<p><strong>Hot slots (default when available).</strong> When <code>CLUSTER SLOT-STATS</code> is available (Valkey 8.0+ with LFU eviction and cluster mode), Valkey Admin uses it as the low-overhead default. This method identifies hot slots by CPU usage. Because <code>CLUSTER SLOT-STATS</code> reads server-side counters, it has minimal performance impact on your cluster. Valkey Admin then resolves keys within the hot slots and retrieves their access frequency via <code>OBJECT FREQ &lt;key&gt;</code>, which reports the LFU logarithmic access frequency counter.</p>
+<p>To use hot slots, your cluster needs: Valkey 8.0 or later, cluster mode, <code>cluster-slot-stats-enabled=yes</code> in your server configuration, and an LFU eviction policy (<code>allkeys-lfu</code> or <code>volatile-lfu</code>). Under the hood, the query Valkey Admin runs looks like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>CLUSTER SLOT-STATS ORDERBY CPU-USEC LIMIT 50</span></span></code></pre>
+<p>This returns the fifty slots consuming the most CPU time, in descending order. Valkey Admin visualizes these results, resolves the keys in each slot, and ranks them by access frequency, turning a multi-step CLI workflow into a single view.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/valkey-admin_06-node-heatmap.png" alt="Node heatmap visualizing CPU usage across cluster nodes, with hotter shards highlighted to identify slots with the most concentrated load" /></p>
+<p><strong>Monitor-based detection.</strong> For any deployment where hot slots are not available, Valkey Admin uses the <code>MONITOR</code> command. It samples commands in real time across all monitored nodes, with configurable sampling duration and interval, then aggregates the results to surface the most frequently accessed keys.</p>
+<p>Monitor-based detection works with any Valkey or Redis OSS version, in both standalone and cluster modes. The tradeoff is that <code>MONITOR</code> does add overhead while sampling is active, so Valkey Admin uses short, configurable sampling windows rather than continuous capture. Before switching to the higher-overhead <code>MONITOR</code>, the settings UI shows the performance warning, so the tradeoff is explicit.</p>
+<h2 id="run-it-where-you-run-valkey">Run it where you run Valkey</h2>
+<p>Valkey Admin ships as a desktop application and as a containerized web deployment. Downloads for both live on the GitHub releases page: macOS users can choose the <code>.dmg</code> installer; Linux users can choose between AppImage and <code>.deb</code>.</p>
+<p>Docker images are published to three registries:</p>
+<ul>
+<li><strong>GitHub Container Registry:</strong> <code>ghcr.io/valkey-io/valkey-admin</code></li>
+<li><strong>Docker Hub:</strong> <code>valkey/valkey-admin</code></li>
+<li><strong>Amazon ECR Public Gallery:</strong> <code>public.ecr.aws/valkey/valkey-admin</code></li>
+</ul>
+<p>Valkey Admin connects to standalone instances and cluster mode deployments. TLS is supported via the <code>VALKEY_TLS</code> environment variable, password authentication is supported, and IAM authentication is available for managed services that use AWS IAM, via <code>VALKEY_AUTH_TYPE=iam</code>. For managed services that restrict certain administrative commands, Valkey Admin uses unrestricted alternatives where possible, so users get the same diagnostic signal without requiring elevated permissions.</p>
+<p>The tool works with Valkey 7.2+ and 8.x. The hot slots feature requires Valkey 8.0 or later for <code>CLUSTER SLOT-STATS</code> support; Command Logs requires 8.1+, all other features work across both major versions.</p>
+<p>For Kubernetes deployments, metrics servers run as sidecars on each Valkey primary pod. This architecture keeps the main Valkey Admin deployment small (approximately 1 GB RAM) while distributing metrics collection across the cluster. Pre-release validation ran Valkey Admin against clusters with up to 276 nodes. Resource sizing is modest overall: a cluster with 1 to 5 primaries runs comfortably on 2 vCPU and 2 GB RAM. The sizing formula scales linearly: RAM is <code>(primary nodes x 150 MB) + 1 GB</code>, and disk is <code>(primary nodes x 50 MB) + 1 GB</code>.</p>
+<h3 id="docker-deployment">Docker deployment</h3>
+<p>Pull the image and point it at your cluster:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">docker</span><span style="color: #A5D6FF;"> pull valkey/valkey-admin:latest</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"># See examples/aws, examples/docker-example, examples/k8s in the repo</span></span></code></pre>
+<p>To pre-configure metrics collection at startup, set these environment variables:</p>
+<ul>
+<li><code>VALKEY_HOST</code>: your Valkey host or cluster endpoint</li>
+<li><code>VALKEY_PORT</code>: defaults to <code>6379</code></li>
+<li><code>VALKEY_TLS</code>: set to <code>true</code> for TLS connections (defaults to <code>false</code>)</li>
+<li><code>VALKEY_AUTH_TYPE</code>: <code>password</code> or <code>iam</code> (defaults to <code>password</code>)</li>
+</ul>
+<p>The <code>examples/</code> directory in the repo contains deployment guides for Docker, Kubernetes, and IAM authentication. Valkey Admin does not include built-in authentication for its web interface. In Docker and Kubernetes deployments, run it behind a reverse proxy or an auth layer such as an OAuth proxy, Cognito, or your identity provider. Metrics are captured per primary node. Replica observability is not independent; you see replica status through the cluster topology view, but metrics collection targets primaries.</p>
+<h2 id="demo">Demo</h2>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-ypi0VkKaIE" title="Valkey Admin 1.0 Release" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<h2 id="join-the-community">Join the community</h2>
+<p>Valkey Admin gives Valkey users a unified tool for monitoring, inspecting, and troubleshooting Valkey clusters, whether you're running a three-node development cluster or a production deployment at scale. We invite you to try it out.</p>
+<p>The project lives at <a rel="external" href="https://github.com/valkey-io/valkey-admin">github.com/valkey-io/valkey-admin</a> under the Apache 2.0 license. To propose new features or significant changes, open a GitHub Issue with the <code>[RFC]</code> prefix; the maintainers review RFCs and guide them through design and implementation. Bug reports, documentation improvements, and pull requests of all sizes are welcome.</p>
+<p>We want to acknowledge the maintainers who have built Valkey Admin to 1.0: <a rel="external" href="https://github.com/arseny-kostenko">@arseny-kostenko</a>, <a rel="external" href="https://github.com/ravjotbrar">@ravjotbrar</a>, <a rel="external" href="https://github.com/ArgusLi">@ArgusLi</a>, and <a rel="external" href="https://github.com/nassery318">@nassery318</a>. The community made them stronger at every step. <a rel="external" href="https://github.com/NormB">@NormB</a> identified and fixed three password-handling bugs in the desktop connection flow, making authentication more reliable. <a rel="external" href="https://github.com/nfunke">@nfunke</a>, <a rel="external" href="https://github.com/maravisk">@maravisk</a>, <a rel="external" href="https://github.com/rlunar">@rlunar</a>, <a rel="external" href="https://github.com/Shirkulk007">@Shirkulk007</a> tested pre-release builds and surfaced issues before GA. Valkey Admin would not have reached 1.0 without everyone who filed issues, tested builds, and submitted patches.</p>
+<p>The roadmap beyond 1.0 is open and community-driven. Big key detection, slot heat maps that visualize hot-slot distribution across the cluster, and Prometheus integration for the broader observability stack are options we are exploring, and we look forward to building them together.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/bblan0803.png" alt="photo of Rong Zhang" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Rong Zhang</h4>
+    
+    <p><strong>Rong Zhang</strong> is a Senior Product Manager on Amazon ElastiCache, focused on improving the developer experience with tooling for observability and migration. She works on making it easier for teams to monitor, debug, and operate Valkey clusters at scale. Off the clock, she travels when she can and keeps a permanent backlog of films, musicals, books, and anime.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/arsenykostenko.png" alt="photo of Arseny Kostenko" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Arseny Kostenko</h4>
+    
+    <p>Arseny is a full-stack engineering leader with over 18 years of experience building fintech platforms, data infrastructure, and developer tooling, and building and managing teams. He has scaled systems from zero to millions of daily transactions, led high-performing teams, hired and mentored future technical leaders, and delivered end-to-end solutions aligned with real customer needs and business goals.</p>
+<p>Arseny's work spans backend, frontend, and platform engineering, as well as open source, product strategy, go-to-market initiatives, and co-authoring a fintech patent.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/&title=Introducing%20Valkey%20Admin%201.0%3A%20Visual%20Cluster%20Management%20for%20Valkey&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/ai-agent-memory-with-valkey-and-mem0/">&laquo; Reduce Token Cost for LLMs: AI Agent Memory with Valkey and Mem0</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/">Valkey 9.1 delivers improvements in security, performance, and more &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

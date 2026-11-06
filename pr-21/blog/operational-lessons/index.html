@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-04.webp" />
+    
+    
+
+    <meta name="description" content="Production lessons on tail latency, migrations, and scale from engineers operating Valkey at real-world scale." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Operational Lessons from Large-Scale Valkey Deployments</title>
+    <meta name="title" property="og:title" content="Valkey: Operational Lessons from Large-Scale Valkey Deployments">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-04.webp" alt="Operational Lessons from Large-Scale Valkey Deployments" class="feature-img">
+
+
+<h1>Operational Lessons from Large-Scale Valkey Deployments</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+  
+  2026-02-19
+  
+    &middot; 
+    
+      
+      
+      <em>Allen Helton</em>,
+    
+      
+      
+      <em>Mike Callahan</em>
+    
+  
+</div>
+<p>Engineers operating large-scale systems face a consistent challenge: what works at moderate scale often breaks in subtle ways as systems grow. Recently, contributors and platform teams gathered at the <a rel="external" href="https://www.unlockedconf.io">Unlocked Conference</a> to compare notes on what actually happens when Valkey is under real production load.</p>
+<p>What follows are high-level observations from the day — directional insights that kept resurfacing across talks, questions, and small-group discussions. For teams running or evaluating Valkey, these represent the operational questions large-scale deployments are asking right now.</p>
+<h2 id="scale-changes-the-nature-of-problems">Scale Changes the Nature of Problems</h2>
+<p>As <a rel="external" href="https://www.linkedin.com/in/kshams/">Khawaja Shams</a> put it during the opening remarks:</p>
+<blockquote>
+<p>"Scale exposes all truths."</p>
+</blockquote>
+<p>Across multiple conversations throughout the day, the recurring theme was what changes once systems cross certain thresholds. Latency that once felt negligible becomes visible. Client behavior that looked harmless begins to shape tail latencies. Operational shortcuts that worked at small volumes introduce instability when workloads grow.</p>
+<p>The takeaway was that scale changes <em>which questions you should be asking</em>. Conversations shift from "does it work?" to "what happens when it's stressed?"</p>
+<p>This aligns with recent work in Valkey such as <a rel="external" href="https://valkey.io/blog/atomic-slot-migration/">Atomic Slot Migration</a>, <a rel="external" href="https://valkey.io/blog/valkey-8-1-0-ga/#i-o-threads-improvements">I/O threading improvements</a> introduced in Valkey 8.0, and <a rel="external" href="https://github.com/valkey-io/valkey/pull/2078">copy-avoidance paths</a> for large replies. These changes reflect lessons learned at scale, where larger clusters, heavier payloads, and higher concurrency expose constraints that smaller deployments rarely encounter.</p>
+<h2 id="predictability-over-peak-throughput">Predictability Over Peak Throughput</h2>
+<p>Another frequently mentioned topic was reducing tail latency rather than maximizing peak throughput. A large gap between your P99 and P999 latency reveals instability caused by issues such as bursty traffic, background work, large payloads, or similar workload characteristics. The practical lesson is that outages often come from edge cases rather than the happy path.</p>
+<p><a rel="external" href="https://www.linkedin.com/in/madelyn-olson-valkey/">Madelyn Olson</a> shared the five guiding performance principles at Valkey:</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/operational-lessons/valkey-performance-principles.jpg" alt="Valkey Performance Principles Screenshot" /></p>
+<p>With <em>"provide predictable user latency"</em> listed as the second principle, it's clear that consistency is a deliberate priority for the project. It's treated as a first-order goal alongside scalability and simplicity.</p>
+<p>A small percentage of multi-megabyte values can distort tail percentiles even when average latency and overall throughput appear stable — behavior that Khawaja Shams explored in a <a rel="external" href="https://www.gomomento.com/blog/large-objects-ruin-the-party-valkey-9-tames-them/">deep dive on large object handling</a>. During her systems engineering session, <a rel="external" href="https://www.linkedin.com/in/danielamiao/">Daniela Miao</a> emphasized a similar principle: performance work often begins by raising the floor of latency behavior before chasing peak numbers. Building predictable systems requires designing for these edge cases explicitly rather than assuming "typical" request sizes.</p>
+<p>Valkey 9.0 introduced reply copy-avoidance paths for large values, significantly reducing the time the main event loop can be blocked by multi-megabyte responses. It's a concrete example of the broader shift from chasing peak numbers to bounding worst-case behavior so latency distributions remain stable as workloads evolve.</p>
+<h2 id="payload-size-and-bandwidth-shape-outcomes">Payload Size and Bandwidth Shape Outcomes</h2>
+<p>While the prior discussion focused on latency variance inside the engine, another recurring theme was variance introduced by traffic moving across the network. With high-performance systems, bottlenecks often emerge from the <em>shape</em> of traffic rather than raw CPU or memory limits. At Unlocked, teams described systems where CPU and memory looked healthy, yet latency variance and node failures increased once payload sizes grew or request patterns shifted.</p>
+<p>Nodes can fail not from CPU exhaustion or memory pressure alone, but from the sheer volume of bytes moving across the network. As Ignacio "Nacho" Alvarez from Mercado Libre put it:</p>
+<blockquote>
+<p>"Nodes dying because of the volume of bytes moving in and out was the hardest problem to solve."</p>
+</blockquote>
+<p>Bandwidth becomes a primary bottleneck and incident driver — a reminder that network throughput and payload variability can dominate system behavior long before standard utilization metrics indicate trouble.</p>
+<p>Instead of asking "are we out of CPU or memory?", teams found themselves asking "what are we actually sending over the wire?" Payload size distribution, network behavior, and client request patterns frequently ended up being primary cost drivers compared to processor utilization alone. Nacho recounted that monitoring how large those requests were and how unevenly they arrived were crucial to Mercado Libre's stability.</p>
+<p>This awareness is visible in recent Valkey releases as well. Valkey 9.0 added <a rel="external" href="https://github.com/valkey-io/valkey/pull/2092">pipeline memory prefetching</a> to smooth bursty workloads and <a rel="external" href="https://github.com/valkey-io/valkey/pull/1811">Multipath TCP</a> support to reduce network-induced latency, alongside <a rel="external" href="https://valkey.io/blog/1-billion-rps/">large-cluster resilience improvements</a> aimed at keeping end-to-end latency stable at higher node counts. Taken together, these changes point less toward chasing peak throughput numbers and more toward limiting the impact of uneven traffic and network variability.</p>
+<h2 id="community-participation-is-the-multiplier">Community Participation Is the Multiplier</h2>
+<p>One of the strongest signals coming out of Unlocked wasn’t a feature announcement or benchmark — it was how openly engineers were exchanging operational lessons. Maintainers, platform teams, and end users were comparing migration strategies, performance regressions, and tooling approaches throughout the day. As Khawaja put it during the opening remarks, the goal is to ”<em>share what you learn and talk about the outages you caused — we’re among friends.</em>”</p>
+<p>This culture of openness reflects what’s happening in Valkey itself. According to the <a rel="external" href="https://valkey.io/blog/2025-year-end/">Valkey 2025 Year-End Review</a>, more than <em>300 contributors</em> authored commits, reviewed code, or opened issues over the course of the year. Participation here spanned testing releases, proposing features, building tooling, documenting deployment patterns, and sharing production lessons that shape future improvements.</p>
+<p>For operators, that amount of involvement means bugs are discovered across a wider variety of real workloads, migration paths are validated by multiple organizations before becoming common practice, and performance fixes are grounded in production behavior rather than synthetic benchmarks alone. Stability improvements and tooling changes arrive already pressure-tested across different infrastructure types and scale points.</p>
+<p>In this sense, contributions act as a multiplier. Shared experience compounds into better tooling and more predictable systems across the ecosystem. What was visible in hallway conversations and session Q&amp;A at Unlocked mirrors what’s happening in these repositories every day: a project evolving through collective operational knowledge.</p>
+<h2 id="what-this-means-for-operators">What This Means for Operators</h2>
+<p>Across sessions and discussions, several operational priorities surfaced repeatedly for teams running or evaluating Valkey:</p>
+<ul>
+<li>Monitor P99 and P999 latency, not just medians. Tail percentiles reveal the edge cases that cause outages while median latency still looks stable.</li>
+<li>Instrument payload size distribution alongside traditional metrics. Bandwidth saturation often appears before CPU or memory pressure signals trouble.</li>
+<li>Treat traffic shape as a first-class metric. Bursty workloads, background work, and large responses frequently explain instability better than raw request counts.</li>
+</ul>
+<p>These recommendations reflect the operational questions teams managing Valkey at scale are actively solving.</p>
+<h2 id="staying-current">Staying Current</h2>
+<p>Because these priorities continue to evolve, most of the related work and discussion happens in the open through release notes, <a rel="external" href="https://github.com/valkey-io/valkey/issues">open issues in GitHub</a>, ongoing community conversations, and conferences like <a rel="external" href="https://www.unlockedconf.io">Unlocked</a>.</p>
+<p>For those interested in following where these signals continue to develop, the <a rel="external" href="https://valkey.io/blog/valkey-newsletter-new/#email-signup">Valkey Community newsletter</a> provides periodic summaries of new releases, tooling updates, and contributor insights as they are published.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/allenhelton.png" alt="photo of Allen Helton" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Allen Helton</h4>
+    
+    <a target="_blank" href="https://github.com/allenheltondev"><i class="icon icon-github-square"></i> @allenheltondev</a>
+    
+    <p>Allen is an Ecosystem Engineer at Momento. He comes from over a decade of experience working in the public sector tech industry where he played a key role in advancing the adoption of modern technology in the space. Allen has a passion for API-first development, developer experience, and autonomous AI agents.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/mikecallahan.jpeg" alt="photo of Mike Callahan" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Mike Callahan</h4>
+    
+    <a target="_blank" href="https://github.com/mikec-momento"><i class="icon icon-github-square"></i> @mikec-momento</a>
+    
+    <p>Mike is a marketing leader at Momento with a background in cloud infrastructure and media technologies. He previously served as Head of Media Solutions Marketing for AWS Elemental at Amazon Web Services, where he helped shape go-to-market strategy and messaging for large-scale video and streaming services. Mike focuses on translating complex technical platforms into clear customer value and industry storytelling.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/operational-lessons/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/operational-lessons/&title=Operational%20Lessons%20from%20Large-Scale%20Valkey%20Deployments&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/operational-lessons/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-newsletter-new/">&laquo; Don’t Miss What’s Next in Valkey — Subscribe Now</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin/">Introducing Valkey Admin: Visual Cluster Management for Valkey &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

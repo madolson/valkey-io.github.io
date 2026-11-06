@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-03.webp" />
+    
+    
+
+    <meta name="description" content="The idea of modules is to allow adding extra features (such as new commands and data types) to Valkey without making changes to the core code." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Valkey Modules 101</title>
+    <meta name="title" property="og:title" content="Valkey: Valkey Modules 101">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-03.webp" alt="Valkey Modules 101" class="feature-img">
+
+
+<h1>Valkey Modules 101</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="How-to">How-to</span>
+  
+  2024-05-01
+  
+    &middot; 
+    
+      
+      
+      <em>Dmitry Polyakovsky</em>
+    
+  
+</div>
+<h2 id="what-are-valkey-modules">What are Valkey modules?</h2>
+<p>The idea of modules is to allow adding extra features (such as new commands and data types) to Valkey without making changes to the core code.
+Modules are a special type of code distribution called a shared library, which can be loaded by other programs at runtime and executed.
+Modules can be written in C or other languages that have C bindings.
+In this article we will go through the process of building simple modules in C and Rust (using the Valkey Module Rust SDK).
+This article expects the audience to be at least somewhat familiar with git, C, Rust and Valkey.</p>
+<h2 id="hello-world-module-in-c">Hello World module in C</h2>
+<p>If we clone the Valkey repo by running <code>git clone git@github.com:valkey-io/valkey.git</code> we will find numerous examples in <code>src/modules</code>.
+Let's create a new file <code>module1.c</code> in the same folder.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span style="color: #FF7B72;">#include</span><span style="color: #A5D6FF;"> &quot;../valkeymodule.h&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">int</span><span style="color: #D2A8FF;"> hello</span><span>(ValkeyModuleCtx </span><span style="color: #FF7B72;">*</span><span style="color: #FFA657;">ctx</span><span>, ValkeyModuleString </span><span style="color: #FF7B72;">**</span><span style="color: #FFA657;">argv</span><span>,</span><span style="color: #FF7B72;"> int</span><span style="color: #FFA657;"> argc</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    VALKEYMODULE_NOT_USED</span><span>(argv);</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    VALKEYMODULE_NOT_USED</span><span>(argc);</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    return</span><span style="color: #D2A8FF;"> ValkeyModule_ReplyWithSimpleString</span><span>(ctx,</span><span style="color: #A5D6FF;"> &quot;world1&quot;</span><span>);</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">int</span><span style="color: #D2A8FF;"> ValkeyModule_OnLoad</span><span>(ValkeyModuleCtx </span><span style="color: #FF7B72;">*</span><span style="color: #FFA657;">ctx</span><span>, ValkeyModuleString </span><span style="color: #FF7B72;">**</span><span style="color: #FFA657;">argv</span><span>,</span><span style="color: #FF7B72;"> int</span><span style="color: #FFA657;"> argc</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    VALKEYMODULE_NOT_USED</span><span>(argv);</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    VALKEYMODULE_NOT_USED</span><span>(argc);</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> (</span><span style="color: #D2A8FF;">ValkeyModule_Init</span><span>(ctx,</span><span style="color: #A5D6FF;">&quot;module1&quot;</span><span>,</span><span style="color: #79C0FF;">1</span><span>,VALKEYMODULE_APIVER_1) </span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        ==</span><span> VALKEYMODULE_ERR)</span><span style="color: #FF7B72;"> return</span><span> VALKEYMODULE_ERR;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> (</span><span style="color: #D2A8FF;">ValkeyModule_CreateCommand</span><span>(ctx,</span><span style="color: #A5D6FF;">&quot;module1.hello&quot;</span><span>, hello,</span><span style="color: #A5D6FF;">&quot;&quot;</span><span>,</span><span style="color: #79C0FF;">0</span><span>,</span><span style="color: #79C0FF;">0</span><span>,</span><span style="color: #79C0FF;">0</span><span>) </span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        ==</span><span> VALKEYMODULE_ERR)</span><span style="color: #FF7B72;"> return</span><span> VALKEYMODULE_ERR;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    return</span><span> VALKEYMODULE_OK;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Here we are calling <code>ValkeyModule_OnLoad</code> C function (required by Valkey) to initialize <code>module1</code> using <code>ValkeyModule_Init</code>.
+Then we use <code>ValkeyModule_CreateCommand</code> to create a Valkey command <code>hello</code> which uses C function <code>hello</code> and returns <code>world1</code> string.
+In future blog posts we will explore these areas at greater depth.</p>
+<p>Now we need to update <code>src/modules/Makefile</code></p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="make"><span class="giallo-l"><span style="color: #D2A8FF;">all</span><span>: ... module1.so</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">module1.xo</span><span>: ../valkeymodule.h</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">module1.so</span><span>: module1.xo</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">	$(</span><span>LD</span><span style="color: #A5D6FF;">)</span><span> -o </span><span style="color: #79C0FF;">$@ $^</span><span style="color: #A5D6FF;"> $(</span><span>SHOBJ_LDFLAGS</span><span style="color: #A5D6FF;">) $(</span><span>LIBS</span><span style="color: #A5D6FF;">)</span><span> -lc</span></span></code></pre>
+<p>Run <code>make module1.so</code> inside <code>src/modules</code> folder.
+This will compile our module in the <code>src/modules</code> folder.</p>
+<h2 id="hello-world-module-in-rust">Hello World module in Rust</h2>
+<p>We will create a new Rust package by running <code>cargo new --lib module2</code> in bash.
+Inside the <code>module2</code> folder we will have <code>Cargo.toml</code> and <code>src/lib.rs</code> files.
+To install the valkey-module SDK run <code>cargo add valkey-module</code> inside <code>module2</code> folder.
+Alternatively we can add <code>valkey-module = "0.1.0</code> in <code>Cargo.toml</code> under <code>[dependencies]</code>.
+Run <code>cargo build</code> and it will create or update the <code>Cargo.lock</code> file.</p>
+<p>Modify <code>Cargo.toml</code> to specify the crate-type to be "cdylib", which will tell cargo to build the target as a shared library.
+Read <a rel="external" href="https://doc.rust-lang.org/reference/linkage.html">Rust docs</a> to understand more about <code>crate-type</code>.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>[lib]</span></span>
+<span class="giallo-l"><span>crate-type = [&quot;cdylib&quot;]</span></span></code></pre>
+<p>Now in <code>src/lib.rs</code> replace the existing code with the following:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span>#[macro_use]</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">extern crate</span><span> valkey_module;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">use</span><span style="color: #FFA657;"> valkey_module</span><span style="color: #FF7B72;">::</span><span>{</span><span style="color: #FFA657;">Context</span><span>,</span><span style="color: #FFA657;"> ValkeyResult</span><span>,</span><span style="color: #FFA657;"> ValkeyString</span><span>,</span><span style="color: #FFA657;"> ValkeyValue</span><span>};</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">fn</span><span style="color: #D2A8FF;"> hello</span><span>(_ctx</span><span style="color: #FF7B72;">: &amp;</span><span style="color: #FFA657;">Context</span><span>, _args</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> Vec</span><span>&lt;</span><span style="color: #FFA657;">ValkeyString</span><span>&gt;)</span><span style="color: #FF7B72;"> -&gt;</span><span style="color: #FFA657;"> ValkeyResult</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    Ok</span><span>(</span><span style="color: #FFA657;">ValkeyValue</span><span style="color: #FF7B72;">::</span><span style="color: #D2A8FF;">SimpleStringStatic</span><span>(</span><span style="color: #A5D6FF;">&quot;world2&quot;</span><span>))</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">valkey_module!</span><span> {</span></span>
+<span class="giallo-l"><span>    name</span><span style="color: #FF7B72;">:</span><span style="color: #A5D6FF;"> &quot;module2&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    version</span><span style="color: #FF7B72;">:</span><span style="color: #79C0FF;"> 1</span><span>,</span></span>
+<span class="giallo-l"><span>    allocator</span><span style="color: #FF7B72;">:</span><span> (</span><span style="color: #FFA657;">valkey_module</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">alloc</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">ValkeyAlloc</span><span>,</span><span style="color: #FFA657;"> valkey_module</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">alloc</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">ValkeyAlloc</span><span>),</span></span>
+<span class="giallo-l"><span>    data_types</span><span style="color: #FF7B72;">:</span><span> [],</span></span>
+<span class="giallo-l"><span>    commands</span><span style="color: #FF7B72;">:</span><span> [</span></span>
+<span class="giallo-l"><span>        [</span><span style="color: #A5D6FF;">&quot;module2.hello&quot;</span><span>, hello,</span><span style="color: #A5D6FF;"> &quot;&quot;</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>],</span></span>
+<span class="giallo-l"><span>    ]</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Rust syntax is a bit different than C but we are creating <code>module2</code> with command <code>hello</code> that returns <code>world2</code> string.
+We are using the external crate <code>valkey_module</code> with <a rel="external" href="https://doc.rust-lang.org/book/ch19-06-macros.html">Rust macros</a> and passing it variables like <code>name</code> and <code>version</code>.
+Some variables like <code>data_types</code> and <code>commands</code> are arrays and we can pass zero, one or many values.
+Since we are not using ctx or args we prefix them with <code>_</code> (Rust convention) instead of <code>VALKEYMODULE_NOT_USED</code> as we did in C.</p>
+<p>Run <code>cargo build</code> in the root folder.
+We will now see <code>target/debug/libmodule2.dylib</code> (on macOS).
+The build will produce *.so files on Linux and *.dll files on Windows.</p>
+<h2 id="run-valkey-server-with-both-modules">Run Valkey server with both modules</h2>
+<p>Go back into the Valkey repo folder and run <code>make</code> to compile the Valkey code.
+Then add these lines to the bottom of the <code>valkey.conf</code> file.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>loadmodule UPDATE_PATH_TO_VALKEY/src/modules/module1.so</span></span>
+<span class="giallo-l"><span>loadmodule UPDATE_PATH_TO_MODULE2/target/debug/libmodule2.dylib</span></span></code></pre>
+<p>and run <code>src/valkey-server valkey.conf</code>.
+You will see these messages in the log output.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>Module &#39;module1&#39; loaded from UPDATE_PATH_TO_VALKEY/src/modules/module1.so</span></span>
+<span class="giallo-l"><span>...</span></span>
+<span class="giallo-l"><span>Module &#39;module2&#39; loaded from UPDATE_PATH_TO_MODULE2/target/debug/libmodule2.dylib</span></span></code></pre>
+<p>Then use <code>src/valkey-cli</code> to connect.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">src/valkey-cli</span><span style="color: #79C0FF;"> -3</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">127.0.0.1:6379</span><span>&gt;</span><span style="color: #A5D6FF;"> module list</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">1</span><span>) 1# </span><span style="color: #A5D6FF;">&quot;name&quot;</span><span> =</span><span style="color: #FF7B72;">&gt;</span><span style="color: #A5D6FF;"> &quot;module2&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   2#</span><span style="color: #A5D6FF;"> &quot;ver&quot;</span><span> =</span><span style="color: #FF7B72;">&gt;</span><span> (integer) 1</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   3#</span><span style="color: #A5D6FF;"> &quot;path&quot;</span><span> =</span><span style="color: #FF7B72;">&gt;</span><span style="color: #A5D6FF;"> &quot;UPDATE_PATH_TO_MODULE2/target/debug/libmodule2.dylib&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   4#</span><span style="color: #A5D6FF;"> &quot;args&quot;</span><span> =</span><span style="color: #FF7B72;">&gt;</span><span> (empty</span><span style="color: #A5D6FF;"> array</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">2</span><span>) 1# </span><span style="color: #A5D6FF;">&quot;name&quot;</span><span> =</span><span style="color: #FF7B72;">&gt;</span><span style="color: #A5D6FF;"> &quot;module1&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   2#</span><span style="color: #A5D6FF;"> &quot;ver&quot;</span><span> =</span><span style="color: #FF7B72;">&gt;</span><span> (integer) 1</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   3#</span><span style="color: #A5D6FF;"> &quot;path&quot;</span><span> =</span><span style="color: #FF7B72;">&gt;</span><span style="color: #A5D6FF;"> &quot;UPDATE_PATH_TO_VALKEY/src/modules/module1.so&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   4#</span><span style="color: #A5D6FF;"> &quot;args&quot;</span><span> =</span><span style="color: #FF7B72;">&gt;</span><span> (empty</span><span style="color: #A5D6FF;"> array</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">127.0.0.1:6379</span><span>&gt;</span><span style="color: #A5D6FF;"> module1.hello</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">world1</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">127.0.0.1:6379</span><span>&gt;</span><span style="color: #A5D6FF;"> module2.hello</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">world2</span></span></code></pre>
+<p>We can now run both modules side by side and if we modify either C or RS file, recompile the code and restart <code>valkey-server</code> we will get the new functionality.</p>
+<p>As an alternative to specifying modules in <code>valkey.conf</code> file, we can use <code>MODULE LOAD</code> and <code>UNLOAD</code> from <code>valkey-cli</code> to update the server.
+First specify <code>enable-module-command yes</code> in <code>valkey.conf</code> and restart <code>valkey-server</code>.
+This enables us to update our module code, recompile it and reload it at runtime.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; module load UPDATE_PATH_TO_VALKEY/src/modules/module1.so</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; module list</span></span>
+<span class="giallo-l"><span>1) 1# &quot;name&quot; =&gt; &quot;module1&quot;</span></span>
+<span class="giallo-l"><span>   2# &quot;ver&quot; =&gt; (integer) 1</span></span>
+<span class="giallo-l"><span>   3# &quot;path&quot; =&gt; &quot;UPDATE_PATH_TO_VALKEY/src/modules/module1.so&quot;</span></span>
+<span class="giallo-l"><span>   4# &quot;args&quot; =&gt; (empty array)</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; module unload module1</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; module list</span></span>
+<span class="giallo-l"><span>(empty array)</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; </span></span></code></pre>
+<p>Please stay tuned for more articles in the future as we explore the possibilities of Valkey modules and where using C or Rust makes sense.</p>
+<h2 id="useful-links">Useful links</h2>
+<ul>
+<li><a rel="external" href="https://github.com/valkey-io/valkey">Valkey repo</a></li>
+<li><a rel="external" href="https://github.com/valkey-io/valkeymodule-rs">Valkey Rust SDK</a></li>
+<li><a rel="external" href="https://code.visualstudio.com/docs/languages/rust">Rust in VS Code</a></li>
+</ul>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/dmitrypol.jpeg" alt="photo of Dmitry Polyakovsky" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Dmitry Polyakovsky</h4>
+    
+    <a target="_blank" href="https://github.com/dmitrypol"><i class="icon icon-github-square"></i> @dmitrypol</a>
+    
+    <p>Dmitry is a Consulting Member of Technical Staff at Oracle Cloud.</p>
+<p>Dmitry has used Redis for over 10 years for a variety of purposes.  He has written numerous blog articles, been interviewed by podcasts, presented at various conferences and built open-source libraries on top of Redis.  Currently Dmitry is working at Oracle Cloud as Tech Lead for OCI Cache service.  He is very excited to be part of the Valkey project.</p>
+<p>In his spare time Dmitry enjoys hiking in the Seattle area and spending time with his family.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/modules-101/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/modules-101/&title=Valkey%20Modules%20101&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/modules-101/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-7-2-5-out/">&laquo; Valkey 7.2.5 GA is out!</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/may-roundup/">What&#39;s new in Valkey for May 2024 &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

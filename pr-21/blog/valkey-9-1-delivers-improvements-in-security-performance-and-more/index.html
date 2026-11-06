@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/Valkey-Release.svg" />
+    
+    
+
+    <meta name="description" content="The Valkey community is excited to announce Valkey version 9.1. This latest release includes new functionality and improvements for security, observability, performance, efficiency, and tooling from over eighty contributors. Let&#39;s take a look at a few of the highlights in this release." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Valkey 9.1 delivers improvements in security, performance, and more</title>
+    <meta name="title" property="og:title" content="Valkey: Valkey 9.1 delivers improvements in security, performance, and more">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/Valkey-Release.svg" alt="Valkey 9.1 delivers improvements in security, performance, and more" class="feature-img">
+
+
+<h1>Valkey 9.1 delivers improvements in security, performance, and more</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2026-05-19
+  
+    &middot; 
+    
+      
+      
+      <em>Jeff Duffy</em>,
+    
+      
+      
+      <em>Roberto Luna-Rojas</em>
+    
+  
+</div>
+<p>The Valkey community is excited to announce version 9.1.0 This latest release includes new functionality and improvements for security, observability, performance, efficiency, and tooling from over eighty contributors. Let's take a look at a few of the highlights in this release.</p>
+<h2 id="security">Security</h2>
+<p>Release 9.1 strengthens Valkey's security capabilities with several important enhancements:</p>
+<p><strong>Numbered Database-level Access Control:</strong> Valkey enables stronger multi-tenant solution isolation and more granular security policies by allowing administrators to restrict which commands a user may execute with per-database granularity. Previously, ACL rules could control which commands a user could execute and which keys they could access, but that access applied to any database. With database-level ACLs, administrators and operators can now scope user permissions to specific databases.</p>
+<p>As an example, we can create a user and limit their access to databases 0 and 1:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> ACL SETUSER app-user on </span><span style="color: #FF7B72;">&gt;</span><span>secretpass +@all </span><span style="color: #FF7B72;">~*</span><span> db</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">0,1</span></span></code></pre>
+<p>After authenticating, that user can interact with database 0:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> SELECT 0</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">OK</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> SET mykey </span><span style="color: #A5D6FF;">&quot;hello&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">OK</span></span></code></pre>
+<p>But not database 2:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> SELECT 2</span></span>
+<span class="giallo-l"><span>(</span><span style="color: #FFA657;">error</span><span>)</span><span style="color: #FFA657;"> NOPERM</span><span style="color: #A5D6FF;"> No permissions to access database</span></span></code></pre>
+<p><strong>Lua Moved to a Module:</strong> Valkey 9.1 moves the Lua scripting engine into its own module, decoupling it from the core server. By extracting Lua into a module, Valkey reduces its security surface area and gives operators the option to disable Lua entirely if it is not required. To make it easier to understand which scripting engines are loaded, the  <a rel="external" href="https://valkey.io/commands/info/"><code>INFO</code></a> command has a new reply section named <code>Scripting Engines</code>.</p>
+<p><strong>TLS Improvements:</strong> Valkey now displays TLS certificate expiration dates via the <a rel="external" href="https://valkey.io/commands/info/"><code>INFO</code></a> command, making it easier to detect and avoid outages caused by expired TLS certificates. 9.1 also includes automatic background reloading of TLS certificates to enable rotation without downtime and support for TLS authentication using certificate Subject Alternate Name (SAN) URIs for easier mTLS integration.</p>
+<h2 id="observability">Observability</h2>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/valkey-9-1_observability.png" alt="Valkey 9.1 Observability highlights: Main and I/O Thread Usage" /></p>
+<p>New observability features in Valkey 9.1.0 make it easier to understand how your server is performing:</p>
+<p><strong>Main and I/O Thread Usage Metrics:</strong> CPU usage metrics alone don’t provide enough insight into how loaded a Valkey server is, as the main thread and I/O threads will wait for work in a busy loop that can appear as near 100% CPU utilization, even if the threads are relatively idle. New cumulative metrics for main and I/O thread usage make it easier to monitor your server’s true load and tune accordingly.</p>
+<p><strong>JSON Logging:</strong> Valkey can now emit server logs in JSON format with the <code>log-format json</code> configuration directive, making logs natively parseable by observability tools without custom parsing patterns. To emit logs in JSON format, add the following configuration to <code>valkey.conf</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">log-format</span><span style="color: #A5D6FF;"> json</span></span></code></pre>
+<p>Previously on plain text:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.508 * oO0OoO0OoO0Oo Valkey is starting oO0OoO0OoO0Oo</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.510 * Valkey version=255.255.255, bits=64, commit=6c329dfe, modified=0, pid=14082, just started</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.512 * Configuration loaded</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.515 * Increased maximum number of open files to 10032 (it was originally set to 2560).</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.517 * monotonic clock: ARM CNTVCT @ 24 ticks/us</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.519 # Failed to write PID file: Permission denied</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.521 * Running mode=standalone, port=6379.</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.522 # WARNING: The TCP backlog setting of 511 cannot be enforced because kern.ipc.somaxconn is set to the lower value of 128.</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.555 * Module &#39;lua&#39; loaded from libvalkeylua.so</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.556 * Server initialized</span></span>
+<span class="giallo-l"><span>14082:M 14 May 2026 14:12:43.557 * Ready to accept connections tcp</span></span></code></pre>
+<p>Each log line is a single JSON object:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="json"><span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.921&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;notice&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;oO0OoO0OoO0Oo Valkey is starting oO0OoO0OoO0Oo&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.922&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;notice&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;Valkey version=255.255.255, bits=64, commit=6c329dfe, modified=0, pid=14500, just started&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.923&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;notice&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;Configuration loaded&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.924&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;notice&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;Increased maximum number of open files to 10032 (it was originally set to 2560).&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.925&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;notice&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;monotonic clock: ARM CNTVCT @ 24 ticks/us&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.925&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;warning&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;Failed to write PID file: Permission denied&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.926&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;notice&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;Running mode=standalone, port=6379.&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.927&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;warning&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;WARNING: The TCP backlog setting of 511 cannot be enforced because kern.ipc.somaxconn is set to the lower value of 128.&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.928&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;notice&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;Module &#39;lua&#39; loaded from libvalkeylua.so&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.929&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;notice&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;Server initialized&quot;</span><span>}</span></span>
+<span class="giallo-l"><span>{</span><span style="color: #7EE787;">&quot;pid&quot;</span><span>:</span><span style="color: #79C0FF;">14500</span><span>,</span><span style="color: #7EE787;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;primary&quot;</span><span>,</span><span style="color: #7EE787;">&quot;timestamp&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;14 May 2026 14:13:02.930&quot;</span><span>,</span><span style="color: #7EE787;">&quot;level&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;notice&quot;</span><span>,</span><span style="color: #7EE787;">&quot;message&quot;</span><span>:</span><span style="color: #A5D6FF;">&quot;Ready to accept connections tcp&quot;</span><span>}</span></span></code></pre><h2 id="performance">Performance</h2>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/valkey-9-1_performance.png" alt="Performance: 2.1M requests per second on a single server" /></p>
+<p>Valkey 9.1.0 pushes single server throughput to 2.1 million requests per second using 512-byte payloads, 9 IO threads, and a pipeline depth of 10 commands. You can explore the full results and compare across versions on the <a rel="external" href="https://valkey.io/performance/">Valkey Performance Dashboards</a>.</p>
+<p>Notable performance enhancements in 9.1.0 include:</p>
+<p><strong>New IO threading model</strong>: A redesign of the IO threading communication model improves throughput by up to 17% for a variety of workload types.</p>
+<p><strong>Faster Stream Operations</strong>: The <a rel="external" href="https://valkey.io/commands/xrange/"><code>XRANGE</code></a> and <a rel="external" href="https://valkey.io/commands/xrevrange/"><code>XREVRANGE</code></a> commands are up to 30% faster thanks to <a rel="external" href="https://github.com/valkey-io/valkey/pull/3002">streams range hot path optimizations</a>.</p>
+<p><strong>Higher throughput GETs</strong>:  Raising the string embedding size threshold delivers up to 30% higher throughput for string GET commands.</p>
+<p><strong>Faster Sorted Set Queries</strong>: Improvements to skiplist query processing makes sorted set operations like <a rel="external" href="https://valkey.io/commands/zrangebyscore/"><code>ZRANGEBYSCORE</code></a> and <a rel="external" href="https://valkey.io/commands/zrangebylex/"><code>ZRANGEBYLEX</code></a> faster.</p>
+<p><strong>Cached COMMAND responses</strong>: <a rel="external" href="https://valkey.io/commands/command/"><code>COMMAND</code></a> responses are now cached. This may reduce connection establishment time for some clients which use this command as part of client initialization.</p>
+<p><strong>Enable Hardware Clock by default</strong>: Valkey now enables hardware clock use by default, reducing the overhead of time-related system calls and improving GET and SET performance by up to 3% overall.</p>
+<h2 id="efficiency">Efficiency</h2>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/valkey-9-1_efficiency.png" alt="Efficiency: Accelerated Faster Sorted Set Queries" /></p>
+<p>9.1.0 continues Valkey’s focus on memory efficiency and faster internal operations:</p>
+<p><strong>Reduced Memory Usage for Strings</strong>: Internal pointer optimizations bring up to a 20% memory reduction for strings under 128 bytes, delivering significant memory usage reduction for common use cases that store many small string values.</p>
+<p><strong>Reduced Memory Usage for Sorted Sets</strong>: Skiplist optimizations reduce sorted set memory usage by up to 10%.</p>
+<p><strong>Improved Rehashing Performance</strong>: Valkey 9.1.0 optimizes internal hash table rehashing (often triggered by keyspace growth) to reduce latency impact during rehashing operations.</p>
+<p><strong>Faster Bulk Delete Operations</strong>: Valkey now pauses internal hash table resizing during bulk delete operations like <a rel="external" href="https://valkey.io/commands/srem/"><code>SREM</code></a>, <a rel="external" href="https://valkey.io/commands/zrem/"><code>ZREM</code></a>, and <a rel="external" href="https://valkey.io/commands/hdel/"><code>HDEL</code></a> to avoid unnecessary rehashing operations and improve bulk deletion performance.</p>
+<p><strong>More Efficient Replica Creation</strong>: Replica creation with AOF enabled now reuses the received RDB file instead of generating a new snapshot for the initial AOF base file.</p>
+<h2 id="new-commands">New Commands</h2>
+<h3 id="hgetdel">HGETDEL</h3>
+<p>The new <a rel="external" href="https://valkey.io/commands/hgetdel/"><code>HGETDEL</code></a> command atomically retrieves and deletes one or more fields from a hash. This is useful for queue-like patterns where you need to consume and remove data in a single operation, eliminating the need to use a transaction with <a rel="external" href="https://valkey.io/commands/hget/"><code>HGET</code></a> followed by an <a rel="external" href="https://valkey.io/commands/hdel/"><code>HDEL</code></a>.</p>
+<p>Let's see a practical example showing a job hash where <code>status</code> and <code>payload</code> fields are atomically retrieved and removed in one call, leaving only the <code>retries</code> field behind.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> HSET job:42 status </span><span style="color: #A5D6FF;">&quot;pending&quot;</span><span> payload </span><span style="color: #A5D6FF;">&#39;{&quot;action&quot;:&quot;send_email&quot;}&#39;</span><span> retries </span><span style="color: #A5D6FF;">&quot;3&quot;</span></span>
+<span class="giallo-l"><span>(</span><span style="color: #FFA657;">integer</span><span>)</span><span style="color: #FFA657;"> 3</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> HGETDEL job:42 FIELDS 2 status payload</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">1</span><span>) </span><span style="color: #A5D6FF;">&quot;pending&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">2</span><span>) </span><span style="color: #A5D6FF;">&quot;{</span><span style="color: #FF7B72;">\&quot;</span><span style="color: #A5D6FF;">action</span><span style="color: #FF7B72;">\&quot;</span><span style="color: #A5D6FF;">:</span><span style="color: #FF7B72;">\&quot;</span><span style="color: #A5D6FF;">send_email</span><span style="color: #FF7B72;">\&quot;</span><span style="color: #A5D6FF;">}&quot;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> HGETALL job:42</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">1</span><span>) </span><span style="color: #A5D6FF;">&quot;retries&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">2</span><span>) </span><span style="color: #A5D6FF;">&quot;3&quot;</span></span></code></pre><h3 id="msetex">MSETEX</h3>
+<p>The new <a rel="external" href="https://valkey.io/commands/msetex/"><code>MSETEX</code></a> command allows you to set multiple keys with a shared expiration time in a single command. Previously, setting multiple keys with the same TTL required either multiple <a rel="external" href="https://valkey.io/commands/setex/"><code>SETEX</code></a> calls or a pipeline of <a rel="external" href="https://valkey.io/commands/set/"><code>SET</code></a> and <a rel="external" href="https://valkey.io/commands/expire/"><code>EXPIRE</code></a> commands. <a rel="external" href="https://valkey.io/commands/msetex/"><code>MSETEX</code></a> simplifies this common pattern and reduces round trips.</p>
+<p>Let's see two examples:</p>
+<ol>
+<li>Set 3 session keys that all expire in 3600 seconds</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> MSETEX 3 session:abc </span><span style="color: #A5D6FF;">&quot;user:1&quot;</span><span> session:def </span><span style="color: #A5D6FF;">&quot;user:2&quot;</span><span> session:ghi </span><span style="color: #A5D6FF;">&quot;user:3&quot;</span><span> EX 3600</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">OK</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> TTL session:abc</span></span>
+<span class="giallo-l"><span>(</span><span style="color: #FFA657;">integer</span><span>)</span><span style="color: #FFA657;"> 3600</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> GET session:def</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">&quot;user:2&quot;</span></span></code></pre>
+<ol start="2">
+<li>Use <code>NX</code> to only set keys that do not already exist</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> MSETEX 2 session:abc </span><span style="color: #A5D6FF;">&quot;user:99&quot;</span><span> session:xyz </span><span style="color: #A5D6FF;">&quot;user:4&quot;</span><span> NX EX 3600</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">OK</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> GET session:abc</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">&quot;user:1&quot;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> GET session:xyz</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">&quot;user:4&quot;</span></span></code></pre><h3 id="clusterscan">CLUSTERSCAN</h3>
+<p>The new <a rel="external" href="https://valkey.io/commands/clusterscan/"><code>CLUSTERSCAN</code></a> command enables cluster-wide key scanning across nodes. Previously, scanning all keys in a cluster required clients to independently <a rel="external" href="https://valkey.io/commands/scan/"><code>SCAN</code></a> each node and merge results. <a rel="external" href="https://valkey.io/commands/clusterscan/"><code>CLUSTERSCAN</code></a> provides a unified interface for iterating over keys across the entire cluster, simplifying client implementations and operational tooling.</p>
+<p>Let's explore some examples:</p>
+<ol>
+<li>Iterate over all keys in the cluster</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> CLUSTERSCAN 0</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">1</span><span>) </span><span style="color: #A5D6FF;">&quot;3&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">2</span><span>) 1) </span><span style="color: #A5D6FF;">&quot;user:1001&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   2</span><span>) </span><span style="color: #A5D6FF;">&quot;user:1002&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   3</span><span>) </span><span style="color: #A5D6FF;">&quot;session:abc&quot;</span></span></code></pre>
+<ol start="2">
+<li>Continue scanning with the returned cursor until it returns 0</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> CLUSTERSCAN 3</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">1</span><span>) </span><span style="color: #A5D6FF;">&quot;7&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">2</span><span>) 1) </span><span style="color: #A5D6FF;">&quot;cache:page1&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   2</span><span>) </span><span style="color: #A5D6FF;">&quot;order:5001&quot;</span></span></code></pre>
+<ol start="3">
+<li>Filter by pattern to find all session keys across the cluster</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> CLUSTERSCAN 0 MATCH </span><span style="color: #A5D6FF;">&quot;session:*&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">1</span><span>) </span><span style="color: #A5D6FF;">&quot;12&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">2</span><span>) 1) </span><span style="color: #A5D6FF;">&quot;session:abc&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   2</span><span>) </span><span style="color: #A5D6FF;">&quot;session:def&quot;</span></span></code></pre>
+<ol start="4">
+<li>Filter by key type</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> CLUSTERSCAN 0 TYPE hash</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">1</span><span>) </span><span style="color: #A5D6FF;">&quot;5&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">2</span><span>) 1) </span><span style="color: #A5D6FF;">&quot;user:profile:1001&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">   2</span><span>) </span><span style="color: #A5D6FF;">&quot;job:42&quot;</span></span></code></pre>
+<ol start="5">
+<li>Scan keys in a specific slot</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> CLUSTERSCAN 0 SLOT 7638</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">1</span><span>) </span><span style="color: #A5D6FF;">&quot;0&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">2</span><span>) 1) </span><span style="color: #A5D6FF;">&quot;user:1001&quot;</span></span></code></pre><h2 id="tooling">Tooling</h2>
+<p>Tooling improvements in 9.1.0 include:</p>
+<p><strong>CLI Support for Atomic Slot Migration</strong>: The Valkey CLI tool now supports atomic slot migration by providing the <code>--cluster-use-atomic-slot-migration</code> parameter when performing <code>--cluster rebalance</code> and <code>--cluster reshard</code> operations.</p>
+<p><strong>Benchmark Improvements:</strong> The <code>valkey-benchmark</code> tool now includes RPS distribution in the output and new <code>--warmup</code> and <code>--duration</code> parameters, giving users more control over benchmarking runs and more detailed performance analysis.</p>
+<h2 id="thank-you-to-our-contributors">Thank You to Our Contributors</h2>
+<p>Over eighty individual contributors made Valkey 9.1.0 possible. For the full list of changes, see the release notes on GitHub <a rel="external" href="https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc1">9.1.0-rc1</a> and <a rel="external" href="https://github.com/valkey-io/valkey/releases/tag/9.1.0-rc2">9.1.0-rc2</a>. Thank you to everyone who contributed code, reported issues, reviewed pull requests, and helped make this release possible. Valkey continues to get better because you helped make it that way.</p>
+<p>We encourage you to try Valkey 9.1.0 and share your feedback on <a rel="external" href="https://github.com/valkey-io/valkey">GitHub</a> and in the <a rel="external" href="https://valkey.io/community/">Valkey community</a>.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/jaduffy.png" alt="photo of Jeff Duffy" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Jeff Duffy</h4>
+    
+    <a target="_blank" href="https://github.com/jaduffy"><i class="icon icon-github-square"></i> @jaduffy</a>
+    
+    <p>Jeff Duffy is a product manager in the ElastiCache team at AWS focused on Valkey. He thinks two-wheeled vehicles are the superior form.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/rlunar.jpg" alt="photo of Roberto Luna-Rojas" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Roberto Luna-Rojas</h4>
+    
+    <a target="_blank" href="https://github.com/rlunar"><i class="icon icon-github-square"></i> @rlunar</a>
+    
+    <p>Roberto Luna Rojas is a Sr Developer Advocate for Valkey based in the USA, originally from Mexico. He tries to get the most out of in-memory databases one bit at the time. When not in front of the computer, he loves spending time with his family, listening to music, and watching movies, TV shows, and sports.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/&title=Valkey%209.1%20delivers%20improvements%20in%20security%2C%20performance%2C%20and%20more&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/">&laquo; Introducing Valkey Admin 1.0: Visual Cluster Management for Valkey</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/momento/">Caching up with the Community: A Conversation with Daniela Miao on Valkey and Momento &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

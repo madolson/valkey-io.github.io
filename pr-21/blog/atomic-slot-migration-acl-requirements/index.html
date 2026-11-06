@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//blog/atomic-slot-migration-acl-requirements/images/hero.png" />
+    
+    
+
+    <meta name="description" content="Explains the ACL permissions required by Atomic Slot Migration and how to debug permission failures" />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Analyzing Atomic Slot Migration ACL requirements</title>
+    <meta name="title" property="og:title" content="Valkey: Analyzing Atomic Slot Migration ACL requirements">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/blog/atomic-slot-migration-acl-requirements/images/hero.png" alt="Analyzing Atomic Slot Migration ACL requirements" class="feature-img">
+
+
+<h1>Analyzing Atomic Slot Migration ACL requirements</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2026-09-01
+  
+    &middot; 
+    
+      
+      
+      <em>Hieu Nguyen</em>
+    
+  
+</div>
+<p>Valkey 9.0 introduced Atomic Slot Migration (ASM), a new resharding mechanism that replaces the traditional key-by-key migration process with a replication-inspired approach. Instead of copying individual keys using <a rel="external" href="https://valkey.io/commands/migrate/"><code>MIGRATE</code></a>, the source node establishes a dedicated connection to the target node and streams the contents of the migrating hash slots, followed by incremental updates until both nodes are synchronized. Once synchronization completes, ownership of the slot is transferred atomically.</p>
+<p>Since ASM internally reuses much of the replication infrastructure, it is natural to assume that it can reuse the same ACL permissions as a replica (which includes permission to execute the command <a rel="external" href="https://valkey.io/commands/cluster-syncslots/"><code>CLUSTER SYNCSLOTS</code></a> also introduced in Valkey 9.0):</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>+psync +replconf +ping +cluster|syncslots</span></span></code></pre>
+<p>And with these permissions, when you execute <a rel="external" href="https://valkey.io/commands/cluster-migrateslots/"><code>CLUSTER MIGRATESLOTS</code></a> on a fresh cluster, it will complete successfully:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:30001&gt; CLUSTER MIGRATESLOTS SLOTSRANGE 0 0 NODE c5937fede5fa8d4e8aaf04070f2f95cbc0682793</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>127.0.0.1:30001&gt; CLUSTER GETSLOTMIGRATIONS</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>1) 1# &quot;name&quot; =&gt; &quot;556e352d6e43762a679c8146d589cdfd7a4511cd&quot;</span></span>
+<span class="giallo-l"><span>    2# &quot;operation&quot; =&gt; &quot;EXPORT&quot;</span></span>
+<span class="giallo-l"><span>    3# &quot;slot_ranges&quot; =&gt; &quot;0-0&quot;</span></span>
+<span class="giallo-l"><span>    4# &quot;target_node&quot; =&gt; &quot;c5937fede5fa8d4e8aaf04070f2f95cbc0682793&quot;</span></span>
+<span class="giallo-l"><span>    5# &quot;source_node&quot; =&gt; &quot;ff4819d483cf6aa47e76bc6e709f42f0bacee339&quot;</span></span>
+<span class="giallo-l"><span>    6# &quot;create_time&quot; =&gt; (integer) 1786075575</span></span>
+<span class="giallo-l"><span>    7# &quot;last_update_time&quot; =&gt; (integer) 1786075575</span></span>
+<span class="giallo-l"><span>    8# &quot;last_ack_time&quot; =&gt; (integer) 1786075575</span></span>
+<span class="giallo-l"><span>    9# &quot;state&quot; =&gt; &quot;success&quot;</span></span>
+<span class="giallo-l"><span>   10# &quot;message&quot; =&gt; &quot;&quot;</span></span>
+<span class="giallo-l"><span>   11# &quot;cow_size&quot; =&gt; (integer) 0</span></span>
+<span class="giallo-l"><span>   12# &quot;remaining_repl_size&quot; =&gt; (integer) 0</span></span></code></pre>
+<p>But if the slot contains data, the operation will fail:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:30001&gt; CLUSTER COUNTKEYSINSLOT 866</span></span>
+<span class="giallo-l"><span>(integer) 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>127.0.0.1:30001&gt; CLUSTER GETSLOTMIGRATIONS</span></span>
+<span class="giallo-l"><span>2)  1# &quot;name&quot; =&gt; &quot;8558969071de71819f291d0e1e9a8b6bc6a769d5&quot;</span></span>
+<span class="giallo-l"><span>    2# &quot;operation&quot; =&gt; &quot;EXPORT&quot;</span></span>
+<span class="giallo-l"><span>    3# &quot;slot_ranges&quot; =&gt; &quot;866-866&quot;</span></span>
+<span class="giallo-l"><span>    4# &quot;target_node&quot; =&gt; &quot;c5937fede5fa8d4e8aaf04070f2f95cbc0682793&quot;</span></span>
+<span class="giallo-l"><span>    5# &quot;source_node&quot; =&gt; &quot;ff4819d483cf6aa47e76bc6e709f42f0bacee339&quot;</span></span>
+<span class="giallo-l"><span>    6# &quot;create_time&quot; =&gt; (integer) 1786076572</span></span>
+<span class="giallo-l"><span>    7# &quot;last_update_time&quot; =&gt; (integer) 1786076572</span></span>
+<span class="giallo-l"><span>    8# &quot;last_ack_time&quot; =&gt; (integer) 1786076572</span></span>
+<span class="giallo-l"><span>    9# &quot;state&quot; =&gt; &quot;failed&quot;</span></span>
+<span class="giallo-l"><span>   10# &quot;message&quot; =&gt; &quot;Connection lost to target. Check CLUSTER GETSLOTMIGRATIONS on the target node for more information.&quot;</span></span>
+<span class="giallo-l"><span>   11# &quot;cow_size&quot; =&gt; (integer) 0</span></span>
+<span class="giallo-l"><span>   12# &quot;remaining_repl_size&quot; =&gt; (integer) 0</span></span></code></pre>
+<p>And the log of the target node will report that the operation failed due to the replication user not being permitted to write data (running <a rel="external" href="https://valkey.io/commands/set/"><code>SET</code></a> command):</p>
+<p><code># == CRITICAL == This slot-import-target is sending an error to its slot-import-source: '-NOPERM User replicator has no permissions to run the 'set' command' after processing the command 'set'</code></p>
+<p>This raises the question:</p>
+<blockquote>
+<p>If ASM behaves like replication, why does it require write access while replication does not?</p>
+</blockquote>
+<h2 id="why-does-asm-require-write-access-to-valkey">Why does ASM require write access to Valkey?</h2>
+<p>To understand this issue, you need to know what the difference is between ASM and a normal replication process. Specifically, about where the ASM and replication requests originate from.</p>
+<h3 id="how-the-normal-replication-process-works">How the (normal) replication process works</h3>
+<p>A normal replica establishes a replication link by authenticating to the primary and issuing:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>PING</span></span>
+<span class="giallo-l"><span>REPLCONF</span></span>
+<span class="giallo-l"><span>PSYNC</span></span></code></pre>
+<p>Once the primary accepts the request, it begins streaming an RDB snapshot followed by incremental replication data. In the source code (specifically, function <code>replicationCreatePrimaryClientWithHandler</code>), you can see that the user associated with this link is NULL:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span style="color: #FF7B72;">void</span><span style="color: #D2A8FF;"> replicationCreatePrimaryClientWithHandler</span><span>(connection </span><span style="color: #FF7B72;">*</span><span style="color: #FFA657;">conn</span><span>,</span><span style="color: #FF7B72;"> int</span><span style="color: #FFA657;"> dbid</span><span>, ConnectionCallbackFunc </span><span style="color: #FFA657;">handler</span><span>) {</span></span>
+<span class="giallo-l"><span> server.primary</span><span style="color: #FF7B72;"> =</span><span style="color: #D2A8FF;"> createClient</span><span>(conn);</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;"> if</span><span> (conn)</span><span style="color: #D2A8FF;"> connSetReadHandler</span><span>(server.primary-&gt;conn, handler);</span></span>
+<span class="giallo-l"><span> server.primary-&gt;flag.primary</span><span style="color: #FF7B72;"> =</span><span style="color: #79C0FF;"> 1</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;"> clientSetUser</span><span>(server.primary,</span><span style="color: #79C0FF;"> NULL</span><span>,</span><span style="color: #79C0FF;"> 1</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"> // removed for brevity</span></span>
+<span class="giallo-l"><span> server.primary-&gt;user</span><span style="color: #FF7B72;"> =</span><span style="color: #79C0FF;"> NULL</span><span>;</span><span style="color: #8B949E;"> /* This client can do everything. */</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"> // removed for brevity</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>As noted in the comment above, when no user is associated with a connection, it is treated as a superuser client and can do everything. You can also verify this client's capability by looking at the function <code>ACLCheckAllUserCommandPerm</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span style="color: #8B949E;">/* Lower level API that checks if a specified user is able to execute a given command.</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">* If the command fails an ACL check, idxptr will be to set to the first argv entry that</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">* causes the failure, either 0 if the command itself fails or the idx of the key/channel</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">* that causes the failure */</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">int</span><span style="color: #D2A8FF;"> ACLCheckAllUserCommandPerm</span><span>(user </span><span style="color: #FF7B72;">*</span><span style="color: #FFA657;">u</span><span>,</span><span style="color: #FF7B72;"> struct</span><span> serverCommand</span><span style="color: #FF7B72;">*</span><span style="color: #FFA657;">cmd</span><span>, robj </span><span style="color: #FF7B72;">**</span><span style="color: #FFA657;">argv</span><span>,</span><span style="color: #FF7B72;"> int</span><span style="color: #FFA657;"> argc</span><span>,</span><span style="color: #FF7B72;"> int</span><span style="color: #FFA657;"> dbid</span><span>,</span><span style="color: #FF7B72;"> int *</span><span style="color: #FFA657;">idxptr</span><span>) {</span></span>
+<span class="giallo-l"><span> listIter li;</span></span>
+<span class="giallo-l"><span> listNode </span><span style="color: #FF7B72;">*</span><span>ln;</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"> /* If there is no associated user, the connection can run anything.*/</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;"> if</span><span> (u </span><span style="color: #FF7B72;">==</span><span style="color: #79C0FF;"> NULL</span><span>)</span><span style="color: #FF7B72;"> return</span><span> ACL_OK;</span></span>
+<span class="giallo-l"><span style="color: #8B949E;"> // removed for brevity</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>So, the replication user only needs permission to keep the connection alive (<a rel="external" href="https://valkey.io/commands/ping"><code>PING</code></a>) and fetch the data from the primary (<a rel="external" href="https://valkey.io/commands/psync"><code>PSYNC</code></a>, <a rel="external" href="https://valkey.io/commands/replconf"><code>REPLCONF</code></a>). Those data are then applied to the replica as a superuser; thus, the replication user does not need any write permissions.</p>
+<h3 id="how-asm-connection-works">How ASM connection works</h3>
+<p>While ASM also copies data using the replication process (and using the <code>primaryuser</code> credentials), instead of having the target node pulling data from the current owner, it is the current slot owner pushing data to the target.
+You can verify this by attaching a GDB debug session to the target valkey-server process, and setting a breakpoint at the function <code>afterErrorReply</code> (where the log entry <code>== CRITICAL == This slot-import-target...</code> is created):</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span>gdb </span><span style="color: #FF7B72;">-</span><span>ex </span><span style="color: #A5D6FF;">&#39;break afterErrorReply&#39;</span><span style="color: #FF7B72;"> -</span><span>ex </span><span style="color: #A5D6FF;">&#39;continue&#39;</span><span style="color: #FF7B72;"> -</span><span>p </span><span style="color: #FF7B72;">&lt;</span><span>target valkey</span><span style="color: #FF7B72;">-</span><span>server PID</span><span style="color: #FF7B72;">&gt;</span></span></code></pre>
+<p><code>SET</code>ting some keys and then migrating the hash slot:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:30002&gt; SET hello world</span></span>
+<span class="giallo-l"><span>-&gt; Redirected to slot [866] located at 127.0.0.1:30001</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>127.0.0.1:30001&gt; CLUSTER MIGRATESLOTS SLOTSRANGE 866 866 NODE &lt;target node ID&gt;</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Go back to the GDB session, the process has hit the breakpoint that was set earlier:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span>Thread </span><span style="color: #79C0FF;">1</span><span style="color: #A5D6FF;"> &quot;valkey-server&quot;</span><span> hit Breakpoint </span><span style="color: #79C0FF;">1.5</span><span>,</span><span style="color: #D2A8FF;"> afterErrorReply</span><span> (flags</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">0</span><span>, len</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">62</span><span>, s</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9ea47203</span><span style="color: #A5D6FF;"> &quot;-NOPERM User replicator has no permissions to run the &#39;set&#39; command&quot;</span><span>, c</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9e49a500</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>networking.c:</span><span style="color: #79C0FF;">848</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">848</span><span style="color: #FF7B72;">     void</span><span style="color: #D2A8FF;"> afterErrorReply</span><span>(client </span><span style="color: #FF7B72;">*</span><span style="color: #FFA657;">c</span><span>,</span><span style="color: #FF7B72;"> const char*</span><span style="color: #FFA657;">s</span><span>,</span><span style="color: #FF7B72;"> size_t</span><span style="color: #FFA657;"> len</span><span>,</span><span style="color: #FF7B72;"> int</span><span style="color: #FFA657;"> flags</span><span>) {</span></span>
+<span class="giallo-l"><span>(gdb)</span></span></code></pre>
+<p>Going down the stacktrace, you can find that the hash slot data is being imported in the function <code>processCommand</code> (being the frame right before the error <code>NOPERM</code>):</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span>(gdb) backtrace</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">0</span><span style="color: #D2A8FF;">  afterErrorReply</span><span> (flags</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">0</span><span>, len</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">62</span><span>, s</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9ea47203</span><span style="color: #A5D6FF;"> &quot;-NOPERM User replicator has no permissions to run the &#39;set&#39; command&quot;</span><span>, c</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9e49a500</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>networking.c:</span><span style="color: #79C0FF;">848</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">1</span><span style="color: #D2A8FF;">  addReplyErrorSdsEx</span><span> (c</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9e49a500</span><span>, err</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9ea47203</span><span style="color: #A5D6FF;"> &quot;-NOPERM User replicator has no permissions to run the &#39;set&#39; command&quot;</span><span>, flags</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">0</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>networking.c:</span><span style="color: #79C0FF;">991</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">2</span><span style="color: #FF7B72;">  0x</span><span style="color: #79C0FF;">0000aaaab5c44db4</span><span> in </span><span style="color: #D2A8FF;">rejectCommandFormat</span><span> (c</span><span style="color: #FF7B72;">=</span><span>c@entry</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9e49a500</span><span>, notify_modules</span><span style="color: #FF7B72;">=</span><span>notify_modules@entry</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">0</span><span>, fmt</span><span style="color: #FF7B72;">=</span><span>fmt@entry</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">aaaab5dbf060</span><span style="color: #A5D6FF;"> &quot;-NOPERM </span><span style="color: #FF7B72;">%s</span><span style="color: #A5D6FF;">&quot;</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>server.c:</span><span style="color: #79C0FF;">4134</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">3</span><span style="color: #FF7B72;">  0x</span><span style="color: #79C0FF;">0000aaaab5c47348</span><span> in </span><span style="color: #D2A8FF;">processCommand</span><span> (c</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9e49a500</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>server.c:</span><span style="color: #79C0FF;">4391</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">4</span><span style="color: #FF7B72;">  0x</span><span style="color: #79C0FF;">0000aaaab5be6fb0</span><span> in </span><span style="color: #D2A8FF;">processCommandAndResetClient</span><span> (c</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9e49a500</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>networking.c:</span><span style="color: #79C0FF;">3919</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">5</span><span style="color: #D2A8FF;">  processInputBuffer</span><span> (c</span><span style="color: #FF7B72;">=</span><span>c@entry</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9e49a500</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>networking.c:</span><span style="color: #79C0FF;">4222</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">6</span><span style="color: #FF7B72;">  0x</span><span style="color: #79C0FF;">0000aaaab5be7484</span><span> in </span><span style="color: #D2A8FF;">readQueryFromClient</span><span> (conn</span><span style="color: #FF7B72;">=&lt;</span><span>optimized out</span><span style="color: #FF7B72;">&gt;</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>networking.c:</span><span style="color: #79C0FF;">4335</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">7</span><span style="color: #FF7B72;">  0x</span><span style="color: #79C0FF;">0000aaaab5c52d98</span><span> in </span><span style="color: #D2A8FF;">callHandler</span><span> (handler</span><span style="color: #FF7B72;">=&lt;</span><span>optimized out</span><span style="color: #FF7B72;">&gt;</span><span>, conn</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9ea46d80</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>connhelpers.h:</span><span style="color: #79C0FF;">79</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">8</span><span style="color: #D2A8FF;">  connSocketEventHandler</span><span> (el</span><span style="color: #FF7B72;">=&lt;</span><span>optimized out</span><span style="color: #FF7B72;">&gt;</span><span>, fd</span><span style="color: #FF7B72;">=&lt;</span><span>optimized out</span><span style="color: #FF7B72;">&gt;</span><span>, clientData</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9ea46d80</span><span>, mask</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">1</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>socket.c:</span><span style="color: #79C0FF;">301</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">9</span><span style="color: #FF7B72;">  0x</span><span style="color: #79C0FF;">0000aaaab5b16f60</span><span> in </span><span style="color: #D2A8FF;">aeProcessEvents</span><span> (flags</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">27</span><span>, eventLoop</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9ea53140</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>ae.c:</span><span style="color: #79C0FF;">486</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">10</span><span style="color: #D2A8FF;"> aeProcessEvents</span><span> (flags</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">27</span><span>, eventLoop</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9ea53140</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>ae.c:</span><span style="color: #79C0FF;">411</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">11</span><span style="color: #D2A8FF;"> aeMain</span><span> (eventLoop</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9ea53140</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>ae.c:</span><span style="color: #79C0FF;">543</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">12</span><span style="color: #FF7B72;"> 0x</span><span style="color: #79C0FF;">0000aaaab5b080fc</span><span> in </span><span style="color: #D2A8FF;">main</span><span> (argc</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">35</span><span>, argv</span><span style="color: #FF7B72;">=&lt;</span><span>optimized out</span><span style="color: #FF7B72;">&gt;</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>server.c:</span><span style="color: #79C0FF;">7765</span></span></code></pre>
+<p>By printing the argument of <code>processCommand</code>, you can see what is being sent from the current slot owner:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span>(gdb) frame </span><span style="color: #79C0FF;">3</span></span>
+<span class="giallo-l"><span># </span><span style="color: #79C0FF;">3</span><span style="color: #FF7B72;">  0x</span><span style="color: #79C0FF;">0000aaaab5c47348</span><span> in </span><span style="color: #D2A8FF;">processCommand</span><span> (c</span><span style="color: #FF7B72;">=0x</span><span style="color: #79C0FF;">ffff9e49a500</span><span>) at </span><span style="color: #FF7B72;">/</span><span>opt</span><span style="color: #FF7B72;">/</span><span>valkey</span><span style="color: #FF7B72;">/</span><span>src</span><span style="color: #FF7B72;">/</span><span>server.c:</span><span style="color: #79C0FF;">4391</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">4391</span><span style="color: #D2A8FF;">            rejectCommandFormat</span><span>(c,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #A5D6FF;"> &quot;-NOPERM </span><span style="color: #FF7B72;">%s</span><span style="color: #A5D6FF;">&quot;</span><span>, msg);</span></span>
+<span class="giallo-l"><span>(gdb) print c</span><span style="color: #FF7B72;">-&gt;</span><span>querybuf</span></span>
+<span class="giallo-l"><span>$</span><span style="color: #79C0FF;">16</span><span style="color: #FF7B72;"> =</span><span> (sds)</span><span style="color: #FF7B72;"> 0x</span><span style="color: #79C0FF;">ffff9ebf6005</span><span style="color: #A5D6FF;"> &quot;*3</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">$3</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">SET</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">$5</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">hello</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">$5</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">world</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">*3</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">$7</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">CLUSTER</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">$9</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">SYNCSLOTS</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">$12</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">SNAPSHOT-EOF</span><span style="color: #FF7B72;">\r\n</span><span style="color: #A5D6FF;">&quot;</span></span></code></pre>
+<p>So the target node is asked to process <code>SET hello world</code> and <code>CLUSTER SYNCSLOTS SNAPSHOT-EOF</code> (You can read more about how to understand the RESP format in <a rel="external" href="https://valkey.io/topics/protocol/">Valkey Serialization Protocol Specification</a>). And these commands are being sent by the replication user instead of the internal superuser like in the replication process:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span>(gdb) p </span><span style="color: #FF7B72;">*</span><span>c</span><span style="color: #FF7B72;">-&gt;</span><span>user</span></span>
+<span class="giallo-l"><span>$</span><span style="color: #79C0FF;">20</span><span style="color: #FF7B72;"> =</span><span> {</span></span>
+<span class="giallo-l"><span>  name </span><span style="color: #FF7B72;">= 0x</span><span style="color: #79C0FF;">ffff9ea377d1</span><span style="color: #A5D6FF;"> &quot;replicator&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>  flags </span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;"> 9</span><span>,</span></span>
+<span class="giallo-l"><span>  passwords </span><span style="color: #FF7B72;">= 0x</span><span style="color: #79C0FF;">ffff9ea3a990</span><span>,</span></span>
+<span class="giallo-l"><span>  selectors </span><span style="color: #FF7B72;">= 0x</span><span style="color: #79C0FF;">ffff9ea3a9c0</span><span>,</span></span>
+<span class="giallo-l"><span>  acl_string </span><span style="color: #FF7B72;">= 0x</span><span style="color: #79C0FF;">0</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="why-doesn-t-asm-use-the-superuser">Why doesn't ASM use the superuser?</h3>
+<p>One might naturally expect ASM to simply operate with superuser privileges. However, there is no technical mechanism to differentiate a legitimate ASM link from any arbitrary connection that has been granted permission to execute <code>CLUSTER SYNCSLOTS</code>. To give ASM superuser access under this constraint, the <code>CLUSTER SYNCSLOTS</code> command itself would have to implicitly escalate the connection's privileges.</p>
+<p>Hidden privilege escalations like this are a common attack vector in database systems, where a simple misconfiguration can lead to a full database compromise. While it requires more upfront configuration, utilizing a dedicated replication user produces a significantly more secure feature. This design adheres to the <strong>Principle of Least Privilege</strong> by ensuring entities only operate with the minimum permissions necessary to function, rather than implicitly upgrading a client's authority.</p>
+<h2 id="so-what-permissions-does-asm-actually-need">So what permissions does ASM actually need?</h2>
+<p>Since ASM sends data as any ordinary client, it needs the permission to do that. It will also need to be granted permission for <a rel="external" href="https://valkey.io/commands/select"><code>SELECT</code></a>, as starting with version 9.0, Valkey cluster supports multiple databases. Also, as the <code>@write</code> category also includes destructive commands like <a rel="external" href="https://valkey.io/commands/flushdb"><code>FLUSHDB</code></a> and <a rel="external" href="https://valkey.io/commands/flushall"><code>FLUSHALL</code></a>, you need to exclude them (<a rel="external" href="https://valkey.io/commands/del"><code>DEL</code></a> and <a rel="external" href="https://valkey.io/commands/unlink"><code>UNLINK</code></a> are not excluded because they can still appear in AOF file):</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>+@write ~* -@dangerous +select -flushall -flushdb -restore -restore-asking</span></span></code></pre>
+<p>So the replication user (specified by the config parameter <code>primaryuser</code>) will need the following ACL permissions:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>+@write ~* -@dangerous +ping +select +psync +replconf +cluster|syncslots -flushall -flushdb -restore -restore-asking</span></span></code></pre>
+<p>Note that the order of ACL rules matters. For example, <code>PSYNC</code> is a dangerous command, so the ACL rules <code>+psync -@dangerous</code> will prevent the user from running <code>PSYNC</code>, while <code>-@dangerous +psync</code> will forbid the user from running any dangerous commands except <code>PSYNC</code>.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Although ASM reuses Valkey’s replication infrastructure, its ACL requirements differ from normal replication because migrated commands are executed on the target as the authenticated <code>primaryuser</code>, rather than an internal super-user client. This means migrating populated slots requires write access in addition to the usual replication permissions.</p>
+<p>For ASM to work correctly, the replication user therefore needs <code>+@write ~* -@dangerous +ping +select +psync +replconf +cluster|syncslots -flushall -flushdb -restore -restore-asking</code>.</p>
+<p>Have thoughts on how <code>CLUSTER MIGRATESLOTS</code> should authenticate across shards? Join the discussion in <a rel="external" href="https://github.com/valkey-io/valkey/issues/2392">Issue 2392 in Valkey GitHub repository</a>.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/hieun.jpg" alt="photo of Hieu Nguyen" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Hieu Nguyen</h4>
+    
+    <a target="_blank" href="https://github.com/hieu2102"><i class="icon icon-github-square"></i> @hieu2102</a>
+    
+    <p>Hieu Nguyen is a Database Engineer at Percona where he helps customers debug and fix their database issues. Outside of work, he dabbles in writing video game mods.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration-acl-requirements/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration-acl-requirements/&title=Analyzing%20Atomic%20Slot%20Migration%20ACL%20requirements&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration-acl-requirements/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/what-is-valkey-benchmark/">&laquo; Simulating Real Workloads with valkey-benchmark</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/finding-big-keys-in-a-running-valkey-cluster/">Finding big keys in a running Valkey cluster with Valkey Admin &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

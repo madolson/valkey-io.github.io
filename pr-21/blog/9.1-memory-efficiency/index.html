@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-07.webp" />
+    
+    
+
+    <meta name="description" content="With Valkey 9.1, per-key memory overhead is cut by up to 44% for strings and up to 8.5 bytes per sorted set member, without changing a single command or configuration." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Reducing Memory Overhead in Valkey 9.1</title>
+    <meta name="title" property="og:title" content="Valkey: Reducing Memory Overhead in Valkey 9.1">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-07.webp" alt="Reducing Memory Overhead in Valkey 9.1" class="feature-img">
+
+
+<h1>Reducing Memory Overhead in Valkey 9.1</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2026-08-13
+  
+    &middot; 
+    
+      
+      
+      <em>Dragos Andriciuc</em>,
+    
+      
+      
+      <em>Rain Valentine</em>
+    
+  
+</div>
+<p>Valkey 9.1 introduces three optimizations that reduce the per-key memory overhead without requiring any new commands or configuration changes.</p>
+<p>These reduce the memory required to store strings and sorted sets, up to 44% overhead for string keys and up to 8.5 bytes per sorted set member for typical short members. These savings add up quickly when millions of keys are in use.</p>
+<p>This blog post explores how these optimizations work and what they mean for your real-world deployments.</p>
+<h2 id="the-cost-of-internal-recordkeeping">The Cost of Internal Recordkeeping</h2>
+<p>In Valkey, the values live inside an <code>robj</code>, a ref-counted object.</p>
+<p>Valkey does not store every value of a given type the same way internally. Depending on its size and structure, the same logical string or sorted set can be represented in memory using different physical layouts. Valkey calls these layouts <strong>encodings</strong>, and you can check which encoding a key is using at any time with <code>OBJECT ENCODING</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> OBJECT ENCODING key</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">&quot;embstr&quot;</span></span></code></pre>
+<p>Choosing the right encoding based on a value's size helps Valkey balance memory use and performance.</p>
+<p>One such encoding is <code>embstr</code>, the optimized memory encoding for small strings. Instead of storing the string data as a separate allocation, the string is placed immediately after the <code>robj</code> header in the same contiguous block of memory. The simplified layout before Valkey 9.1:</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/embstr_memory_before_9.1.svg" alt="embstr memory before" /></p>
+<p>This structure represents not only your data, but also metadata, flags, reference counts, and a pointer (<code>ptr</code>) to the actual value. For <code>raw</code> encoding, where the string lives in a separate allocation elsewhere in memory, that pointer is necessary. But <code>embstr</code> encoding guarantees the string sits immediately after the <code>robj</code> header, always in the same fixed offset, so its location is always computable. Storing a pointer to something you can always compute is redundant.</p>
+<h3 id="eliminating-the-redundant-pointer">Eliminating the Redundant Pointer</h3>
+<p>After the changes in Valkey 9.1, the <code>ptr</code> field is removed from the embedded string layout by reusing its 8-byte slot to store the beginning of the embedded string itself. Because the string's location is deterministic, Valkey now computes its address on demand using pointer arithmetic instead of storing an explicit pointer. The new layout looks like this:</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/embstr_memory_after_9.1.svg" alt="embstr memory after" /></p>
+<p>The result is that every value stored with <code>embstr</code> encoding shrinks by 8 bytes at the struct level. Whether that translates into a real memory saving depends on jemalloc's allocation rounding, more on that below.</p>
+<h3 id="raising-the-embstr-threshold-from-64-to-128-bytes">Raising the <code>embstr</code> Threshold from 64 to 128 Bytes</h3>
+<p>Removing this redundant pointer reduced the size of every embedded string object. Because the <code>robj</code> header itself got smaller, this means the same total allocation budget now accommodates more actual string content.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/raise_embstr_threshold_before.svg" alt="raise embstr threshold before" /></p>
+<p>Raising this threshold to 128 bytes (covering the full robj size including key, expiry metadata, and value) means more string sizes now qualify for the more compact <code>embstr</code> layout instead of falling through the <code>raw</code> encoding.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/raise_embstr_threshold_after.svg" alt="raise embstr threshold after" /></p>
+<p>Any key returning <code>embstr</code> benefits from both of the above optimizations with no extra configuration required.</p>
+<p>The saving per key is not a flat number. Because Valkey allocates memory through jemalloc, requests are rounded up to fixed size classes rather than granting the exact byte count requested. In practice this produces overhead reductions ranging from roughly 17% to 44%, averaging around 26%.</p>
+<p><em>(Note: Measured across a range of key+value sizes, 5 million items per test, Valkey 9.0 compared to 9.1.)</em></p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/jemalloc_waste_chart.svg" alt="jemalloc waste chart" /></p>
+<p>The exact saving depends on where your key+value sizes fall relative to jemalloc's size class boundaries.</p>
+<h3 id="optimizing-sorted-sets-to-reduce-overhead">Optimizing Sorted Sets to Reduce Overhead</h3>
+<p>The final improvement in Valkey 9.1 targets Sorted Sets, where the sets also received a memory reduction for workloads that use the <code>skiplist</code> encoding representation.</p>
+<p>In the default configuration, once a sorted set grows beyond 128 elements, or if a single member exceeds 64 bytes (the default thresholds), Valkey stores it internally using the skiplist encoding. Before Valkey 9.1, each skiplist node contained a pointer to a separately allocated SDS string representing the member.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/optimize_sorted_sets_before.svg" alt="sorted sets before" /></p>
+<p><em>Note: SDS (Simple Dynamic String) is Valkey's internal  dynamic string implementation. Most keys, string values, and many internal data structures are stored as SDS objects.</em></p>
+<p>Sorted set members are typically short and immutable. Once a member is added to a sorted set, its value never changes in place, so there is no risk of the embedded string needing to grow and disrupt a node's layout later. Because the embedded data now sits at the end of the allocation, it does not shift the position of the other fields (score, backward pointer) that the rest of the skiplist logic depends upon.</p>
+<p>In Valkey 9.1, the SDS representation is embedded directly inside the <code>skiplist</code> node instead of being stored as a separate pointer:</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/optimize_sorted_sets_after.svg" alt="sorted sets after" /></p>
+<p>The actual saving depends on member length, for the same reason string savings varied earlier: merging the separate member allocation into the skiplist node changes how jemalloc rounds the resulting allocation size. For typical short members (10-40 bytes), 9.1 saves roughly 6-8.5 bytes per member which is about 11-15% of per-member overhead. A handful of specific lengths see little or no benefit, and a few see a small regression, so the real number for your workload depends on your actual member sizes.</p>
+<h2 id="quantifying-the-impact">Quantifying the Impact</h2>
+<p>The above improvements effectiveness vary by workload, key sizes and data type mixes. However, as a practical reference:</p>
+<table><thead><tr><th>Change</th><th>Affected encoding</th><th style="text-align: right">Struct-level change</th><th style="text-align: right">Measured overhead reduction</th></tr></thead><tbody>
+<tr><td>Remove <code>robj-&gt;ptr</code></td><td><code>embstr</code> strings</td><td style="text-align: right">-8 bytes</td><td style="text-align: right">17-44% (avg. 26%)</td></tr>
+<tr><td>Raise <code>embstr</code> threshold to 128 bytes</td><td>Objects newly eligible under the raised threshold</td><td style="text-align: right">-8 bytes (newly applies)</td><td style="text-align: right">included in range above</td></tr>
+<tr><td>Embed element SDS inside skiplist node</td><td>Sorted set members (skiplist encoding)</td><td style="text-align: right">-8.5 bytes (max)</td><td style="text-align: right">11-15% for members 10-40B</td></tr>
+</tbody></table>
+<h2 id="what-this-means-for-production">What This Means for Production</h2>
+<p>These improvements are transparent and you do not need to change your configuration, commands, or application code. The savings activate automatically on upgrade to Valkey 9.1.</p>
+<p>For clusters that are operating near memory limits, these no configuration required reductions may bring you back into having a comfortable headroom. However the impact is most pronounced for workloads dominated by small strings or large sorted sets.</p>
+<p>If you are utilizing Valkey as a dedicated cache running near full capacity with an eviction policy such as <code>allkeys-lru</code>, these memory savings effectively increase your cache capacity. With more data fitting into the same amount of memory, your cache may achieve a higher hit rate without requiring any changes.</p>
+<h2 id="try-this-against-your-own-workload">Try This Against Your Own Workload</h2>
+<p>None of the above matters until you check it against real keys. Here's how to find out what Valkey 9.1 is worth to you specifically.</p>
+<p>Pick a handful of representative keys from your production deployment and run <code>MEMORY USAGE</code> and <code>OBJECT ENCODING</code> on a 9.0 instance versus a 9.1 instance where <code>MEMORY USAGE</code> gives you the byte count, <code>OBJECT ENCODING</code> tells you which layout produced it:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> MEMORY USAGE session:abc123</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">&gt;</span><span> OBJECT ENCODING session:abc123</span></span></code></pre>
+<p>A key converts from <code>raw</code> to <code>embstr</code> once its combined key+expiry+value size falls within the new 128-byte budget. A restart alone is enough to trigger it, since RDB and AOF reload re-applies encoding logic. If a key reports <code>embstr</code> where it used to report <code>raw</code>, that key just got cheaper to store. Multiply the byte difference by your key count and you have the real number, not just an estimate.</p>
+<p>For sorted sets, the savings depend on your member lengths where short members (10 to 40 bytes) see the most benefit, roughly 11-15% of per-member overhead. Compare <code>MEMORY USAGE</code> on a representative sorted set before and after upgrading to see what your actual member sizes yield, since the exact number varies by length in the same allocator-rounding way string savings do.</p>
+<p>The memory you get back by simply moving to 9.1 and measuring what has changed is the real upgrade.</p>
+<h2 id="reference-prs">Reference PRs</h2>
+<ul>
+<li><a rel="external" href="https://github.com/valkey-io/valkey/pull/2516">PR 2516 — Remove redundant robj-&gt;ptr for embstr encoding</a></li>
+<li><a rel="external" href="https://github.com/valkey-io/valkey/pull/3397">PR 3397 — Raise embstr threshold from 64 to 128 bytes</a></li>
+<li><a rel="external" href="https://github.com/valkey-io/valkey/pull/2508">PR 2508 — Optimize memory usage by embedding element in skiplist</a></li>
+</ul>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/dragosandriciuc.jpg" alt="photo of Dragos Andriciuc" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Dragos Andriciuc</h4>
+    
+    <a target="_blank" href="https://github.com/Andriciuc"><i class="icon icon-github-square"></i> @Andriciuc</a>
+    
+    <p>Dragos Andriciuc is a Senior Technical Educator for Valkey at Percona where he creates technical content, blogs, and upstream documentation to help users and the community better understand Valkey. A Romanian national based in a small town outside of the capital of Bucharest, he studied Computer Science at Sheffield University and started to work in the technical writing field. He enjoys scuba diving, practicing airsoft, and spending time with his family.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/rainvalentine.png" alt="photo of Rain Valentine" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Rain Valentine</h4>
+    
+    <a target="_blank" href="https://github.com/rainsupreme"><i class="icon icon-github-square"></i> @rainsupreme</a>
+    
+    <p>Rain Valentine is a software engineer at AWS working on Valkey's core data structures and performance. Her contributions include a B+ tree ordered index for sorted sets, improvements to the core hashtable, and more compact string storage — plus benchmarking and performance characterization across ARM, AMD, and Intel platforms.
+Rain skipped grad school partly to avoid writing papers and giving presentations, so it's kind of funny that people keep recruiting her for blog posts and putting her behind a podium.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/&title=Reducing%20Memory%20Overhead%20in%20Valkey%209.1&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/modern-ai-workloads-mapping-to-valkey/">&laquo; How modern AI workloads map to Valkey primitives</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/what-is-valkey-benchmark/">Simulating Real Workloads with valkey-benchmark &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

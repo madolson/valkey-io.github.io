@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-04.webp" />
+    
+    
+
+    <meta name="description" content="Learn about the internal workings of cluster mode and the improvements which helped to scale to 1 Billion RPS with the latest Valkey 9.0 release" />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Scaling a Valkey Cluster to 1 Billion Request per Second</title>
+    <meta name="title" property="og:title" content="Valkey: Scaling a Valkey Cluster to 1 Billion Request per Second">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-04.webp" alt="Scaling a Valkey Cluster to 1 Billion Request per Second" class="feature-img">
+
+
+<h1>Scaling a Valkey Cluster to 1 Billion Request per Second</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2025-10-20
+  
+    &middot; 
+    
+      
+      
+      <em>Harkrishn Patro</em>,
+    
+      
+      
+      <em>Mahesh Cherukumilli</em>,
+    
+      
+      
+      <em>Sarthak Aggarwal</em>,
+    
+      
+      
+      <em>Seungmin Lee</em>
+    
+  
+</div>
+<p>The upcoming Valkey 9.0 release brings major improvements in the resilience of large clusters, enabling scaling to 2,000 nodes and achieving over 1 billion requests per second, all while ensuring bounded recovery time.
+In this blog post, we provide an overview of how the Valkey clustering system works, along with the architectural improvements and rigorous testing that made this level of scale possible.</p>
+<p>Valkey’s standalone configuration is a single server setup with optional replicas for availability, but all writes flow to one primary. It is one process, one dataset, zero coordination, blazing fast and simple to operate when a single machine’s CPU, memory, and NIC can carry the load. However, Valkey at-scale moves past single node limits.</p>
+<p>Valkey’s cluster mode shards the keyspace into <strong>16,384 hash slots</strong> and spreads them across multiple primaries with replicas for redundancy. Clients are cluster aware: they route commands directly to the node owning the slot and follow redirections during resharding or failover. The result is horizontal scalability, balanced throughput, and built in fault tolerance without a central coordinator. Behind the scenes, the cluster bus keeps this distributed system coherent, coordinating membership, gossip, and failover.
+<img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/1-billion-rps/1B-rps-overview.png" alt="Diagram showcasing different operational mode" /></p>
+<h2 id="cluster-bus-overview">Cluster Bus Overview</h2>
+<p>Under the hood, nodes coordinate over the cluster bus a persistent TCP mesh with a lightweight, gossip-based protocol. It handles <code>MEET</code> (discovery), <code>PING</code>/<code>PONG</code> heartbeats with piggybacked cluster topology, quorum-based <code>FAIL</code> decisions, replica promotion elections, and epoch-based conflict resolution so the cluster converges cleanly after partitions. Since membership, health, and slot ownership flow through gossip, it allows Valkey to scale to large node counts while remaining resilient to node and network failures.</p>
+<h3 id="membership-discovery-and-information-dissemination-gossip">Membership Discovery and Information Dissemination (Gossip)</h3>
+<p>Nodes join a Valkey cluster by sending a <code>MEET</code> message to any existing member (a seed). From there, the cluster bus, a mesh of persistent TCP links which spreads membership and topology using lightweight gossip of peers piggybacked on periodic PING/PONG heartbeats. This peer-to-peer exchange quickly converges every node in the cluster and which slots each primary owns, without any central coordinator.
+<img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/1-billion-rps/1B-rps-node-discovery.png" alt="Diagram showcasing membership discovery and mesh topology formation" /></p>
+<h3 id="cluster-bus-failure-detection-failover-and-epoch-update">Cluster Bus: Failure Detection, Failover, and Epoch Update</h3>
+<p>When a node misses heartbeats beyond the configurable node-timeout, peers mark it potentially failed (<code>PFAIL</code> - suspect). If a quorum of primaries observes the timeout, they declare <code>FAIL</code> and initiate failover: the replica(s) of the failed primary becomes candidate to take over the ownership of the shard and send vote requests to all the primaries. Primaries respond and the winner is promoted to serve the affected slots. Clients that hit the old owner receive <code>MOVED/ASK</code> and transparently retry against the new primary.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/1-billion-rps/1B-rps-failover.png" alt="Diagram showcasing failure detection and failover" /></p>
+<h2 id="major-improvements-to-scale-cluster-bus-in-valkey">Major improvements to scale Cluster Bus in Valkey</h2>
+<p>Across multiple major/minor versions, the community has improved cluster stability a lot and have made multiple changes to handle various failure scenarios to heal the system in a steady manner and avoid any manual intervention. Here are few of the interesting improvements:</p>
+<ul>
+<li><strong>Multiple primary failures</strong> Failover operation across cluster is serialized. Hence, only one shard can undergo failover at a given point in time. When there are multiple primary outages across the cluster, it used to lead to collision of vote request from replica candidates of impacted shards. Due to the collision, the votes would get split and the cluster won’t reach to consensus of promoting a replica in a given cycle. With a large number of primaries failing, the cluster won’t heal automatically and further an administrator needs to manually intervene.
+This problem was tackled by <a rel="external" href="https://github.com/enjoy-binbin">Binbin Zhu</a> in Valkey 8.1 by introducing a <a rel="external" href="https://github.com/valkey-io/valkey/pull/1018">ranking mechanism</a>  to each shard based on lexicographic order of the shard ID. With the ranking algorithm, the shard with highest ranking would go sooner and the one with lower ranking would add additional delay to start the election for the given shard. This helped to get a consistent recovery time in a multiple primary outage.</li>
+<li><strong>Reconnection attempt storm to unavailable nodes</strong> Profiling revealed that with multiple node failures, a large chunk of compute goes into attempting to reconnect with the already failed nodes. Each node attempts to reconnect to all the failed nodes every 100ms. This lead to significant compute usage when there are hundreds of failed nodes in the cluster. In order to prevent the cluster from getting overwhelmed, <a rel="external" href="https://github.com/sarthakaggarwal97">Sarthak Aggarwal</a> implemented a <a rel="external" href="https://github.com/valkey-io/valkey/pull/2154">throttling mechanism</a> which allows enough reconnect attempts within a configured cluster node timeout, while ensuring the server node is not overwhelmed.</li>
+<li><strong>Optimized failure report tracking</strong> Profiling also revealed that when hundreds of nodes fail simultaneously, the surviving nodes spend a significant amount of time processing and cleaning up redundant failure reports. For example, after 499 out of 2000 nodes were killed, the remaining 1501 nodes continued to gossip about each failed node and exchange reports, even after those nodes had already been marked as failed. <a rel="external" href="https://github.com/sungming2">Seungmin Lee</a> optimized the <a rel="external" href="https://github.com/valkey-io/valkey/pull/2277">addition/removal of failure report</a> by using a radix tree to store the failure report time information rounded to every second and group multiple report together. This helps with cleaning up expired failure report efficiently as well. Further optimizations were also made to avoid duplicate failure report processing and save CPU cycles.</li>
+<li><strong>Pub/Sub System</strong> Cluster bus system is also used for <a rel="external" href="https://valkey.io/topics/pubsub/">pub/sub operations</a> to provide a simplified interface for a client to connect to any node to publish data and subscribers connected on any node would receive the data. The data is transported via the cluster bus. This is quite an interesting usage of the cluster bus. However, the metadata overhead of each packet is roughly 2 KB which is quite large for small pub/sub messages. The observation was the packet header was large due to the slot ownership information (16384 bits = 2048 bytes). And that information was irrelevant for a pub/sub message. Hence, <a rel="external" href="https://github.com/roshkhatri">Roshan Khatri</a> introduced a <a rel="external" href="https://github.com/valkey-io/valkey/pull/654">light weight message header</a> (~30 bytes) to be used for efficient message transfer across nodes. This allowed pub/sub to scale better with large clusters.
+Valkey also has a sharded pub/sub system which keeps the data traffic of shard channels to a given shard which is an major improvement over the global pub/sub system in cluster mode. This was also onboarded to the light weight message header.</li>
+</ul>
+<p>Valkey 9.0 has plenty of other improvements to increase the overall stability of the clustering system. All these enhancements allowed us to scale to 2,000 nodes with bounded recovery time during network partitions and below we have documented the benchmark setup and the throughput we were able to attain.</p>
+<h2 id="benchmarking">Benchmarking</h2>
+<p>In order to scale the Valkey cluster to 1 billion requests per second (RPS) for write command, we decided to choose a SET type command to accurately reflect the scale. We have seen previous experiments where a single instance was able to achieve more than <a href="/valkey-io.github.io/pr-21/blog/unlock-one-million-rps">1 million RPS</a> so the goal was to reach 1 billion RPS with a 2,000 node cluster, where each shard has 1 primary and 1 replica. A replica is added to each shard for better availability.</p>
+<p><strong>Hardware Configuration</strong>
+For this experiment, Valkey cluster was deployed on AWS <code>r7g.2xlarge</code> instance type, which is a memory optimized instance, featuring 8 cores and 64 GB memory on an ARM-based (<code>aarch64</code>) architecture. In order to generate enough traffic across all the slots, we used 750 instances of AWS <code>c7g.16xlarge</code>.</p>
+<p><strong>System Configuration</strong>
+Note: The core assignments used in this guide are examples. Optimal core selection may vary depending on your specific system configuration and workload.</p>
+<p>Each of the Valkey server nodes had 8 cores, so we decided to pin 2 cores to ensure interrupt affinity.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># identify the network interface, for this run, it was ens5</span></span>
+<span class="giallo-l"><span>IFACE</span><span style="color: #FF7B72;">=</span><span>$(</span><span style="color: #FFA657;">ip</span><span style="color: #A5D6FF;"> route</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> awk</span><span style="color: #A5D6FF;"> &#39;/default/ {print $5; exit}&#39;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># expose two combined Rx/Tx queues</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">sudo</span><span style="color: #A5D6FF;"> ethtool</span><span style="color: #79C0FF;"> -L</span><span style="color: #A5D6FF;"> &quot;</span><span>$IFACE</span><span style="color: #A5D6FF;">&quot; combined</span><span style="color: #79C0FF;"> 2</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># grab exactly the two IRQ numbers that belong to those queues</span></span>
+<span class="giallo-l"><span>IRQS</span><span style="color: #FF7B72;">=</span><span>($(</span><span style="color: #FFA657;">grep</span><span style="color: #79C0FF;"> -w</span><span style="color: #A5D6FF;"> &quot;</span><span>$IFACE</span><span style="color: #A5D6FF;">&quot; /proc/interrupts</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> awk</span><span style="color: #A5D6FF;"> &#39;{gsub(&quot;:&quot;,&quot;&quot;,$1); print $1}&#39;</span><span>))</span></span>
+<span class="giallo-l"><span>IRQ0</span><span style="color: #FF7B72;">=</span><span>${IRQS[0]}</span></span>
+<span class="giallo-l"><span>IRQ1</span><span style="color: #FF7B72;">=</span><span>${IRQS[1]}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># pin queue-0 interrupt to CPU0</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">echo 0</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> sudo</span><span style="color: #A5D6FF;"> tee /proc/irq/</span><span>$IRQ0</span><span style="color: #A5D6FF;">/smp_affinity_list</span><span style="color: #8B949E;">   # bind IRQ0 → CPU 0</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">echo 1</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> sudo</span><span style="color: #A5D6FF;"> tee /proc/irq/</span><span>$IRQ1</span><span style="color: #A5D6FF;">/smp_affinity_list</span><span style="color: #8B949E;">   # bind IRQ1 → CPU 1</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">sudo</span><span style="color: #A5D6FF;"> systemctl stop irqbalance</span></span></code></pre>
+<p>We increased the default limit of file descriptors of the instance so that the node is able to handle connections from the Valkey cluster nodes and clients.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># increase max conn</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">ulimit -n 1048544</span></span></code></pre>
+<p>With 6 cores left on the node, we decided to assign all the remaining cores to the <code>valkey-server</code>, so that the 6 <code>io-threads</code> (including the <code>main thread</code>) can leverage the most from the instance.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;"># pin 6 cores to valkey-server</span></span>
+<span class="giallo-l"><span>CPUSET</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">2-7</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">sudo</span><span style="color: #A5D6FF;"> cset shield</span><span style="color: #79C0FF;"> --cpu=</span><span>$CPUSET</span><span style="color: #79C0FF;"> --kthread=on</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">sudo</span><span style="color: #A5D6FF;"> cset shield</span><span style="color: #79C0FF;"> --exec</span><span style="color: #A5D6FF;"> taskset</span><span style="color: #79C0FF;"> -- -c</span><span> $CPUSET</span><span style="color: #A5D6FF;"> ./valkey-server valkey-cluster.conf</span><span style="color: #79C0FF;"> --daemonize</span><span style="color: #A5D6FF;"> yes</span></span></code></pre>
+<p><strong>Server Configuration</strong>
+We launched each Valkey process with minimal changes to the default configurations.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>cluster-enabled yes # To enable cluster mode</span></span>
+<span class="giallo-l"><span>cluster-config-file nodes.conf # To persiste the topology information</span></span>
+<span class="giallo-l"><span>cluster-require-full-coverage no # To prioritize availability</span></span>
+<span class="giallo-l"><span>cluster-allow-reads-when-down yes # To allow reads and partial operations to continue even under slot loss</span></span>
+<span class="giallo-l"><span>save &quot;&quot; # Disable periodic snapshots</span></span>
+<span class="giallo-l"><span>io-threads 6 # Allow offloading io operations to separate io-threads</span></span>
+<span class="giallo-l"><span>maxmemory 50gb # Limit maximum memory utilization by the process</span></span></code></pre>
+<p><strong>Benchmark Configurations</strong>
+We ran the <code>valkey-benchmark</code> from 750 client instances to generate the required traffic. We used the following parameters for each of those instances.</p>
+<ul>
+<li>Number of requests (-n): <code>100M</code></li>
+<li>Number of clients (-c): <code>1000</code></li>
+<li>Test (-t): <code>SET</code></li>
+<li>Data Size (-d): <code>512</code></li>
+<li>Threads: <code>20</code></li>
+</ul>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/1-billion-rps/1B-rps-throughput.png" alt="Diagram showcasing 1 billion request per sec throughput" /></p>
+<p>Overall observation has been that the throughput grows almost linearly with the overall count of primaries and cluster bus has a minimal overhead with the default node timeout.</p>
+<h3 id="recovery">Recovery</h3>
+<p>In the same environment, we tested the recovery time of the cluster when multiple primary nodes go down. We picked up to 50% of the primaries and killed them and let the automatic failover process to heal the write outage for a given shard. To simulate primary node failures, we sent <code>SIGKILL</code> to hard-stop the Valkey process, and let the replica take over through automated failovers. The recovery time measured here is from the moment any of the nodes discovered a primary in a <code>PFAIL</code> state until the cluster reported ok and all slots were covered again.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/1-billion-rps/1B-rps-recovery-time.png" alt="Diagram showcasing recovery time across various primary failure scenarios" /></p>
+<h2 id="closing-thoughts">Closing thoughts</h2>
+<p>With all these improvements made in Valkey, a cluster can now scale to 1 billion RPS using 2,000 nodes which is quite a remarkable feat. However, there is plenty of room to improve further. The steady state CPU utilization overhead from the cluster bus message transfer/processing can be reduced further by incorporating the <a rel="external" href="https://en.wikipedia.org/wiki/SWIM_Protocol">SWIM protocol</a> or moving the cluster bus messsage processing off the main thread into an independent separate thread. The failover logic can be made smarter as well by incorporating the AZ placement of nodes. We would also like to introduce more observability metrics/logs into the system for better manageability. All of these are being linked under the <a rel="external" href="https://github.com/valkey-io/valkey/issues/2281">Support Large Cluster</a> issue. Feel free to check it out and add in your suggestions.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/hpatro.jpeg" alt="photo of Harkrishn Patro" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Harkrishn Patro</h4>
+    
+    <a target="_blank" href="https://github.com/hpatro"><i class="icon icon-github-square"></i> @hpatro</a>
+    
+    <p>Harkrishn is passionate about distributed systems, databases, anything related to data.</p>
+<p>In his spare time, Harkrishn loves to play badminton or go for a hike with friends and family. He also watches lots of horror movies (with half-open eyes) to keep his loving wife, Pooja, company.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/maheshcherukumilli.jpg" alt="photo of Mahesh Cherukumilli" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Mahesh Cherukumilli</h4>
+    
+    <a target="_blank" href="https://github.com/cherukum-Amazon"><i class="icon icon-github-square"></i> @cherukum-Amazon</a>
+    
+    <p>Mahesh Cherukumilli is an engineering leader passionate about large-scale distributed systems and high-performance databases. He sets strategy and builds high-performing teams that align architecture with business outcomes and deliver reliable, at-scale infrastructure.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/sarthakaggarwal97.png" alt="photo of Sarthak Aggarwal" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Sarthak Aggarwal</h4>
+    
+    <a target="_blank" href="https://github.com/sarthakaggarwal97"><i class="icon icon-github-square"></i> @sarthakaggarwal97</a>
+    
+    <p>Sarthak is a software engineer at AWS. He is an open-source enthusiast and an active contributor for Valkey. Sarthak is passionate about large-scale distributed systems and databases.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/sungming2.jpg" alt="photo of Seungmin Lee" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Seungmin Lee</h4>
+    
+    <a target="_blank" href="https://github.com/sungming2"><i class="icon icon-github-square"></i> @sungming2</a>
+    
+    <p>Seungmin is a software engineer at AWS. He is an active contributor for Valkey. He is passionate about large-scale distributed systems.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/1-billion-rps/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/1-billion-rps/&title=Scaling%20a%20Valkey%20Cluster%20to%201%20Billion%20Request%20per%20Second&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/1-billion-rps/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/50-million-zsets/">&laquo; How Valkey 8.1 Handles 50 Million Sorted Set Inserts</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-9/">Valkey 9.0: innovation, features, and improvements. &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

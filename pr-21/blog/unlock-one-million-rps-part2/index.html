@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-06.webp" />
+    
+    
+
+    <meta name="description" content="Maximize the performance of your hardware with memory access amortization" />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Unlock 1 Million RPS: Experience Triple the Speed with Valkey - part 2</title>
+    <meta name="title" property="og:title" content="Valkey: Unlock 1 Million RPS: Experience Triple the Speed with Valkey - part 2">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-06.webp" alt="Unlock 1 Million RPS: Experience Triple the Speed with Valkey - part 2" class="feature-img">
+
+
+<h1>Unlock 1 Million RPS: Experience Triple the Speed with Valkey - part 2</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2024-09-13
+  
+    &middot; 
+    
+      
+      
+      <em>Dan Touitou</em>,
+    
+      
+      
+      <em>Uri Yagelnik</em>
+    
+  
+</div>
+<p>In the <a href="/valkey-io.github.io/pr-21/blog/unlock-one-million-rps/">first part</a> of this blog, we described how we offloaded almost all I/O operations to I/O threads, thereby freeing more CPU cycles in the main thread to execute commands. When we profiled the execution of the main thread, we found that a considerable amount of time was spent waiting for external memory. This was not entirely surprising, as when accessing random keys, the probability of finding the key in one of the processor caches is relatively low.  Considering that external memory access latency is approximately 50 times greater than L1 cache, it became clear that despite showing 100% CPU utilization, the main process was mostly “waiting”. In this blog, we describe the technique we have been using to increase the number of parallel memory accesses, thereby reducing the impact that external memory latency has on performance.</p>
+<h3 id="speculative-execution-and-linked-lists">Speculative execution and linked lists</h3>
+<p>Speculative execution is a performance optimization technique used by modern processors, where the processor guesses the outcome of conditional operations and executes in parallel subsequent instructions ahead of time. Dynamic data structures, such as linked lists and search trees, have many advantages over static data structures: they are economical in memory consumption, provide fast insertion and deletion mechanisms, and can be resized efficiently. However, some dynamic data structures have a major drawback: they hinder the processor's ability to speculate on future memory load instructions that could be executed in parallel. This lack of concurrency is especially problematic in very large dynamic data structures, where most pointer accesses result in high-latency external memory access.</p>
+<p>In this blog, Memory Access Amortization, a method that facilitates speculative execution to improve performance, is introduced along with how it is applied in Valkey. The basic idea behind the method is that by interleaving the execution of operations that access random memory locations, one can achieve significantly better performance than by executing them serially.</p>
+<p>To depict the problem we are trying to solve consider the following <a href="/valkey-io.github.io/pr-21/assets/C/list_array.c">function</a> which gets an array of linked list and returns sum of all values in the lists:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span style="color: #FF7B72;">unsigned long</span><span style="color: #D2A8FF;"> sequentialSum</span><span>(</span><span style="color: #FF7B72;">size_t</span><span style="color: #FFA657;"> arr_size</span><span>, list </span><span style="color: #FF7B72;">**</span><span style="color: #FFA657;">la</span><span>) {</span></span>
+<span class="giallo-l"><span>    list </span><span style="color: #FF7B72;">*</span><span>lp;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    unsigned long</span><span>  res </span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;"> 0</span><span>; </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    for</span><span> (</span><span style="color: #FF7B72;">int</span><span> i </span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;"> 0</span><span>; i </span><span style="color: #FF7B72;">&lt;</span><span> arr_size; i</span><span style="color: #FF7B72;">++</span><span>) { </span></span>
+<span class="giallo-l"><span>        lp </span><span style="color: #FF7B72;">=</span><span style="color: #FFA657;"> la</span><span>[i]; </span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        while</span><span> (lp) { </span></span>
+<span class="giallo-l"><span>            res </span><span style="color: #FF7B72;">+=</span><span> lp-&gt;val;</span></span>
+<span class="giallo-l"><span>            lp </span><span style="color: #FF7B72;">=</span><span> lp-&gt;next;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    return</span><span> res; </span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Executing this function on an array of 16 lists containing 10 million elements each takes approximately 20.8 seconds on an ARM processor (Graviton 3). Now consider the following alternative implementation which instead of scanning the lists separately,  interleaves the executions of the lists scans:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span style="color: #FF7B72;">unsigned long</span><span style="color: #D2A8FF;"> interleavedSum</span><span>(</span><span style="color: #FF7B72;">size_t</span><span style="color: #FFA657;"> arr_size</span><span>, list </span><span style="color: #FF7B72;">**</span><span style="color: #FFA657;">la</span><span>) {</span></span>
+<span class="giallo-l"><span>    list </span><span style="color: #FF7B72;">**</span><span>lthreads </span><span style="color: #FF7B72;">=</span><span style="color: #D2A8FF;"> malloc</span><span>(arr_size </span><span style="color: #FF7B72;">* sizeof</span><span>(list </span><span style="color: #FF7B72;">*</span><span>)); </span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    unsigned long</span><span> res </span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;"> 0</span><span>; </span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    int</span><span> n </span><span style="color: #FF7B72;">=</span><span> arr_size; </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    for</span><span> (</span><span style="color: #FF7B72;">int</span><span> i </span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;"> 0</span><span>; i </span><span style="color: #FF7B72;">&lt;</span><span> arr_size; i</span><span style="color: #FF7B72;">++</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        lthreads</span><span>[i]</span><span style="color: #FF7B72;"> =</span><span style="color: #FFA657;"> la</span><span>[i]; </span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        if</span><span> (</span><span style="color: #FFA657;">lthreads</span><span>[i]</span><span style="color: #FF7B72;"> ==</span><span style="color: #79C0FF;"> NULL</span><span>) </span></span>
+<span class="giallo-l"><span>            n</span><span style="color: #FF7B72;">--</span><span>; </span></span>
+<span class="giallo-l"><span>    } </span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    while</span><span>(n) {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        for</span><span> (</span><span style="color: #FF7B72;">int</span><span> i </span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;"> 0</span><span>; i </span><span style="color: #FF7B72;">&lt;</span><span> arr_size; i</span><span style="color: #FF7B72;">++</span><span>) { </span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">            if</span><span> (</span><span style="color: #FFA657;">lthreads</span><span>[i]</span><span style="color: #FF7B72;"> ==</span><span style="color: #79C0FF;"> NULL</span><span>) </span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">                continue</span><span>; </span></span>
+<span class="giallo-l"><span>            res </span><span style="color: #FF7B72;">+=</span><span style="color: #FFA657;"> lthreads</span><span>[i]-&gt;val;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">            lthreads</span><span>[i]</span><span style="color: #FF7B72;"> =</span><span style="color: #FFA657;"> lthreads</span><span>[i]-&gt;next; </span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">            if</span><span> (</span><span style="color: #FFA657;">lthreads</span><span>[i]</span><span style="color: #FF7B72;"> ==</span><span style="color: #79C0FF;"> NULL</span><span>) </span></span>
+<span class="giallo-l"><span>                n</span><span style="color: #FF7B72;">--</span><span>;</span></span>
+<span class="giallo-l"><span>        }  </span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    free</span><span>(lthreads);</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    return</span><span> res; </span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Running this new version with the same input as previously described takes less than 2 seconds, achieving a 10x speedup! The explanation for this significant improvement lies in the processor's speculative execution capabilities. In a standard sequential traversal of a linked list, as seen in the first version of the function, the processor cannot 'speculate' on future memory access instructions. This limitation becomes particularly costly with large lists, where each pointer access likely results in a expensive external memory access. In contrast, the alternative implementation, which interleaves list traversals, allows the processor to issue more memory accesses in parallel. This leads to an overall reduction in memory access latency through amortization.</p>
+<p>One way to maximize the amount of parallel memory access issued is to add prefetch instructions. Replacing</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span style="color: #FF7B72;">             if</span><span> (</span><span style="color: #FFA657;">lthreads</span><span>[i]</span><span style="color: #FF7B72;"> ==</span><span style="color: #79C0FF;"> NULL</span><span>) </span></span>
+<span class="giallo-l"><span>                n</span><span style="color: #FF7B72;">--</span><span>;</span></span></code></pre>
+<p>with</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="c"><span class="giallo-l"><span style="color: #FF7B72;">            if</span><span> (</span><span style="color: #FFA657;">lthreads</span><span>[i]) </span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">                __builtin_prefetch</span><span>(</span><span style="color: #FFA657;">lthreads</span><span>[i]);</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">            else</span><span> </span></span>
+<span class="giallo-l"><span>                n</span><span style="color: #FF7B72;">--</span><span>;</span></span></code></pre>
+<p>reduces the execution time further to 1.8 sec.</p>
+<h3 id="back-to-valkey">Back to Valkey</h3>
+<p>In the first part, we described how we updated the existing I/O threads implementation to increase parallelism and reduce the amount of I/O operations executed by the main thread to a minimum. Indeed, we observed an increase in the number of requests per second, reaching up to 780K SET commands per second. Profiling the execution revealed that Valkey's main thread was spending more than 40% of its time in a single function: lookupKey, whose goal is to locate the command keys in Valkey's main dictionary. This dictionary is implemented as a straightforward chained hash, as shown in the picture below:
+<img src="/valkey-io.github.io/pr-21/assets/media/pictures/lookupKey.jpg" alt="dict find" />
+On a large enough set of keys, almost every memory address accessed while searching the dictionary will not be found in any of the processor caches, resulting in costly external memory accesses. Also, similarly as with the linked list from above, since the addresses in the table→dictEntry→...dictEntry→robj sequence are serially dependent, it is not possible to determine the next address to be accessed before the previous address in the chain has been resolved.</p>
+<h3 id="batching-and-interleaving">Batching and interleaving</h3>
+<p>To overcome this inefficiency, we adopted the following approach. Every time a batch of incoming commands from the I/O threads is ready for execution, Valkey’s main thread efficiently prefetches the memory addresses needed for future lookupKey invocations for the keys involved in the commands  before executing the commands. This prefetch phase is achieved by dictPrefetch, which, similarly as with the linked list example from above, interleaves the table→dictEntry→...dictEntry→robj search sequences for all keys. This reduces the time spent on lookupKey by more than 80%. Another issue we had to address was that all the incoming parsed commands from the I/O threads were not present in the L1/L2 caches of the core running Valkey’s main thread. This was also resolved using the same method.  All the relevant code can be found in <a rel="external" href="https://github.com/valkey-io/valkey/blob/unstable/src/memory_prefetch.c">memory_prefetch.c</a>. In total the impact of the memory access amortization on Valkey performance is almost 50% and it increased the requests per second to more than 1.19M rps.</p>
+<h3 id="how-to-reproduce-valkey-8-0-performance-numbers">How to reproduce Valkey 8.0 performance numbers</h3>
+<p>This section will walk you through the process of reproducing our performance results, where we achieved 1.19 million requests per second using Valkey 8.</p>
+<h3 id="hardware-setup">Hardware Setup</h3>
+<p>We conducted our tests on an AWS EC2 c7g.4xlarge instance, featuring 16 cores on an ARM-based (aarch64) architecture.</p>
+<h3 id="system-configuration">System Configuration</h3>
+<blockquote>
+<p>Note: The core assignments used in this guide are examples. Optimal core selection may vary depending on your specific system configuration and workload.</p>
+</blockquote>
+<p>Interrupt affinity - locate the network interface with <code>ifconfig</code> (let's assume it is <code>eth0</code>) and its associated IRQs with</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">grep</span><span style="color: #A5D6FF;"> eth0 /proc/interrupts</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> awk</span><span style="color: #A5D6FF;"> &#39;{print $1}&#39;</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> cut</span><span style="color: #79C0FF;"> -d</span><span style="color: #A5D6FF;"> :</span><span style="color: #79C0FF;"> -f 1</span></span></code></pre>
+<p>In our setup, lines <code>48</code> to <code>55</code> are allocated for <code>eth0</code> interrupts. Allocate one core per 4 IRQ lines:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FF7B72;">for</span><span> i</span><span style="color: #FF7B72;"> in</span><span> {</span><span style="color: #FFA657;">48..51}</span><span>;</span><span style="color: #FF7B72;"> do</span><span style="color: #79C0FF;"> echo 1000</span><span style="color: #FF7B72;"> &gt;</span><span style="color: #A5D6FF;"> /proc/irq/</span><span>$i</span><span style="color: #A5D6FF;">/smp_affinity</span><span>;</span><span style="color: #FF7B72;"> done</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">for</span><span> i</span><span style="color: #FF7B72;"> in</span><span> {</span><span style="color: #FFA657;">52..55}</span><span>;</span><span style="color: #FF7B72;"> do</span><span style="color: #79C0FF;"> echo 2000</span><span style="color: #FF7B72;"> &gt;</span><span style="color: #A5D6FF;"> /proc/irq/</span><span>$i</span><span style="color: #A5D6FF;">/smp_affinity</span><span>;</span><span style="color: #FF7B72;"> done</span></span></code></pre>
+<p>Server configuration - launch the Valkey server with these minimal configurations:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">./valkey-server</span><span style="color: #79C0FF;"> --io-threads 9 --save --protected-mode</span><span style="color: #A5D6FF;"> no</span></span></code></pre>
+<p><code>--save</code> disables dumping to RDB file and <code>--protected-mode no </code>  allows connections from external hosts. <code>--io-threads</code> number includes the main thread and the IO threads, meaning that in our case 8 I/O threads are launched in addition to the main thread.</p>
+<p>Main thread affinity - pin the main thread to a specific CPU core, avoiding the cores handling IRQs. Here we use core #3:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">sudo</span><span style="color: #A5D6FF;"> taskset</span><span style="color: #79C0FF;"> -cp 3</span><span style="color: #A5D6FF;"> `</span><span style="color: #FFA657;">pidof</span><span style="color: #A5D6FF;"> valkey-server`</span></span></code></pre>
+<blockquote>
+<p>Important: We suggest experimenting with different core pinning strategies to find the optimal performance while avoiding conflicts with IRQ-handling cores.</p>
+</blockquote>
+<h3 id="benchmark-configuration">Benchmark Configuration</h3>
+<p>Run the benchmark from a separate instance using the following parameters:</p>
+<ul>
+<li>Value size: 512 bytes</li>
+<li>Number of keys: 3 million</li>
+<li>Number of clients: 650</li>
+<li>Number of threads: 50 (may vary for optimal results)</li>
+</ul>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">./valkey-benchmark</span><span style="color: #79C0FF;"> -t</span><span style="color: #A5D6FF;"> set</span><span style="color: #79C0FF;"> -d 512 -r 3000000 -c 650 --threads 50 -h</span><span style="color: #A5D6FF;"> &quot;host-name&quot;</span><span style="color: #79C0FF;"> -n 100000000000</span></span></code></pre>
+<blockquote>
+<p>Important: When running the benchmark, it may take a few seconds for the database to get populated and for the performance to stabilize. You can adjust the <code>-n</code> parameter to ensure the benchmark runs long enough to reach optimal throughput.</p>
+</blockquote>
+<h3 id="testing-and-availability">Testing and Availability</h3>
+<p><a rel="external" href="https://github.com/valkey-io/valkey/releases/tag/8.0.0-rc2">Valkey 8.0 RC2</a> is available now for evaluation with I/O threads and memory access amortization.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/dantouitou.jpeg" alt="photo of Dan Touitou" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Dan Touitou</h4>
+    
+    <a target="_blank" href="https://github.com/touitou-dan"><i class="icon icon-github-square"></i> @touitou-dan</a>
+    
+    <p>Dan is a software engineer at AWS</p>
+<p>In his spare time, Dan loves solving complex partial differential equations with his family and telling fairy tales about himself.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/uriyagelnik.png" alt="photo of Uri Yagelnik" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Uri Yagelnik</h4>
+    
+    <a target="_blank" href="https://github.com/uriyage"><i class="icon icon-github-square"></i> @uriyage</a>
+    
+    <p>Uri Yagelnik is a Software Engineer at AWS with over a decade of experience, Uri is passionate about distributed systems, databases, and performance optimization. In his spare time, he enjoys hiking with his family and reading.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/unlock-one-million-rps-part2/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/unlock-one-million-rps-part2/&title=Unlock%201%20Million%20RPS%3A%20Experience%20Triple%20the%20Speed%20with%20Valkey%20-%20part%202&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/unlock-one-million-rps-part2/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-memory-efficiency-8-0/">&laquo; Storing more with less: Memory Efficiency in Valkey 8</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-ga/">Generally Available: Valkey 8.0.0 &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

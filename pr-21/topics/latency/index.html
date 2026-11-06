@@ -1,0 +1,1933 @@
+
+
+
+
+
+
+    
+    
+    
+    
+        
+     
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey Documentation &middot; Diagnosing latency issues</title>
+    <meta name="title" property="og:title" content="Valkey Documentation: Diagnosing latency issues">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+
+    <div class="styled-title">
+        <h1 class="page-title">Documentation: Diagnosing latency issues</h1>
+    </div>
+
+
+<div class="left-aside-bg">
+    <div class="left-aside">
+        <main>
+            
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item">
+            <a href="/valkey-io.github.io/pr-21/topics/" class="breadcrumb-link">Topics</a>
+        </li>
+        
+        <li class="breadcrumb-item">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="" width="8" height="10"/>
+            
+            Performance and troubleshooting
+            
+        </li>
+        
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            Diagnosing latency issues
+        </li>
+    </ul>
+</nav>
+
+            <div class="main-inner">
+                
+<p>This document will help you understand what the problem could be if you
+are experiencing latency problems with Valkey.</p>
+<p>In this context <em>latency</em> is the maximum delay between the time a client
+issues a command and the time the reply to the command is received by the
+client. Usually Valkey processing time is extremely low, in the sub microsecond
+range, but there are certain conditions leading to higher latency figures.</p>
+<h2 id="i-ve-little-time-give-me-the-checklist">I've little time, give me the checklist</h2>
+<p>The following documentation is very important in order to run Valkey in
+a low latency fashion. However I understand that we are busy people, so
+let's start with a quick checklist. If you fail following these steps, please
+return here to read the full documentation.</p>
+<ol>
+<li>Make sure you are not running slow commands that are blocking the server. Use the Valkey <a href="/valkey-io.github.io/pr-21/commands/slowlog">Slow Log feature</a> to check this.</li>
+<li>For EC2 users, make sure you use HVM based modern EC2 instances, like m3.medium. Otherwise fork() is too slow.</li>
+<li>Transparent huge pages must be disabled from your kernel. Use <code>echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled</code> to disable them, and restart your Valkey process.</li>
+<li>If you are using a virtual machine, it is possible that you have an intrinsic latency that has nothing to do with Valkey. Check the minimum latency you can expect from your runtime environment using <code>./valkey-cli --intrinsic-latency 100</code>. Note: you need to run this command in <em>the server</em> not in the client.</li>
+<li>Enable and use the <a href="/valkey-io.github.io/pr-21/topics/latency-monitor">Latency monitor</a> feature of Valkey in order to get a human readable description of the latency events and causes in your Valkey instance.</li>
+</ol>
+<p>In general, use the following table for durability VS latency/performance tradeoffs, ordered from stronger safety to better latency.</p>
+<ol>
+<li>AOF + fsync always: this is very slow, you should use it only if you know what you are doing.</li>
+<li>AOF + fsync every second: this is a good compromise.</li>
+<li>AOF + fsync every second + no-appendfsync-on-rewrite option set to yes: this is as the above, but avoids to fsync during rewrites to lower the disk pressure.</li>
+<li>AOF + fsync never. Fsyncing is up to the kernel in this setup, even less disk pressure and risk of latency spikes.</li>
+<li>RDB. Here you have a vast spectrum of tradeoffs depending on the save triggers you configure.</li>
+</ol>
+<p>And now for people with 15 minutes to spend, the details...</p>
+<h2 id="measuring-latency">Measuring latency</h2>
+<p>If you are experiencing latency problems, you probably know how to measure
+it in the context of your application, or maybe your latency problem is very
+evident even macroscopically. However valkey-cli can be used to measure the
+latency of a Valkey server in milliseconds, just try:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>valkey-cli --latency -h `host` -p `port`</span></span></code></pre><h2 id="using-the-internal-valkey-latency-monitoring-subsystem">Using the internal Valkey latency monitoring subsystem</h2>
+<p>Valkey provides latency monitoring capabilities that
+are able to sample different execution paths to understand where the
+server is blocking. This makes debugging of the problems illustrated in
+this documentation much simpler, so we suggest enabling latency monitoring
+ASAP. Please refer to the <a href="/valkey-io.github.io/pr-21/topics/latency-monitor">Latency monitor documentation</a>.</p>
+<p>While the latency monitoring sampling and reporting capabilities will make
+it simpler to understand the source of latency in your Valkey system, it is still
+advised that you read this documentation extensively to better understand
+the topic of Valkey and latency spikes.</p>
+<h2 id="latency-baseline">Latency baseline</h2>
+<p>There is a kind of latency that is inherently part of the environment where
+you run Valkey, that is the latency provided by your operating system kernel
+and, if you are using virtualization, by the hypervisor you are using.</p>
+<p>While this latency can't be removed it is important to study it because
+it is the baseline, or in other words, you won't be able to achieve a Valkey
+latency that is better than the latency that every process running in your
+environment will experience because of the kernel or hypervisor implementation
+or setup.</p>
+<p>We call this kind of latency <strong>intrinsic latency</strong>, and <code>valkey-cli</code>
+is able to measure it. This is an example run.</p>
+<p>Note: the argument <code>100</code> is the number of seconds the test will be executed.
+The more time we run the test, the more likely we'll be able to spot
+latency spikes. 100 seconds is usually appropriate, however you may want
+to perform a few runs at different times. Please note that the test is CPU
+intensive and will likely saturate a single core in your system.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>$ ./valkey-cli --intrinsic-latency 100</span></span>
+<span class="giallo-l"><span>Max latency so far: 1 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 16 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 50 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 53 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 83 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 115 microseconds.</span></span></code></pre>
+<p>Note: valkey-cli in this special case needs to <strong>run in the server</strong> where you run or plan to run Valkey, not in the client. In this special mode valkey-cli does not connect to a Valkey server at all: it will just try to measure the largest time the kernel does not provide CPU time to run to the valkey-cli process itself.</p>
+<p>In the above example, the intrinsic latency of the system is just 0.115
+milliseconds (or 115 microseconds), which is a good news, however keep in mind
+that the intrinsic latency may change over time depending on the load of the
+system.</p>
+<p>In a virtualized environments with high load or if there are noisy neighbors,
+you may get numbers like these:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>$ ./valkey-cli --intrinsic-latency 100</span></span>
+<span class="giallo-l"><span>Max latency so far: 573 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 695 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 919 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 1606 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 3191 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 9243 microseconds.</span></span>
+<span class="giallo-l"><span>Max latency so far: 9671 microseconds.</span></span></code></pre>
+<p>Here we have an intrinsic latency of 9.7 milliseconds: this means that we can't ask better than that to Valkey. However other runs at different times in different virtualization environments with higher load or with noisy neighbors can easily show even worse values. We were able to measure up to 40 milliseconds in
+systems otherwise apparently running normally.</p>
+<h2 id="latency-induced-by-network-and-communication">Latency induced by network and communication</h2>
+<p>Clients connect to Valkey using a TCP/IP connection or a Unix domain connection.
+The typical latency of a 1 Gbit/s network is about 200 us, while the latency
+with a Unix domain socket can be as low as 30 us. It actually depends on your
+network and system hardware. On top of the communication itself, the system
+adds some more latency (due to thread scheduling, CPU caches, NUMA placement,
+etc ...). System induced latencies are significantly higher on a virtualized
+environment than on a physical machine.</p>
+<p>The consequence is even if Valkey processes most commands in sub microsecond
+range, a client performing many roundtrips to the server will have to pay
+for these network and system related latencies.</p>
+<p>An efficient client will therefore try to limit the number of roundtrips by
+pipelining several commands together. This is fully supported by the servers
+and most clients. Aggregated commands like MSET/MGET can be also used for
+that purpose. A number of commands also support
+variadic parameters for all data types.</p>
+<p>Here are some guidelines:</p>
+<ul>
+<li>If you can afford it, prefer a physical machine over a VM to host the server.</li>
+<li>Do not systematically connect/disconnect to the server (especially true
+for web based applications). Keep your connections as long lived as possible.</li>
+<li>If your client is on the same host than the server, use Unix domain sockets.</li>
+<li>Prefer to use aggregated commands (MSET/MGET), or commands with variadic
+parameters (if possible) over pipelining.</li>
+<li>Prefer to use pipelining (if possible) over sequence of roundtrips.</li>
+<li>Valkey supports Lua server-side scripting to cover cases that are not suitable
+for raw pipelining (for instance when the result of a command is an input for
+the following commands).</li>
+</ul>
+<p>On Linux, some people can achieve better latencies by playing with process
+placement (taskset), cgroups, real-time priorities (chrt), NUMA
+configuration (numactl), or by using a low-latency kernel. Please note
+vanilla Valkey is not really suitable to be bound on a <strong>single</strong> CPU core.
+Valkey can fork background tasks that can be extremely CPU consuming
+like <code>BGSAVE</code> or <code>BGREWRITEAOF</code>. These tasks must <strong>never</strong> run on the same core
+as the main event loop.</p>
+<p>In most situations, these kind of system level optimizations are not needed.
+Only do them if you require them, and if you are familiar with them.</p>
+<h2 id="valkey-sequential-command-execution">Valkey sequential command execution</h2>
+<p>Valkey uses a <em>mostly</em> single threaded design for command execution. This means that a single process
+executes all the client commands sequentially, using a technique called <strong>multiplexing</strong>.
+While multiple commands can have their I/O operations processed concurrently in the background,
+only one command can be executed at any given moment. This is similar to how Node.js
+works as well. However, both products are not often perceived as being slow.
+This is caused in part by the small amount of time to complete a single command execution,
+but primarily because these products are designed to not block on system calls,
+such as reading data from or writing data to a socket.</p>
+<h2 id="latency-generated-by-slow-commands">Latency generated by slow commands</h2>
+<p>A consequence of being single thread is that when a request is slow to serve
+all the other clients will wait for this request to be served. When executing
+normal commands, like <code>GET</code> or <code>SET</code> or <code>LPUSH</code> this is not a problem
+at all since these commands are executed in constant (and very small) time.
+However there are commands operating on many elements, like <code>SORT</code>, <code>LREM</code>,
+<code>SUNION</code> and others. For instance taking the intersection of two big sets
+can take a considerable amount of time.</p>
+<p>The algorithmic complexity of all commands is documented. A good practice
+is to systematically check it when using commands you are not familiar with.</p>
+<p>If you have latency concerns you should either not use slow commands against
+values composed of many elements, or you should run a replica using Valkey
+replication where you run all your slow queries.</p>
+<p>It is possible to monitor slow commands using the Valkey
+<a href="/valkey-io.github.io/pr-21/commands/slowlog">Slow Log feature</a>.</p>
+<p>Additionally, you can use your favorite per-process monitoring program
+(top, htop, prstat, etc ...) to quickly check the CPU consumption of the
+main Valkey process. If it is high while the traffic is not, it is usually
+a sign that slow commands are used.</p>
+<p><strong>IMPORTANT NOTE</strong>: a VERY common source of latency generated by the execution
+of slow commands is the use of the <code>KEYS</code> command in production environments.
+<code>KEYS</code>, as documented in the Valkey documentation, should only be used for
+debugging purposes. To
+iterate the key space and other large collections incrementally, please check
+the <code>SCAN</code>, <code>SSCAN</code>, <code>HSCAN</code> and <code>ZSCAN</code> commands for more information.</p>
+<h2 id="latency-generated-by-fork">Latency generated by fork</h2>
+<p>In order to generate the RDB file in background, or to rewrite the Append Only File if AOF persistence is enabled, Valkey has to fork background processes.
+The fork operation (running in the main thread) can induce latency by itself.</p>
+<p>Forking is an expensive operation on most Unix-like systems, since it involves
+copying a good number of objects linked to the process. This is especially
+true for the page table associated to the virtual memory mechanism.</p>
+<p>For instance on a Linux/AMD64 system, the memory is divided in 4 kB pages.
+To convert virtual addresses to physical addresses, each process stores
+a page table (actually represented as a tree) containing at least a pointer
+per page of the address space of the process. So a large 24 GB Valkey instance
+requires a page table of 24 GB / 4 kB * 8 = 48 MB.</p>
+<p>When a background save is performed, this instance will have to be forked,
+which will involve allocating and copying 48 MB of memory. It takes time
+and CPU, especially on virtual machines where allocation and initialization
+of a large memory chunk can be expensive.</p>
+<h2 id="fork-time-in-different-systems">Fork time in different systems</h2>
+<p>Modern hardware is pretty fast at copying the page table.
+So are modern hardware-assisted virtualized environments,
+but fork can be really slow in older virtualized environments without hardware support.
+As of 2024, this is hardly a problem.</p>
+<p>You can measure the fork time for a Valkey instance by
+performing a BGSAVE and looking at the <code>latest_fork_usec</code> field in the <code>INFO</code> command output.</p>
+<h2 id="latency-induced-by-transparent-huge-pages">Latency induced by transparent huge pages</h2>
+<p>Unfortunately when a Linux kernel has transparent huge pages enabled, Valkey
+incurs to a big latency penalty after the <code>fork</code> call is used in order to
+persist on disk. Huge pages are the cause of the following issue:</p>
+<ol>
+<li>Fork is called, two processes with shared huge pages are created.</li>
+<li>In a busy instance, a few event loops runs will cause commands to target a few thousand of pages, causing the copy on write of almost the whole process memory.</li>
+<li>This will result in big latency and big memory usage.</li>
+</ol>
+<p>Make sure to <strong>disable transparent huge pages</strong> using the following command:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>echo never &gt; /sys/kernel/mm/transparent_hugepage/enabled</span></span></code></pre><h2 id="latency-induced-by-swapping-operating-system-paging">Latency induced by swapping (operating system paging)</h2>
+<p>Linux (and many other modern operating systems) is able to relocate memory
+pages from the memory to the disk, and vice versa, in order to use the
+system memory efficiently.</p>
+<p>If a Valkey page is moved by the kernel from the memory to the swap file, when
+the data stored in this memory page is used by Valkey (for example accessing
+a key stored into this memory page) the kernel will stop the Valkey process
+in order to move the page back into the main memory. This is a slow operation
+involving random I/Os (compared to accessing a page that is already in memory)
+and will result into anomalous latency experienced by Valkey clients.</p>
+<p>The kernel relocates Valkey memory pages on disk mainly because of three reasons:</p>
+<ul>
+<li>The system is under memory pressure since the running processes are demanding
+more physical memory than the amount that is available. The simplest instance of
+this problem is simply Valkey using more memory than is available.</li>
+<li>The Valkey instance data set, or part of the data set, is mostly completely idle
+(never accessed by clients), so the kernel could swap idle memory pages on disk.
+This problem is very rare since even a moderately slow instance will touch all
+the memory pages often, forcing the kernel to retain all the pages in memory.</li>
+<li>Some processes are generating massive read or write I/Os on the system. Because
+files are generally cached, it tends to put pressure on the kernel to increase
+the filesystem cache, and therefore generate swapping activity. Please note it
+includes Valkey RDB and/or AOF background threads which can produce large files.</li>
+</ul>
+<p>Fortunately Linux offers good tools to investigate the problem, so the simplest
+thing to do is when latency due to swapping is suspected is just to check if
+this is the case.</p>
+<p>The first thing to do is to checking the amount of Valkey memory that is swapped
+on disk. In order to do so you need to obtain the Valkey instance pid:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>$ valkey-cli info | grep process_id</span></span>
+<span class="giallo-l"><span>process_id:5454</span></span></code></pre>
+<p>Now enter the /proc file system directory for this process:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>$ cd /proc/5454</span></span></code></pre>
+<p>Here you'll find a file called <strong>smaps</strong> that describes the memory layout of
+the Valkey process (assuming you are using Linux 2.6.16 or newer).
+This file contains very detailed information about our process memory maps,
+and one field called <strong>Swap</strong> is exactly what we are looking for. However
+there is not just a single swap field since the smaps file contains the
+different memory maps of our Valkey process (The memory layout of a process
+is more complex than a simple linear array of pages).</p>
+<p>Since we are interested in all the memory swapped by our process the first thing
+to do is to grep for the Swap field across all the file:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>$ cat smaps | grep &#39;Swap:&#39;</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                 12 kB</span></span>
+<span class="giallo-l"><span>Swap:                156 kB</span></span>
+<span class="giallo-l"><span>Swap:                  8 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span></code></pre>
+<p>If everything is 0 kB, or if there are sporadic 4k entries, everything is
+perfectly normal. Actually in our example instance (the one of a real web
+site running Valkey and serving hundreds of users every second) there are a
+few entries that show more swapped pages. To investigate if this is a serious
+problem or not we change our command in order to also print the size of the
+memory map:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>$ cat smaps | egrep &#39;^(Swap|Size)&#39;</span></span>
+<span class="giallo-l"><span>Size:                316 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  8 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                 40 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                132 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:             720896 kB</span></span>
+<span class="giallo-l"><span>Swap:                 12 kB</span></span>
+<span class="giallo-l"><span>Size:               4096 kB</span></span>
+<span class="giallo-l"><span>Swap:                156 kB</span></span>
+<span class="giallo-l"><span>Size:               4096 kB</span></span>
+<span class="giallo-l"><span>Swap:                  8 kB</span></span>
+<span class="giallo-l"><span>Size:               4096 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:               1272 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  8 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                 16 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                 84 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  8 kB</span></span>
+<span class="giallo-l"><span>Swap:                  4 kB</span></span>
+<span class="giallo-l"><span>Size:                  8 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  4 kB</span></span>
+<span class="giallo-l"><span>Size:                144 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  4 kB</span></span>
+<span class="giallo-l"><span>Size:                 12 kB</span></span>
+<span class="giallo-l"><span>Swap:                  4 kB</span></span>
+<span class="giallo-l"><span>Size:                108 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                272 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span>
+<span class="giallo-l"><span>Size:                  4 kB</span></span>
+<span class="giallo-l"><span>Swap:                  0 kB</span></span></code></pre>
+<p>As you can see from the output, there is a map of 720896 kB
+(with just 12 kB swapped) and 156 kB more swapped in another map:
+basically a very small amount of our memory is swapped so this is not
+going to create any problem at all.</p>
+<p>If instead a non trivial amount of the process memory is swapped on disk your
+latency problems are likely related to swapping. If this is the case with your
+Valkey instance you can further verify it using the <strong>vmstat</strong> command:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>$ vmstat 1</span></span>
+<span class="giallo-l"><span>procs -----------memory---------- ---swap-- -----io---- -system-- ----cpu----</span></span>
+<span class="giallo-l"><span> r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa</span></span>
+<span class="giallo-l"><span> 0  0   3980 697932 147180 1406456    0    0     2     2    2    0  4  4 91  0</span></span>
+<span class="giallo-l"><span> 0  0   3980 697428 147180 1406580    0    0     0     0 19088 16104  9  6 84  0</span></span>
+<span class="giallo-l"><span> 0  0   3980 697296 147180 1406616    0    0     0    28 18936 16193  7  6 87  0</span></span>
+<span class="giallo-l"><span> 0  0   3980 697048 147180 1406640    0    0     0     0 18613 15987  6  6 88  0</span></span>
+<span class="giallo-l"><span> 2  0   3980 696924 147180 1406656    0    0     0     0 18744 16299  6  5 88  0</span></span>
+<span class="giallo-l"><span> 0  0   3980 697048 147180 1406688    0    0     0     4 18520 15974  6  6 88  0</span></span>
+<span class="giallo-l"><span>^C</span></span></code></pre>
+<p>The interesting part of the output for our needs are the two columns <strong>si</strong>
+and <strong>so</strong>, that counts the amount of memory swapped from/to the swap file. If
+you see non zero counts in those two columns then there is swapping activity
+in your system.</p>
+<p>Finally, the <strong>iostat</strong> command can be used to check the global I/O activity of
+the system.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>$ iostat -xk 1</span></span>
+<span class="giallo-l"><span>avg-cpu:  %user   %nice %system %iowait  %steal   %idle</span></span>
+<span class="giallo-l"><span>          13.55    0.04    2.92    0.53    0.00   82.95</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await  svctm  %util</span></span>
+<span class="giallo-l"><span>sda               0.77     0.00    0.01    0.00     0.40     0.00    73.65     0.00    3.62   2.58   0.00</span></span>
+<span class="giallo-l"><span>sdb               1.27     4.75    0.82    3.54    38.00    32.32    32.19     0.11   24.80   4.24   1.85</span></span></code></pre>
+<p>If your latency problem is due to Valkey memory being swapped on disk you need
+to lower the memory pressure in your system, either adding more RAM if Valkey
+is using more memory than the available, or avoiding running other memory
+hungry processes in the same system.</p>
+<h2 id="latency-due-to-aof-and-disk-i-o">Latency due to AOF and disk I/O</h2>
+<p>Another source of latency is due to the Append Only File support on Valkey.
+The AOF basically uses two system calls to accomplish its work. One is
+write(2) that is used in order to write data to the append only file, and
+the other one is fdatasync(2) that is used in order to flush the kernel
+file buffer on disk in order to ensure the durability level specified by
+the user.</p>
+<p>Both the write(2) and fdatasync(2) calls can be source of latency.
+For instance write(2) can block both when there is a system wide sync
+in progress, or when the output buffers are full and the kernel requires
+to flush on disk in order to accept new writes.</p>
+<p>The fdatasync(2) call is a worse source of latency as with many combinations
+of kernels and file systems used it can take from a few milliseconds to
+a few seconds to complete, especially in the case of some other process
+doing I/O. For this reason when possible Valkey does the fdatasync(2) call
+in a different thread.</p>
+<p>We'll see how configuration can affect the amount and source of latency
+when using the AOF file.</p>
+<p>The AOF can be configured to perform a fsync on disk in three different
+ways using the <strong>appendfsync</strong> configuration option (this setting can be
+modified at runtime using the <strong>CONFIG SET</strong> command).</p>
+<ul>
+<li>
+<p>When appendfsync is set to the value of <strong>no</strong> Valkey performs no fsync.
+In this configuration the only source of latency can be write(2).
+When this happens usually there is no solution since simply the disk can't
+cope with the speed at which Valkey is receiving data, however this is
+uncommon if the disk is not seriously slowed down by other processes doing
+I/O.</p>
+</li>
+<li>
+<p>When appendfsync is set to the value of <strong>everysec</strong> Valkey performs a
+fsync every second. It uses a different thread, and if the fsync is still
+in progress Valkey uses a buffer to delay the write(2) call up to two seconds
+(since write would block on Linux if a fsync is in progress against the
+same file). However if the fsync is taking too long Valkey will eventually
+perform the write(2) call even if the fsync is still in progress, and this
+can be a source of latency.</p>
+</li>
+<li>
+<p>When appendfsync is set to the value of <strong>always</strong> a fsync is performed
+at every write operation before replying back to the client with an OK code
+(actually Valkey will try to cluster many commands executed at the same time
+into a single fsync). In this mode performances are very low in general and
+it is strongly recommended to use a fast disk and a file system implementation
+that can perform the fsync in short time.</p>
+</li>
+</ul>
+<p>Most Valkey users will use either the <strong>no</strong> or <strong>everysec</strong> setting for the
+appendfsync configuration directive. The suggestion for minimum latency is
+to avoid other processes doing I/O in the same system.
+Using an SSD disk can help as well, but usually even non SSD disks perform
+well with the append only file if the disk is spare as Valkey writes
+to the append only file without performing any seek.</p>
+<p>If you want to investigate your latency issues related to the append only
+file you can use the strace command under Linux:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>sudo strace -p $(pidof valkey-server) -T -e trace=fdatasync</span></span></code></pre>
+<p>The above command will show all the fdatasync(2) system calls performed by
+Valkey in the main thread. With the above command you'll not see the
+fdatasync system calls performed by the background thread when the
+appendfsync config option is set to <strong>everysec</strong>. In order to do so
+just add the -f switch to strace.</p>
+<p>If you wish you can also see both fdatasync and write system calls with the
+following command:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>sudo strace -p $(pidof valkey-server) -T -e trace=fdatasync,write</span></span></code></pre>
+<p>However since write(2) is also used in order to write data to the client
+sockets this will likely show too many things unrelated to disk I/O.
+Apparently there is no way to tell strace to just show slow system calls so
+I use the following command:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>sudo strace -f -p $(pidof valkey-server) -T -e trace=fdatasync,write 2&gt;&amp;1 | grep -v &#39;0.0&#39; | grep -v unfinished</span></span></code></pre><h2 id="latency-generated-by-expires">Latency generated by expires</h2>
+<p>Valkey evict expired keys in two ways:</p>
+<ul>
+<li>One <em>lazy</em> way expires a key when it is requested by a command, but it is found to be already expired.</li>
+<li>One <em>active</em> way expires a few keys every 100 milliseconds.</li>
+</ul>
+<p>The active expiring is designed to be adaptive. An expire cycle is started every 100 milliseconds (10 times per second), and will do the following:</p>
+<ul>
+<li>Sample <code>ACTIVE_EXPIRE_CYCLE_LOOKUPS_PER_LOOP</code> keys, evicting all the keys already expired.</li>
+<li>If the more than 25% of the keys were found expired, repeat.</li>
+</ul>
+<p>Given that <code>ACTIVE_EXPIRE_CYCLE_LOOKUPS_PER_LOOP</code> is set to 20 by default, and the process is performed ten times per second, usually just 200 keys per second are actively expired. This is enough to clean the DB fast enough even when already expired keys are not accessed for a long time, so that the <em>lazy</em> algorithm does not help. At the same time expiring just 200 keys per second has no effects in the latency a Valkey instance.</p>
+<p>However the algorithm is adaptive and will loop if it finds more than 25% of keys already expired in the set of sampled keys. But given that we run the algorithm ten times per second, this means that the unlucky event of more than 25% of the keys in our random sample are expiring at least <em>in the same second</em>.</p>
+<p>Basically this means that <strong>if the database has many, many keys expiring in the same second, and these make up at least 25% of the current population of keys with an expire set</strong>, Valkey can block in order to get the percentage of keys already expired below 25%.</p>
+<p>This approach is needed in order to avoid using too much memory for keys that are already expired, and usually is absolutely harmless since it's strange that a big number of keys are going to expire in the same exact second, but it is not impossible that the user used <code>EXPIREAT</code> extensively with the same Unix time.</p>
+<p>In short: be aware that many keys expiring at the same moment can be a source of latency.</p>
+<h2 id="valkey-software-watchdog">Valkey software watchdog</h2>
+<p>The <em>Valkey Software Watchdog</em> is a debugging tool
+designed to track those latency problems that for one reason or the other
+escaped an analysis using normal tools.</p>
+<p>The software watchdog is an experimental feature. While it is designed to
+be used in production environments care should be taken to backup the database
+before proceeding as it could possibly have unexpected interactions with the
+normal execution of the Valkey server.</p>
+<p>It is important to use it only as <em>last resort</em> when there is no way to track the issue by other means.</p>
+<p>This is how this feature works:</p>
+<ul>
+<li>The user enables the software watchdog using the <code>CONFIG SET</code> command.</li>
+<li>Valkey starts monitoring itself constantly.</li>
+<li>If Valkey detects that the server is blocked into some operation that is not returning fast enough, and that may be the source of the latency issue, a low level report about where the server is blocked is dumped on the log file.</li>
+<li>The user contacts the developers by opening an issue on GitHub, including the watchdog report in the message.</li>
+</ul>
+<p>Note that this feature cannot be enabled using the valkey.conf file, because it is designed to be enabled only in already running instances and only for debugging purposes.</p>
+<p>To enable the feature just use the following:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>CONFIG SET watchdog-period 500</span></span></code></pre>
+<p>The period is specified in milliseconds. In the above example I specified to log latency issues only if the server detects a delay of 500 milliseconds or greater. The minimum configurable period is 200 milliseconds.</p>
+<p>When you are done with the software watchdog you can turn it off setting the <code>watchdog-period</code> parameter to 0. <strong>Important:</strong> remember to do this because keeping the instance with the watchdog turned on for a longer time than needed is generally not a good idea.</p>
+<p>The following is an example of what you'll see printed in the log file once the software watchdog detects a delay longer than the configured one:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>[8547 | signal handler] (1333114359)</span></span>
+<span class="giallo-l"><span>--- WATCHDOG TIMER EXPIRED ---</span></span>
+<span class="giallo-l"><span>/lib/libc.so.6(nanosleep+0x2d) [0x7f16b5c2d39d]</span></span>
+<span class="giallo-l"><span>/lib/libpthread.so.0(+0xf8f0) [0x7f16b5f158f0]</span></span>
+<span class="giallo-l"><span>/lib/libc.so.6(nanosleep+0x2d) [0x7f16b5c2d39d]</span></span>
+<span class="giallo-l"><span>/lib/libc.so.6(usleep+0x34) [0x7f16b5c62844]</span></span>
+<span class="giallo-l"><span>./valkey-server(debugCommand+0x3e1) [0x43ab41]</span></span>
+<span class="giallo-l"><span>./valkey-server(call+0x5d) [0x415a9d]</span></span>
+<span class="giallo-l"><span>./valkey-server(processCommand+0x375) [0x415fc5]</span></span>
+<span class="giallo-l"><span>./valkey-server(processInputBuffer+0x4f) [0x4203cf]</span></span>
+<span class="giallo-l"><span>./valkey-server(readQueryFromClient+0xa0) [0x4204e0]</span></span>
+<span class="giallo-l"><span>./valkey-server(aeProcessEvents+0x128) [0x411b48]</span></span>
+<span class="giallo-l"><span>./valkey-server(aeMain+0x2b) [0x411dbb]</span></span>
+<span class="giallo-l"><span>./valkey-server(main+0x2b6) [0x418556]</span></span>
+<span class="giallo-l"><span>/lib/libc.so.6(__libc_start_main+0xfd) [0x7f16b5ba1c4d]</span></span>
+<span class="giallo-l"><span>./valkey-server() [0x411099]</span></span>
+<span class="giallo-l"><span>------</span></span></code></pre>
+<p>Note: in the example the <strong>DEBUG SLEEP</strong> command was used in order to block the server. The stack trace is different if the server blocks in a different context.</p>
+<p>If you happen to collect multiple watchdog stack traces you are encouraged to post everything in a GitHub issue.
+The more traces we obtain, the simpler it will be to understand what the problem with your instance is.</p>
+
+
+            </div>
+        </main>
+        <aside>
+            
+
+
+
+
+
+<nav class="docs-menu" aria-label="Documentation">
+    <ul class="docs-menu-sections">
+        <li>
+            <details>
+                <summary>Getting started</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/introduction/">Introduction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/quickstart/">Quick start guide</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/installation/">Installation</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/faq/">FAQ</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/migration/">Migration from Redis to Valkey</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-bundle/">Valkey Bundle</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        
+<li>
+    <details>
+        <summary>Command reference</summary>
+        <ul>
+            <li><a href="/valkey-io.github.io/pr-21/commands/">All commands</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bitmap">Bitmap</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bloom">Bloom filter</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#cluster">Cluster</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#connection">Connection</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#generic">Generic</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#geo">Geospatial indices</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hash">Hash</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hyperloglog">HyperLogLog</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#json">JSON</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#list">List</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#pubsub">Pub/Sub</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#scripting">Scripting and Functions</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#search">Search</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#server">Server</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#set">Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#sorted-set">Sorted Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#stream">Stream</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#string">String</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#transactions">Transactions</a></li>
+        </ul>
+    </details>
+</li>
+
+        <li>
+            <details>
+                <summary>Data types</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/data-types/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/strings/">Strings</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Strings commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Strings commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/append/">APPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decr/">DECR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decrby/">DECRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delex/">DELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delifeq/">DELIFEQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/get/">GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getdel/">GETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getex/">GETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getrange/">GETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getset/">GETSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incr/">INCR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrby/">INCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrbyfloat/">INCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lcs/">LCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mget/">MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mset/">MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetex/">MSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetnx/">MSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psetex/">PSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/set/">SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setex/">SETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setnx/">SETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setrange/">SETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/strlen/">STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/substr/">SUBSTR</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/lists/">Lists</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Lists commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Lists commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmove/">BLMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmpop/">BLMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blpop/">BLPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpop/">BRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpoplpush/">BRPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lindex/">LINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/linsert/">LINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/llen/">LLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmove/">LMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmpop/">LMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpop/">LPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpos/">LPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpush/">LPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpushx/">LPUSHX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrange/">LRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrem/">LREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lset/">LSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ltrim/">LTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpop/">RPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpoplpush/">RPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpush/">RPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpushx/">RPUSHX</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sets/">Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/sadd/">SADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scard/">SCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiff/">SDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiffstore/">SDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinter/">SINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sintercard/">SINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinterstore/">SINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sismember/">SISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smembers/">SMEMBERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smismember/">SMISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smove/">SMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spop/">SPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srandmember/">SRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srem/">SREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sscan/">SSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunion/">SUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunionstore/">SUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hashes/">Hashes</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hashes commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hashes commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hdel/">HDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexists/">HEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpire/">HEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpireat/">HEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpiretime/">HEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hget/">HGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetall/">HGETALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetdel/">HGETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetex/">HGETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrby/">HINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrbyfloat/">HINCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hkeys/">HKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hlen/">HLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmget/">HMGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmset/">HMSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpersist/">HPERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpire/">HPEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpireat/">HPEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpiretime/">HPEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpttl/">HPTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hrandfield/">HRANDFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hscan/">HSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hset/">HSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetex/">HSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetnx/">HSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hstrlen/">HSTRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/httl/">HTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hvals/">HVALS</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sorted-sets/">Sorted Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sorted Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sorted Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzmpop/">BZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmax/">BZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmin/">BZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zadd/">ZADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcard/">ZCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcount/">ZCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiff/">ZDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiffstore/">ZDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zincrby/">ZINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinter/">ZINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zintercard/">ZINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinterstore/">ZINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zlexcount/">ZLEXCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmpop/">ZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmscore/">ZMSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmax/">ZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmin/">ZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrandmember/">ZRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrange/">ZRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebylex/">ZRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebyscore/">ZRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangestore/">ZRANGESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrank/">ZRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrem/">ZREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebylex/">ZREMRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyrank/">ZREMRANGEBYRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyscore/">ZREMRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrange/">ZREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebylex/">ZREVRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebyscore/">ZREVRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrank/">ZREVRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscan/">ZSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscore/">ZSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunion/">ZUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunionstore/">ZUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/streams-intro/">Streams</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Streams commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Streams commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/xack/">XACK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xackdel/">XACKDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xadd/">XADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xautoclaim/">XAUTOCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xclaim/">XCLAIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdel/">XDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xdelex/">XDELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup/">XGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-create/">XGROUP CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-createconsumer/">XGROUP CREATECONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-delconsumer/">XGROUP DELCONSUMER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-destroy/">XGROUP DESTROY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-help/">XGROUP HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-setid/">XGROUP SETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo/">XINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-consumers/">XINFO CONSUMERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-groups/">XINFO GROUPS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-help/">XINFO HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-stream/">XINFO STREAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xlen/">XLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xpending/">XPENDING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrange/">XRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xread/">XREAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xreadgroup/">XREADGROUP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xrevrange/">XREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xsetid/">XSETID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/xtrim/">XTRIM</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/geospatial/">Geospatial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Geospatial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Geospatial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/geoadd/">GEOADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geodist/">GEODIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geohash/">GEOHASH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geopos/">GEOPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius/">GEORADIUS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember/">GEORADIUSBYMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember_ro/">GEORADIUSBYMEMBER_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius_ro/">GEORADIUS_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearch/">GEOSEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearchstore/">GEOSEARCHSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitmaps/">Bitmaps</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitmaps commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitmaps commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitcount/">BITCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitop/">BITOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitpos/">BITPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getbit/">GETBIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setbit/">SETBIT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitfields/">Bitfields</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitfields commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitfields commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield/">BITFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield_ro/">BITFIELD_RO</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hyperloglogs/">HyperLogLog</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">HyperLogLog commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="HyperLogLog commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfadd/">PFADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfcount/">PFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfdebug/">PFDEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfmerge/">PFMERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfselftest/">PFSELFTEST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bloomfilters/">Bloom Filters <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bloom Filters commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bloom Filters commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.add/">BF.ADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.card/">BF.CARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.exists/">BF.EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.info/">BF.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.insert/">BF.INSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.load/">BF.LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.madd/">BF.MADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.mexists/">BF.MEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.reserve/">BF.RESERVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-json/">JSON <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">JSON commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="JSON commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrappend/">JSON.ARRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrindex/">JSON.ARRINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrinsert/">JSON.ARRINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrlen/">JSON.ARRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrpop/">JSON.ARRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrtrim/">JSON.ARRTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.clear/">JSON.CLEAR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.debug/">JSON.DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.del/">JSON.DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.forget/">JSON.FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.get/">JSON.GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.merge/">JSON.MERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mget/">JSON.MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mset/">JSON.MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.numincrby/">JSON.NUMINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.nummultby/">JSON.NUMMULTBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objkeys/">JSON.OBJKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objlen/">JSON.OBJLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.resp/">JSON.RESP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.set/">JSON.SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strappend/">JSON.STRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strlen/">JSON.STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.toggle/">JSON.TOGGLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.type/">JSON.TYPE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Application development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/keyspace/">Keyspace</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Keyspace commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Keyspace commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/copy/">COPY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dbsize/">DBSIZE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/del/">DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dump/">DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exists/">EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expire/">EXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expireat/">EXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expiretime/">EXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushall/">FLUSHALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushdb/">FLUSHDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/keys/">KEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/migrate/">MIGRATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/move/">MOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object/">OBJECT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-encoding/">OBJECT ENCODING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-freq/">OBJECT FREQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-help/">OBJECT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-idletime/">OBJECT IDLETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-refcount/">OBJECT REFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/persist/">PERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpire/">PEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpireat/">PEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpiretime/">PEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pttl/">PTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/randomkey/">RANDOMKEY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rename/">RENAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/renamenx/">RENAMENX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/restore/">RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scan/">SCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort/">SORT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort_ro/">SORT_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/swapdb/">SWAPDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/touch/">TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ttl/">TTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/type/">TYPE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unlink/">UNLINK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/wait/">WAIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/waitaof/">WAITAOF</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/pipelining/">Pipelining</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/transactions/">Transactions</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Transactions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Transactions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/discard/">DISCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exec/">EXEC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/multi/">MULTI</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unwatch/">UNWATCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/watch/">WATCH</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/pubsub/">Pub/Sub</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Pub/Sub commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Pub/Sub commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/psubscribe/">PSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/publish/">PUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub/">PUBSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-channels/">PUBSUB CHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-help/">PUBSUB HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numpat/">PUBSUB NUMPAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numsub/">PUBSUB NUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardchannels/">PUBSUB SHARDCHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardnumsub/">PUBSUB SHARDNUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/punsubscribe/">PUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spublish/">SPUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ssubscribe/">SSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/subscribe/">SUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunsubscribe/">SUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unsubscribe/">UNSUBSCRIBE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/notifications/">Keyspace notifications</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Patterns and tutorials</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lru-cache/">Key eviction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/client-side-caching/">Client-side caching</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/distlock/">Distributed Locks</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/indexing/">Secondary indexing</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/twitter-clone/">Patterns example</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Scripting and functions</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/programmability/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Scripting and functions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Scripting and functions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval/">EVAL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha/">EVALSHA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha_ro/">EVALSHA_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval_ro/">EVAL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall/">FCALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall_ro/">FCALL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function/">FUNCTION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-delete/">FUNCTION DELETE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-dump/">FUNCTION DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-flush/">FUNCTION FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-help/">FUNCTION HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-kill/">FUNCTION KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-list/">FUNCTION LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-load/">FUNCTION LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-restore/">FUNCTION RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-stats/">FUNCTION STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script/">SCRIPT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-debug/">SCRIPT DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-exists/">SCRIPT EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-flush/">SCRIPT FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-help/">SCRIPT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-kill/">SCRIPT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-load/">SCRIPT LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-show/">SCRIPT SHOW</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/eval-intro/">Scripting with Lua</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/functions-intro/">Functions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lua-api/">Lua API reference</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldb/">Debugging Lua scripts</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Search <span class="docs-menu-badge">module</span></summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/search/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Search commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Search commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.aggregate/">FT.AGGREGATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.create/">FT.CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.cursor/">FT.CURSOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.dropindex/">FT.DROPINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.hybrid/">FT.HYBRID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.info/">FT.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.search/">FT.SEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft._list/">FT._LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-query/">Queries</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-expressions/">Aggregation expressions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-data-formats/">Data formats</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-configurables/">Configuration</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-monitoring/">Metrics and configurations</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-observables/">INFO SEARCH metrics</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Administration</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/server/">The Valkey server</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cli/">CLI</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey.conf/">Configuration</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Configuration commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Configuration commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/config/">CONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-get/">CONFIG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-help/">CONFIG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-resetstat/">CONFIG RESETSTAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-rewrite/">CONFIG REWRITE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-set/">CONFIG SET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/persistence/">Persistence</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Persistence commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Persistence commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgrewriteaof/">BGREWRITEAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgsave/">BGSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lastsave/">LASTSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/save/">SAVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/replication/">Replication</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Replication commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Replication commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/failover/">FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psync/">PSYNC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replconf/">REPLCONF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replicaof/">REPLICAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/role/">ROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slaveof/">SLAVEOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sync/">SYNC</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel/">High availability with Valkey Sentinel</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/admin/">Administration</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/clients/">Client handling</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Client handling commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Client handling commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/auth/">AUTH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client/">CLIENT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-caching/">CLIENT CACHING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-capa/">CLIENT CAPA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getname/">CLIENT GETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getredir/">CLIENT GETREDIR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-help/">CLIENT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-id/">CLIENT ID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-import-source/">CLIENT IMPORT-SOURCE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-info/">CLIENT INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-kill/">CLIENT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-list/">CLIENT LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-evict/">CLIENT NO-EVICT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-touch/">CLIENT NO-TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-pause/">CLIENT PAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-reply/">CLIENT REPLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setinfo/">CLIENT SETINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setname/">CLIENT SETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-tracking/">CLIENT TRACKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-trackinginfo/">CLIENT TRACKINGINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unblock/">CLIENT UNBLOCK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unpause/">CLIENT UNPAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/echo/">ECHO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hello/">HELLO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ping/">PING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/quit/">QUIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/reset/">RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/select/">SELECT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/signals/">Signal handling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ARM/">ARM support</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/RDMA/">RDMA experimental support</a>
+</li>
+
+                    <li>
+                        <details class="docs-menu-other-commands">
+                            <summary>Other commands</summary>
+                            <ul class="docs-menu-commands" aria-label="Administration commands">
+                                <li><a href="/valkey-io.github.io/pr-21/commands/debug/">DEBUG</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/info/">INFO</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/lolwut/">LOLWUT</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/monitor/">MONITOR</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/restore-asking/">RESTORE-ASKING</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/shutdown/">SHUTDOWN</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/time/">TIME</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Cluster</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-tutorial/">Cluster tutorial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Cluster tutorial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Cluster tutorial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/asking/">ASKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster/">CLUSTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslots/">CLUSTER ADDSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslotsrange/">CLUSTER ADDSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-bumpepoch/">CLUSTER BUMPEPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-cancelslotmigrations/">CLUSTER CANCELSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-count-failure-reports/">CLUSTER COUNT-FAILURE-REPORTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-countkeysinslot/">CLUSTER COUNTKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslots/">CLUSTER DELSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslotsrange/">CLUSTER DELSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-failover/">CLUSTER FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-flushslots/">CLUSTER FLUSHSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-forget/">CLUSTER FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getkeysinslot/">CLUSTER GETKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getslotmigrations/">CLUSTER GETSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-help/">CLUSTER HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-info/">CLUSTER INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-keyslot/">CLUSTER KEYSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-links/">CLUSTER LINKS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-meet/">CLUSTER MEET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-migrateslots/">CLUSTER MIGRATESLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myid/">CLUSTER MYID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myshardid/">CLUSTER MYSHARDID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-nodes/">CLUSTER NODES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicas/">CLUSTER REPLICAS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicate/">CLUSTER REPLICATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-reset/">CLUSTER RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-saveconfig/">CLUSTER SAVECONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-set-config-epoch/">CLUSTER SET-CONFIG-EPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-setslot/">CLUSTER SETSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-shards/">CLUSTER SHARDS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slaves/">CLUSTER SLAVES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slot-stats/">CLUSTER SLOT-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slots/">CLUSTER SLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-syncslots/">CLUSTER SYNCSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/clusterscan/">CLUSTERSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readonly/">READONLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readwrite/">READWRITE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-spec/">Cluster specification</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/atomic-slot-migration/">Atomic slot migration</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Security</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/security/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/acl/">ACL</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">ACL commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="ACL commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl/">ACL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-cat/">ACL CAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-delrole/">ACL DELROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-deluser/">ACL DELUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-digest/">ACL DIGEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-dryrun/">ACL DRYRUN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-genpass/">ACL GENPASS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getrole/">ACL GETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getuser/">ACL GETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-help/">ACL HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-list/">ACL LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-load/">ACL LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-log/">ACL LOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-roles/">ACL ROLES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-save/">ACL SAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setrole/">ACL SETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setuser/">ACL SETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-users/">ACL USERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-whoami/">ACL WHOAMI</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/tls/">TLS</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldap/">LDAP authentication <span class="docs-menu-badge">module</span></a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details open>
+                <summary>Performance and troubleshooting</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/problems/">Troubleshooting Valkey</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/memory-optimization/">Memory optimization</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Memory optimization commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Memory optimization commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory/">MEMORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-doctor/">MEMORY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-help/">MEMORY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-malloc-stats/">MEMORY MALLOC-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-purge/">MEMORY PURGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-stats/">MEMORY STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-usage/">MEMORY USAGE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency-monitor/">Latency monitoring</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Latency monitoring commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Latency monitoring commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency/">LATENCY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-doctor/">LATENCY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-graph/">LATENCY GRAPH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-help/">LATENCY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-histogram/">LATENCY HISTOGRAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-history/">LATENCY HISTORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-latest/">LATENCY LATEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-reset/">LATENCY RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <details class="docs-menu-current-topic" open>
+        <summary class="docs-menu-current" aria-current="page"><span>Diagnosing latency issues</span>
+        </summary>
+        <ul class="docs-menu-commands" aria-label="Diagnosing latency issues commands">
+            <li><a href="/valkey-io.github.io/pr-21/commands/commandlog/">COMMANDLOG</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-get/">COMMANDLOG GET</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-help/">COMMANDLOG HELP</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-len/">COMMANDLOG LEN</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-reset/">COMMANDLOG RESET</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/slowlog/">SLOWLOG</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-get/">SLOWLOG GET</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-help/">SLOWLOG HELP</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-len/">SLOWLOG LEN</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-reset/">SLOWLOG RESET</a></li>
+        </ul>
+    </details>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hotkeys/">Hot key tracking</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hot key tracking commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hot key tracking commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys/">HOTKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-get/">HOTKEYS GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-help/">HOTKEYS HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-reset/">HOTKEYS RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/benchmark/">Benchmarking tool</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/performance-on-cpu/">CPU profiling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/debugging/">Debugging</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/mass-insertion/">Bulk loading</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Module development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/modules-intro/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Module development commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Module development commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/module/">MODULE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-help/">MODULE HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-list/">MODULE LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-load/">MODULE LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-loadex/">MODULE LOADEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-unload/">MODULE UNLOAD</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-native-types/">Modules API for native types</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-blocking-ops/">Modules and blocking commands</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-api-ref/">Modules API reference</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Client development</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/protocol/">Serialization protocol specification</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/command-arguments/">Command arguments</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Command arguments commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Command arguments commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/command/">COMMAND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-count/">COMMAND COUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-docs/">COMMAND DOCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeys/">COMMAND GETKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeysandflags/">COMMAND GETKEYSANDFLAGS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-help/">COMMAND HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-info/">COMMAND INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-list/">COMMAND LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/key-specs/">Command key specifications</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/command-tips/">Command tips</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel-clients/">Sentinel client spec</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>About Valkey</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/releases/">Releases and versioning schema</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/history/">History</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+    </ul>
+</nav>
+
+
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/latency.md">Update this Page on GitHub!</a>
+</div>
+
+        </aside>
+    </div>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

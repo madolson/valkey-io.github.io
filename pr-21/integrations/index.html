@@ -1,0 +1,2252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Integrations</title>
+    <meta name="title" property="og:title" content="Valkey: Integrations">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+  <script>document.documentElement.classList.add('js');</script>
+  
+  
+  
+
+  
+  
+  
+
+  
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+
+  
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+    
+    
+    
+  
+    
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+    
+    
+    
+      
+    
+  
+    
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+    
+    
+    
+  
+    
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+    
+    
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+    
+      
+    
+  
+    
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+    
+    
+    
+  
+    
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+    
+  
+    
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+    
+    
+    
+  
+
+  
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+
+  
+  
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+
+  <div class="catalog" data-catalog-root data-page="libraries">
+
+    
+    <header class="catalog-header">
+      <h1 class="catalog-title">Integrations</h1>
+      <p class="catalog-lede">Frameworks, job queues, AI libraries, and operations tools that work with Valkey.</p>
+      <p class="catalog-crosslink">See also: <a href="/valkey-io.github.io/pr-21/clients/">Clients</a></p>
+    </header>
+    
+
+    
+    
+    <div class="toolbar" data-toolbar>
+      <div class="field field-search">
+        <label for="catalog-q">Search</label>
+        <span class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="catalog-q" type="search" class="search-input" data-search-input
+                 placeholder="Search integrations…" autocomplete="off" aria-label="Search">
+        </span>
+      </div>
+      <div class="field field-toggle">
+        <span class="toggle-label" aria-hidden="true">Valkey</span>
+        <button type="button" class="fp-toggle" data-first-party-toggle
+                role="switch" aria-checked="false">
+          <span class="fp-toggle-track" aria-hidden="true"><span class="fp-toggle-thumb"></span></span>
+          <span class="fp-toggle-text">Maintained by Valkey</span>
+        </button>
+      </div>
+      <div class="field field-sort">
+        <label id="catalog-sort-label">Sort</label>
+        <button type="button" id="catalog-sort" class="sort-control" data-sort-control
+                aria-labelledby="catalog-sort-label catalog-sort-text">
+          <span class="sort-control-text" id="catalog-sort-text" data-sort-text>Name A–Z</span>
+          <svg class="sort-control-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 4v16"></path><path d="M4 8l3-4 3 4"></path>
+            <path d="M13 6h7"></path><path d="M13 12h5"></path><path d="M13 18h3"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+
+    <div class="sr-only" role="status" data-result-count data-noun="integrations" data-noun-one="integration"></div>
+
+    
+    
+    <div class="filterbar" data-facet="tags" data-select="multi">
+      <span class="filterbar-label">Category</span>
+      <div class="pills">
+        <button type="button" class="filter-pill" data-value="__all__" aria-pressed="true">All</button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="CLI &amp; GUI" aria-pressed="false">
+            CLI &amp; GUI <span class="pill-count" data-count>2</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Deploy &amp; operate" aria-pressed="false">
+            Deploy &amp; operate <span class="pill-count" data-count>4</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Frameworks &amp; ORMs" aria-pressed="false">
+            Frameworks &amp; ORMs <span class="pill-count" data-count>2</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Queues &amp; background jobs" aria-pressed="false">
+            Queues &amp; background jobs <span class="pill-count" data-count>3</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="RAG &amp; retrieval" aria-pressed="false">
+            RAG &amp; retrieval <span class="pill-count" data-count>3</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Agent memory" aria-pressed="false">
+            Agent memory <span class="pill-count" data-count>1</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Agent frameworks" aria-pressed="false">
+            Agent frameworks <span class="pill-count" data-count>5</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Inference &amp; serving" aria-pressed="false">
+            Inference &amp; serving <span class="pill-count" data-count>2</span></button>
+        
+      </div>
+    </div>
+    
+
+    <section class="catalog-grid" data-catalog>
+
+      
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey admin"
+                 data-search="valkey admin administration console for standalone and clustered deployments: browse and edit keys, inspect slots and replication, watch live metrics and run commands from a single web interface. cli &amp; gui"
+                 data-desc="administration console for standalone and clustered deployments: browse and edit keys, inspect slots and replication, watch live metrics and run commands from a single web interface."
+                 data-tags="CLI &amp; GUI"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://valkey-admin.valkey.io/deployment/docker/">Valkey Admin</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">CLI &amp; GUI</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Administration console for standalone and clustered deployments: browse and edit keys, inspect slots and replication, watch live metrics and run commands from a single web interface.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-admin">Repository</a>
+            <a class="link-site" href="https://valkey-admin.valkey.io/deployment/docker/">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey-cli"
+                 data-search="valkey-cli the interactive terminal client shipped with valkey-server, with cluster-aware routing, --scan, --bigkeys and latency diagnostics built in. cli &amp; gui"
+                 data-desc="the interactive terminal client shipped with valkey-server, with cluster-aware routing, --scan, --bigkeys and latency diagnostics built in."
+                 data-tags="CLI &amp; GUI"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="/valkey-io.github.io/pr-21/topics/cli/">valkey-cli</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">CLI &amp; GUI</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">The interactive terminal client shipped with valkey-server, with cluster-aware routing, --scan, --bigkeys and latency diagnostics built in.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">BSD-3-Clause</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey">Repository</a>
+            <a class="link-site" href="/valkey-io.github.io/pr-21/topics/cli/">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey-operator"
+                 data-search="valkey-operator kubernetes operator for deploying valkey clusters and managing their lifecycle. work in progress. deploy &amp; operate"
+                 data-desc="kubernetes operator for deploying valkey clusters and managing their lifecycle. work in progress."
+                 data-tags="Deploy &amp; operate"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/valkey-io/valkey-operator/blob/v0.7.1/docs/quickstart.md">valkey-operator</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Deploy &amp; operate</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Kubernetes operator for deploying Valkey clusters and managing their lifecycle. Work in progress.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-operator">Repository</a>
+            <a class="link-site" href="https://github.com/valkey-io/valkey-operator/blob/v0.7.1/docs/quickstart.md">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey-helm"
+                 data-search="valkey-helm official helm chart for installing valkey on kubernetes. deploy &amp; operate"
+                 data-desc="official helm chart for installing valkey on kubernetes."
+                 data-tags="Deploy &amp; operate"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/valkey-io/valkey-helm/blob/valkey-0.12.0/README.md#tldr">valkey-helm</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Deploy &amp; operate</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Official Helm chart for installing Valkey on Kubernetes.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">BSD-3-Clause</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-helm">Repository</a>
+            <a class="link-site" href="https://github.com/valkey-io/valkey-helm/blob/valkey-0.12.0/README.md#tldr">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey-container"
+                 data-search="valkey-container sources for the official valkey container images. deploy &amp; operate"
+                 data-desc="sources for the official valkey container images."
+                 data-tags="Deploy &amp; operate"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://hub.docker.com/r/valkey/valkey">valkey-container</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Deploy &amp; operate</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Sources for the official Valkey container images.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">BSD-3-Clause</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-container">Repository</a>
+            <a class="link-site" href="https://hub.docker.com/r/valkey/valkey">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="spring data valkey"
+                 data-search="spring data valkey spring data module for valkey — templates, repositories and spring cache backing for jvm applications. frameworks &amp; orms"
+                 data-desc="spring data module for valkey — templates, repositories and spring cache backing for jvm applications."
+                 data-tags="Frameworks &amp; ORMs"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://spring.valkey.io/valkey/getting-started/">Spring Data Valkey</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Frameworks &amp; ORMs</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Spring Data module for Valkey — templates, repositories and Spring Cache backing for JVM applications.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">implementation &#39;io.valkey.springframework.boot:spring-boot-starter-data-valkey:2.0.1&#39;</code></span>
+            <button type="button" class="copy-btn" data-copy="implementation &#39;io.valkey.springframework.boot:spring-boot-starter-data-valkey:2.0.1&#39;"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/spring-data-valkey">Repository</a>
+            <a class="link-site" href="https://spring.valkey.io/valkey/getting-started/">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="redsync"
+                 data-search="redsync distributed mutual-exclusion lock for go, coordinating a quorum across several independent nodes. frameworks &amp; orms"
+                 data-desc="distributed mutual-exclusion lock for go, coordinating a quorum across several independent nodes."
+                 data-tags="Frameworks &amp; ORMs"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/go-redsync/redsync/blob/v4.18.0/examples/valkego/main.go">Redsync</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Frameworks &amp; ORMs</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Distributed mutual-exclusion lock for Go, coordinating a quorum across several independent nodes.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">go get github.com/go-redsync/redsync/v4</code></span>
+            <button type="button" class="copy-btn" data-copy="go get github.com/go-redsync/redsync/v4"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">BSD-3-Clause</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/go-redsync/redsync">Repository</a>
+            <a class="link-site" href="https://github.com/go-redsync/redsync/blob/v4.18.0/examples/valkego/main.go">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="rq"
+                 data-search="rq minimalistic python task queue that supports valkey. queues &amp; background jobs"
+                 data-desc="minimalistic python task queue that supports valkey."
+                 data-tags="Queues &amp; background jobs"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://python-rq.org/">Rq</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Queues &amp; background jobs</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Minimalistic Python task queue that supports Valkey.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install rq</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install rq"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">BSD-2-Clause</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/rq/rq">Repository</a>
+            <a class="link-site" href="https://python-rq.org/">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="huey"
+                 data-search="huey python task queue with periodic tasks and retries, with a valkey backend built on the official valkey glide client. queues &amp; background jobs"
+                 data-desc="python task queue with periodic tasks and retries, with a valkey backend built on the official valkey glide client."
+                 data-tags="Queues &amp; background jobs"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://huey.readthedocs.io/en/latest/recipes.html#high-availability-redis-sentinel-valkey-and-cluster">huey</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Queues &amp; background jobs</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Python task queue with periodic tasks and retries, with a Valkey backend built on the official Valkey GLIDE client.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install huey valkey-glide-sync</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install huey valkey-glide-sync"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">MIT</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/coleifer/huey">Repository</a>
+            <a class="link-site" href="https://huey.readthedocs.io/en/latest/recipes.html#high-availability-redis-sentinel-valkey-and-cluster">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="sidekiq"
+                 data-search="sidekiq background job processing for ruby applications, with maintained support for valkey 7.2 and above. queues &amp; background jobs"
+                 data-desc="background job processing for ruby applications, with maintained support for valkey 7.2 and above."
+                 data-tags="Queues &amp; background jobs"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/sidekiq/sidekiq/wiki/Using-Redis/b685f8063a1147679a5221f675433d40588bdaff">Sidekiq</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Queues &amp; background jobs</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Background job processing for Ruby applications, with maintained support for Valkey 7.2 and above.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">gem install sidekiq</code></span>
+            <button type="button" class="copy-btn" data-copy="gem install sidekiq"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">LGPL-3.0-only</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/sidekiq/sidekiq">Repository</a>
+            <a class="link-site" href="https://github.com/sidekiq/sidekiq/wiki/Using-Redis/b685f8063a1147679a5221f675433d40588bdaff">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="cocoindex"
+                 data-search="cocoindex data transformation framework for ai that builds and incrementally updates indexes as your sources change. rag &amp; retrieval"
+                 data-desc="data transformation framework for ai that builds and incrementally updates indexes as your sources change."
+                 data-tags="RAG &amp; retrieval"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://cocoindex.io/docs/connectors/valkey/">CocoIndex</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">RAG &amp; retrieval</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Data transformation framework for AI that builds and incrementally updates indexes as your sources change.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install &#39;cocoindex[valkey]&#39;</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install &#39;cocoindex[valkey]&#39;"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/cocoindex-io/cocoindex">Repository</a>
+            <a class="link-site" href="https://cocoindex.io/docs/connectors/valkey/">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey integration for haystack"
+                 data-search="valkey integration for haystack document and embedding store for haystack rag pipelines, backed by valkey (requires valkey-bundle). rag &amp; retrieval"
+                 data-desc="document and embedding store for haystack rag pipelines, backed by valkey (requires valkey-bundle)."
+                 data-tags="RAG &amp; retrieval"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://haystack.deepset.ai/integrations/valkey">Valkey Integration for Haystack</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">RAG &amp; retrieval</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Document and embedding store for Haystack RAG pipelines, backed by Valkey (requires valkey-bundle).</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install valkey-haystack</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install valkey-haystack"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/deepset-ai/haystack-core-integrations">Repository</a>
+            <a class="link-site" href="https://haystack.deepset.ai/integrations/valkey">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="cognee valkey adapter"
+                 data-search="cognee valkey adapter cognee is an ai memory engine building knowledge graphs from your data, which has an adapter for storing embeddings in valkey (requires valkey-bundle). agent memory"
+                 data-desc="cognee is an ai memory engine building knowledge graphs from your data, which has an adapter for storing embeddings in valkey (requires valkey-bundle)."
+                 data-tags="Agent memory"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/topoteretes/cognee-community/blob/25980633a5d047e6e41b1f65e5607a44ca0dd7a2/packages/vector/valkey/examples/example.py">Cognee Valkey Adapter</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Agent memory</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Cognee is an AI memory engine building knowledge graphs from your data, which has an adapter for storing embeddings in Valkey (requires valkey-bundle).</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install cognee-community-vector-adapter-valkey</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install cognee-community-vector-adapter-valkey"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/topoteretes/cognee-community">Repository</a>
+            <a class="link-site" href="https://github.com/topoteretes/cognee-community/blob/25980633a5d047e6e41b1f65e5607a44ca0dd7a2/packages/vector/valkey/examples/example.py">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="praisonai"
+                 data-search="praisonai multi-agent framework for building production agent teams, with pluggable retrieval (requires valkey-bundle), and storage. agent frameworks"
+                 data-desc="multi-agent framework for building production agent teams, with pluggable retrieval (requires valkey-bundle), and storage."
+                 data-tags="Agent frameworks"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://praison.ai/docs/features/persistence#url-schemes-per-store-kind">PraisonAI</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Agent frameworks</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Multi-agent framework for building production agent teams, with pluggable retrieval (requires valkey-bundle), and storage.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install &#39;praisonai[valkey]&#39;</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install &#39;praisonai[valkey]&#39;"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">MIT</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/MervinPraison/PraisonAI">Repository</a>
+            <a class="link-site" href="https://praison.ai/docs/features/persistence#url-schemes-per-store-kind">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey-skills"
+                 data-search="valkey-skills reusable, domain-specific skills that teach coding agents how to work with valkey correctly. agent frameworks"
+                 data-desc="reusable, domain-specific skills that teach coding agents how to work with valkey correctly."
+                 data-tags="Agent frameworks"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/valkey-io/valkey-skills/blob/c7f563970ae4702d1c83c9da27ac8cdbca15fa7b/README.md#install">valkey-skills</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Agent frameworks</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Reusable, domain-specific skills that teach coding agents how to work with Valkey correctly.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">BSD-3-Clause</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-skills">Repository</a>
+            <a class="link-site" href="https://github.com/valkey-io/valkey-skills/blob/c7f563970ae4702d1c83c9da27ac8cdbca15fa7b/README.md#install">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="agno"
+                 data-search="agno agent framework with valkey as a session and state store, plus a valkey vector store (requires valkey-bundle) supporting vector and keyword search. agent frameworks"
+                 data-desc="agent framework with valkey as a session and state store, plus a valkey vector store (requires valkey-bundle) supporting vector and keyword search."
+                 data-tags="Agent frameworks"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://docs.agno.com/database/providers/valkey/overview">Agno</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Agent frameworks</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Agent framework with Valkey as a session and state store, plus a Valkey vector store (requires valkey-bundle) supporting vector and keyword search.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install &#39;agno[valkey]&#39;</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install &#39;agno[valkey]&#39;"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/agno-agi/agno">Repository</a>
+            <a class="link-site" href="https://docs.agno.com/database/providers/valkey/overview">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="langbot"
+                 data-search="langbot chat-bot platform whose knowledge base can use a valkey vector store, built on the official valkey glide client (requires valkey-bundle; not available on windows). agent frameworks"
+                 data-desc="chat-bot platform whose knowledge base can use a valkey vector store, built on the official valkey glide client (requires valkey-bundle; not available on windows)."
+                 data-tags="Agent frameworks"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/langbot-app/LangBot/blob/v4.10.11/docs/VALKEY_SEARCH_INTEGRATION.md">LangBot</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Agent frameworks</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Chat-bot platform whose knowledge base can use a Valkey vector store, built on the official Valkey GLIDE client (requires valkey-bundle; not available on Windows).</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install langbot</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install langbot"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/langbot-app/LangBot">Repository</a>
+            <a class="link-site" href="https://github.com/langbot-app/LangBot/blob/v4.10.11/docs/VALKEY_SEARCH_INTEGRATION.md">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="langflow"
+                 data-search="langflow visual builder for agent and rag flows, with valkey vector store (requires valkey-bundle) and chat memory components shipped as extensions. rag &amp; retrieval"
+                 data-desc="visual builder for agent and rag flows, with valkey vector store (requires valkey-bundle) and chat memory components shipped as extensions."
+                 data-tags="RAG &amp; retrieval"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://docs.langflow.org/bundles-valkey">Langflow</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">RAG &amp; retrieval</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Visual builder for agent and RAG flows, with Valkey vector store (requires valkey-bundle) and chat memory components shipped as extensions.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install &quot;langflow[bundles]&quot;</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install &quot;langflow[bundles]&quot;"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">MIT</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/langflow-ai/langflow">Repository</a>
+            <a class="link-site" href="https://docs.langflow.org/bundles-valkey">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="litellm"
+                 data-search="litellm unified gateway for 100+ llm apis, with a valkey-backed semantic cache for prompt and response reuse (requires valkey-bundle). inference &amp; serving"
+                 data-desc="unified gateway for 100+ llm apis, with a valkey-backed semantic cache for prompt and response reuse (requires valkey-bundle)."
+                 data-tags="Inference &amp; serving"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://docs.litellm.ai/docs/proxy/caching_semantic#valkey">LiteLLM</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Inference &amp; serving</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Unified gateway for 100+ LLM APIs, with a Valkey-backed semantic cache for prompt and response reuse (requires valkey-bundle).</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install litellm &#39;redis&lt;6&#39;</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install litellm &#39;redis&lt;6&#39;"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">MIT</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/BerriAI/litellm">Repository</a>
+            <a class="link-site" href="https://docs.litellm.ai/docs/proxy/caching_semantic#valkey">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey mcp server"
+                 data-search="valkey mcp server model context protocol server exposing valkey to ai agents through search, json, and tiered read/write/admin command tools (requires valkey-bundle). agent frameworks"
+                 data-desc="model context protocol server exposing valkey to ai agents through search, json, and tiered read/write/admin command tools (requires valkey-bundle)."
+                 data-tags="Agent frameworks"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://awslabs.github.io/mcp/servers/valkey-mcp-server">Valkey MCP Server</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Agent frameworks</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Model Context Protocol server exposing Valkey to AI agents through search, JSON, and tiered read/write/admin command tools (requires valkey-bundle).</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">uvx awslabs.valkey-mcp-server@latest</code></span>
+            <button type="button" class="copy-btn" data-copy="uvx awslabs.valkey-mcp-server@latest"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/awslabs/mcp/tree/main/src/valkey-mcp-server">Repository</a>
+            <a class="link-site" href="https://awslabs.github.io/mcp/servers/valkey-mcp-server">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey message queue starter"
+                 data-search="valkey message queue starter next.js starter template demonstrating a reliable message queue built on valkey streams, using consumer groups and pending-entry acknowledgement. deploy &amp; operate"
+                 data-desc="next.js starter template demonstrating a reliable message queue built on valkey streams, using consumer groups and pending-entry acknowledgement."
+                 data-tags="Deploy &amp; operate"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://vercel.com/templates/next.js/valkey-message-queue-with-elasticache-and-next-js">Valkey Message Queue Starter</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Deploy &amp; operate</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Next.js starter template demonstrating a reliable message queue built on Valkey Streams, using consumer groups and pending-entry acknowledgement.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pnpm create next-app --example https://github.com/vercel/examples/tree/main/solutions/aws-message-queue-elasticache</code></span>
+            <button type="button" class="copy-btn" data-copy="pnpm create next-app --example https://github.com/vercel/examples/tree/main/solutions/aws-message-queue-elasticache"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">MIT</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/vercel/examples/tree/main/solutions/aws-message-queue-elasticache">Repository</a>
+            <a class="link-site" href="https://vercel.com/templates/next.js/valkey-message-queue-with-elasticache-and-next-js">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+          
+            
+            
+          
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="vllm semantic router"
+                 data-search="vllm semantic router mixture-of-models router for llm inference, with a valkey-backed semantic cache, conversation memory and vector store (requires valkey-bundle). inference &amp; serving"
+                 data-desc="mixture-of-models router for llm inference, with a valkey-backed semantic cache, conversation memory and vector store (requires valkey-bundle)."
+                 data-tags="Inference &amp; serving"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://vllm-sr.ai/docs/installation/valkey-memory/">vLLM Semantic Router</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-tag">Inference &amp; serving</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">Mixture-of-Models router for LLM inference, with a Valkey-backed semantic cache, conversation memory and vector store (requires valkey-bundle).</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/vllm-project/semantic-router">Repository</a>
+            <a class="link-site" href="https://vllm-sr.ai/docs/installation/valkey-memory/">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+      
+
+      
+      <div class="empty-state" data-empty-state hidden>
+        <p class="empty-msg">No integrations match your current search and filters.</p>
+        <ul class="empty-recovery" data-recovery>
+          <li><button type="button" data-recover="clear-filters">Clear filters</button></li>
+          <li><button type="button" data-recover="clear-search">Clear search</button></li>
+        </ul>
+      </div>
+
+    </section>
+
+    
+
+    
+    <h2 class="submission-heading">Add your client, tool or integration</h2>
+    <p class="submission-lede">Building something on Valkey - a client, a module, a tool, or an AI integration? We'd love to see it here alongside the rest. Everything on this page lives in valkey-io repo, so adding yours is just a pull request away.</p>
+    <a class="submission-cta" href="https://github.com/valkey-io/valkey-io.github.io/blob/main/.github/PULL_REQUEST_TEMPLATE/add_library.md">Add your library</a>
+  </div>
+
+  <noscript>
+    <p class="catalog-nojs-note">Showing every library. Interactive filtering, search, and sorting require JavaScript.</p>
+  </noscript>
+
+
+  <script defer src="/valkey-io.github.io/pr-21/assets/js/libraries.js"></script>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

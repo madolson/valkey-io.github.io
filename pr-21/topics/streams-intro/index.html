@@ -1,0 +1,2079 @@
+
+
+
+
+
+
+    
+    
+    
+    
+        
+     
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey Documentation &middot; Streams</title>
+    <meta name="title" property="og:title" content="Valkey Documentation: Streams">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+
+    <div class="styled-title">
+        <h1 class="page-title">Documentation: Streams</h1>
+    </div>
+
+
+<div class="left-aside-bg">
+    <div class="left-aside">
+        <main>
+            
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item">
+            <a href="/valkey-io.github.io/pr-21/topics/" class="breadcrumb-link">Topics</a>
+        </li>
+        
+        <li class="breadcrumb-item">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="" width="8" height="10"/>
+            
+            <a href="/valkey-io.github.io/pr-21/topics/data-types/" class="breadcrumb-link">Data types</a>
+            
+        </li>
+        
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/valkey-io.github.io/pr-21/img/caret-right.svg" alt="Caret Right Icon" width="8" height="10"/>
+            Streams
+        </li>
+    </ul>
+</nav>
+
+            <div class="main-inner">
+                
+<p>A Stream is a data structure that acts like an append-only log but also implements several operations to overcome some of the limits of a typical append-only log. These include random access in O(1) time and complex consumption strategies, such as consumer groups.
+You can use streams to record and simultaneously syndicate events in real time.
+Examples of Stream use cases include:</p>
+<ul>
+<li>Event sourcing (e.g., tracking user actions, clicks, etc.)</li>
+<li>Sensor monitoring (e.g., readings from devices in the field)</li>
+<li>Notifications (e.g., storing a record of each user's notifications in a separate stream)</li>
+</ul>
+<p>Valkey generates a unique ID for each stream entry.
+You can use these IDs to retrieve their associated entries later or to read and process all subsequent entries in the stream. Note that because these IDs are related to time, the ones shown here may vary and will be different from the IDs you see in your own Valkey instance.</p>
+<p>Streams support several trimming strategies (to prevent streams from growing unbounded) and more than one consumption strategy (see <code>XREAD</code>, <code>XREADGROUP</code>, and <code>XRANGE</code>).</p>
+<h2 id="basic-commands">Basic commands</h2>
+<ul>
+<li><code>XADD</code> adds a new entry to a stream.</li>
+<li><code>XREAD</code> reads one or more entries, starting at a given position and moving forward in time.</li>
+<li><code>XRANGE</code> returns a range of entries between two supplied entry IDs.</li>
+<li><code>XLEN</code> returns the length of a stream.</li>
+</ul>
+<p>See the <a href="/valkey-io.github.io/pr-21/commands/#stream">complete list of stream commands</a>.</p>
+<h2 id="examples">Examples</h2>
+<ul>
+<li>When our racers pass a checkpoint, we add a stream entry for each racer that includes the racer's name, speed, position, and location ID:</li>
+</ul>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:france * rider Castilla speed 30.2 position 1 location_id 1</span></span>
+<span class="giallo-l"><span>&quot;1692632086370-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:france * rider Norem speed 28.8 position 3 location_id 1</span></span>
+<span class="giallo-l"><span>&quot;1692632094485-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:france * rider Prickett speed 29.7 position 2 location_id 1</span></span>
+<span class="giallo-l"><span>&quot;1692632102976-0&quot;</span></span></code></pre>
+<ul>
+<li>Read two stream entries starting at ID <code>1692632086370-0</code>:</li>
+</ul>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:france 1692632086370-0 + COUNT 2</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692632086370-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Castilla&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;30.2&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>2) 1) &quot;1692632094485-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Norem&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;28.8&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;3&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;1&quot;</span></span></code></pre>
+<ul>
+<li>Read up to 100 new stream entries, starting at the end of the stream, and block for up to 300 ms if no entries are being written:</li>
+</ul>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XREAD COUNT 100 BLOCK 300 STREAMS race:france $</span></span>
+<span class="giallo-l"><span>(nil)</span></span></code></pre><h2 id="performance">Performance</h2>
+<p>Adding an entry to a stream is O(1).
+Accessing any single entry is O(n), where <em>n</em> is the length of the ID.
+Since stream IDs are typically short and of a fixed length, this effectively reduces to a constant time lookup.
+For details on why, note that streams are implemented as <a rel="external" href="https://en.wikipedia.org/wiki/Radix_tree">radix trees</a>.</p>
+<p>Simply put, Streams provide highly efficient inserts and reads.
+See each command's time complexity for the details.</p>
+<h2 id="streams-basics">Streams basics</h2>
+<p>Streams are an append-only data structure. The fundamental write command, called <code>XADD</code>, appends a new entry to the specified stream.</p>
+<p>Each stream entry consists of one or more field-value pairs, somewhat like a dictionary or a Hash:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:france * rider Castilla speed 29.9 position 1 location_id 2</span></span>
+<span class="giallo-l"><span>&quot;1692632147973-0&quot;</span></span></code></pre>
+<p>The above call to the <code>XADD</code> command adds an entry <code>rider: Castilla, speed: 29.9, position: 1, location_id: 2</code> to the stream at key <code>race:france</code>, using an auto-generated entry ID, which is the one returned by the command, specifically <code>1692632147973-0</code>. It gets as its first argument the key name <code>race:france</code>, the second argument is the entry ID that identifies every entry inside a stream. However, in this case, we passed <code>*</code> because we want the server to generate a new ID for us. Every new ID will be monotonically increasing, so in more simple terms, every new entry added will have a higher ID compared to all the past entries. Auto-generation of IDs by the server is almost always what you want, and the reasons for specifying an ID explicitly are very rare. We'll talk more about this later. The fact that each Stream entry has an ID is another similarity with log files, where line numbers, or the byte offset inside the file, can be used in order to identify a given entry. Returning back at our <code>XADD</code> example, after the key name and ID, the next arguments are the field-value pairs composing our stream entry.</p>
+<p>It is possible to get the number of items inside a Stream just using the <code>XLEN</code> command:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XLEN race:france</span></span>
+<span class="giallo-l"><span>(integer) 4</span></span></code></pre><h3 id="entry-ids">Entry IDs</h3>
+<p>The entry ID returned by the <code>XADD</code> command, and identifying univocally each entry inside a given stream, is composed of two parts:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&lt;millisecondsTime&gt;-&lt;sequenceNumber&gt;</span></span></code></pre>
+<p>The milliseconds time part is actually the local time in the local Valkey node generating the stream ID, however if the current milliseconds time happens to be smaller than the previous entry time, then the previous entry time is used instead, so if a clock jumps backward the monotonically incrementing ID property still holds. The sequence number is used for entries created in the same millisecond. Since the sequence number is 64 bit wide, in practical terms there is no limit to the number of entries that can be generated within the same millisecond.</p>
+<p>The format of such IDs may look strange at first, and the gentle reader may wonder why the time is part of the ID. The reason is that Streams support range queries by ID. Because the ID is related to the time the entry is generated, this gives the ability to query for time ranges basically for free. We will see this soon while covering the <code>XRANGE</code> command.</p>
+<p>If for some reason the user needs incremental IDs that are not related to time but are actually associated to another external system ID, as previously mentioned, the <code>XADD</code> command can take an explicit ID instead of the <code>*</code> wildcard ID that triggers auto-generation, like in the following examples:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:usa 0-1 racer Castilla</span></span>
+<span class="giallo-l"><span>0-1</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:usa 0-2 racer Norem</span></span>
+<span class="giallo-l"><span>0-2</span></span></code></pre>
+<p>Note that in this case, the minimum ID is 0-1 and that the command will not accept an ID equal or smaller than a previous one:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:usa 0-1 racer Prickett</span></span>
+<span class="giallo-l"><span>(error) ERR The ID specified in XADD is equal or smaller than the target stream top item</span></span></code></pre>
+<p>If you're running Redis OSS 7 or later, you can also provide an explicit ID consisting of the milliseconds part only. In this case, the sequence portion of the ID will be automatically generated. To do this, use the syntax below:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:usa 0-* racer Prickett</span></span>
+<span class="giallo-l"><span>0-3</span></span></code></pre><h2 id="getting-data-from-streams">Getting data from Streams</h2>
+<p>Now we are finally able to append entries in our stream via <code>XADD</code>. However, while appending data to a stream is quite obvious, the way streams can be queried in order to extract data is not so obvious. If we continue with the analogy of the log file, one obvious way is to mimic what we normally do with the Unix command <code>tail -f</code>, that is, we may start to listen in order to get the new messages that are appended to the stream. Note that unlike the blocking list operations of Valkey, where a given element will reach a single client which is blocking in a <em>pop style</em> operation like <code>BLPOP</code>, with streams we want multiple consumers to see the new messages appended to the stream (the same way many <code>tail -f</code> processes can see what is added to a log). Using the traditional terminology we want the streams to be able to <em>fan out</em> messages to multiple clients.</p>
+<p>However, this is just one potential access mode. We could also see a stream in quite a different way: not as a messaging system, but as a <em>time series store</em>. In this case, maybe it's also useful to get the new messages appended, but another natural query mode is to get messages by ranges of time, or alternatively to iterate the messages using a cursor to incrementally check all the history. This is definitely another useful access mode.</p>
+<p>Finally, if we see a stream from the point of view of consumers, we may want to access the stream in yet another way, that is, as a stream of messages that can be partitioned to multiple consumers that are processing such messages, so that groups of consumers can only see a subset of the messages arriving in a single stream. In this way, it is possible to scale the message processing across different consumers, without single consumers having to process all the messages: each consumer will just get different messages to process. This is basically what Kafka (TM) does with consumer groups. Reading messages via consumer groups is yet another interesting mode of reading from a Stream.</p>
+<p>Streams support all three of the query modes described above via different commands. The next sections will show them all, starting from the simplest and most direct to use: range queries.</p>
+<h3 id="querying-by-range-xrange-and-xrevrange">Querying by range: XRANGE and XREVRANGE</h3>
+<p>To query the stream by range we are only required to specify two IDs, <em>start</em> and <em>end</em>. The range returned will include the elements having start or end as ID, so the range is inclusive. The two special IDs <code>-</code> and <code>+</code> respectively mean the smallest and the greatest ID possible.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:france - +</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692632086370-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Castilla&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;30.2&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>2) 1) &quot;1692632094485-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Norem&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;28.8&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;3&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>3) 1) &quot;1692632102976-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Prickett&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;29.7&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;2&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>4) 1) &quot;1692632147973-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Castilla&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;29.9&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;2&quot;</span></span></code></pre>
+<p>Each entry returned is an array of two items: the ID and the list of field-value pairs. We already said that the entry IDs have a relation with the time, because the part at the left of the <code>-</code> character is the Unix time in milliseconds of the local node that created the stream entry, at the moment the entry was created (however note that streams are replicated with fully specified <code>XADD</code> commands, so the replicas will have identical IDs to the primary). This means that I could query a range of time using <code>XRANGE</code>. In order to do so, however, I may want to omit the sequence part of the ID: if omitted, in the start of the range it will be assumed to be 0, while in the end part it will be assumed to be the maximum sequence number available. This way, querying using just two milliseconds Unix times, we get all the entries that were generated in that range of time, in an inclusive way. For instance, if I want to query a two milliseconds period I could use:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:france 1692632086369 1692632086371</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692632086370-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Castilla&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;30.2&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;1&quot;</span></span></code></pre>
+<p>I have only a single entry in this range. However in real data sets, I could query for ranges of hours, or there could be many items in just two milliseconds, and the result returned could be huge. For this reason, <code>XRANGE</code> supports an optional <strong>COUNT</strong> option at the end. By specifying a count, I can just get the first <em>N</em> items. If I want more, I can get the last ID returned, increment the sequence part by one, and query again. Let's see this in the following example. Let's assume that the stream <code>race:france</code> was populated with 4 items. To start my iteration, getting 2 items per command, I start with the full range, but with a count of 2.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:france - + COUNT 2</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692632086370-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Castilla&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;30.2&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>2) 1) &quot;1692632094485-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Norem&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;28.8&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;3&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;1&quot;</span></span></code></pre>
+<p>To continue the iteration with the next two items, I have to pick the last ID returned, that is <code>1692632094485-0</code>, and add the prefix <code>(</code> to it. The resulting exclusive range interval, that is <code>(1692632094485-0</code> in this case, can now be used as the new <em>start</em> argument for the next <code>XRANGE</code> call:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:france (1692632094485-0 + COUNT 2</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692632102976-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Prickett&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;29.7&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;2&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>2) 1) &quot;1692632147973-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Castilla&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;29.9&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;2&quot;</span></span></code></pre>
+<p>Now that we've retrieved 4 items out of a stream that only had 4 entries in it, if we try to retrieve more items, we'll get an empty array:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:france (1692632147973-0 + COUNT 2</span></span>
+<span class="giallo-l"><span>(empty array)</span></span></code></pre>
+<p>Since <code>XRANGE</code> complexity is <em>O(log(N))</em> to seek, and then <em>O(M)</em> to return M elements, with a small count the command has a logarithmic time complexity, which means that each step of the iteration is fast. So <code>XRANGE</code> is also the de facto <em>streams iterator</em> and does not require an <strong>XSCAN</strong> command.</p>
+<p>The command <code>XREVRANGE</code> is the equivalent of <code>XRANGE</code> but returning the elements in inverted order, so a practical use for <code>XREVRANGE</code> is to check what is the last item in a Stream:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XREVRANGE race:france + - COUNT 1</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692632147973-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Castilla&quot;</span></span>
+<span class="giallo-l"><span>      3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>      4) &quot;29.9&quot;</span></span>
+<span class="giallo-l"><span>      5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>      6) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>      7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>      8) &quot;2&quot;</span></span></code></pre>
+<p>Note that the <code>XREVRANGE</code> command takes the <em>start</em> and <em>stop</em> arguments in reverse order.</p>
+<h2 id="listening-for-new-items-with-xread">Listening for new items with XREAD</h2>
+<p>When we do not want to access items by a range in a stream, usually what we want instead is to <em>subscribe</em> to new items arriving to the stream. This concept may appear related to Valkey Pub/Sub, where you subscribe to a channel, or to Valkey blocking lists, where you wait for a key to get new elements to fetch, but there are fundamental differences in the way you consume a stream:</p>
+<ol>
+<li>A stream can have multiple clients (consumers) waiting for data. Every new item, by default, will be delivered to <em>every consumer</em> that is waiting for data in a given stream. This behavior is different than blocking lists, where each consumer will get a different element. However, the ability to <em>fan out</em> to multiple consumers is similar to Pub/Sub.</li>
+<li>While in Pub/Sub messages are <em>fire and forget</em> and are never stored anyway, and while when using blocking lists, when a message is received by the client it is <em>popped</em> (effectively removed) from the list, streams work in a fundamentally different way. All the messages are appended in the stream indefinitely (unless the user explicitly asks to delete entries): different consumers will know what is a new message from its point of view by remembering the ID of the last message received.</li>
+<li>Streams Consumer Groups provide a level of control that Pub/Sub or blocking lists cannot achieve, with different groups for the same stream, explicit acknowledgment of processed items, ability to inspect the pending items, claiming of unprocessed messages, and coherent history visibility for each single client, that is only able to see its private past history of messages.</li>
+</ol>
+<p>The command that provides the ability to listen for new messages arriving into a stream is called <code>XREAD</code>. It's a bit more complex than <code>XRANGE</code>, so we'll start showing simple forms, and later the whole command layout will be provided.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XREAD COUNT 2 STREAMS race:france 0</span></span>
+<span class="giallo-l"><span>1) 1) &quot;race:france&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) 1) &quot;1692632086370-0&quot;</span></span>
+<span class="giallo-l"><span>         2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>            2) &quot;Castilla&quot;</span></span>
+<span class="giallo-l"><span>            3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>            4) &quot;30.2&quot;</span></span>
+<span class="giallo-l"><span>            5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>            6) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>            7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>            8) &quot;1&quot;</span></span>
+<span class="giallo-l"><span>      2) 1) &quot;1692632094485-0&quot;</span></span>
+<span class="giallo-l"><span>         2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>            2) &quot;Norem&quot;</span></span>
+<span class="giallo-l"><span>            3) &quot;speed&quot;</span></span>
+<span class="giallo-l"><span>            4) &quot;28.8&quot;</span></span>
+<span class="giallo-l"><span>            5) &quot;position&quot;</span></span>
+<span class="giallo-l"><span>            6) &quot;3&quot;</span></span>
+<span class="giallo-l"><span>            7) &quot;location_id&quot;</span></span>
+<span class="giallo-l"><span>            8) &quot;1&quot;</span></span></code></pre>
+<p>The above is the non-blocking form of <code>XREAD</code>. Note that the <strong>COUNT</strong> option is not mandatory, in fact the only mandatory option of the command is the <strong>STREAMS</strong> option, that specifies a list of keys together with the corresponding maximum ID already seen for each stream by the calling consumer, so that the command will provide the client only with messages with an ID greater than the one we specified.</p>
+<p>In the above command we wrote <code>STREAMS race:france 0</code> so we want all the messages in the Stream <code>race:france</code> having an ID greater than <code>0-0</code>. As you can see in the example above, the command returns the key name, because actually it is possible to call this command with more than one key to read from different streams at the same time. I could write, for instance: <code>STREAMS race:france race:italy 0 0</code>. Note how after the <strong>STREAMS</strong> option we need to provide the key names, and later the IDs. For this reason, the <strong>STREAMS</strong> option must always be the last option.
+Any other options must come before the <strong>STREAMS</strong> option.</p>
+<p>Apart from the fact that <code>XREAD</code> can access multiple streams at once, and that we are able to specify the last ID we own to just get newer messages, in this simple form the command is not doing something so different compared to <code>XRANGE</code>. However, the interesting part is that we can turn <code>XREAD</code> into a <em>blocking command</em> easily, by specifying the <strong>BLOCK</strong> argument:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; XREAD BLOCK 0 STREAMS race:france $</span></span></code></pre>
+<p>Note that in the example above, other than removing <strong>COUNT</strong>, I specified the new <strong>BLOCK</strong> option with a timeout of 0 milliseconds (that means to never timeout). Moreover, instead of passing a normal ID for the stream <code>race:france</code> I passed the special ID <code>$</code>. This special ID means that <code>XREAD</code> should use as last ID the maximum ID already stored in the stream <code>race:france</code>, so that we will receive only <em>new</em> messages, starting from the time we started listening. This is similar to the <code>tail -f</code> Unix command in some way.</p>
+<p>Note that when the <strong>BLOCK</strong> option is used, we do not have to use the special ID <code>$</code>. We can use any valid ID. If the command is able to serve our request immediately without blocking, it will do so, otherwise it will block. Normally if we want to consume the stream starting from new entries, we start with the ID <code>$</code>, and after that we continue using the ID of the last message received to make the next call, and so forth.</p>
+<p>The blocking form of <code>XREAD</code> is also able to listen to multiple Streams, just by specifying multiple key names. If the request can be served synchronously because there is at least one stream with elements greater than the corresponding ID we specified, it returns with the results. Otherwise, the command will block and will return the items of the first stream which gets new data (according to the specified ID).</p>
+<p>Similarly to blocking list operations, blocking stream reads are <em>fair</em> from the point of view of clients waiting for data, since the semantics is FIFO style. The first client that blocked for a given stream will be the first to be unblocked when new items are available.</p>
+<p><code>XREAD</code> has no other options than <strong>COUNT</strong> and <strong>BLOCK</strong>, so it's a pretty basic command with a specific purpose to attach consumers to one or multiple streams. More powerful features to consume streams are available using the consumer groups API, however reading via consumer groups is implemented by a different command called <code>XREADGROUP</code>, covered in the next section of this guide.</p>
+<h2 id="consumer-groups">Consumer groups</h2>
+<p>When the task at hand is to consume the same stream from different clients, then <code>XREAD</code> already offers a way to <em>fan-out</em> to N clients, potentially also using replicas in order to provide more read scalability. However in certain problems what we want to do is not to provide the same stream of messages to many clients, but to provide a <em>different subset</em> of messages from the same stream to many clients. An obvious case where this is useful is that of messages which are slow to process: the ability to have N different workers that will receive different parts of the stream allows us to scale message processing, by routing different messages to different workers that are ready to do more work.</p>
+<p>In practical terms, if we imagine having three consumers C1, C2, C3, and a stream that contains the messages 1, 2, 3, 4, 5, 6, 7 then what we want is to serve the messages according to the following diagram:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>1 -&gt; C1</span></span>
+<span class="giallo-l"><span>2 -&gt; C2</span></span>
+<span class="giallo-l"><span>3 -&gt; C3</span></span>
+<span class="giallo-l"><span>4 -&gt; C1</span></span>
+<span class="giallo-l"><span>5 -&gt; C2</span></span>
+<span class="giallo-l"><span>6 -&gt; C3</span></span>
+<span class="giallo-l"><span>7 -&gt; C1</span></span></code></pre>
+<p>In order to achieve this, Valkey uses a concept called <em>consumer groups</em>. It is very important to understand that Valkey consumer groups have nothing to do, from an implementation standpoint, with Kafka (TM) consumer groups. Yet they are similar in functionality, so I decided to keep Kafka's (TM) terminology, as it originally popularized this idea.</p>
+<p>A consumer group is like a <em>pseudo consumer</em> that gets data from a stream, and actually serves multiple consumers, providing certain guarantees:</p>
+<ol>
+<li>Each message is served to a different consumer so that it is not possible that the same message will be delivered to multiple consumers.</li>
+<li>Consumers are identified, within a consumer group, by a name, which is a case-sensitive string that the clients implementing consumers must choose. This means that even after a disconnect, the stream consumer group retains all the state, since the client will claim again to be the same consumer. However, this also means that it is up to the client to provide a unique identifier.</li>
+<li>Each consumer group has the concept of the <em>first ID never consumed</em> so that, when a consumer asks for new messages, it can provide just messages that were not previously delivered.</li>
+<li>Consuming a message, however, requires an explicit acknowledgment using a specific command. Valkey interprets the acknowledgment as: this message was correctly processed so it can be evicted from the consumer group.</li>
+<li>A consumer group tracks all the messages that are currently pending, that is, messages that were delivered to some consumer of the consumer group, but are yet to be acknowledged as processed. Thanks to this feature, when accessing the message history of a stream, each consumer <em>will only see messages that were delivered to it</em>.</li>
+</ol>
+<p>In a way, a consumer group can be imagined as some <em>amount of state</em> about a stream:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>+----------------------------------------+</span></span>
+<span class="giallo-l"><span>| consumer_group_name: mygroup           |</span></span>
+<span class="giallo-l"><span>| consumer_group_stream: somekey         |</span></span>
+<span class="giallo-l"><span>| last_delivered_id: 1292309234234-92    |</span></span>
+<span class="giallo-l"><span>|                                        |</span></span>
+<span class="giallo-l"><span>| consumers:                             |</span></span>
+<span class="giallo-l"><span>|    &quot;consumer-1&quot; with pending messages  |</span></span>
+<span class="giallo-l"><span>|       1292309234234-4                  |</span></span>
+<span class="giallo-l"><span>|       1292309234232-8                  |</span></span>
+<span class="giallo-l"><span>|    &quot;consumer-42&quot; with pending messages |</span></span>
+<span class="giallo-l"><span>|       ... (and so forth)               |</span></span>
+<span class="giallo-l"><span>+----------------------------------------+</span></span></code></pre>
+<p>If you see this from this point of view, it is very simple to understand what a consumer group can do, how it is able to just provide consumers with their history of pending messages, and how consumers asking for new messages will just be served with message IDs greater than <code>last_delivered_id</code>. At the same time, if you look at the consumer group as an auxiliary data structure for Streams, it is obvious that a single stream can have multiple consumer groups, that have a different set of consumers. Actually, it is even possible for the same stream to have clients reading without consumer groups via <code>XREAD</code>, and clients reading via <code>XREADGROUP</code> in different consumer groups.</p>
+<p>Now it's time to zoom in to see the fundamental consumer group commands. They are the following:</p>
+<ul>
+<li><code>XGROUP</code> is used in order to create, destroy and manage consumer groups.</li>
+<li><code>XREADGROUP</code> is used to read from a stream via a consumer group.</li>
+<li><code>XACK</code> is the command that allows a consumer to mark a pending message as correctly processed.</li>
+</ul>
+<h2 id="creating-a-consumer-group">Creating a consumer group</h2>
+<p>Assuming I have a key <code>race:france</code> of type stream already existing, in order to create a consumer group I just need to do the following:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XGROUP CREATE race:france france_riders $</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>As you can see in the command above when creating the consumer group we have to specify an ID, which in the example is just <code>$</code>. This is needed because the consumer group, among the other states, must have an idea about what message to serve next at the first consumer connecting, that is, what was the <em>last message ID</em> when the group was just created. If we provide <code>$</code> as we did, then only new messages arriving in the stream from now on will be provided to the consumers in the group. If we specify <code>0</code> instead the consumer group will consume <em>all</em> the messages in the stream history to start with. Of course, you can specify any other valid ID. What you know is that the consumer group will start delivering messages that are greater than the ID you specify. Because <code>$</code> means the current greatest ID in the stream, specifying <code>$</code> will have the effect of consuming only new messages.</p>
+<p><code>XGROUP CREATE</code> also supports creating the stream automatically, if it doesn't exist, using the optional <code>MKSTREAM</code> subcommand as the last argument:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XGROUP CREATE race:italy italy_riders $ MKSTREAM</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Now that the consumer group is created we can immediately try to read messages via the consumer group using the <code>XREADGROUP</code> command. We'll read from consumers, that we will call Alice and Bob, to see how the system will return different messages to Alice or Bob.</p>
+<p><code>XREADGROUP</code> is very similar to <code>XREAD</code> and provides the same <strong>BLOCK</strong> option, otherwise it is a synchronous command. However there is a <em>mandatory</em> option that must be always specified, which is <strong>GROUP</strong> and has two arguments: the name of the consumer group, and the name of the consumer that is attempting to read. The option <strong>COUNT</strong> is also supported and is identical to the one in <code>XREAD</code>.</p>
+<p>We'll add riders to the race:italy stream and try reading something using the consumer group:
+Note: <em>here rider is the field name, and the name is the associated value. Remember that stream items are small dictionaries.</em></p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:italy * rider Castilla</span></span>
+<span class="giallo-l"><span>&quot;1692632639151-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:italy * rider Royce</span></span>
+<span class="giallo-l"><span>&quot;1692632647899-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:italy * rider Sam-Bodden</span></span>
+<span class="giallo-l"><span>&quot;1692632662819-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:italy * rider Prickett</span></span>
+<span class="giallo-l"><span>&quot;1692632670501-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:italy * rider Norem</span></span>
+<span class="giallo-l"><span>&quot;1692632678249-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XREADGROUP GROUP italy_riders Alice COUNT 1 STREAMS race:italy &gt;</span></span>
+<span class="giallo-l"><span>1) 1) &quot;race:italy&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) 1) &quot;1692632639151-0&quot;</span></span>
+<span class="giallo-l"><span>         2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>            2) &quot;Castilla&quot;</span></span></code></pre>
+<p><code>XREADGROUP</code> replies are just like <code>XREAD</code> replies. Note however the <code>GROUP &lt;group-name&gt; &lt;consumer-name&gt;</code> provided above. It states that I want to read from the stream using the consumer group <code>mygroup</code> and I'm the consumer <code>Alice</code>. Every time a consumer performs an operation with a consumer group, it must specify its name, uniquely identifying this consumer inside the group.</p>
+<p>There is another very important detail in the command line above, after the mandatory <strong>STREAMS</strong> option the ID requested for the key <code>race:italy</code> is the special ID <code>&gt;</code>. This special ID is only valid in the context of consumer groups, and it means: <strong>messages never delivered to other consumers so far</strong>.</p>
+<p>This is almost always what you want, however it is also possible to specify a real ID, such as <code>0</code> or any other valid ID, in this case, however, what happens is that we request from <code>XREADGROUP</code> to just provide us with the <strong>history of pending messages</strong>, and in such case, will never see new messages in the group. So basically <code>XREADGROUP</code> has the following behavior based on the ID we specify:</p>
+<ul>
+<li>If the ID is the special ID <code>&gt;</code> then the command will return only new messages never delivered to other consumers so far, and as a side effect, will update the consumer group's <em>last ID</em>.</li>
+<li>If the ID is any other valid numerical ID, then the command will let us access our <em>history of pending messages</em>. That is, the set of messages that were delivered to this specified consumer (identified by the provided name), and never acknowledged so far with <code>XACK</code>.</li>
+</ul>
+<p>We can test this behavior immediately specifying an ID of 0, without any <strong>COUNT</strong> option: we'll just see the only pending message, that is, the one about Castilla:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XREADGROUP GROUP italy_riders Alice STREAMS race:italy 0</span></span>
+<span class="giallo-l"><span>1) 1) &quot;race:italy&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) 1) &quot;1692632639151-0&quot;</span></span>
+<span class="giallo-l"><span>         2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>            2) &quot;Castilla&quot;</span></span></code></pre>
+<p>However, if we acknowledge the message as processed, it will no longer be part of the pending messages history, so the system will no longer report anything:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XACK race:italy italy_riders 1692632639151-0</span></span>
+<span class="giallo-l"><span>(integer) 1</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XREADGROUP GROUP italy_riders Alice STREAMS race:italy 0</span></span>
+<span class="giallo-l"><span>1) 1) &quot;race:italy&quot;</span></span>
+<span class="giallo-l"><span>   2) (empty array)</span></span></code></pre>
+<p>Don't worry if you yet don't know how <code>XACK</code> works, the idea is just that processed messages are no longer part of the history that we can access.</p>
+<p>Now it's Bob's turn to read something:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XREADGROUP GROUP italy_riders Bob COUNT 2 STREAMS race:italy &gt;</span></span>
+<span class="giallo-l"><span>1) 1) &quot;race:italy&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) 1) &quot;1692632647899-0&quot;</span></span>
+<span class="giallo-l"><span>         2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>            2) &quot;Royce&quot;</span></span>
+<span class="giallo-l"><span>      2) 1) &quot;1692632662819-0&quot;</span></span>
+<span class="giallo-l"><span>         2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>            2) &quot;Sam-Bodden&quot;</span></span></code></pre>
+<p>Bob asked for a maximum of two messages and is reading via the same group <code>mygroup</code>. So what happens is that Valkey reports just <em>new</em> messages. As you can see the "Castilla" message is not delivered, since it was already delivered to Alice, so Bob gets Royce and Sam-Bodden and so forth.</p>
+<p>This way Alice, Bob, and any other consumer in the group, are able to read different messages from the same stream, to read their history of yet to process messages, or to mark messages as processed. This allows creating different topologies and semantics for consuming messages from a stream.</p>
+<p>There are a few things to keep in mind:</p>
+<ul>
+<li>Consumers are auto-created the first time they are mentioned, no need for explicit creation.</li>
+<li>Even with <code>XREADGROUP</code> you can read from multiple keys at the same time, however for this to work, you need to create a consumer group with the same name in every stream. This is not a common need, but it is worth mentioning that the feature is technically available.</li>
+<li><code>XREADGROUP</code> is a <em>write command</em> because even if it reads from the stream, the consumer group is modified as a side effect of reading, so it can only be called on primary instances.</li>
+</ul>
+<p>An example of a consumer implementation, using consumer groups, written in the Ruby language could be the following. The Ruby code is aimed to be readable by virtually any experienced programmer, even if they do not know Ruby:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="ruby"><span class="giallo-l"><span style="color: #FF7B72;">require</span><span style="color: #A5D6FF;"> &#39;redis&#39;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">if</span><span style="color: #79C0FF;"> ARGV</span><span>.</span><span style="color: #D2A8FF;">length</span><span style="color: #FF7B72;"> ==</span><span style="color: #79C0FF;"> 0</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">    puts</span><span style="color: #A5D6FF;"> &quot;Please specify a consumer name&quot;</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">    exit 1</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79C0FF;">ConsumerName</span><span style="color: #FF7B72;"> =</span><span style="color: #79C0FF;"> ARGV</span><span>[</span><span style="color: #79C0FF;">0</span><span>]</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">GroupName</span><span style="color: #FF7B72;"> =</span><span style="color: #A5D6FF;"> &quot;mygroup&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">r</span><span style="color: #FF7B72;"> =</span><span style="color: #79C0FF;"> Redis</span><span>.</span><span style="color: #FF7B72;">new</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">def</span><span style="color: #D2A8FF;"> process_message</span><span>(id,msg)</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">    puts</span><span style="color: #A5D6FF;"> &quot;[</span><span style="color: #FF7B72;">#{</span><span style="color: #79C0FF;">ConsumerName</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;">] </span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">id</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;"> = </span><span style="color: #FF7B72;">#{</span><span style="color: #A5D6FF;">msg.</span><span style="color: #D2A8FF;">inspect</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;">&quot;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>$lastid</span><span style="color: #FF7B72;"> =</span><span style="color: #A5D6FF;"> &#39;0-0&#39;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79C0FF;">puts</span><span style="color: #A5D6FF;"> &quot;Consumer </span><span style="color: #FF7B72;">#{</span><span style="color: #79C0FF;">ConsumerName</span><span style="color: #FF7B72;">}</span><span style="color: #A5D6FF;"> starting...&quot;</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">check_backlog</span><span style="color: #FF7B72;"> =</span><span style="color: #79C0FF;"> true</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">while</span><span style="color: #79C0FF;"> true</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    # Pick the ID based on the iteration: the first time we want to</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    # read our pending messages, in case we crashed and are recovering.</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    # Once we consumed our history, we can start getting new messages.</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> check_backlog</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        myid</span><span style="color: #FF7B72;"> =</span><span> $lastid</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    else</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        myid</span><span style="color: #FF7B72;"> =</span><span style="color: #A5D6FF;"> &#39;&gt;&#39;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FFA657;">    items</span><span style="color: #FF7B72;"> =</span><span> r.</span><span style="color: #D2A8FF;">xreadgroup</span><span>(</span><span style="color: #A5D6FF;">&#39;GROUP&#39;</span><span>,</span><span style="color: #79C0FF;">GroupName</span><span>,</span><span style="color: #79C0FF;">ConsumerName</span><span>,</span><span style="color: #A5D6FF;">&#39;BLOCK&#39;</span><span>,</span><span style="color: #A5D6FF;">&#39;2000&#39;</span><span>,</span><span style="color: #A5D6FF;">&#39;COUNT&#39;</span><span>,</span><span style="color: #A5D6FF;">&#39;10&#39;</span><span>,</span><span style="color: #A5D6FF;">&#39;STREAMS&#39;</span><span>,</span><span style="color: #79C0FF;">:my_stream_key</span><span>,myid)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> items </span><span style="color: #FF7B72;">==</span><span style="color: #79C0FF;"> nil</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">        puts</span><span style="color: #A5D6FF;"> &quot;Timeout!&quot;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        next</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    end</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;">    # If we receive an empty reply, it means we were consuming our history</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    # and that the history is now empty. Let&#39;s start to consume new messages.</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    check_backlog</span><span style="color: #FF7B72;"> =</span><span style="color: #79C0FF;"> false</span><span style="color: #FF7B72;"> if</span><span> items[</span><span style="color: #79C0FF;">0</span><span>][</span><span style="color: #79C0FF;">1</span><span>].</span><span style="color: #D2A8FF;">length</span><span style="color: #FF7B72;"> ==</span><span style="color: #79C0FF;"> 0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    items[</span><span style="color: #79C0FF;">0</span><span>][</span><span style="color: #79C0FF;">1</span><span>].</span><span style="color: #D2A8FF;">each</span><span>{|i|</span></span>
+<span class="giallo-l"><span>        id,fields </span><span style="color: #FF7B72;">=</span><span> i</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;">        # Process the message</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">        process_message</span><span>(id,fields)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;">        # Acknowledge the message as processed</span></span>
+<span class="giallo-l"><span>        r.</span><span style="color: #D2A8FF;">xack</span><span>(</span><span style="color: #79C0FF;">:my_stream_key</span><span>,</span><span style="color: #79C0FF;">GroupName</span><span>,id)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        $lastid</span><span style="color: #FF7B72;"> =</span><span> id</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">end</span></span></code></pre>
+<p>As you can see the idea here is to start by consuming the history, that is, our list of pending messages. This is useful because the consumer may have crashed before, so in the event of a restart we want to re-read messages that were delivered to us without getting acknowledged. Note that we might process a message multiple times or one time (at least in the case of consumer failures, but there are also the limits of Valkey persistence and replication involved, see the specific section about this topic).</p>
+<p>Once the history was consumed, and we get an empty list of messages, we can switch to using the <code>&gt;</code> special ID in order to consume new messages.</p>
+<h2 id="recovering-from-permanent-failures">Recovering from permanent failures</h2>
+<p>The example above allows us to write consumers that participate in the same consumer group, each taking a subset of messages to process, and when recovering from failures re-reading the pending messages that were delivered just to them. However in the real world consumers may permanently fail and never recover. What happens to the pending messages of the consumer that never recovers after stopping for any reason?</p>
+<p>Valkey consumer groups offer a feature that is used in these situations in order to <em>claim</em> the pending messages of a given consumer so that such messages will change ownership and will be re-assigned to a different consumer. The feature is very explicit. A consumer has to inspect the list of pending messages, and will have to claim specific messages using a special command, otherwise the server will leave the messages pending forever and assigned to the old consumer. In this way different applications can choose if to use such a feature or not, and exactly how to use it.</p>
+<p>The first step of this process is just a command that provides observability of pending entries in the consumer group and is called <code>XPENDING</code>.
+This is a read-only command which is always safe to call and will not change ownership of any message.
+In its simplest form, the command is called with two arguments, which are the name of the stream and the name of the consumer group.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XPENDING race:italy italy_riders</span></span>
+<span class="giallo-l"><span>1) (integer) 2</span></span>
+<span class="giallo-l"><span>2) &quot;1692632647899-0&quot;</span></span>
+<span class="giallo-l"><span>3) &quot;1692632662819-0&quot;</span></span>
+<span class="giallo-l"><span>4) 1) 1) &quot;Bob&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;2&quot;</span></span></code></pre>
+<p>When called in this way, the command outputs the total number of pending messages in the consumer group (two in this case), the lower and higher message ID among the pending messages, and finally a list of consumers and the number of pending messages they have.
+We have only Bob with two pending messages because the single message that Alice requested was acknowledged using <code>XACK</code>.</p>
+<p>We can ask for more information by giving more arguments to <code>XPENDING</code>, because the full command signature is the following:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>XPENDING &lt;key&gt; &lt;groupname&gt; [[IDLE &lt;min-idle-time&gt;] &lt;start-id&gt; &lt;end-id&gt; &lt;count&gt; [&lt;consumer-name&gt;]]</span></span></code></pre>
+<p>By providing a start and end ID (that can be just <code>-</code> and <code>+</code> as in <code>XRANGE</code>) and a count to control the amount of information returned by the command, we are able to know more about the pending messages. The optional final argument, the consumer name, is used if we want to limit the output to just messages pending for a given consumer, but won't use this feature in the following example.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XPENDING race:italy italy_riders - + 10</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692632647899-0&quot;</span></span>
+<span class="giallo-l"><span>   2) &quot;Bob&quot;</span></span>
+<span class="giallo-l"><span>   3) (integer) 74642</span></span>
+<span class="giallo-l"><span>   4) (integer) 1</span></span>
+<span class="giallo-l"><span>2) 1) &quot;1692632662819-0&quot;</span></span>
+<span class="giallo-l"><span>   2) &quot;Bob&quot;</span></span>
+<span class="giallo-l"><span>   3) (integer) 74642</span></span>
+<span class="giallo-l"><span>   4) (integer) 1</span></span></code></pre>
+<p>Now we have the details for each message: the ID, the consumer name, the <em>idle time</em> in milliseconds, which is how many milliseconds have passed since the last time the message was delivered to some consumer, and finally the number of times that a given message was delivered.
+We have two messages from Bob, and they are idle for 60000+ milliseconds, about a minute.</p>
+<p>Note that nobody prevents us from checking what the first message content was by just using <code>XRANGE</code>.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:italy 1692632647899-0 1692632647899-0</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692632647899-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Royce&quot;</span></span></code></pre>
+<p>We have just to repeat the same ID twice in the arguments. Now that we have some ideas, Alice may decide that after 1 minute of not processing messages, Bob will probably not recover quickly, and it's time to <em>claim</em> such messages and resume the processing in place of Bob. To do so, we use the <code>XCLAIM</code> command.</p>
+<p>This command is very complex and full of options in its full form, since it is used for replication of consumer groups changes, but we'll use just the arguments that we need normally. In this case it is as simple as:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>XCLAIM &lt;key&gt; &lt;group&gt; &lt;consumer&gt; &lt;min-idle-time&gt; &lt;ID-1&gt; &lt;ID-2&gt; ... &lt;ID-N&gt;</span></span></code></pre>
+<p>Basically we say, for this specific key and group, I want that the message IDs specified will change ownership, and will be assigned to the specified consumer name <code>&lt;consumer&gt;</code>. However, we also provide a minimum idle time, so that the operation will only work if the idle time of the mentioned messages is greater than the specified idle time. This is useful because maybe two clients are retrying to claim a message at the same time:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>Client 1: XCLAIM race:italy italy_riders Alice 60000 1692632647899-0</span></span>
+<span class="giallo-l"><span>Client 2: XCLAIM race:italy italy_riders Lora 60000 1692632647899-0</span></span></code></pre>
+<p>However, as a side effect, claiming a message will reset its idle time and will increment its number of deliveries counter, so the second client will fail claiming it. In this way we avoid trivial re-processing of messages (even if in the general case you cannot obtain exactly once processing).</p>
+<p>This is the result of the command execution:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XCLAIM race:italy italy_riders Alice 60000 1692632647899-0</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692632647899-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Royce&quot;</span></span></code></pre>
+<p>The message was successfully claimed by Alice, who can now process the message and acknowledge it, and move things forward even if the original consumer is not recovering.</p>
+<p>It is clear from the example above that as a side effect of successfully claiming a given message, the <code>XCLAIM</code> command also returns it. However this is not mandatory. The <strong>JUSTID</strong> option can be used in order to return just the IDs of the message successfully claimed. This is useful if you want to reduce the bandwidth used between the client and the server (and also the performance of the command) and you are not interested in the message because your consumer is implemented in a way that it will rescan the history of pending messages from time to time.</p>
+<p>Claiming may also be implemented by a separate process: one that just checks the list of pending messages, and assigns idle messages to consumers that appear to be active. Active consumers can be obtained using one of the observability features of Streams. This is the topic of the next section.</p>
+<h2 id="automatic-claiming">Automatic claiming</h2>
+<p>The <code>XAUTOCLAIM</code> command, added in Redis OSS 6.2, implements the claiming process that we've described above.
+<code>XPENDING</code> and <code>XCLAIM</code> provide the basic building blocks for different types of recovery mechanisms.
+This command optimizes the generic process by having Valkey manage it and offers a simple solution for most recovery needs.</p>
+<p><code>XAUTOCLAIM</code> identifies idle pending messages and transfers ownership of them to a consumer.
+The command's signature looks like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>XAUTOCLAIM &lt;key&gt; &lt;group&gt; &lt;consumer&gt; &lt;min-idle-time&gt; &lt;start&gt; [COUNT count] [JUSTID]</span></span></code></pre>
+<p>So, in the example above, I could have used automatic claiming to claim a single message like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XAUTOCLAIM race:italy italy_riders Alice 60000 0-0 COUNT 1</span></span>
+<span class="giallo-l"><span>1) &quot;0-0&quot;</span></span>
+<span class="giallo-l"><span>2) 1) 1) &quot;1692632662819-0&quot;</span></span>
+<span class="giallo-l"><span>      2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>         2) &quot;Sam-Bodden&quot;</span></span></code></pre>
+<p>Like <code>XCLAIM</code>, the command replies with an array of the claimed messages, but it also returns a stream ID that allows iterating the pending entries.
+The stream ID is a cursor, and I can use it in my next call to continue in claiming idle pending messages:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XAUTOCLAIM race:italy italy_riders Lora 60000 (1692632662819-0 COUNT 1</span></span>
+<span class="giallo-l"><span>1) &quot;1692632662819-0&quot;</span></span>
+<span class="giallo-l"><span>2) 1) 1) &quot;1692632647899-0&quot;</span></span>
+<span class="giallo-l"><span>      2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>         2) &quot;Royce&quot;</span></span></code></pre>
+<p>When <code>XAUTOCLAIM</code> returns the "0-0" stream ID as a cursor, that means that it reached the end of the consumer group pending entries list.
+That doesn't mean that there are no new idle pending messages, so the process continues by calling <code>XAUTOCLAIM</code> from the beginning of the stream.</p>
+<h2 id="claiming-and-the-delivery-counter">Claiming and the delivery counter</h2>
+<p>The counter that you observe in the <code>XPENDING</code> output is the number of deliveries of each message. The counter is incremented in two ways: when a message is successfully claimed via <code>XCLAIM</code> or when an <code>XREADGROUP</code> call is used in order to access the history of pending messages.</p>
+<p>When there are failures, it is normal that messages will be delivered multiple times, but eventually they usually get processed and acknowledged. However there might be a problem processing some specific message, because it is corrupted or crafted in a way that triggers a bug in the processing code. In such a case what happens is that consumers will continuously fail to process this particular message. Because we have the counter of the delivery attempts, we can use that counter to detect messages that for some reason are not processable. So once the deliveries counter reaches a given large number that you chose, it is probably wiser to put such messages in another stream and send a notification to the system administrator. This is basically the way that Streams implements the <em>dead letter</em> concept.</p>
+<h2 id="streams-observability">Streams observability</h2>
+<p>Messaging systems that lack observability are very hard to work with. Not knowing who is consuming messages, what messages are pending, the set of consumer groups active in a given stream, makes everything opaque. For this reason, Streams and consumer groups have different ways to observe what is happening. We already covered <code>XPENDING</code>, which allows us to inspect the list of messages that are under processing at a given moment, together with their idle time and number of deliveries.</p>
+<p>However we may want to do more than that, and the <code>XINFO</code> command is an observability interface that can be used with sub-commands in order to get information about streams or consumer groups.</p>
+<p>This command uses subcommands in order to show different information about the status of the stream and its consumer groups. For instance <strong>XINFO STREAM <key></strong> reports information about the stream itself.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XINFO STREAM race:italy</span></span>
+<span class="giallo-l"><span> 1) &quot;length&quot;</span></span>
+<span class="giallo-l"><span> 2) (integer) 5</span></span>
+<span class="giallo-l"><span> 3) &quot;radix-tree-keys&quot;</span></span>
+<span class="giallo-l"><span> 4) (integer) 1</span></span>
+<span class="giallo-l"><span> 5) &quot;radix-tree-nodes&quot;</span></span>
+<span class="giallo-l"><span> 6) (integer) 2</span></span>
+<span class="giallo-l"><span> 7) &quot;last-generated-id&quot;</span></span>
+<span class="giallo-l"><span> 8) &quot;1692632678249-0&quot;</span></span>
+<span class="giallo-l"><span> 9) &quot;groups&quot;</span></span>
+<span class="giallo-l"><span>10) (integer) 1</span></span>
+<span class="giallo-l"><span>11) &quot;first-entry&quot;</span></span>
+<span class="giallo-l"><span>12) 1) &quot;1692632639151-0&quot;</span></span>
+<span class="giallo-l"><span>    2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>       2) &quot;Castilla&quot;</span></span>
+<span class="giallo-l"><span>13) &quot;last-entry&quot;</span></span>
+<span class="giallo-l"><span>14) 1) &quot;1692632678249-0&quot;</span></span>
+<span class="giallo-l"><span>    2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>       2) &quot;Norem&quot;</span></span></code></pre>
+<p>The output shows information about how the stream is encoded internally, and also shows the first and last message in the stream. Another piece of information available is the number of consumer groups associated with this stream. We can dig further asking for more information about the consumer groups.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XINFO GROUPS race:italy</span></span>
+<span class="giallo-l"><span>1) 1) &quot;name&quot;</span></span>
+<span class="giallo-l"><span>   2) &quot;italy_riders&quot;</span></span>
+<span class="giallo-l"><span>   3) &quot;consumers&quot;</span></span>
+<span class="giallo-l"><span>   4) (integer) 3</span></span>
+<span class="giallo-l"><span>   5) &quot;pending&quot;</span></span>
+<span class="giallo-l"><span>   6) (integer) 2</span></span>
+<span class="giallo-l"><span>   7) &quot;last-delivered-id&quot;</span></span>
+<span class="giallo-l"><span>   8) &quot;1692632662819-0&quot;</span></span></code></pre>
+<p>As you can see in this and in the previous output, the <code>XINFO</code> command outputs a sequence of field-value items. Because it is an observability command this allows the human user to immediately understand what information is reported, and allows the command to report more information in the future by adding more fields without breaking compatibility with older clients. Other commands that must be more bandwidth efficient, like <code>XPENDING</code>, just report the information without the field names.</p>
+<p>The output of the example above, where the <strong>GROUPS</strong> subcommand is used, should be clear observing the field names. We can check in more detail the state of a specific consumer group by checking the consumers that are registered in the group.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XINFO CONSUMERS race:italy italy_riders</span></span>
+<span class="giallo-l"><span>1) 1) &quot;name&quot;</span></span>
+<span class="giallo-l"><span>   2) &quot;Alice&quot;</span></span>
+<span class="giallo-l"><span>   3) &quot;pending&quot;</span></span>
+<span class="giallo-l"><span>   4) (integer) 1</span></span>
+<span class="giallo-l"><span>   5) &quot;idle&quot;</span></span>
+<span class="giallo-l"><span>   6) (integer) 177546</span></span>
+<span class="giallo-l"><span>2) 1) &quot;name&quot;</span></span>
+<span class="giallo-l"><span>   2) &quot;Bob&quot;</span></span>
+<span class="giallo-l"><span>   3) &quot;pending&quot;</span></span>
+<span class="giallo-l"><span>   4) (integer) 0</span></span>
+<span class="giallo-l"><span>   5) &quot;idle&quot;</span></span>
+<span class="giallo-l"><span>   6) (integer) 424686</span></span>
+<span class="giallo-l"><span>3) 1) &quot;name&quot;</span></span>
+<span class="giallo-l"><span>   2) &quot;Lora&quot;</span></span>
+<span class="giallo-l"><span>   3) &quot;pending&quot;</span></span>
+<span class="giallo-l"><span>   4) (integer) 1</span></span>
+<span class="giallo-l"><span>   5) &quot;idle&quot;</span></span>
+<span class="giallo-l"><span>   6) (integer) 72241</span></span></code></pre>
+<p>In case you do not remember the syntax of the command, just ask the command itself for help:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; XINFO HELP</span></span>
+<span class="giallo-l"><span>1) XINFO &lt;subcommand&gt; [&lt;arg&gt; [value] [opt] ...]. Subcommands are:</span></span>
+<span class="giallo-l"><span>2) CONSUMERS &lt;key&gt; &lt;groupname&gt;</span></span>
+<span class="giallo-l"><span>3)     Show consumers of &lt;groupname&gt;.</span></span>
+<span class="giallo-l"><span>4) GROUPS &lt;key&gt;</span></span>
+<span class="giallo-l"><span>5)     Show the stream consumer groups.</span></span>
+<span class="giallo-l"><span>6) STREAM &lt;key&gt; [FULL [COUNT &lt;count&gt;]</span></span>
+<span class="giallo-l"><span>7)     Show information about the stream.</span></span>
+<span class="giallo-l"><span>8) HELP</span></span>
+<span class="giallo-l"><span>9)     Prints this help.</span></span></code></pre><h2 id="differences-with-kafka-tm-partitions">Differences with Kafka (TM) partitions</h2>
+<p>Consumer groups in Streams may resemble in some way Kafka (TM) partitioning-based consumer groups, however note that Streams are, in practical terms, very different. The partitions are only <em>logical</em> and the messages are just put into a single Valkey key, so the way the different clients are served is based on who is ready to process new messages, and not from which partition clients are reading. For instance, if the consumer C3 at some point fails permanently, Valkey will continue to serve C1 and C2 all the new messages arriving, as if now there are only two <em>logical</em> partitions.</p>
+<p>Similarly, if a given consumer is much faster at processing messages than the other consumers, this consumer will receive proportionally more messages in the same unit of time. This is possible since Valkey tracks all the unacknowledged messages explicitly, and remembers who received which message and the ID of the first message never delivered to any consumer.</p>
+<p>However, this also means that in Valkey if you really want to partition messages in the same stream into multiple Valkey instances, you have to use multiple keys and some sharding system such as Valkey Cluster or some other application-specific sharding system. A single Stream is not automatically partitioned to multiple instances.</p>
+<p>We could say that schematically the following is true:</p>
+<ul>
+<li>If you use 1 stream -&gt; 1 consumer, you are processing messages in order.</li>
+<li>If you use N streams with N consumers, so that only a given consumer hits a subset of the N streams, you can scale the above model of 1 stream -&gt; 1 consumer.</li>
+<li>If you use 1 stream -&gt; N consumers, you are load balancing to N consumers, however in that case, messages about the same logical item may be consumed out of order, because a given consumer may process message 3 faster than another consumer is processing message 4.</li>
+</ul>
+<p>So basically Kafka partitions are more similar to using N different Valkey keys, while Valkey consumer groups are a server-side load balancing system of messages from a given stream to N different consumers.</p>
+<h2 id="capped-streams">Capped Streams</h2>
+<p>Many applications do not want to collect data into a stream forever. Sometimes it is useful to have at maximum a given number of items inside a stream, other times once a given size is reached, it is useful to move data from Valkey to a storage which is not in memory and not as fast but suited to store the history for, potentially, decades to come. Streams have some support for this. One is the <strong>MAXLEN</strong> option of the <code>XADD</code> command. This option is very simple to use:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:italy MAXLEN 2 * rider Jones</span></span>
+<span class="giallo-l"><span>&quot;1692633189161-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:italy MAXLEN 2 * rider Wood</span></span>
+<span class="giallo-l"><span>&quot;1692633198206-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XADD race:italy MAXLEN 2 * rider Henshaw</span></span>
+<span class="giallo-l"><span>&quot;1692633208557-0&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XLEN race:italy</span></span>
+<span class="giallo-l"><span>(integer) 2</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:italy - +</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692633198206-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Wood&quot;</span></span>
+<span class="giallo-l"><span>2) 1) &quot;1692633208557-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Henshaw&quot;</span></span></code></pre>
+<p>Using <strong>MAXLEN</strong> the old entries are automatically evicted when the specified length is reached, so that the stream is left at a constant size. There is currently no option to tell the stream to just retain items that are not older than a given period, because such command, in order to run consistently, would potentially block for a long time in order to evict items. Imagine for example what happens if there is an insertion spike, then a long pause, and another insertion, all with the same maximum time. The stream would block to evict the data that became too old during the pause. So it is up to the user to do some planning and understand what is the maximum stream length desired. Moreover, while the length of the stream is proportional to the memory used, trimming by time is less simple to control and anticipate: it depends on the insertion rate which often changes over time (and when it does not change, then to just trim by size is trivial).</p>
+<p>However trimming with <strong>MAXLEN</strong> can be expensive: streams are represented by macro nodes into a radix tree, in order to be very memory efficient. Altering the single macro node, consisting of a few tens of elements, is not optimal. So it's possible to use the command in the following special form:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>XADD race:italy MAXLEN ~ 1000 * ... entry fields here ...</span></span></code></pre>
+<p>The <code>~</code> argument between the <strong>MAXLEN</strong> option and the actual count means, I don't really need this to be exactly 1000 items. It can be 1000 or 1010 or 1030, just make sure to save at least 1000 items. With this argument, the trimming is performed only when we can remove a whole node. This makes it much more efficient, and it is usually what you want. You'll note here that the client libraries have various implementations of this. For example, the Python client defaults to approximate and has to be explicitly set to a true length.</p>
+<p>There is also the <code>XTRIM</code> command, which performs something very similar to what the <strong>MAXLEN</strong> option does above, except that it can be run by itself:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XTRIM race:italy MAXLEN 10</span></span>
+<span class="giallo-l"><span>(integer) 0</span></span></code></pre>
+<p>Or, as for the <code>XADD</code> option:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XTRIM race:italy MAXLEN ~ 10</span></span>
+<span class="giallo-l"><span>(integer) 0</span></span></code></pre>
+<p>However, <code>XTRIM</code> is designed to accept different trimming strategies. Another trimming strategy is <strong>MINID</strong>, that evicts entries with IDs lower than the one specified.</p>
+<p>As <code>XTRIM</code> is an explicit command, the user is expected to know about the possible shortcomings of different trimming strategies.</p>
+<p>Another useful eviction strategy that may be added to <code>XTRIM</code> in the future, is to remove by a range of IDs to ease use of <code>XRANGE</code> and <code>XTRIM</code> to move data from Valkey to other storage systems if needed.</p>
+<h2 id="special-ids-in-the-streams-api">Special IDs in the streams API</h2>
+<p>You may have noticed that there are several special IDs that can be used in the Valkey API. Here is a short recap, so that they can make more sense in the future.</p>
+<p>The first two special IDs are <code>-</code> and <code>+</code>, and are used in range queries with the <code>XRANGE</code> command. Those two IDs respectively mean the smallest ID possible (that is basically <code>0-1</code>) and the greatest ID possible (that is <code>18446744073709551615-18446744073709551615</code>). As you can see it is a lot cleaner to write <code>-</code> and <code>+</code> instead of those numbers.</p>
+<p>Then there are APIs where we want to say, the ID of the item with the greatest ID inside the stream. This is what <code>$</code> means. So for instance if I want only new entries with <code>XREADGROUP</code> I use this ID to signify I already have all the existing entries, but not the new ones that will be inserted in the future. Similarly when I create or set the ID of a consumer group, I can set the last delivered item to <code>$</code> in order to just deliver new entries to the consumers in the group.</p>
+<p>As you can see <code>$</code> does not mean <code>+</code>, they are two different things, as <code>+</code> is the greatest ID possible in every possible stream, while <code>$</code> is the greatest ID in a given stream containing given entries. Moreover APIs will usually only understand <code>+</code> or <code>$</code>, yet it was useful to avoid loading a given symbol with multiple meanings.</p>
+<p>Another special ID is <code>&gt;</code>, that is a special meaning only related to consumer groups and only when the <code>XREADGROUP</code> command is used. This special ID means that we want only entries that were never delivered to other consumers so far. So basically the <code>&gt;</code> ID is the <em>last delivered ID</em> of a consumer group.</p>
+<p>Finally the special ID <code>*</code>, that can be used only with the <code>XADD</code> command, means to auto select an ID for us for the new entry.</p>
+<p>So we have <code>-</code>, <code>+</code>, <code>$</code>, <code>&gt;</code> and <code>*</code>, and all have a different meaning, and most of the time, can be used in different contexts.</p>
+<h2 id="persistence-replication-and-message-safety">Persistence, replication and message safety</h2>
+<p>A Stream, like any other Valkey data structure, is asynchronously replicated to replicas and persisted into AOF and RDB files. However what may not be so obvious is that also the consumer groups full state is propagated to AOF, RDB and replicas, so if a message is pending in the primary, also the replica will have the same information. Similarly, after a restart, the AOF will restore the consumer groups' state.</p>
+<p>However note that Streams and consumer groups are persisted and replicated using the Valkey default replication, so:</p>
+<ul>
+<li>AOF must be used with a strong fsync policy if persistence of messages is important in your application.</li>
+<li>By default the asynchronous replication will not guarantee that <code>XADD</code> commands or consumer groups state changes are replicated: after a failover something can be missing depending on the ability of replicas to receive the data from the primary.</li>
+<li>The <code>WAIT</code> command may be used in order to force the propagation of the changes to a set of replicas. However note that while this makes it very unlikely that data is lost, the Valkey failover process as operated by Sentinel or Valkey Cluster performs only a <em>best effort</em> check to failover to the replica which is the most updated, and under certain specific failure conditions may promote a replica that lacks some data.</li>
+</ul>
+<p>So when designing an application using Streams and consumer groups, make sure to understand the semantical properties your application should have during failures, and configure things accordingly, evaluating whether it is safe enough for your use case.</p>
+<h2 id="removing-single-items-from-a-stream">Removing single items from a stream</h2>
+<p>Streams also have a special command for removing items from the middle of a stream, just by ID. Normally for an append only data structure this may look like an odd feature, but it is actually useful for applications involving, for instance, privacy regulations. The command is called <code>XDEL</code> and receives the name of the stream followed by the IDs to delete:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:italy - + COUNT 2</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692633198206-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Wood&quot;</span></span>
+<span class="giallo-l"><span>2) 1) &quot;1692633208557-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Henshaw&quot;</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XDEL race:italy 1692633208557-0</span></span>
+<span class="giallo-l"><span>(integer) 1</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; XRANGE race:italy - + COUNT 2</span></span>
+<span class="giallo-l"><span>1) 1) &quot;1692633198206-0&quot;</span></span>
+<span class="giallo-l"><span>   2) 1) &quot;rider&quot;</span></span>
+<span class="giallo-l"><span>      2) &quot;Wood&quot;</span></span></code></pre>
+<p>However in the current implementation, memory is not really reclaimed until a macro node is completely empty, so you should not abuse this feature.</p>
+<h2 id="zero-length-streams">Zero length streams</h2>
+<p>A difference between streams and other Valkey data structures is that when the other data structures no longer have any elements, as a side effect of calling commands that remove elements, the key itself will be removed. So for instance, a sorted set will be completely removed when a call to <code>ZREM</code> will remove the last element in the sorted set. Streams, on the other hand, are allowed to stay at zero elements, both as a result of using a <strong>MAXLEN</strong> option with a count of zero (<code>XADD</code> and <code>XTRIM</code> commands), or because <code>XDEL</code> was called.</p>
+<p>The reason why such an asymmetry exists is because Streams may have associated consumer groups, and we do not want to lose the state that the consumer groups defined just because there are no longer any items in the stream. Currently the stream is not deleted even when it has no associated consumer groups.</p>
+<h2 id="total-latency-of-consuming-a-message">Total latency of consuming a message</h2>
+<p>Non blocking stream commands like <code>XRANGE</code> and <code>XREAD</code> or <code>XREADGROUP</code> without the BLOCK option are served synchronously like any other Valkey command, so to discuss latency of such commands is meaningless: it is more interesting to check the time complexity of the commands in the Valkey documentation. It should be enough to say that stream commands are at least as fast as sorted set commands when extracting ranges, and that <code>XADD</code> is very fast and can easily insert from half a million to one million items per second in an average machine if pipelining is used.</p>
+<p>However latency becomes an interesting parameter if we want to understand the delay of processing a message, in the context of blocking consumers in a consumer group, from the moment the message is produced via <code>XADD</code>, to the moment the message is obtained by the consumer because <code>XREADGROUP</code> returned with the message.</p>
+<h2 id="how-serving-blocked-consumers-works">How serving blocked consumers works</h2>
+<p>Before providing the results of performed tests, it is interesting to understand what model Valkey uses in order to route stream messages (and in general actually how any blocking operation waiting for data is managed).</p>
+<ul>
+<li>The blocked client is referenced in a hash table that maps keys for which there is at least one blocking consumer, to a list of consumers that are waiting for such key. This way, given a key that received data, we can resolve all the clients that are waiting for such data.</li>
+<li>When a write happens, in this case when the <code>XADD</code> command is called, it calls the <code>signalKeyAsReady()</code> function. This function will put the key into a list of keys that need to be processed, because such keys may have new data for blocked consumers. Note that such <em>ready keys</em> will be processed later, so in the course of the same event loop cycle, it is possible that the key will receive other writes.</li>
+<li>Finally, before returning into the event loop, the <em>ready keys</em> are finally processed. For each key the list of clients waiting for data is scanned, and if applicable, such clients will receive the new data that arrived. In the case of streams the data is the messages in the applicable range requested by the consumer.</li>
+</ul>
+<p>As you can see, basically, before returning to the event loop both the client calling <code>XADD</code> and the clients blocked to consume messages, will have their reply in the output buffers, so the caller of <code>XADD</code> should receive the reply from Valkey at about the same time the consumers will receive the new messages.</p>
+<p>This model is <em>push-based</em>, since adding data to the consumers buffers will be performed directly by the action of calling <code>XADD</code>, so the latency tends to be quite predictable.</p>
+<h2 id="latency-tests-results">Latency tests results</h2>
+<p>In order to check these latency characteristics a test was performed using multiple instances of Ruby programs pushing messages having as an additional field the computer millisecond time, and Ruby programs reading the messages from the consumer group and processing them. The message processing step consisted of comparing the current computer time with the message timestamp, in order to understand the total latency.</p>
+<p>Results obtained:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>Processed between 0 and 1 ms -&gt; 74.11%</span></span>
+<span class="giallo-l"><span>Processed between 1 and 2 ms -&gt; 25.80%</span></span>
+<span class="giallo-l"><span>Processed between 2 and 3 ms -&gt; 0.06%</span></span>
+<span class="giallo-l"><span>Processed between 3 and 4 ms -&gt; 0.01%</span></span>
+<span class="giallo-l"><span>Processed between 4 and 5 ms -&gt; 0.02%</span></span></code></pre>
+<p>So 99.9% of requests have a latency &lt;= 2 milliseconds, with the outliers that remain still very close to the average.</p>
+<p>Adding a few million unacknowledged messages to the stream does not change the gist of the benchmark, with most queries still processed with very short latency.</p>
+<p>A few remarks:</p>
+<ul>
+<li>Here we processed up to 10k messages per iteration, this means that the <code>COUNT</code> parameter of <code>XREADGROUP</code> was set to 10000. This adds a lot of latency but is needed in order to allow the slow consumers to be able to keep with the message flow. So you can expect a real world latency that is a lot smaller.</li>
+<li>The system used for this benchmark is very slow compared to today's standards.</li>
+</ul>
+
+
+            </div>
+        </main>
+        <aside>
+            
+
+
+
+
+
+<nav class="docs-menu" aria-label="Documentation">
+    <ul class="docs-menu-sections">
+        <li>
+            <details>
+                <summary>Getting started</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/introduction/">Introduction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/quickstart/">Quick start guide</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/installation/">Installation</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/faq/">FAQ</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/migration/">Migration from Redis to Valkey</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-bundle/">Valkey Bundle</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        
+<li>
+    <details>
+        <summary>Command reference</summary>
+        <ul>
+            <li><a href="/valkey-io.github.io/pr-21/commands/">All commands</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bitmap">Bitmap</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#bloom">Bloom filter</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#cluster">Cluster</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#connection">Connection</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#generic">Generic</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#geo">Geospatial indices</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hash">Hash</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#hyperloglog">HyperLogLog</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#json">JSON</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#list">List</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#pubsub">Pub/Sub</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#scripting">Scripting and Functions</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#search">Search</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#server">Server</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#set">Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#sorted-set">Sorted Set</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#stream">Stream</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#string">String</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/#transactions">Transactions</a></li>
+        </ul>
+    </details>
+</li>
+
+        <li>
+            <details open>
+                <summary>Data types</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/data-types/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/strings/">Strings</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Strings commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Strings commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/append/">APPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decr/">DECR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/decrby/">DECRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delex/">DELEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/delifeq/">DELIFEQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/get/">GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getdel/">GETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getex/">GETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getrange/">GETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getset/">GETSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incr/">INCR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrby/">INCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/incrbyfloat/">INCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lcs/">LCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mget/">MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/mset/">MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetex/">MSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/msetnx/">MSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psetex/">PSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/set/">SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setex/">SETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setnx/">SETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setrange/">SETRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/strlen/">STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/substr/">SUBSTR</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/lists/">Lists</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Lists commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Lists commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmove/">BLMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blmpop/">BLMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/blpop/">BLPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpop/">BRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/brpoplpush/">BRPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lindex/">LINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/linsert/">LINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/llen/">LLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmove/">LMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lmpop/">LMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpop/">LPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpos/">LPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpush/">LPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lpushx/">LPUSHX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrange/">LRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lrem/">LREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lset/">LSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ltrim/">LTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpop/">RPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpoplpush/">RPOPLPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpush/">RPUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rpushx/">RPUSHX</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sets/">Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/sadd/">SADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scard/">SCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiff/">SDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sdiffstore/">SDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinter/">SINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sintercard/">SINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sinterstore/">SINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sismember/">SISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smembers/">SMEMBERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smismember/">SMISMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/smove/">SMOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spop/">SPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srandmember/">SRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/srem/">SREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sscan/">SSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunion/">SUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunionstore/">SUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hashes/">Hashes</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hashes commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hashes commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hdel/">HDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexists/">HEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpire/">HEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpireat/">HEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hexpiretime/">HEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hget/">HGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetall/">HGETALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetdel/">HGETDEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hgetex/">HGETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrby/">HINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hincrbyfloat/">HINCRBYFLOAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hkeys/">HKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hlen/">HLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmget/">HMGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hmset/">HMSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpersist/">HPERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpire/">HPEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpireat/">HPEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpexpiretime/">HPEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hpttl/">HPTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hrandfield/">HRANDFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hscan/">HSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hset/">HSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetex/">HSETEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hsetnx/">HSETNX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hstrlen/">HSTRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/httl/">HTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hvals/">HVALS</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/sorted-sets/">Sorted Sets</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Sorted Sets commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Sorted Sets commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzmpop/">BZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmax/">BZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bzpopmin/">BZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zadd/">ZADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcard/">ZCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zcount/">ZCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiff/">ZDIFF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zdiffstore/">ZDIFFSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zincrby/">ZINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinter/">ZINTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zintercard/">ZINTERCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zinterstore/">ZINTERSTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zlexcount/">ZLEXCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmpop/">ZMPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zmscore/">ZMSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmax/">ZPOPMAX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zpopmin/">ZPOPMIN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrandmember/">ZRANDMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrange/">ZRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebylex/">ZRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangebyscore/">ZRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrangestore/">ZRANGESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrank/">ZRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrem/">ZREM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebylex/">ZREMRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyrank/">ZREMRANGEBYRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zremrangebyscore/">ZREMRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrange/">ZREVRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebylex/">ZREVRANGEBYLEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrangebyscore/">ZREVRANGEBYSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zrevrank/">ZREVRANK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscan/">ZSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zscore/">ZSCORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunion/">ZUNION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/zunionstore/">ZUNIONSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <details class="docs-menu-current-topic" open>
+        <summary class="docs-menu-current" aria-current="page"><span>Streams</span>
+        </summary>
+        <ul class="docs-menu-commands" aria-label="Streams commands">
+            <li><a href="/valkey-io.github.io/pr-21/commands/xack/">XACK</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xackdel/">XACKDEL</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xadd/">XADD</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xautoclaim/">XAUTOCLAIM</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xclaim/">XCLAIM</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xdel/">XDEL</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xdelex/">XDELEX</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xgroup/">XGROUP</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-create/">XGROUP CREATE</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-createconsumer/">XGROUP CREATECONSUMER</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-delconsumer/">XGROUP DELCONSUMER</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-destroy/">XGROUP DESTROY</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-help/">XGROUP HELP</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xgroup-setid/">XGROUP SETID</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xinfo/">XINFO</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-consumers/">XINFO CONSUMERS</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-groups/">XINFO GROUPS</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-help/">XINFO HELP</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xinfo-stream/">XINFO STREAM</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xlen/">XLEN</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xpending/">XPENDING</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xrange/">XRANGE</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xread/">XREAD</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xreadgroup/">XREADGROUP</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xrevrange/">XREVRANGE</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xsetid/">XSETID</a></li>
+            <li><a href="/valkey-io.github.io/pr-21/commands/xtrim/">XTRIM</a></li>
+        </ul>
+    </details>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/geospatial/">Geospatial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Geospatial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Geospatial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/geoadd/">GEOADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geodist/">GEODIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geohash/">GEOHASH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geopos/">GEOPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius/">GEORADIUS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember/">GEORADIUSBYMEMBER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadiusbymember_ro/">GEORADIUSBYMEMBER_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/georadius_ro/">GEORADIUS_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearch/">GEOSEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/geosearchstore/">GEOSEARCHSTORE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitmaps/">Bitmaps</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitmaps commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitmaps commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitcount/">BITCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitop/">BITOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitpos/">BITPOS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/getbit/">GETBIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/setbit/">SETBIT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bitfields/">Bitfields</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bitfields commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bitfields commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield/">BITFIELD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bitfield_ro/">BITFIELD_RO</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hyperloglogs/">HyperLogLog</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">HyperLogLog commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="HyperLogLog commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfadd/">PFADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfcount/">PFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfdebug/">PFDEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfmerge/">PFMERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pfselftest/">PFSELFTEST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/bloomfilters/">Bloom Filters <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Bloom Filters commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Bloom Filters commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.add/">BF.ADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.card/">BF.CARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.exists/">BF.EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.info/">BF.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.insert/">BF.INSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.load/">BF.LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.madd/">BF.MADD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.mexists/">BF.MEXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bf.reserve/">BF.RESERVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey-json/">JSON <span class="docs-menu-badge">module</span></a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">JSON commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="JSON commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrappend/">JSON.ARRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrindex/">JSON.ARRINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrinsert/">JSON.ARRINSERT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrlen/">JSON.ARRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrpop/">JSON.ARRPOP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.arrtrim/">JSON.ARRTRIM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.clear/">JSON.CLEAR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.debug/">JSON.DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.del/">JSON.DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.forget/">JSON.FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.get/">JSON.GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.merge/">JSON.MERGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mget/">JSON.MGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.mset/">JSON.MSET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.numincrby/">JSON.NUMINCRBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.nummultby/">JSON.NUMMULTBY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objkeys/">JSON.OBJKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.objlen/">JSON.OBJLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.resp/">JSON.RESP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.set/">JSON.SET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strappend/">JSON.STRAPPEND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.strlen/">JSON.STRLEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.toggle/">JSON.TOGGLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/json.type/">JSON.TYPE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Application development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/keyspace/">Keyspace</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Keyspace commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Keyspace commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/copy/">COPY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dbsize/">DBSIZE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/del/">DEL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/dump/">DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exists/">EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expire/">EXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expireat/">EXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/expiretime/">EXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushall/">FLUSHALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/flushdb/">FLUSHDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/keys/">KEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/migrate/">MIGRATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/move/">MOVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object/">OBJECT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-encoding/">OBJECT ENCODING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-freq/">OBJECT FREQ</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-help/">OBJECT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-idletime/">OBJECT IDLETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/object-refcount/">OBJECT REFCOUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/persist/">PERSIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpire/">PEXPIRE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpireat/">PEXPIREAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pexpiretime/">PEXPIRETIME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pttl/">PTTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/randomkey/">RANDOMKEY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/rename/">RENAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/renamenx/">RENAMENX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/restore/">RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/scan/">SCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort/">SORT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sort_ro/">SORT_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/swapdb/">SWAPDB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/touch/">TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ttl/">TTL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/type/">TYPE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unlink/">UNLINK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/wait/">WAIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/waitaof/">WAITAOF</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/pipelining/">Pipelining</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/transactions/">Transactions</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Transactions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Transactions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/discard/">DISCARD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/exec/">EXEC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/multi/">MULTI</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unwatch/">UNWATCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/watch/">WATCH</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/pubsub/">Pub/Sub</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Pub/Sub commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Pub/Sub commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/psubscribe/">PSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/publish/">PUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub/">PUBSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-channels/">PUBSUB CHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-help/">PUBSUB HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numpat/">PUBSUB NUMPAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-numsub/">PUBSUB NUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardchannels/">PUBSUB SHARDCHANNELS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/pubsub-shardnumsub/">PUBSUB SHARDNUMSUB</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/punsubscribe/">PUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/spublish/">SPUBLISH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ssubscribe/">SSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/subscribe/">SUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sunsubscribe/">SUNSUBSCRIBE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/unsubscribe/">UNSUBSCRIBE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/notifications/">Keyspace notifications</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Patterns and tutorials</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lru-cache/">Key eviction</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/client-side-caching/">Client-side caching</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/distlock/">Distributed Locks</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/indexing/">Secondary indexing</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/twitter-clone/">Patterns example</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Scripting and functions</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/programmability/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Scripting and functions commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Scripting and functions commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval/">EVAL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha/">EVALSHA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/evalsha_ro/">EVALSHA_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/eval_ro/">EVAL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall/">FCALL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/fcall_ro/">FCALL_RO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function/">FUNCTION</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-delete/">FUNCTION DELETE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-dump/">FUNCTION DUMP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-flush/">FUNCTION FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-help/">FUNCTION HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-kill/">FUNCTION KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-list/">FUNCTION LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-load/">FUNCTION LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-restore/">FUNCTION RESTORE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/function-stats/">FUNCTION STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script/">SCRIPT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-debug/">SCRIPT DEBUG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-exists/">SCRIPT EXISTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-flush/">SCRIPT FLUSH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-help/">SCRIPT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-kill/">SCRIPT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-load/">SCRIPT LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/script-show/">SCRIPT SHOW</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/eval-intro/">Scripting with Lua</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/functions-intro/">Functions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/lua-api/">Lua API reference</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldb/">Debugging Lua scripts</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Search <span class="docs-menu-badge">module</span></summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/search/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Search commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Search commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.aggregate/">FT.AGGREGATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.create/">FT.CREATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.cursor/">FT.CURSOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.dropindex/">FT.DROPINDEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.hybrid/">FT.HYBRID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.info/">FT.INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft.search/">FT.SEARCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ft._list/">FT._LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-query/">Queries</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-expressions/">Aggregation expressions</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-data-formats/">Data formats</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-configurables/">Configuration</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-monitoring/">Metrics and configurations</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/search-observables/">INFO SEARCH metrics</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Administration</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/server/">The Valkey server</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cli/">CLI</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/valkey.conf/">Configuration</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Configuration commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Configuration commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/config/">CONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-get/">CONFIG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-help/">CONFIG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-resetstat/">CONFIG RESETSTAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-rewrite/">CONFIG REWRITE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/config-set/">CONFIG SET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/persistence/">Persistence</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Persistence commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Persistence commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgrewriteaof/">BGREWRITEAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/bgsave/">BGSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/lastsave/">LASTSAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/save/">SAVE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/replication/">Replication</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Replication commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Replication commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/failover/">FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/psync/">PSYNC</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replconf/">REPLCONF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/replicaof/">REPLICAOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/role/">ROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slaveof/">SLAVEOF</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/sync/">SYNC</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel/">High availability with Valkey Sentinel</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/admin/">Administration</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/clients/">Client handling</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Client handling commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Client handling commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/auth/">AUTH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client/">CLIENT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-caching/">CLIENT CACHING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-capa/">CLIENT CAPA</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getname/">CLIENT GETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-getredir/">CLIENT GETREDIR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-help/">CLIENT HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-id/">CLIENT ID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-import-source/">CLIENT IMPORT-SOURCE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-info/">CLIENT INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-kill/">CLIENT KILL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-list/">CLIENT LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-evict/">CLIENT NO-EVICT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-no-touch/">CLIENT NO-TOUCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-pause/">CLIENT PAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-reply/">CLIENT REPLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setinfo/">CLIENT SETINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-setname/">CLIENT SETNAME</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-tracking/">CLIENT TRACKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-trackinginfo/">CLIENT TRACKINGINFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unblock/">CLIENT UNBLOCK</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/client-unpause/">CLIENT UNPAUSE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/echo/">ECHO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hello/">HELLO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/ping/">PING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/quit/">QUIT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/reset/">RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/select/">SELECT</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/signals/">Signal handling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ARM/">ARM support</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/RDMA/">RDMA experimental support</a>
+</li>
+
+                    <li>
+                        <details class="docs-menu-other-commands">
+                            <summary>Other commands</summary>
+                            <ul class="docs-menu-commands" aria-label="Administration commands">
+                                <li><a href="/valkey-io.github.io/pr-21/commands/debug/">DEBUG</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/info/">INFO</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/lolwut/">LOLWUT</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/monitor/">MONITOR</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/restore-asking/">RESTORE-ASKING</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/shutdown/">SHUTDOWN</a></li>
+                                <li><a href="/valkey-io.github.io/pr-21/commands/time/">TIME</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Cluster</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-tutorial/">Cluster tutorial</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Cluster tutorial commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Cluster tutorial commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/asking/">ASKING</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster/">CLUSTER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslots/">CLUSTER ADDSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-addslotsrange/">CLUSTER ADDSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-bumpepoch/">CLUSTER BUMPEPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-cancelslotmigrations/">CLUSTER CANCELSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-count-failure-reports/">CLUSTER COUNT-FAILURE-REPORTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-countkeysinslot/">CLUSTER COUNTKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslots/">CLUSTER DELSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-delslotsrange/">CLUSTER DELSLOTSRANGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-failover/">CLUSTER FAILOVER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-flushslots/">CLUSTER FLUSHSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-forget/">CLUSTER FORGET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getkeysinslot/">CLUSTER GETKEYSINSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-getslotmigrations/">CLUSTER GETSLOTMIGRATIONS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-help/">CLUSTER HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-info/">CLUSTER INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-keyslot/">CLUSTER KEYSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-links/">CLUSTER LINKS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-meet/">CLUSTER MEET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-migrateslots/">CLUSTER MIGRATESLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myid/">CLUSTER MYID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-myshardid/">CLUSTER MYSHARDID</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-nodes/">CLUSTER NODES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicas/">CLUSTER REPLICAS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-replicate/">CLUSTER REPLICATE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-reset/">CLUSTER RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-saveconfig/">CLUSTER SAVECONFIG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-set-config-epoch/">CLUSTER SET-CONFIG-EPOCH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-setslot/">CLUSTER SETSLOT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-shards/">CLUSTER SHARDS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slaves/">CLUSTER SLAVES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slot-stats/">CLUSTER SLOT-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-slots/">CLUSTER SLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/cluster-syncslots/">CLUSTER SYNCSLOTS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/clusterscan/">CLUSTERSCAN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readonly/">READONLY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/readwrite/">READWRITE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/cluster-spec/">Cluster specification</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/atomic-slot-migration/">Atomic slot migration</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Security</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/security/">Overview</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/acl/">ACL</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">ACL commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="ACL commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl/">ACL</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-cat/">ACL CAT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-delrole/">ACL DELROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-deluser/">ACL DELUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-digest/">ACL DIGEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-dryrun/">ACL DRYRUN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-genpass/">ACL GENPASS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getrole/">ACL GETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-getuser/">ACL GETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-help/">ACL HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-list/">ACL LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-load/">ACL LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-log/">ACL LOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-roles/">ACL ROLES</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-save/">ACL SAVE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setrole/">ACL SETROLE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-setuser/">ACL SETUSER</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-users/">ACL USERS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/acl-whoami/">ACL WHOAMI</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/tls/">TLS</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/ldap/">LDAP authentication <span class="docs-menu-badge">module</span></a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Performance and troubleshooting</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/problems/">Troubleshooting Valkey</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/memory-optimization/">Memory optimization</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Memory optimization commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Memory optimization commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory/">MEMORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-doctor/">MEMORY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-help/">MEMORY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-malloc-stats/">MEMORY MALLOC-STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-purge/">MEMORY PURGE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-stats/">MEMORY STATS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/memory-usage/">MEMORY USAGE</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency-monitor/">Latency monitoring</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Latency monitoring commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Latency monitoring commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency/">LATENCY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-doctor/">LATENCY DOCTOR</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-graph/">LATENCY GRAPH</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-help/">LATENCY HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-histogram/">LATENCY HISTOGRAM</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-history/">LATENCY HISTORY</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-latest/">LATENCY LATEST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/latency-reset/">LATENCY RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/latency/">Diagnosing latency issues</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Diagnosing latency issues commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Diagnosing latency issues commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog/">COMMANDLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-get/">COMMANDLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-help/">COMMANDLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-len/">COMMANDLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/commandlog-reset/">COMMANDLOG RESET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog/">SLOWLOG</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-get/">SLOWLOG GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-help/">SLOWLOG HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-len/">SLOWLOG LEN</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/slowlog-reset/">SLOWLOG RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/hotkeys/">Hot key tracking</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Hot key tracking commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Hot key tracking commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys/">HOTKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-get/">HOTKEYS GET</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-help/">HOTKEYS HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/hotkeys-reset/">HOTKEYS RESET</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/benchmark/">Benchmarking tool</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/performance-on-cpu/">CPU profiling</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/debugging/">Debugging</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/mass-insertion/">Bulk loading</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Module development</summary>
+                <ul>
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/modules-intro/">Overview</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Module development commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Module development commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/module/">MODULE</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-help/">MODULE HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-list/">MODULE LIST</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-load/">MODULE LOAD</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-loadex/">MODULE LOADEX</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/module-unload/">MODULE UNLOAD</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-native-types/">Modules API for native types</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-blocking-ops/">Modules and blocking commands</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/modules-api-ref/">Modules API reference</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>Client development</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/protocol/">Serialization protocol specification</a>
+</li>
+
+                    
+<li class="docs-menu-has-commands">
+    <a href="/valkey-io.github.io/pr-21/topics/command-arguments/">Command arguments</a>
+    
+<details class="docs-menu-commands-toggle">
+    <summary><span class="sr-only">Command arguments commands</span></summary>
+    <ul class="docs-menu-commands" aria-label="Command arguments commands">
+        <li><a href="/valkey-io.github.io/pr-21/commands/command/">COMMAND</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-count/">COMMAND COUNT</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-docs/">COMMAND DOCS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeys/">COMMAND GETKEYS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-getkeysandflags/">COMMAND GETKEYSANDFLAGS</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-help/">COMMAND HELP</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-info/">COMMAND INFO</a></li>
+        <li><a href="/valkey-io.github.io/pr-21/commands/command-list/">COMMAND LIST</a></li>
+    </ul>
+</details>
+
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/key-specs/">Command key specifications</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/command-tips/">Command tips</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/sentinel-clients/">Sentinel client spec</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+        <li>
+            <details>
+                <summary>About Valkey</summary>
+                <ul>
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/releases/">Releases and versioning schema</a>
+</li>
+
+                    
+<li>
+    <a href="/valkey-io.github.io/pr-21/topics/history/">History</a>
+</li>
+
+                </ul>
+            </details>
+        </li>
+    </ul>
+</nav>
+
+
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/topics/streams-intro.md">Update this Page on GitHub!</a>
+</div>
+
+        </aside>
+    </div>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

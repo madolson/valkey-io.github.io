@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Events</title>
+    <meta name="title" property="og:title" content="Valkey: Events">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+<div class="styled-title">
+    <h1>Events</h1>
+</div>
+
+<div class="width-limiter">
+    <main class="container">
+        
+<div class="events-intro">
+  <p>Come meet us at an upcoming Valkey event!</p>
+  <p>Get involved: <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Host a Meetup</a> | <a href="https://form.asana.com/?k=FA6ZlbUBbiaE4b7LJ9EXqQ&amp;d=9283783873717">Share an event</a></p>
+</div>
+<div class="events-calendar">
+  <div class="events-legend">
+    <span class="legend-item"><span class="legend-dot first-party"></span> Valkey Events</span>
+    <span class="legend-item"><span class="legend-dot third-party"></span> Third Party</span>
+    <span class="legend-item"><span class="legend-dot meetup-hackathon"></span> Meetup / Hackathon</span>
+  </div>
+  <div class="calendar-nav">
+    <button class="calendar-nav-btn" id="cal-prev" aria-label="Previous month">&#9664;</button>
+    <span class="calendar-nav-title" id="cal-title"></span>
+    <button class="calendar-nav-btn" id="cal-next" aria-label="Next month">&#9654;</button>
+  </div>
+  <div class="calendar-grid" id="cal-grid">
+    <div class="calendar-header">
+      <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+    </div>
+    <div class="calendar-days" id="cal-days"></div>
+  </div>
+  <div class="events-list" id="events-list"></div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var events = [
+    
+    {
+      title: "Nerdearla Mexico 2026",
+      date: "2026-11-18",
+      type: "third-party",
+      location: "Mexico City, Mexico",
+      locationUrl: "",
+      url: "https://nerdearla.com/en/"
+    },
+    
+    {
+      title: "PyBeach 2026",
+      date: "2026-10-24",
+      type: "third-party",
+      location: "Santa Monica, CA, USA",
+      locationUrl: "",
+      url: "https://2026.pybeach.org/"
+    },
+    
+    {
+      title: "MQ Summit 2026",
+      date: "2026-10-21",
+      type: "third-party",
+      location: "Haarlem, Netherlands",
+      locationUrl: "",
+      url: "https://mqsummit.com/"
+    },
+    
+    {
+      title: "All Things Open 2026",
+      date: "2026-10-19",
+      type: "third-party",
+      location: "Raleigh, NC, USA",
+      locationUrl: "",
+      url: "https://2026.allthingsopen.org/"
+    },
+    
+    {
+      title: "Open Source Summit Europe 2026",
+      date: "2026-10-07",
+      type: "third-party",
+      location: "Prague, Czechia",
+      locationUrl: "",
+      url: "https://events.linuxfoundation.org/open-source-summit-europe/"
+    },
+    
+    {
+      title: "Valkey Contributor Summit 2026",
+      date: "2026-10-06",
+      type: "first-party",
+      location: "Prague, Czechia",
+      locationUrl: "",
+      url: "https://events.linuxfoundation.org/valkey-contributor-summit/"
+    },
+    
+    {
+      title: "ValkeyConf 2026",
+      date: "2026-10-05",
+      type: "first-party",
+      location: "Prague, Czechia",
+      locationUrl: "",
+      url: "https://events.linuxfoundation.org/valkeyconf/"
+    },
+    
+    {
+      title: "TDC Sao Paulo 2026",
+      date: "2026-09-23",
+      type: "third-party",
+      location: "Sao Paulo, Brazil",
+      locationUrl: "",
+      url: "https://thedevconf.com/"
+    },
+    
+    {
+      title: "Nerdearla Argentina 2026",
+      date: "2026-09-22",
+      type: "third-party",
+      location: "Buenos Aires, Argentina",
+      locationUrl: "",
+      url: "https://nerdearla.com/en/"
+    },
+    
+    {
+      title: "PyCon Cameroon 2026",
+      date: "2026-09-17",
+      type: "third-party",
+      location: "Yaounde, Cameroon",
+      locationUrl: "",
+      url: "https://cm.pycon.org/"
+    },
+    
+    {
+      title: "Open Source Summit Korea 2026",
+      date: "2026-08-11",
+      type: "third-party",
+      location: "Seoul, South Korea",
+      locationUrl: "",
+      url: "https://events.linuxfoundation.org/open-source-summit-korea/"
+    },
+    
+    {
+      title: "Laracon US 2026",
+      date: "2026-07-28",
+      type: "third-party",
+      location: "Boston, MA, USA",
+      locationUrl: "",
+      url: "https://laracon.us/"
+    },
+    
+    {
+      title: "KCD Lima 2026",
+      date: "2026-07-18",
+      type: "third-party",
+      location: "Lima, Peru",
+      locationUrl: "",
+      url: "https://community2.cncf.io/events/details/cncf-kcd-lima-peru-presents-kubernetes-community-days-lima-2026/"
+    },
+    
+    {
+      title: "KCD Kuala Lumpur 2026",
+      date: "2026-06-27",
+      type: "third-party",
+      location: "Kuala Lumpur, Malaysia",
+      locationUrl: "",
+      url: "https://community2.cncf.io/events/details/cncf-kcd-kuala-lumpur-2026-presents-kcd-kuala-lumpur-2026/"
+    },
+    
+    {
+      title: "Valkey x Seattle Systems Meetup",
+      date: "2026-06-25",
+      type: "meetup-hackathon",
+      location: "Conference Rooms - SURF Incubator 999 3rd Ave, Suite 700, Seattle, WA",
+      locationUrl: "",
+      url: "https://www.meetup.com/seattle-valkey/events/314853351/"
+    },
+    
+    {
+      title: "Open Source Summit India 2026",
+      date: "2026-06-16",
+      type: "third-party",
+      location: "Mumbai, India",
+      locationUrl: "",
+      url: "https://events.linuxfoundation.org/open-source-summit-india/"
+    },
+    
+    {
+      title: "From Caching to AI & IIoT Systems - The First Valkey Meetup Chennai",
+      date: "2026-06-14",
+      type: "meetup-hackathon",
+      location: "Chennai, India",
+      locationUrl: "",
+      url: "https://luma.com/tsuzpa4r"
+    },
+    
+    {
+      title: "From Caching to AI Systems - The First Valkey Meetup Delhi",
+      date: "2026-06-13",
+      type: "meetup-hackathon",
+      location: "Gurugram, India",
+      locationUrl: "",
+      url: "https://luma.com/3ru2wb4d"
+    },
+    
+    {
+      title: "KCD New York 2026",
+      date: "2026-06-10",
+      type: "third-party",
+      location: "New York, NY, USA",
+      locationUrl: "",
+      url: "https://community2.cncf.io/events/details/cncf-kcd-new-york-presents-kcd-new-york-2026/"
+    },
+    
+    {
+      title: "Percona Live 2026",
+      date: "2026-05-27",
+      type: "third-party",
+      location: "Mountain View, CA, USA",
+      locationUrl: "",
+      url: "https://perconalive.com/2026-usa/"
+    },
+    
+    {
+      title: "Build Beyond Limits Hackathon - Hyderabad",
+      date: "2026-05-24",
+      type: "meetup-hackathon",
+      location: "Hyderabad, India",
+      locationUrl: "",
+      url: "https://reacthyderabad.com/react-hyderabad-build-beyond-limits"
+    },
+    
+    {
+      title: "From Caching to AI Systems - The First Valkey Meetup Bengaluru",
+      date: "2026-05-23",
+      type: "meetup-hackathon",
+      location: "Bengaluru, India",
+      locationUrl: "",
+      url: "https://luma.com/r85gjjg8"
+    },
+    
+    {
+      title: "Cache Café",
+      date: "2026-05-20",
+      type: "meetup-hackathon",
+      location: "Minneapolis, MN, USA",
+      locationUrl: "",
+      url: "https://luma.com/7hqby6yi"
+    },
+    
+    {
+      title: "Open Source Summit North America 2026",
+      date: "2026-05-18",
+      type: "third-party",
+      location: "Minneapolis, MN, USA",
+      locationUrl: "",
+      url: "https://events.linuxfoundation.org/open-source-summit-north-america/"
+    },
+    
+    {
+      title: "Unlocked Conference 2026",
+      date: "2026-05-07",
+      type: "third-party",
+      location: "T-Mobile Park, Seattle, WA",
+      locationUrl: "https://www.google.com/maps/place/T-Mobile+Park",
+      url: "https://www.unlockedconf.io/"
+    },
+    
+    {
+      title: "Valkey x React Hyderabad Meetup",
+      date: "2026-04-25",
+      type: "meetup-hackathon",
+      location: "Hyderabad, India",
+      locationUrl: "",
+      url: "https://reacthyderabad.com/"
+    },
+    
+    {
+      title: "Bay Area OpenSearch + Valkey Meetup - April 2026",
+      date: "2026-04-20",
+      type: "meetup-hackathon",
+      location: "San Francisco, CA, USA",
+      locationUrl: "",
+      url: "https://builder.aws.com/content/3BM4ZJR7CsJiD7kytzRthwa3o9G/opensearch-project-and-valkey-bay-area-meetup-april-2026"
+    },
+    
+    {
+      title: "KCD Guadalajara 2026",
+      date: "2026-04-18",
+      type: "third-party",
+      location: "Guadalajara, Mexico",
+      locationUrl: "",
+      url: "https://community2.cncf.io/events/details/cncf-kcd-guadalajara-presents-kcd-guadalajara-2026/"
+    },
+    
+    {
+      title: "Seattle Valkey Meetup - April 2026",
+      date: "2026-04-09",
+      type: "meetup-hackathon",
+      location: "AWS Nitro South, 2205 8th Ave, Seattle, WA",
+      locationUrl: "https://www.google.com/maps/place/2205+8th+Ave,+Seattle,+WA",
+      url: "https://www.meetup.com/seattle-valkey/events/313607187/"
+    },
+    
+    {
+      title: "KCD Beijing + vLLM 2026",
+      date: "2026-03-21",
+      type: "third-party",
+      location: "Beijing, China",
+      locationUrl: "",
+      url: "https://community2.cncf.io/events/details/cncf-kcd-beijing-presents-kcd-beijing-vllm-2026/"
+    },
+    
+    {
+      title: "SCaLE 23x 2026",
+      date: "2026-03-05",
+      type: "third-party",
+      location: "Pasadena, CA, USA",
+      locationUrl: "",
+      url: "https://www.socallinuxexpo.org/scale/23x"
+    },
+    
+    {
+      title: "Hack_NCState 2026",
+      date: "2026-02-14",
+      type: "meetup-hackathon",
+      location: "Raleigh, NC, USA",
+      locationUrl: "",
+      url: "https://hackncstate.org/"
+    },
+    
+    {
+      title: "Laracon India 2026",
+      date: "2026-01-31",
+      type: "third-party",
+      location: "Ahmedabad, India",
+      locationUrl: "",
+      url: "https://laracon.in/"
+    },
+    
+    {
+      title: "Keyspace Beijing 北京",
+      date: "2025-12-13",
+      type: "first-party",
+      location: "Dongsheng Building, Tower A, Haidian District, Beijing",
+      locationUrl: "https://www.google.com/maps/place/Dongsheng+Building",
+      url: "https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/"
+    },
+    
+    {
+      title: "Keyspace Amsterdam",
+      date: "2025-08-28",
+      type: "first-party",
+      location: "RAI Amsterdam Convention Centre, Amsterdam, Netherlands",
+      locationUrl: "https://www.google.com/maps/place/Amsterdam+RAI/@52.3411938,4.8860407,1232m",
+      url: "https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/"
+    },
+    
+    {
+      title: "Contributor Summit Amsterdam",
+      date: "2025-08-24",
+      type: "first-party",
+      location: "RAI Amsterdam Convention Centre, Amsterdam, Netherlands",
+      locationUrl: "https://www.google.com/maps/place/Amsterdam+RAI/@52.3411938,4.8860407,1232m",
+      url: "https://madolson.github.io/valkey-io.github.io/pr-21/events/contributor-summit-2025/"
+    }
+    
+  ];
+
+  var eventTypeLabels = {
+    'first-party': 'Valkey Event',
+    'third-party': 'Third Party',
+    'meetup-hackathon': 'Meetup / Hackathon'
+  };
+
+  function escapeHtml(value) {
+    if (!value) return '';
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+  }
+
+  function safeHref(value) {
+    if (!value) return '';
+    try {
+      var url = new URL(value, window.location.origin);
+      if (url.protocol === 'http:' || url.protocol === 'https:') return escapeHtml(url.href);
+    } catch (error) {}
+    return '#';
+  }
+
+  events = events.map(function(e) {
+    var type = eventTypeLabels[e.type] ? e.type : 'third-party';
+    return {
+      safeTitle: escapeHtml(e.title),
+      date: e.date,
+      eventClass: type,
+      typeLabel: eventTypeLabels[type],
+      safeLocation: escapeHtml(e.location),
+      safeLocationUrl: safeHref(e.locationUrl),
+      safeUrl: safeHref(e.url)
+    };
+  });
+
+  // Collect events by month
+  var monthSet = {};
+  events.forEach(function(e) {
+    var key = e.date.substring(0, 7);
+    if (!monthSet[key]) monthSet[key] = [];
+    monthSet[key].push(e);
+  });
+
+  // Build all months from first to last event
+  var eventDates = events.map(function(e) { return e.date; }).sort();
+  var first = eventDates[0].split('-');
+  var last = eventDates[eventDates.length - 1].split('-');
+  var months = [];
+  var y = Number(first[0]), m = Number(first[1]);
+  var endY = Number(last[0]), endM = Number(last[1]);
+  while (y < endY || (y === endY && m <= endM)) {
+    months.push(y + '-' + (m < 10 ? '0' + m : m));
+    m++;
+    if (m > 12) { m = 1; y++; }
+  }
+
+  var currentIdx = 0;
+  // Start on current month if it exists, otherwise first month
+  var now = new Date();
+  var currentKey = now.getFullYear() + '-' + (now.getMonth() + 1 < 10 ? '0' + (now.getMonth() + 1) : '' + (now.getMonth() + 1));
+  var foundIdx = months.indexOf(currentKey);
+  if (foundIdx !== -1) currentIdx = foundIdx;
+
+  var monthNames = ['January','February','March','April','May','June',
+                    'July','August','September','October','November','December'];
+
+  function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
+  function startDay(y, m) { var d = new Date(y, m, 1).getDay(); return d === 0 ? 6 : d - 1; } // Mon=0
+
+  function render() {
+    var key = months[currentIdx];
+    var parts = key.split('-');
+    var year = Number(parts[0]);
+    var month = Number(parts[1]) - 1;
+    var total = daysInMonth(year, month);
+    var start = startDay(year, month);
+    var evts = monthSet[key] || [];
+
+    // Build event lookup by day
+    var byDay = {};
+    evts.forEach(function(e) { var d = Number(e.date.substring(8, 10)); if (!byDay[d]) byDay[d] = []; byDay[d].push(e); });
+
+    document.getElementById('cal-title').textContent = monthNames[month] + ' ' + year;
+
+    // Calendar days
+    var html = '';
+    for (var i = 0; i < start; i++) html += '<div class="calendar-day empty"></div>';
+    for (var d = 1; d <= total; d++) {
+      var hasEvents = byDay[d];
+      if (hasEvents) {
+        var labels = '';
+        hasEvents.forEach(function(e) {
+          labels += '<a href="' + e.safeUrl + '" class="event-label ' + e.eventClass + '" title="' + e.safeTitle + '">' + e.safeTitle + '</a>';
+        });
+        html += '<div class="calendar-day has-event"><span class="day-num">' + d + '</span>' + labels + '</div>';
+      } else {
+        html += '<div class="calendar-day"><span class="day-num">' + d + '</span></div>';
+      }
+    }
+    document.getElementById('cal-days').innerHTML = html;
+
+    // Highlight current month's event cards
+    var allCards = document.querySelectorAll('.event-card');
+    var firstMatch = null;
+    allCards.forEach(function(card) {
+      var cardMonth = card.getAttribute('data-month');
+      if (cardMonth === key) {
+        card.classList.add('active');
+        if (!firstMatch) firstMatch = card;
+      } else {
+        card.classList.remove('active');
+      }
+    });
+    if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Nav button state
+    document.getElementById('cal-prev').disabled = currentIdx === 0;
+    document.getElementById('cal-next').disabled = currentIdx === months.length - 1;
+  }
+
+  // Render all event cards once
+  var nowLocal = new Date();
+  var today = nowLocal.getFullYear() + '-' +
+    String(nowLocal.getMonth() + 1).padStart(2, '0') + '-' +
+    String(nowLocal.getDate()).padStart(2, '0');
+  var currentMonth = today.substring(0, 7);
+
+  var thisMonthUpcoming = events.filter(function(e) { return e.date.substring(0, 7) === currentMonth && e.date >= today; })
+                          .sort(function(a, b) { return a.date.localeCompare(b.date); });
+  var upcoming = events.filter(function(e) { return e.date > today && e.date.substring(0, 7) !== currentMonth; })
+                       .sort(function(a, b) { return a.date.localeCompare(b.date); });
+  var past = events.filter(function(e) { return e.date < today; })
+                   .sort(function(a, b) { return b.date.localeCompare(a.date); });
+
+  var allEvents = thisMonthUpcoming.concat(upcoming).concat(past);
+  var listHtml = '';
+  allEvents.forEach(function(e) {
+    var dateObj = new Date(e.date + 'T00:00:00');
+    var dateStr = monthNames[dateObj.getMonth()] + ' ' + dateObj.getDate() + ', ' + dateObj.getFullYear();
+    var eventMonth = e.date.substring(0, 7);
+    listHtml += '<div class="event-card' + (e.date < today ? ' past' : '') + '" data-month="' + eventMonth + '">' +
+      '<span class="event-card-badge ' + e.eventClass + '">' + e.typeLabel + '</span>' +
+      '<h3><a href="' + e.safeUrl + '">' + e.safeTitle + '</a></h3>' +
+      '<p class="event-card-date">' + dateStr + '</p>' +
+      (e.safeLocation
+        ? '<p class="event-card-location">' +
+          (e.safeLocationUrl
+            ? '<a href="' + e.safeLocationUrl + '" target="_blank" rel="noopener noreferrer">' + e.safeLocation + '</a>'
+            : e.safeLocation) +
+          '</p>'
+        : '') +
+      '</div>';
+  });
+  document.getElementById('events-list').innerHTML = listHtml;
+
+  document.getElementById('cal-prev').addEventListener('click', function() { if (currentIdx > 0) { currentIdx--; render(); } });
+  document.getElementById('cal-next').addEventListener('click', function() { if (currentIdx < months.length - 1) { currentIdx++; render(); } });
+  render();
+});
+</script>
+
+    </main>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

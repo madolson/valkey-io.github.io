@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="Introducing Spring Data Valkey, a new open source Spring Data module that provides first-class integration between Valkey and the Spring ecosystem." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Announcing Spring Data Valkey: A New Season for High-Performance Spring Applications</title>
+    <meta name="title" property="og:title" content="Valkey: Announcing Spring Data Valkey: A New Season for High-Performance Spring Applications">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Announcing Spring Data Valkey: A New Season for High-Performance Spring Applications</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2026-04-01
+  
+    &middot; 
+    
+      
+      
+      <em>Masataka Kubo</em>,
+    
+      
+      
+      <em>Ilia Kolominsky</em>
+    
+  
+</div>
+<p>With the winter months winding down, it's a fitting time to introduce the general availability of <a rel="external" href="https://github.com/valkey-io/spring-data-valkey">Spring Data Valkey</a>, a new open source Spring Data module that provides first-class integration between <a rel="external" href="https://valkey.io/">Valkey</a> and the Spring ecosystem.
+Valkey adoption has expanded rapidly across cloud providers, Linux distributions, and enterprise environments.
+As organizations standardize on Valkey for caching, session management, and real-time data workloads, demand has grown for native integrations with the frameworks developers already use.
+For the Java ecosystem, that means <a rel="external" href="https://spring.io/">Spring</a> and <a rel="external" href="https://spring.io/projects/spring-data">Spring Data</a>.</p>
+<p>Spring Data Valkey was built to meet that need.
+It allows Spring applications to use Valkey through familiar Spring Data abstractions.
+The programming model remains the same.
+The templates and repositories remain the same.
+What changes is the foundation underneath.
+Spring Data Valkey is officially supported by the Valkey project and can optionally be used with <a rel="external" href="https://glide.valkey.io/">Valkey GLIDE</a>, one of Valkey's official client libraries, that brings new operational-excellence capabilities to Spring applications.
+When enabled, GLIDE adds cluster awareness, intelligent routing, automatic failover handling, and production-grade reliability — extending the operational capabilities of Spring Data Valkey while preserving the existing developer experience.</p>
+<p>In this blog, we'll walk through the key capabilities of Spring Data Valkey, explain how it integrates with Valkey and Valkey GLIDE, outline common real-world application patterns, and show how to get started.
+Whether you're migrating an existing application or building something new, you'll see how Spring Data Valkey provides a seamless path to adopting Valkey within the Spring ecosystem.</p>
+<h2 id="spring-data-redis-compatible">Spring Data Redis Compatible</h2>
+<p>Spring Data Valkey was built to align closely with the established Spring Data programming model while supporting Valkey's Redis-compatible API, protocol, and data structures.
+Spring Data Valkey is designed to make it as easy as possible to migrate from Spring Data Redis — your existing code and configuration patterns work as-is.
+If your application already relies on Spring Data templates, repository-based data access, Spring's cache abstraction (such as <code>@Cacheable</code> and <code>@CacheEvict</code>), or Spring Boot auto-configuration, you can seamlessly move to Valkey while continuing to use those same abstractions.
+The core programming model does not change, data access patterns remain consistent, and your application architecture remains intact.</p>
+<p>To move your existing Spring Data applications to use Spring Data Valkey, you update a few dependencies, switch to Valkey-specific package namespaces, and adjust configuration property names; after that, your application continues to operate using the same Spring Data APIs and behaviors it always has.
+For a step-by-step guide, you can refer to the <a rel="external" href="https://spring.valkey.io/commons/migration/">Spring Data Valkey migration documentation</a>.</p>
+<p>Spring Data Valkey is available through standard Maven repositories, so you can manage it using your existing dependency management workflows and align versions with the broader Spring ecosystem.</p>
+<h2 id="the-valkey-advantage">The Valkey Advantage</h2>
+<p>Spring Data Valkey continues to support existing client libraries such as Lettuce and Jedis, enabling teams to adopt Valkey while keeping their current integrations.
+In addition, it introduces first-class support for <a rel="external" href="https://glide.valkey.io/">Valkey GLIDE</a>, one of Valkey's official client libraries.</p>
+<ul>
+<li><strong><a rel="external" href="https://valkey.io/blog/az-affinity-strategy/">Replica selection and availability-zone–aware routing</a></strong> (when supported by your deployment) – Enables smarter read distribution and improved resilience by directing traffic to appropriate replicas across availability zones, while helping reduce inter-AZ network traffic and associated data transfer costs.</li>
+<li><strong><a rel="external" href="https://glide.valkey.io/concepts/client-features/pubsub-model/">Resilient Pub/Sub support</a></strong> – Automatically restores Pub/Sub subscriptions after disconnections, failovers, or topology changes so applications continue receiving messages without custom resubscription logic.</li>
+<li><strong><a rel="external" href="https://glide.valkey.io/concepts/client-features/open-telemetry/">OpenTelemetry integration</a></strong> – Provides built-in observability hooks that emit tracing and metrics data, enabling teams to monitor Valkey interactions using standard OpenTelemetry-compatible tooling.</li>
+</ul>
+<p>Together, these capabilities shift distributed systems complexity out of your application code and into the client layer where it belongs.
+With Spring Data Valkey and GLIDE, cluster changes, failovers, reconnections, observability, and cross-AZ traffic optimization are handled transparently, allowing teams to focus on business logic instead of infrastructure edge cases.
+The result is a Spring-native development experience backed by a client designed for resilient, production-grade operation in modern distributed environments.</p>
+<h2 id="performance-characteristics-with-valkey-glide">Performance Characteristics with Valkey GLIDE</h2>
+<p>Spring Data Valkey using the GLIDE client delivers the performance needed for caching and real-time data workloads.
+We benchmarked Spring Data Valkey using GLIDE compared to Jedis and Lettuce.
+Overall, all three clients perform similarly across all dimensions measured, although where Valkey GLIDE shined was in higher throughput at large client counts.
+Let's take a closer look.</p>
+<h3 id="throughput">Throughput</h3>
+<p>The first graph shows total throughput measured in requests per second (RPS) as the number of concurrent clients increases.</p>
+<p>At lower client counts, all three clients deliver similar performance.
+As concurrency increases, GLIDE maintains competitive throughput and begins to scale particularly well beyond roughly 64 concurrent clients, sustaining high request rates while maintaining stable latency characteristics.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/spring-data-valkey/images/throughput-rps-scalability.png" alt="RPS Scalability – Total Workload Throughput" /></p>
+<h3 id="tail-latency">Tail Latency</h3>
+<p>Tail latency is often the most important indicator for user-facing workloads, since it reflects the worst-case response times experienced by applications.
+Across the test range, Spring Data Valkey with GLIDE maintains tail latency comparable to both Lettuce and Jedis.
+Even as client counts increase, latency remains stable, indicating that the client and server interaction continues to operate efficiently under load.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/spring-data-valkey/images/latency-p99-get-commands.png" alt="Latency p99.9 – GET Command" /></p>
+<h2 id="value-add-for-real-world-use-cases">Value-add for Real-World Use Cases</h2>
+<p>Let's explore how the new capabilities introduced through Valkey GLIDE integration with Spring Data Valkey solve real-world problems in real-world use cases.</p>
+<h3 id="high-availability-caching-in-microservices">High-Availability Caching in Microservices</h3>
+<p>In microservices architectures, caches are often deployed in clustered, multi-AZ environments.
+The operational challenge is not implementing <code>@Cacheable</code> — it's ensuring the cache remains available and correctly routed during node failures, scaling events, or topology changes.</p>
+<p>With GLIDE, Spring Data Valkey <a rel="external" href="https://valkey.io/blog/az-affinity-strategy/">automatically discovers cluster topology</a>, routes requests to the correct primary or replica node, and adapts to slot remapping or primary promotions without application restarts.
+In multi-AZ deployments, availability-zone–aware routing can reduce unnecessary cross-AZ traffic, improving resilience while also lowering inter-AZ data transfer costs.
+These capabilities allow teams to scale cache clusters or handle infrastructure events without adding custom retry logic or topology management code.</p>
+<h3 id="event-driven-systems-and-pub-sub-messaging">Event-Driven Systems and Pub/Sub Messaging</h3>
+<p>Real-time messaging systems depend on stable subscriptions.
+In long-running services, dropped connections or topology changes can silently break Pub/Sub consumers unless resubscription logic is carefully implemented.</p>
+<p><a rel="external" href="https://aws.amazon.com/blogs/database/how-habby-enhanced-resiliency-and-system-robustness-using-valkey-glide-and-amazon-elasticache/">GLIDE provides resilient Pub/Sub support</a> by automatically restoring subscriptions after disconnections, failovers, or cluster changes.
+Combined with cluster-aware routing, this reduces the operational burden of maintaining reliable messaging pipelines and allows Spring-based services to continue receiving events even as the underlying Valkey cluster evolves.</p>
+<h3 id="real-time-analytics-counters-and-rate-limiting">Real-Time Analytics, Counters, and Rate Limiting</h3>
+<p>Workloads such as rate limiting, distributed counters, and leaderboards often operate under sustained traffic and must tolerate node restarts or scaling operations without impacting user-facing latency.</p>
+<p>GLIDE's intelligent routing and native cluster-mode integration ensure that commands are sent to the correct shard as the cluster topology changes.
+Automatic reconnection handling reduces error surfaces during network interruptions, while built-in <a rel="external" href="https://glide.valkey.io/concepts/client-features/open-telemetry/">OpenTelemetry integration</a> provides standardized tracing and metrics for datastore interactions — allowing teams to observe latency patterns, detect failover events, and troubleshoot distributed behavior using familiar observability tooling.</p>
+<p>Across these use cases, the core theme is consistent: Spring Data Valkey preserves the developer experience, while GLIDE strengthens the operational layer.
+Cluster awareness, failover transparency, resilient messaging, cost-aware routing, and observability are handled in the client — so application code can remain simple even as infrastructure grows more complex.</p>
+<h2 id="a-new-season-for-spring-and-valkey">A New Season for Spring and Valkey</h2>
+<p>Spring Data Valkey makes leveraging Valkey in Spring applications simple.
+You keep the familiar Spring Data programming model — templates, repositories, cache annotations, and Spring Boot workflows — while benefiting from a modern, cluster-aware client with built-in resilience, intelligent routing, and observability via the optional Valkey GLIDE integration, all without requiring changes to how your Spring applications are written.
+Fully compatible with Spring Data Redis, migrating is seamless and straightforward — just a dependency update and a few configuration changes.</p>
+<p>Valkey is rapidly becoming the default high-performance caching engine across cloud providers and enterprise environments, and Spring Data Valkey provides a clear path for Spring developers to adopt it.
+We are excited for the community to try it out and welcome all feedback — whether it's feature suggestions, bug reports, or contributions to the project.
+To get started, explore the project on GitHub: <a rel="external" href="https://github.com/valkey-io/spring-data-valkey">https://github.com/valkey-io/spring-data-valkey</a>.
+For documentation and a step-by-step migration guide from Spring Data Redis, visit <a rel="external" href="https://spring.valkey.io/overview/">https://spring.valkey.io/overview/</a>.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/makubo-aws.jpeg" alt="photo of Masataka Kubo" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Masataka Kubo</h4>
+    
+    <a target="_blank" href="https://github.com/makubo-aws"><i class="icon icon-github-square"></i> @makubo-aws</a>
+    
+    <p>Mas is a Product Manager in the In-Memory Databases team at AWS focused on Valkey. Outside of work Mas follows the wind and the ocean while freediving, paragliding, kitesurfing, and sailing.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/ikolomi.jpeg" alt="photo of Ilia Kolominsky" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Ilia Kolominsky</h4>
+    
+    <a target="_blank" href="https://github.com/ikolomi"><i class="icon icon-github-square"></i> @ikolomi</a>
+    
+    <p>Ilia Kolominsky is a Senior Software Engineer at AWS with a passion for software engineering, performance optimization, and distributed systems. He specializes in building high-performance infrastructure and open-source developer tools. Outside of programming, he enjoys scuba diving, snowboarding, and spending time with his family.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/spring-data-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/spring-data-valkey/&title=Announcing%20Spring%20Data%20Valkey%3A%20A%20New%20Season%20for%20High-Performance%20Spring%20Applications&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/spring-data-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-tooling-primitives/">&laquo; What Valkey&#39;s new primitives tell us about the tools we need</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/victory-at-hackncstate/">Victory at HackNC State: Innovating for the Telecom Industry with Valkey &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

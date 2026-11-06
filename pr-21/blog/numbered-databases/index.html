@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//blog/numbered-databases/images/move-db.drawio.png" />
+    
+    
+
+    <meta name="description" content="Valkey 9.0 brings new namespacing abilities to cluster mode. In this blog you&#39;ll learn about numbered databases, how they&#39;ve changed in the recent release, limitations, and how you can use them to efficiently solve a variety of otherwise challenging problems." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Numbered Databases in Valkey 9.0</title>
+    <meta name="title" property="og:title" content="Valkey: Numbered Databases in Valkey 9.0">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/blog/numbered-databases/images/move-db.drawio.png" alt="Numbered Databases in Valkey 9.0" class="feature-img">
+
+
+<h1>Numbered Databases in Valkey 9.0</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2025-09-25
+  
+    &middot; 
+    
+      
+      
+      <em>Kyle Davis</em>
+    
+  
+</div>
+<p>If you explore Valkey’s documentation you might run across a feature called ‘numbered databases’ which allows you to separate the keyspace into (by default) 16 different databases. Digging into this feature reveals tantalizing ways to avoid key prefixing, house different workloads together on Valkey, and even perform patterns that are otherwise clunky. However, if you’ve done more research outside of the documentation on numbered databases you find advice like “don’t use them,” “they don’t scale,” and “they’re a bad idea.” Well, the forthcoming Valkey 9.0 changes many things with numbered databases and you’ll see in this post that advice definitely needs some updating.</p>
+<p>Today, a common way to conceptualize Valkey is that your keys represent a unique name for pointers to data in memory across a cluster of nodes. So, key <code>foo</code>  is unique and deterministically linked to a specific node and on that node there is a memory address where the value resides. However, this misses one important detail: the database number. The reality is that key names belong to a specific numbered database and <em>aren’t unique</em> on a given instance of Valkey. To put this another way, Valkey can have the key <code>foo</code> as many times as there are numbered databases with each one pointing to different data.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/numbered-databases/./images/numbered-db.drawio.png" alt="one key, many databases" /></p>
+<p>Historically, before Valkey’s preceding project had the ability to cluster (before version 3.0.0), using multiple numbered databases was fully supported. However, when clustering was implemented numbered databases weren’t included: a cluster had one database (DB 0) that spanned across the entire cluster. In a world where using numbered databases in your application locked you into never going to a cluster, the early advice made sense, however Valkey 9.0 adds the ability to have numbered databases on a cluster, changing everything about that advice.</p>
+<p>Why bring this feature to cluster mode in Valkey 9.0? In the intervening years since numbered databases were left out of the cluster spec, users have found a number of very handy patterns that were unfortunately limited without numbered databases. However, numbered databases aren't a panacea: read on to find out when you should stick to DB 0 and when to go for a numbered database.</p>
+<h2 id="clustering-and-numbered-databases">Clustering and numbered databases</h2>
+<p>As mentioned earlier, the key name dictates where the key lives in the cluster and this doesn’t change for numbered databases. As a refresher, <a rel="external" href="https://valkey.io/topics/cluster-tutorial/">Valkey clustering</a> takes the key name as a string, runs that through a CRC-16 function, then does a modulo of 16,384 which determines the ‘slot’. Each of these slots belong to a node in the cluster. For a numbered database, each slot contains all the numbered databases, so, carrying forward the idea that you can have the same key name in each database on a single instance, in Valkey 9.0 you can have the same key multiple times in a given slot, each in their own database. In other words, numbered databases do not affect clustering: the key is still the determinate factor in calculating slots.</p>
+<p>You can see this directly with <a rel="external" href="https://valkey.io/commands/cluster-keyslot/"><code>CLUSTER KEYSLOT</code></a> and <a rel="external" href="https://valkey.io/commands/select/"><code>SELECT</code></a>. Take the following example:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; SELECT 0</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; SET somekey hi</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; CLUSTER KEYSLOT somekey</span></span>
+<span class="giallo-l"><span>(integer) 11058</span></span>
+<span class="giallo-l"><span>&gt; SELECT 5</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; SET somekey hello</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"><span>&gt; CLUSTER KEYSLOT somekey</span></span>
+<span class="giallo-l"><span>(integer) 11058</span></span></code></pre>
+<p>Here the key <code>somekey</code> was set to two different values: ‘hi’ on database 0, and ‘hello’ on database 5, with <code>SELECT</code> altering the selected database. <code>CLUSTER KEYSLOT</code> was called twice: each one yielding the same slot number meaning this key will be assigned to the same node in the cluster, no matter which database is selected.</p>
+<h2 id="limitations">Limitations</h2>
+<p>Numbered databases do not change the properties of how a Valkey cluster works. The keyspace of each database is still split amongst all the nodes. As a consequence, operations that need to span the entire keyspace will to be run on each node:</p>
+<ul>
+<li><a rel="external" href="https://valkey.io/commands/flushdb/"><code>FLUSHDB</code></a> will flush the keys in the current database <em>on the connected node</em></li>
+<li><a rel="external" href="https://valkey.io/commands/scan/"><code>SCAN</code></a> will iteratively return keys in the current database <em>on the connected node.</em></li>
+<li><a rel="external" href="https://valkey.io/commands/dbsize/"><code>DBSIZE</code></a> will return the number of keys in the current database <em>on the connected node.</em></li>
+</ul>
+<p>You get the picture: if a command previously said it did something for the entire database, in cluster mode it really means for the connected node’s portion of the database. These are especially important to understand if you're planning to move an application built for non-clustered, numbered databases to a cluster.</p>
+<p>Additionally, numbered databases do not provide any form of resource isolation. It's tempting to point a bunch of applications to a single Valkey cluster with each application taking its own database. While this certainly <em>can</em> work, it works without resource isolation and this setup can suffer from classic noisy neighbour problems: busy applications will affect the others using the same cluster. If you're worried about resource sharing, most of the time you'll be better off just having distinct clusters for each application instead of numbered databases.</p>
+<h2 id="where-to-use-numbered-databases">Where to use numbered databases</h2>
+<p>If you take away one thing from this blog it should be this: <strong>numbered databases are a form of namespacing</strong>.</p>
+<p>The most straight forward use case of numbered databases is when you need to separate your data logically and you can tolerate the effects of resource sharing (see above). This might be something like keeping customer data separated from one another or combining applications on to a single cluster when resources are unlikely to be an issue. In a similar manner, multiple databases are a useful debugging tool. When you’re building an application it can be difficult to see what happens inside Valkey when you make a change. If you have multiple databases you can run your original code on one database and the changed version on a different database then you can more easily see changes in how data looks in Valkey by just the connection swapping between databases. This is also a useful pattern during a migration when you want your old data to stick around while your new data is populated.</p>
+<p>An entirely different use of numbered databases is related to the <a rel="external" href="https://valkey.io/commands/move/"><code>MOVE</code></a> command. <code>MOVE</code> allows you to change a key from one database to another <em>without copying the data,</em> meaning it uses very little resources and it’s an <code>O(1)</code> operation. This allows a couple of things: 1) you can effectively make data inaccessible from a database whilst keeping it on the same cluster node, and 2) you can replace a complex key atomically.</p>
+<p>Looking at the first use of <code>MOVE</code>: imagine you have some content, maybe a user submitted post, that is stored at the key “mycontent.” At some point this content gets flagged as needing to be reviewed. You might not want to <em>delete</em> this content but you also don’t want it accessible. In this case you take the content and <code>MOVE</code> it to a different database. Once it’s reviewed (or edited!) you can <code>MOVE</code> it back. Never does the data actually leave the node nor get copied. Whilst your use-case might not be the same as this, the pattern illustrates an operation useful in a variety of contexts.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/numbered-databases/./images/move-db.drawio.png" alt="now you see me, now you don&#39;t" /></p>
+<p>The second use of <code>MOVE</code> is similar to the first except it revolves around complex keys that contain many elements. Take, for example, a large sorted set. It’s not unusual for these keys to be quite large because the key contains thousands or millions of smaller elements. If you need to replace this key with one that contains different elements then you’d have to first <code>DEL</code> the original key, then <code>ZADD</code> thousands of elements. Doing this in a transaction would be expensive and monopolize the node, and without a transaction, it would reveal a (potentially undesirable) partial state. Instead, with multiple databases, you build up new a complex key on a different database (under no urgency) and do a much simpler <code>MULTI</code> / <code>EXEC</code> transaction of of <code>DEL</code> followed by <code>MOVE</code> to atomically make the new complex key available to the database being used to serve commands without the chance of a partial state.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/numbered-databases/./images/zadd-move.drawio.png" alt="show me it when its done" /></p>
+<p>This is really a form of temporal namespacing: you're taking advantage of the namespace to have two active keys under the same name both of which can be read and manipulated. You can apply this pattern to other cases: anyplace you want to make a key inaccessible for a period of time.</p>
+<blockquote>
+<p><strong>How is key prefixing different than numbered databases?</strong> Some of the patterns in this blog can be achieved without numbered databases and instead with key prefixing (e.g. <code>app0:...</code>, <code>app1:...</code>). Key prefixing has a few downsides when compared to numbered databases:</p>
+<ul>
+<li>Prefixes add up at scale. Millions of keys each with repeated prefixes over the span of the whole cluster means less RAM for data. While each database does have a memory overhead it is linear relative to the number of databases used, not keys. For a deeper look at how numbered database memory overhead works, including using 10 million databases, read the comments on <a rel="external" href="https://github.com/valkey-io/valkey/pull/1609#issuecomment-2616366819">valkey-io/valkey#1609</a>.</li>
+<li>Databases are transparent to your application. To support prefixing, either your application or your client library has to be able to interpolate the prefix into each key. With numbered databases, the changes can be as simple as a number in the connection URI, not to each key name.</li>
+<li>Databases avoid pattern-based iterations. Having all your keys in DB 0 then needing to iterate over the entire keyspace to affect a specific pattern is expensive and complicated. If your keys are separated into databases, this both subsets that iteration and enables some database wide commands (i.e. <code>FLUSHDB</code> instead of trying to delete keys by a pattern).</li>
+</ul>
+</blockquote>
+<h2 id="gotchas-and-future-work">Gotchas and future work</h2>
+<p>Aside from the aforementioned lack of resource isolation, numbered databases in clustered Valkey have a few places that you need to look out for today. First, right now numbered databases don’t have a lot of dedicated metrics, so it can be hard to gain insights into per-database resource usage. Second, the ACL system doesn’t currently address numbered databases, so you can’t meaningfully restrict access to databases (at time of writing, there is an <a rel="external" href="https://github.com/valkey-io/valkey/pull/2309">open pull request that addresses this</a>). Unlike in the previous project, databases are an active area of work for the Valkey project and the database abstraction holds potential as a way to implement new features.</p>
+<p>Finally, while numbered databases are well supported in client libraries there are rough edges:</p>
+<ul>
+<li>Some client libraries artificially restrict usage to a single database in cluster mode,</li>
+<li>Pooled clients may naïvely manage the selected database, so a client returned to the pool after running <code>SELECT</code> might retain the database number in subsequent usage. A similar situation is possible for multiplexed clients.</li>
+</ul>
+<p>In general, watch out for three assumptions: 1) the selected database is always 0, 2) there is only one database in cluster mode, and 3) if there are multiple databases in use it isn’t in cluster mode. None of these are true in Valkey 9.0.</p>
+<p>With this in mind, Valkey 9.0 gives you the ability to divvy up that keyspace into nice neat numbered databases and spread them out over a whatever cluster you have. So, get rid of that old, outdated advice and start using them, seeing how they scale, and what a good idea number databases actually are for Valkey 9.0.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/kyledvs.jpg" alt="photo of Kyle Davis" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Kyle Davis</h4>
+    
+    <a target="_blank" href="https://github.com/stockholmux"><i class="icon icon-github-square"></i> @stockholmux</a>
+    
+    <p>Kyle is the General Manager for the Valkey ecosystem at Percona.
+He has a long history with open source software development; he was a founding contributor to the OpenSearch project and worked to build a community around Bottlerocket OS.
+When not working, Kyle enjoys 3D printing and getting his hands dirty in his Edmonton, Alberta-based home garden.</p>
+<p>Kyle has written over 70 technology-related blog posts, tutorials, and bylines, published a book on microservice architectures, been a guest on more than a dozen podcasts, and presented at over 20 different conferences around the world (and too many meetups to list).
+He presents on a diverse range of topics such as open source software, data structures, 3D modelling, operating systems, and embedded electronics.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/numbered-databases/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/numbered-databases/&title=Numbered%20Databases%20in%20Valkey%209.0&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/numbered-databases/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-investment-in-open-source/">&laquo; Valkey: An Investment in Open Source</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/">Introducing Hash Field Expirations &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

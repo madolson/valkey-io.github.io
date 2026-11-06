@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Valkey - Events</title>
+    <link rel="self" type="application/atom+xml" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/"/>
+
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-11-18T01:01:01+00:00</updated>
+    <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/atom.xml</id><entry xml:lang="en">
+        <title>Nerdearla Mexico 2026</title>
+        <published>2026-11-18T01:01:01+00:00</published><updated>2026-11-18T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/nerdearla-mx-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/nerdearla-mx-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/nerdearla-mx-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>PyBeach 2026</title>
+        <published>2026-10-24T01:01:01+00:00</published><updated>2026-10-24T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/pybeach-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/pybeach-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/pybeach-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>MQ Summit 2026</title>
+        <published>2026-10-21T01:01:01+00:00</published><updated>2026-10-21T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/mqsummit-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/mqsummit-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/mqsummit-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>All Things Open 2026</title>
+        <published>2026-10-19T01:01:01+00:00</published><updated>2026-10-19T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/all-things-open-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/all-things-open-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/all-things-open-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Open Source Summit Europe 2026</title>
+        <published>2026-10-07T01:01:01+00:00</published><updated>2026-10-07T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-europe-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-europe-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-europe-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Valkey Contributor Summit 2026</title>
+        <published>2026-10-06T01:01:01+00:00</published><updated>2026-10-06T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/valkey-contributor-summit-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/valkey-contributor-summit-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/valkey-contributor-summit-2026/">&lt;p&gt;Valkey Contributor Summit is a first-party Valkey event taking place on October 6, 2026.&lt;/p&gt;
+&lt;p&gt;Visit the &lt;a rel=&quot;external&quot; href=&quot;https://events.linuxfoundation.org/valkey-contributor-summit/&quot;&gt;Valkey Contributor Summit website&lt;/a&gt; for registration, venue, travel, and schedule details.&lt;/p&gt;
+</content>
+        
+    </entry><entry xml:lang="en">
+        <title>ValkeyConf 2026</title>
+        <published>2026-10-05T01:01:01+00:00</published><updated>2026-10-05T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/valkeyconf-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/valkeyconf-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/valkeyconf-2026/">&lt;p&gt;ValkeyConf is a first-party Valkey event taking place on October 5, 2026.&lt;/p&gt;
+&lt;p&gt;Visit the &lt;a rel=&quot;external&quot; href=&quot;https://events.linuxfoundation.org/valkeyconf/&quot;&gt;ValkeyConf website&lt;/a&gt; for registration, CFP, venue, and schedule details.&lt;/p&gt;
+</content>
+        
+    </entry><entry xml:lang="en">
+        <title>TDC Sao Paulo 2026</title>
+        <published>2026-09-23T01:01:01+00:00</published><updated>2026-09-23T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/tdc-sao-paulo-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/tdc-sao-paulo-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/tdc-sao-paulo-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Nerdearla Argentina 2026</title>
+        <published>2026-09-22T01:01:01+00:00</published><updated>2026-09-22T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/nerdearla-ar-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/nerdearla-ar-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/nerdearla-ar-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>PyCon Cameroon 2026</title>
+        <published>2026-09-17T01:01:01+00:00</published><updated>2026-09-17T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/pycon-cameroon-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/pycon-cameroon-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/pycon-cameroon-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Open Source Summit Korea 2026</title>
+        <published>2026-08-11T01:01:01+00:00</published><updated>2026-08-11T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-korea-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-korea-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-korea-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Laracon US 2026</title>
+        <published>2026-07-28T01:01:01+00:00</published><updated>2026-07-28T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/laracon-us-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/laracon-us-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/laracon-us-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>KCD Lima 2026</title>
+        <published>2026-07-18T01:01:01+00:00</published><updated>2026-07-18T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-lima-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-lima-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-lima-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>KCD Kuala Lumpur 2026</title>
+        <published>2026-06-27T01:01:01+00:00</published><updated>2026-06-27T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-kuala-lumpur-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-kuala-lumpur-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-kuala-lumpur-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Valkey x Seattle Systems Meetup</title>
+        <published>2026-06-25T01:01:01+00:00</published><updated>2026-06-25T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/valkey-seattle-systems-meetup-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/valkey-seattle-systems-meetup-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/valkey-seattle-systems-meetup-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Open Source Summit India 2026</title>
+        <published>2026-06-16T01:01:01+00:00</published><updated>2026-06-16T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-india-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-india-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-india-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>From Caching to AI &amp; IIoT Systems - The First Valkey Meetup Chennai</title>
+        <published>2026-06-14T01:01:01+00:00</published><updated>2026-06-14T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/chennai-valkey-meetup-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/chennai-valkey-meetup-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/chennai-valkey-meetup-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>From Caching to AI Systems - The First Valkey Meetup Delhi</title>
+        <published>2026-06-13T01:01:01+00:00</published><updated>2026-06-13T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/delhi-valkey-meetup-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/delhi-valkey-meetup-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/delhi-valkey-meetup-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>KCD New York 2026</title>
+        <published>2026-06-10T01:01:01+00:00</published><updated>2026-06-10T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-new-york-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-new-york-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-new-york-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Percona Live 2026</title>
+        <published>2026-05-27T01:01:01+00:00</published><updated>2026-05-27T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/percona-live-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/percona-live-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/percona-live-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Build Beyond Limits Hackathon - Hyderabad</title>
+        <published>2026-05-24T01:01:01+00:00</published><updated>2026-05-24T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/build-beyond-limits-hyderabad-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/build-beyond-limits-hyderabad-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/build-beyond-limits-hyderabad-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>From Caching to AI Systems - The First Valkey Meetup Bengaluru</title>
+        <published>2026-05-23T01:01:01+00:00</published><updated>2026-05-23T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/bengaluru-valkey-meetup-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/bengaluru-valkey-meetup-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/bengaluru-valkey-meetup-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Cache Café</title>
+        <published>2026-05-20T01:01:01+00:00</published><updated>2026-05-20T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/cache-cafe-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/cache-cafe-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/cache-cafe-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Open Source Summit North America 2026</title>
+        <published>2026-05-18T01:01:01+00:00</published><updated>2026-05-18T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-na-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-na-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/ossummit-na-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Unlocked Conference 2026</title>
+        <published>2026-05-07T01:01:01+00:00</published><updated>2026-05-07T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/unlocked-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/unlocked-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/unlocked-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Valkey x React Hyderabad Meetup</title>
+        <published>2026-04-25T01:01:01+00:00</published><updated>2026-04-25T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/valkey-react-hyderabad-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/valkey-react-hyderabad-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/valkey-react-hyderabad-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Bay Area OpenSearch + Valkey Meetup - April 2026</title>
+        <published>2026-04-20T01:01:01+00:00</published><updated>2026-04-20T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/bay-area-opensearch-valkey-meetup-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/bay-area-opensearch-valkey-meetup-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/bay-area-opensearch-valkey-meetup-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>KCD Guadalajara 2026</title>
+        <published>2026-04-18T01:01:01+00:00</published><updated>2026-04-18T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-guadalajara-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-guadalajara-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-guadalajara-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Seattle Valkey Meetup - April 2026</title>
+        <published>2026-04-09T01:01:01+00:00</published><updated>2026-04-09T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/seattle-meetup-april-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/seattle-meetup-april-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/seattle-meetup-april-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>KCD Beijing + vLLM 2026</title>
+        <published>2026-03-21T01:01:01+00:00</published><updated>2026-03-21T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-beijing-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-beijing-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/kcd-beijing-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>SCaLE 23x 2026</title>
+        <published>2026-03-05T01:01:01+00:00</published><updated>2026-03-05T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/scale-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/scale-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/scale-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Hack_NCState 2026</title>
+        <published>2026-02-14T01:01:01+00:00</published><updated>2026-02-14T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/hack-ncstate-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/hack-ncstate-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/hack-ncstate-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Laracon India 2026</title>
+        <published>2026-01-31T01:01:01+00:00</published><updated>2026-01-31T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/laracon-india-2026/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/laracon-india-2026/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/laracon-india-2026/"></content>
+        
+    </entry><entry xml:lang="en">
+        <title>Keyspace Beijing 北京</title>
+        <published>2025-12-13T01:01:01+00:00</published><updated>2025-12-13T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/">&lt;p&gt;Keyspace 北京峰会是开发者、SRE 和 DevOps 专家齐聚一堂，分享 Valkey 的技术、最佳实践和新用途的盛会。您将在为期一天的活动中与项目维护人员、社区爱好者和思想领袖见面交流。&lt;/p&gt;
+&lt;p&gt;Keyspace Beijing is the event where developers, SREs, and DevOps pros gather to share techniques, best practices, and new uses for Valkey. You’ll meet and network with the project maintainers, community enthusiasts, and thought leaders in a focused one-day event.&lt;/p&gt;
+&lt;h2 id=&quot;ri-qi-when&quot;&gt;日期 / When&lt;/h2&gt;
+&lt;p&gt;2025年12月13日&lt;/p&gt;
+&lt;p&gt;Dec 13, 2025&lt;/p&gt;
+&lt;h2 id=&quot;di-dian-where&quot;&gt;地点 / Where&lt;/h2&gt;
+&lt;p&gt;东升大厦A座 北京市海淀区中关村东路8号
+(五道口地铁站A北口步行490米)&lt;/p&gt;
+&lt;p&gt;Dongsheng Building, Tower A, No. 8 Zhongguancun East Road, Haidian District, Beijing (490 meters walk from North Exit A of Wudaokou Subway Station)&lt;/p&gt;
+&lt;h2 id=&quot;yan-shi-pdf-presentation-slides&quot;&gt;演示 PDF / Presentation Slides&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/./slides/%E4%BB%80%E4%B9%88%E6%98%AFValkey%EF%BC%9A%E4%BB%8E%E8%AF%9E%E7%94%9F%E5%88%B0%E6%9C%AA%E6%9D%A5%E5%8F%91%E5%B1%95%E6%96%B9%E5%90%91.pdf&quot;&gt;什么是 Valkey：从诞生到未来发展方向&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/./slides/Valkey-Dual-Channel-Replication.pdf&quot;&gt;Valkey Dual Channel Replication&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/./slides/Valkey%E9%AB%98%E5%8F%AF%E7%94%A8%E5%88%87%E6%8D%A2%E6%8A%80%E6%9C%AF%E6%BC%94%E8%BF%9B%E5%8F%8A%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5.pdf&quot;&gt;Valkey 高可用切换技术演进及最佳实践&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/./slides/%E5%9F%BA%E4%BA%8EValkey%E6%9E%84%E5%BB%BA%E8%B6%85%E5%A4%A7%E8%A7%84%E6%A8%A1%E7%9A%84%E9%9B%86%E7%BE%A4%E6%9C%8D%E5%8A%A1.pdf&quot;&gt;基于 Valkey 构建超大规模的集群服务&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/./slides/Valkey-Cluster-Atomic-Slot-Migration.pdf&quot;&gt;Valkey Cluster Atomic Slot Migration&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/./slides/Valkey-Hash-Field-Expiration%E7%89%B9%E6%80%A7%E8%A7%A3%E8%AF%BB.pdf&quot;&gt;Valkey Hash Field Expiration 特性解读&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/./slides/Valkey-Over-RDMA%EF%BC%9A%E6%9E%81%E8%87%B4%E7%9A%84%E9%AB%98%E6%80%A7%E8%83%BDKV%E5%AD%98%E5%82%A8.pdf&quot;&gt;Valkey Over RDMA: 极致的高性能 KV 存储&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/./slides/Valkey-Over-MPTCP.pdf&quot;&gt;Valkey Over MPTCP&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-beijing-2025/./slides/Valkey%E5%A4%9A%E5%8F%AF%E7%94%A8%E5%8C%BA%E9%83%A8%E7%BD%B2%E5%AE%9E%E8%B7%B5.pdf&quot;&gt;Valkey 多可用区部署实践&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+        
+    </entry><entry xml:lang="en">
+        <title>Keyspace Amsterdam</title>
+        <published>2025-08-28T01:01:01+00:00</published><updated>2025-08-28T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/">&lt;style type=&quot;text/css&quot;&gt;
+/* this page pulls in CSS from sessionize and it clashes with our color scheme */
+.event-single #sessionize.sessionize-wrapper .sz-cssgrid .sz-cssgrid__track-label,
+.event-single #sessionize.sessionize-wrapper h3,
+.event-single #sessionize.sessionize-wrapper h2,
+.event-single #sessionize.sessionize-wrapper .sz-day__title {
+    color: #fff;
+}
+.event-single #sessionize.sessionize-wrapper .sz-cssgrid .sz-cssgrid__track-label {
+    background-color: #111;
+}
+
+.event-single #sessionize.sessionize-wrapper .sz-cssgrid .sz-session__card{
+    box-shadow: rgb(100,100,100) 0px 0px 0px 2px;
+}
+&lt;/style&gt;
+&lt;p&gt;Keyspace is the event where developers, SREs, and DevOps pros gather to share techniques, best practices, and new uses for Valkey. You’ll meet and network with the project maintainers, community enthusiasts, and thought leaders in a focused one-day event. The event will give insights into the project through general sessions, breakout rooms, lightning talks, and a workshop, in two distinct orbits (aka &quot;tracks&quot; if you want to be boring).&lt;/p&gt;
+&lt;h2 id=&quot;when&quot;&gt;When&lt;/h2&gt;
+&lt;p&gt;August 28, 2025 0900-1700&lt;/p&gt;
+&lt;h2 id=&quot;where&quot;&gt;Where&lt;/h2&gt;
+&lt;p&gt;RAI Amsterdam Convention Centre &lt;a rel=&quot;external&quot; href=&quot;https://www.google.com/maps/place/Amsterdam+RAI/@52.3411938,4.8860407,1232m/data=!3m2!1e3!4b1!4m6!3m5!1s0x47c60a1f63d57e25:0xa08f37a724d09338!8m2!3d52.3411906!4d4.8886156!16s%2Fm%2F064pf4f?entry=ttu&amp;amp;g_ep=EgoyMDI1MDcwOS4wIKXMDSoASAFQAw%3D%3D&quot;&gt;Europaplein 24, 1078 GZ Amsterdam, Netherlands&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;related&quot;&gt;Related&lt;/h2&gt;
+&lt;p&gt;Keyspace is a co-located event with &lt;a rel=&quot;external&quot; href=&quot;https://events.linuxfoundation.org/open-source-summit-europe/&quot;&gt;Open Source Summit Europe&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;recorded-talks-video&quot;&gt;Recorded Talks &amp;amp; Video&lt;/h2&gt;
+&lt;iframe width=&quot;560&quot; height=&quot;315&quot; src=&quot;https://www.youtube.com/embed/videoseries?si=muYle3gZPUUM1vbA&amp;amp;list=PLAV1X7hxH2HtZWc2YNQRMQe9FT9XTWemE&quot; title=&quot;YouTube video player&quot; frameborder=&quot;0&quot; allow=&quot;accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share&quot; referrerpolicy=&quot;strict-origin-when-cross-origin&quot; allowfullscreen&gt;&lt;/iframe&gt;
+&lt;h2 id=&quot;presentation-slides&quot;&gt;Presentation Slides&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/whats-new-in-valkey.pdf&quot;&gt;What&#39;s New in Valkey 9?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/demystifying-valkey-clustering.pdf&quot;&gt;Demystifying Valkey Clustering: Architecture, Fault Tolerance, and Scalability&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/keyspace-valkey-bundle.pdf&quot;&gt;valkey-bundle: One Stop Shop for Real-Time Applications&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/valkey-modules-in-rust.pdf&quot;&gt;Customizing Valkey with Rust: Building High-Performance Modules&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/keyspace-25-ldap-audit.pdf&quot;&gt;Deploying Valkey at Enterprise level with LDAP Authentication and Auditing&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/timeseries-keyspace-2025.pdf&quot;&gt;Harder, Better, Faster, Stronger - Building Valkey-Timeseries&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/keyspace-k0rdent.pdf&quot;&gt;Effortless Platform Engineering: Multi-Cluster Valkey Deployments with k0rdent&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/connection-storms.pdf&quot;&gt;Connection Storms: Detecting and Defusing Outages Before Valkey Crashes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/migrating-15k-redis-servers-to-valkey.pdf&quot;&gt;Migrating 15k Redis servers to Valkey&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://madolson.github.io/valkey-io.github.io/pr-21/events/keyspace-2025/./slides/redis-to-valkey-upgrade-and-downgrade.pdf&quot;&gt;Redis to Valkey: Upgrade and Downgrade Compatibility&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</content>
+        
+    </entry><entry xml:lang="en">
+        <title>Contributor Summit Amsterdam</title>
+        <published>2025-08-24T01:01:01+00:00</published><updated>2025-08-24T01:01:01+00:00</updated>
+        
+        <author>
+          <name>Unknown</name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://madolson.github.io/valkey-io.github.io/pr-21/events/contributor-summit-2025/"/>
+        <id>https://madolson.github.io/valkey-io.github.io/pr-21/events/contributor-summit-2025/</id>
+        
+        <content type="html" xml:base="https://madolson.github.io/valkey-io.github.io/pr-21/events/contributor-summit-2025/">&lt;p&gt;Calling all Valkey contributors, maintainers, product, and engagement leaders! Valkey Contributor Summit is the in-person event to gain insight into the mechanics and future of the project. At the event we have time and space to brainstorm, discuss, and plan the future of the project. Bring your ideas, calendars, and an open mind to chart the destiny of Valkey.&lt;/p&gt;
+&lt;h2 id=&quot;when&quot;&gt;When&lt;/h2&gt;
+&lt;p&gt;August 24, 2025&lt;/p&gt;
+&lt;h2 id=&quot;where&quot;&gt;Where&lt;/h2&gt;
+&lt;p&gt;RAI Amsterdam Convention Centre &lt;a rel=&quot;external&quot; href=&quot;https://www.google.com/maps/place/Amsterdam+RAI/@52.3411938,4.8860407,1232m/data=!3m2!1e3!4b1!4m6!3m5!1s0x47c60a1f63d57e25:0xa08f37a724d09338!8m2!3d52.3411906!4d4.8886156!16s%2Fm%2F064pf4f?entry=ttu&amp;amp;g_ep=EgoyMDI1MDcwOS4wIKXMDSoASAFQAw%3D%3D&quot;&gt;Europaplein 24, 1078 GZ Amsterdam, Netherlands&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;related&quot;&gt;Related&lt;/h2&gt;
+&lt;p&gt;Keyspace is a co-located event with &lt;a rel=&quot;external&quot; href=&quot;https://events.linuxfoundation.org/open-source-summit-europe/&quot;&gt;Open Source Summit Europe&lt;/a&gt;. You do not need to purchase a ticket for Open Source Summit Europe to attend the Contributor Summit.&lt;/p&gt;
+&lt;h2 id=&quot;register&quot;&gt;Register&lt;/h2&gt;
+&lt;p&gt;To register, you will need to sign in with your Linux Foundation ID.&lt;/p&gt;
+&lt;p&gt;If you don&#39;t yet have an ID, you can create one by clicking &quot;Create an account&quot; on the reservation link below.&lt;/p&gt;
+&lt;p&gt;&lt;a rel=&quot;external&quot; href=&quot;https://register.linuxfoundation.org/valkey-contributor-summit-2025&quot;&gt;Reserve your ticket today!&lt;/a&gt;&lt;/p&gt;
+</content>
+        
+    </entry>
+</feed>

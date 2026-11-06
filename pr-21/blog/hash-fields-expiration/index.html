@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-08.webp" />
+    
+    
+
+    <meta name="description" content=" 
+    One of Valkey’s greatest strengths has always been its built-in ability to expire keys.
+    This simple but powerful feature helps developers keep datasets fresh, automatically clear caches, and enforce session lifetimes — all without extra application logic.
+    But until now, expiration worked only at the level of entire keys.  
+    In this post, we’ll explore how Valkey 9.0 introduces per-field expiration for hash objects, 
+    the challenges we faced designing it, the tradeoffs we considered, and the benchmarks that guided our final implementation.  
+    We’ll also walk through practical examples to show how you can start using this feature today.
+    " />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Introducing Hash Field Expirations</title>
+    <meta name="title" property="og:title" content="Valkey: Introducing Hash Field Expirations">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-08.webp" alt="Introducing Hash Field Expirations" class="feature-img">
+
+
+<h1>Introducing Hash Field Expirations</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2025-09-30
+  
+    &middot; 
+    
+      
+      
+      <em>Ran Shidlansik</em>
+    
+  
+</div>
+<p>One of the great strengths of Valkey has always been its built-in ability to expire keys.
+This simple but powerful mechanism lets developers keep their datasets fresh, automatically clear caches, or enforce session lifetimes without additional logic.
+But there has always been one limitation: expiration worked at the level of whole keys.
+If you stored multiple fields in a hash, you could set a TTL for the hash itself, but you couldn’t say “this field should live for 10 seconds while another field should stick around for 10 minutes.”</p>
+<p>That limitation forced developers into awkward choices.</p>
+<p>Imagine you’re running a feature flag system. You want to store all of a customer’s feature toggles inside one hash:</p>
+<ul>
+<li>
+<p>Some flags are short-lived experiments, meant to turn off automatically after a few seconds or minutes.</p>
+</li>
+<li>
+<p>Others are long-term rollouts, where the toggle might remain valid for days or weeks.</p>
+</li>
+</ul>
+<p>If you only had key-level expirations, you were forced to compromise.
+You could put all flags for a customer into a single hash, but then they would all share one expiration time.
+Or, you could store each flag in its own key so that each could expire independently — but this would explode the number of keys your system has to manage,
+hurting memory efficiency and increasing overhead for operations.</p>
+<p>The inability to set different TTLs per field meant developers either built complex cleanup processes outside of Valkey, or gave up flexibility in how expirations were handled.</p>
+<h2 id="finding-the-right-expiration-model">Finding the Right Expiration Model</h2>
+<p>At first glance, adding field expirations might sound like a simple matter of storing timestamps per field.
+In order to understand the problem, it’s important to understand how expiration is normally handled in Valkey today.</p>
+<p>Valkey uses two complementary mechanisms to reclaim expired keys:</p>
+<ul>
+<li>
+<p><strong>Lazy expiration:</strong> A key is deleted only when accessed. If you try to read or write an expired key, Valkey notices it has passed its TTL and deletes it immediately. This is cheap, but untouched keys would linger indefinitely and waste memory.</p>
+</li>
+<li>
+<p><strong>Active expiration:</strong> A background cron job runs 10 times per second, sampling a small set of keys with expiration. Expired keys are deleted until a time budget is reached, ensuring memory is reclaimed proactively without introducing latency spikes.</p>
+</li>
+</ul>
+<p>For hash fields, we made a key design choice: we did not implement lazy expiration.
+Adding expiration checks to every <a href="/valkey-io.github.io/pr-21/commands/hget"><code>HGET</code></a>, <a href="/valkey-io.github.io/pr-21/commands/hset"><code>HSET</code></a>, or <a href="/valkey-io.github.io/pr-21/commands/hdel"><code>HDEL</code></a> would have complicated the hot path of hash commands and risked performance regressions.
+Instead, we extended the active expiration job so that it can now also scan field-level expiration buckets, alongside top-level keys.</p>
+<p>This approach keeps expiration logic unified, predictable, and free from new latency cliffs.
+But it also introduced a challenge:
+how do we efficiently track and clean up expired fields inside hashes that may contain thousands (or millions) of entries,
+when only a small subset are volatile — and an even smaller fraction are expired at any given time?
+The challenge is balancing three conflicting goals:</p>
+<ul>
+<li>
+<p><strong>Keep memory usage small.</strong> Hashes can grow to millions of fields, so metadata overhead must be minimal.</p>
+</li>
+<li>
+<p><strong>Maintain fast lookups and updates.</strong> Most hash commands run in <code>O(1)</code> time, and expiration tracking can’t change that.</p>
+</li>
+<li>
+<p><strong>Reclaim memory efficiently.</strong> The active expiration job is time-bounded, so we need to minimize wasted CPU cycles spent scanning unexpired fields.</p>
+</li>
+</ul>
+<h3 id="approaches-considered">Approaches Considered</h3>
+<p>"We explored several ways to solve this problem:</p>
+<h4 id="1-secondary-hashtable-per-field-expiration">1. Secondary hashtable per field expiration</h4>
+<p>This seemed simple: build a secondary hashtable in each Hash object which maps only volatile fields.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/hfe-alternative-hashtable.png" alt="Diagram illustrating optional solution using a secondary hashtable index" /></p>
+<p>This is actually the way volatile generic keys are being tracked. Per each database, Valkey manage a secondary map mapping volatile keys.
+During active expiration process the existing job scan the secondary map and each key found to pass it's assigned TTL is expired and it's memory is reclaimed.
+The problem with this design option is the potential inefficiency introduced while scanning many items which should not expire.</p>
+<h4 id="2-radix-tree-based-index">2. Radix Tree-based index</h4>
+<p>Using a radix tree to hold field names plus expirations provides sorted access for free.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/hfe-alternative-radixtree.png" alt="Diagram illustrating optional solution using a secondary radix-tree index" /></p>
+<p>This is also not a new concept in Valkey. In fact this exact structure is being used to manage client connections blocked on key operations
+like <a href="/valkey-io.github.io/pr-21/commands/blpop/"><code>BLPOP</code></a> and <a href="/valkey-io.github.io/pr-21/commands/xread/"><code>XREAD</code></a>.</p>
+<p>But the memory overhead per node was high. During experiments we measured more than 54 bytes overhead per each hash field when using this type of index.</p>
+<h4 id="3-global-sorted-structure">3. Global sorted structure</h4>
+<p>We wanted to have the ability to efficiently scan over fields which are already expired. A good way to achieve this is by using a sorted index.
+Using a radix tree was possible, but the memory overhead was high. Instead we could use a more lightweight data structure like a skip list, which memory consumption is more bounded
+and is not governed by the data atrophy.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/hfe-alternative-skiplist.png" alt="Diagram illustrating optional solution using a secondary skiplist index" /></p>
+<p>However, This would give <code>O(log N)</code> access to the index which did not work well with our target to keep hash operations constant time complexity.</p>
+<h3 id="coarse-buckets-with-adaptive-encoding">Coarse Buckets with Adaptive Encoding</h3>
+<p>Instead of tracking every field’s expiration individually, we designed a coarse bucket system.
+Each field’s timestamp is mapped into a time bucket, represented by a shared “end timestamp.”</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/hfe-coarse-buckets.png" alt="Diagram illustrating our selected coarse buckets solution" /></p>
+<p>This solution introduces a semi-sorted data structure which we named 'vset' (stands for "volatile set").
+The volatile set manages buckets in different time window resolutions and adaptive encodings.
+Buckets can split if too many expirations cluster in one interval.
+This adaptability keeps the number of buckets small while ensuring they’re fine-grained enough for efficient cleanup.</p>
+<p>When a new field with TTL is added, the volatile set either places it into an existing bucket or creates a new one.
+If a bucket grows too large, it is narrowed into smaller time windows to keep expiration scans efficient.
+For example: scanning 1,000 items in a single 10-second bucket may result in mostly misses, while spreading them across 10 smaller buckets avoids wasted work.
+Why not always use a very small time window (e.g few milliseconds) for each bucket? The reason is memory.
+Recall that the buckets are managed in a Radix-Tree which introduces a high overhead per each item.
+When many buckets are used, the memory overhead can be high and we might end up with the same memory overhead introduced by using a Radix-Tree index.</p>
+<p>The volatile set also uses different bucket encoding based on the number of items in the bucket.
+A bucket with only a single element would require just a single pointer size of bytes.
+A bucket of small amount of items would be encoded as a vector of item pointers, and when the bucket contains many items we will use the <a href="/valkey-io.github.io/pr-21/blog/new-hash-table">Valkey hashtable</a> structure to map the relevant items.
+This way, we are leveraging existing data structures which are highly optimized for modern CPUs.</p>
+<p>A hash object that contains volatile fields now also carries a secondary volatile set index.
+At the database level, we maintain a global map of hashes with volatile fields.
+The active expiration cron job scans both regular keys and these hashes, but only iterates over volatile set buckets whose end time has passed.
+This ensures that CPU time is spent only on fields that are truly ready to expire.</p>
+<h2 id="benchmarking-our-solution">Benchmarking our solution</h2>
+<p>Validating the new design meant benchmarking across several dimensions: memory overhead, command performance, and expiration efficiency.</p>
+<h3 id="memory-overhead">Memory Overhead</h3>
+<p>We first measured the per-field memory overhead when setting TTLs.
+The raw expiration time itself requires a constant 8 bytes (though this could be reduced in the future
+by storing only a delta relative to a reference timestamp, such as server start time).
+On top of that, extra memory is needed for tracking within the volatile set.</p>
+<p>The actual overhead depends on both how many fields have expirations and how spread out their expiration times are.
+This is because the bucket encoding chosen by the volatile set adapts to the data distribution.
+In practice, the overhead ranged between 16 and 29 bytes per field.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/hfe-benchmark-memory.png" alt="Chart indicating the per field memory overhead for different hash object encoding types" /></p>
+<p>The higher end of this range primarily affects small hashes, where compact encodings
+like listpack are avoided when volatile fields are present.</p>
+<h3 id="command-performance">Command Performance</h3>
+<p>Next, we benchmarked common hash commands both with and without field expirations.
+The results showed no measurable performance regression and throughput remained stable when expirations were added.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/hfe-benchmark-hash-commands.png" alt="Chart comparing the throughput of common hash commands both with and without field expirations" /></p>
+<p>We also benchmarked the new expiration-aware commands (e.g., <code>HSETEX</code>), confirming that their performance is on par with traditional hash operations.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/hfe-benchmark-new-commands.png" alt="Chart showing the throughput of the new expiration-aware commands" /></p>
+<h3 id="active-expiration-efficiency">Active Expiration Efficiency</h3>
+<p>The design goal of the volatile set was to enable efficient background deletion of expired fields.
+To test this, we preloaded 10 million fields with TTLs.
+We distributed these fields across varying numbers of hash objects to see how object size influences expiration.
+During the load phase, we disabled the expiration job using the <a href="/valkey-io.github.io/pr-21/commands/debug/"><code>DEBUG</code></a>, then re-enabled it once all fields had expired.</p>
+<p>The following chart shows the time it took the expiration cron job to complete the full deletion of all the 10M fields.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/hfe-benchmark-reclaim-time.png" alt="Chart showing the time it took the expiration cron job complete the full deletion of all the 10M fields" /></p>
+<p>The results revealed that expiration time depends not just on the number of fields, but also on how they are distributed across objects.
+Smaller hashes tend to fit into CPU caches, so random field deletions remain cache-friendly.
+Very large hashes, however, cannot fit entirely in cache, which means more expensive memory lookups during expiration.</p>
+<p>Another important factor is CPU utilization.
+The active expiration job is deliberately CPU-bounded and designed to use no more than ~25% of available CPU time (unless configured to work more aggressively),
+preventing it from overwhelming the system.
+The chart above shows that average CPU usage was consistently kept under this cap, even when expiring millions of fields, ensuring predictable tail latency.</p>
+<p>We also simulated a more realistic scenario: <em>expiring data during continuous ingestion.</em>
+Using the 'valkey-benchmark' executing the new <a href="/valkey-io.github.io/pr-21/commands/hsetex"><code>HSETEX</code></a> command, we continuously
+inserted 10 million fields with 10-second TTLs, while the active expiration job ran in the background.</p>
+<p>This setup maintained a constant pool of fields at different stages of their lifecycle — some fresh, some nearing expiration, some ready to be reclaimed.
+We then tracked memory usage over a 5-minute period.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/hfe-benchmark-active-expiry.png" alt="Chart presenting the ability of active expiration job to reclaim memory during constant data ingestion" /></p>
+<p>The results aligned with our theoretical expectation:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>Memory = (Injection Throughput) x (AVG TTL) x (AVG Item memory)</span></span></code></pre>
+<p>In our experiment:</p>
+<ul>
+<li>
+<p>Injection rate: 300K commands/sec</p>
+</li>
+<li>
+<p>Average TTL: 10 seconds</p>
+</li>
+<li>
+<p>Base item size: ~61 bytes</p>
+</li>
+<li>
+<p>Additional expiration overhead: ~19 bytes</p>
+</li>
+</ul>
+<p>This yields an expected memory footprint of ~230MB:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>300K × 10 × 80B = 230MB</span></span></code></pre>
+<p>The observed memory matched this estimate closely, demonstrating that the active expiration mechanism
+is able to keep up with load and prevent memory from spiking unexpectedly.</p>
+<h2 id="benchmark-takeaways">Benchmark Takeaways</h2>
+<p>The benchmarks demonstrate that field-level expirations can be added to Valkey without compromising memory efficiency, or latency.
+The memory overhead remains modest and predictable, command throughput is unaffected, and the shared active expiration job efficiently reclaims memory even under heavy ingestion workloads.
+Together, these results validate that the coarse-bucket design with adaptive encoding delivers the right balance of efficiency, scalability, and correctness, while preserving Valkey’s reputation for high performance and low latency.</p>
+<h2 id="using-hash-field-expiration-in-valkey">Using Hash Field Expiration in Valkey</h2>
+<p>Valkey 9.0 introduces a new API for hash field expirations, fully compatible with the Redis 8.0 API.
+Any existing client library supporting this API can be used.
+In this example, we will use the latest <a rel="external" href="https://github.com/valkey-io/valkey-glide/">valkey-glide</a> 2.1.0 release, which also supports the new hash field expiration commands.</p>
+<p>Let's start with a simple example.</p>
+<p>First, we create a client connecting to a local Valkey server:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #FF7B72;"> from</span><span> glide_sync</span><span style="color: #FF7B72;"> import</span><span> GlideClientConfiguration, NodeAddress, GlideClient</span></span>
+<span class="giallo-l"><span> addresses</span><span style="color: #FF7B72;"> =</span><span> [NodeAddress(</span><span style="color: #A5D6FF;">&quot;localhost&quot;</span><span>,</span><span style="color: #79C0FF;"> 6379</span><span>)]</span></span>
+<span class="giallo-l"><span> config</span><span style="color: #FF7B72;"> =</span><span> GlideClientConfiguration(addresses,</span><span style="color: #FFA657;"> request_timeout</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">500</span><span>)</span><span style="color: #8B949E;">  # 500ms timeout</span></span>
+<span class="giallo-l"><span> client</span><span style="color: #FF7B72;"> =</span><span> GlideClient.create(config)</span></span></code></pre>
+<p>Next, let's create a new hash object to store some random user data:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span> client.hset(</span><span style="color: #A5D6FF;">&quot;User1&quot;</span><span>, {</span><span style="color: #A5D6FF;">&quot;name&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;Ran&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;age&quot;</span><span>:</span><span style="color: #A5D6FF;"> &#39;old&#39;</span><span>,</span><span style="color: #A5D6FF;"> &quot;password&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;1234&quot;</span><span>})</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;"> &gt;</span><span style="color: #79C0FF;"> 3</span></span></code></pre>
+<p>Suppose we want the user’s password to be available only for a specific timeframe (e.g., 60 seconds).
+With the new hash field expiration feature, we can now do that:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span> client.hexpire(</span><span style="color: #A5D6FF;">&quot;User1&quot;</span><span>,</span><span style="color: #79C0FF;"> 60</span><span>, [</span><span style="color: #A5D6FF;">&quot;password&quot;</span><span>])</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;"> &gt;</span><span> [</span><span style="color: #79C0FF;">1</span><span>]</span></span></code></pre>
+<p>Note that in this example, we only set a TTL for a single field, but the command can accept multiple fields at once.</p>
+<p>We can check the remaining TTL for the password field:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span> client.httl(</span><span style="color: #A5D6FF;">&quot;User1&quot;</span><span>, [</span><span style="color: #A5D6FF;">&quot;password&quot;</span><span>])</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;"> &gt;</span><span> [</span><span style="color: #79C0FF;">46</span><span>]</span></span></code></pre>
+<p>The reply shows the remaining time in seconds for the field to live. We can also query the absolute expiration time:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span> client.hexpiretime(</span><span style="color: #A5D6FF;">&quot;User1&quot;</span><span>, [</span><span style="color: #A5D6FF;">&quot;password&quot;</span><span>])</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;"> &gt;</span><span> [</span><span style="color: #79C0FF;">1757499351</span><span>]</span></span></code></pre>
+<p>This is a Unix timestamp, which we can easily convert to human-readable time:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">date</span><span style="color: #79C0FF;"> -d</span><span style="color: #A5D6FF;"> @1757499351</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;"> &gt;</span><span style="color: #FFA657;"> Wed</span><span style="color: #A5D6FF;"> Sep</span><span style="color: #79C0FF;"> 10</span><span style="color: #A5D6FF;"> 10:15:51 UTC</span><span style="color: #79C0FF;"> 2025</span></span></code></pre>
+<p>After 60 seconds, if we read the hash:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span> client.hgetall(</span><span style="color: #A5D6FF;">&quot;User1&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;"> &gt;</span><span> {</span><span style="color: #FF7B72;">b</span><span style="color: #A5D6FF;">&#39;name&#39;</span><span>:</span><span style="color: #FF7B72;"> b</span><span style="color: #A5D6FF;">&#39;Ran&#39;</span><span>,</span><span style="color: #FF7B72;"> b</span><span style="color: #A5D6FF;">&#39;age&#39;</span><span>:</span><span style="color: #FF7B72;"> b</span><span style="color: #A5D6FF;">&#39;old&#39;</span><span>}</span></span></code></pre>
+<p>Notice that the password field is no longer present, since it has expired.</p>
+<p>Another practical use case is managing a collection of links where each field represents a URL along with its metadata:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>links:valkey:blogs -&gt; {</span></span>
+<span class="giallo-l"><span>    &quot;https://valkey.io/blog/valkey-is-a-key-value-store&quot; -&gt;</span></span>
+<span class="giallo-l"><span>                                    {votes: 15, category: &quot;tech&quot;},</span></span>
+<span class="giallo-l"><span>    &quot;https://valkey.io/blog/valkey-supports-different-ai-workloads&quot; -&gt;</span></span>
+<span class="giallo-l"><span>                                    {votes: 42, category: &quot;ai&quot;},</span></span>
+<span class="giallo-l"><span>    &quot;https://myblog.com/blog/how-to-write-good-valkey-blog&quot; -&gt;</span></span>
+<span class="giallo-l"><span>                                    {votes: 7, category: &quot;blog&quot;}</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Here’s how hash field expirations help:</p>
+<ul>
+<li>Each link can have a TTL representing its “relevance window.” If a link hasn’t been accessed within a certain period, it automatically expires.</li>
+<li>Every time a user queries or updates a link, its TTL can be refreshed, keeping active links alive while letting inactive ones naturally fall off.</li>
+<li>Expired links are removed automatically, so you don’t need extra cleanup logic and can focus on active links.</li>
+</ul>
+<p>Using Valkey’s <a href="/valkey-io.github.io/pr-21/commands/hsetex">HSETEX</a> and <a href="/valkey-io.github.io/pr-21/commands/hgetex">HGETEX</a>, we can update a field’s TTL whenever it’s accessed or modified:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #8B949E;"># Set or update link metadata with a 30-day TTL</span></span>
+<span class="giallo-l"><span>client.hsetex(</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">     &#39;links:user:42&#39;</span><span>,</span></span>
+<span class="giallo-l"><span>     {</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">      &#39;https://valkey.io/blog/valkey-is-a-key-value-store&#39;</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">      &#39;{&quot;clicks&quot;:15,&quot;category&quot;:&quot;tech&quot;}&#39;</span></span>
+<span class="giallo-l"><span>     },</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">     expiry</span><span style="color: #FF7B72;">=</span><span>ExpirySet(ExpiryType.</span><span style="color: #79C0FF;">MILLSEC</span><span>,</span><span style="color: #79C0FF;"> 30</span><span style="color: #FF7B72;">*</span><span style="color: #79C0FF;">24</span><span style="color: #FF7B72;">*</span><span style="color: #79C0FF;">3600</span><span>))</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Retrieve a link and refresh its TTL</span></span>
+<span class="giallo-l"><span>link_data</span><span style="color: #FF7B72;"> =</span><span> client.hgetex(</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">      &#39;links:user:42&#39;</span><span>,</span></span>
+<span class="giallo-l"><span>      {</span><span style="color: #A5D6FF;">&#39;https://valkey.io/blog/valkey-is-a-key-value-store&#39;</span><span>},</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">      expiry</span><span style="color: #FF7B72;">=</span><span>ExpirySet(ExpiryType.</span><span style="color: #79C0FF;">MILLSEC</span><span>,</span><span style="color: #79C0FF;"> 30</span><span style="color: #FF7B72;">*</span><span style="color: #79C0FF;">24</span><span style="color: #FF7B72;">*</span><span style="color: #79C0FF;">3600</span><span>)</span></span>
+<span class="giallo-l"><span>)</span></span></code></pre><h2 id="what-s-next">What’s Next?</h2>
+<p>What we’ve shipped so far is just the first step: the ability to set and control time-to-live at the hash field level. But we’re not stopping here.
+Future work will focus on two main areas: reducing memory overhead and improving performance.
+For example, we plan to support compressed encodings for hashes with volatile fields, and to leverage modern CPU features such as memory prefetching and SIMD instructions to speed up operations.</p>
+<p>Another critical area for improvement is the active expiration job.
+Today, all volatile data in Valkey is tracked in unsorted maps (hashtables). The background job must repeatedly scan these unordered sets, which means wasting CPU cycles on entries that aren’t close to expiration.
+By introducing structured tracking—through the volatile set or even alternative approaches like <a rel="external" href="https://www.cs.columbia.edu/~nahum/w6998/papers/sosp87-timing-wheels.pdf">Hierarchal Time Wheels</a> —we can significantly
+reduce wasted work and make expiration more efficient at scale.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/ranshid.png" alt="photo of Ran Shidlansik" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Ran Shidlansik</h4>
+    
+    <a target="_blank" href="https://github.com/ranshid"><i class="icon icon-github-square"></i> @ranshid</a>
+    
+    <p>Ran Shidlansik is a Software Engineer at AWS.</p>
+<p>In his free time, Ran is trying to figure out why his code behaves like it has a mind of its own.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/&title=Introducing%20Hash%20Field%20Expirations&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/numbered-databases/">&laquo; Numbered Databases in Valkey 9.0</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/50-million-zsets/">How Valkey 8.1 Handles 50 Million Sorted Set Inserts &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

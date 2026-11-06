@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="Pointing a graphical client at a Valkey server that is taking traffic raises two questions: how to safely collect data from the server, and how to properly authorize the access. This post covers how LibreDB Studio answers the first and best practices for the second." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Browsing a Valkey keyspace safely: SCAN, INFO, and a read-only ACL user</title>
+    <meta name="title" property="og:title" content="Valkey: Browsing a Valkey keyspace safely: SCAN, INFO, and a read-only ACL user">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Browsing a Valkey keyspace safely: SCAN, INFO, and a read-only ACL user</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="How-to">How-to</span>
+  
+  2026-09-24
+  
+    &middot; 
+    
+      
+      
+      <em>Abdullah Kaya</em>
+    
+  
+</div>
+<p>Valkey rarely runs on its own.
+It often sits in front of a database, and when a page gets slow the answer is either a cache that is not being hit or a query that got worse.
+Checking both usually means one terminal on <code>valkey-cli</code> and another on the database, and holding the two halves of the picture in your head.</p>
+<p>That is the situation I want to walk through, using a graphical user interface (GUI) as the example.
+Reaching for one against a server that is serving traffic raises two questions, and neither of them is really about the tool.
+The first is whether listing keys blocks the server.
+The second is what the tool is allowed to do once it has connected.
+Valkey answers both, and the useful thing a client can do is stay out of the way of those answers.</p>
+<p>The tool in the examples is <a rel="external" href="https://github.com/libredb/libredb-studio">LibreDB Studio</a>, an open source database GUI I work on, which connects to Valkey alongside the relational database in the same window.
+Everything below was measured against Valkey 9.1.1 from the <a rel="external" href="https://hub.docker.com/r/valkey/valkey"><code>valkey/valkey</code></a> container image with a default configuration, and every command in it you can run yourself.</p>
+<h2 id="listing-keys-without-blocking-the-server">Listing keys without blocking the server</h2>
+<p><a rel="external" href="https://valkey.io/commands/keys/"><code>KEYS</code></a> is the obvious way to find out what is in a keyspace and the wrong one on a server with traffic.
+Do not run it against a server that is taking production traffic.
+It walks the entire keyspace in a single call and blocks the server for the duration.
+On a keyspace with millions of keys that is a stall every other client sees.</p>
+<p><a rel="external" href="https://valkey.io/commands/scan/"><code>SCAN</code></a> exists for this reason.
+It is cursor-based, and other commands run in between the calls.
+<code>COUNT</code> is a hint and not a batch size: a single call can come back with more keys than that, with fewer, or with none at all, and it is the cursor returning to zero rather than an empty reply that tells you the scan is over.
+The guarantee is weaker, which is the point: a key present for the whole scan is returned at least once, but a scan that overlaps with writes samples a moving keyspace rather than snapshotting a still one.</p>
+<p>LibreDB Studio's key explorer is built on that.
+It issues <code>SCAN</code> with <code>COUNT 100</code> and keeps following the cursor until it has collected 1000 keys or the scan finishes, whichever comes first.
+It groups what it collected by the text before the first colon and shows the groups as rows:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>user:*      2</span></span>
+<span class="giallo-l"><span>session:*   1</span></span>
+<span class="giallo-l"><span>queue:*     1</span></span></code></pre>
+<p>Two things about that display are worth stating, because a table of names invites the wrong reading.
+<code>user:*</code> is a grouping derived from key names the scan happened to see, not an object on the server, so nothing can be addressed by it.
+And the counts are the sample, not the keyspace.
+The total key count shown elsewhere comes from <a rel="external" href="https://valkey.io/commands/dbsize/"><code>DBSIZE</code></a>, which is the count for the database you have selected on the node you are connected to.</p>
+<p>The effect is that opening the explorer against a busy server costs a bounded number of <code>SCAN</code> calls.
+To look inside one prefix you send <code>SCAN 0 MATCH session:* COUNT 50</code> yourself rather than asking anything to enumerate the keyspace for you.</p>
+<h2 id="connecting-as-a-user-that-cannot-write">Connecting as a user that cannot write</h2>
+<p>The second question is authorization, and no client has a good answer to it.
+A read-only switch in an interface is a property of that interface.
+Anyone who can reach the server can open a connection that does not have the switch.
+The privileges have to come from Valkey.</p>
+<p>An access control list (ACL) user does that.
+A client that authenticates with a username and password rather than a password alone reaches the server as that user, and the server enforces the rest.
+Here is a grant that covers everything the interface reads:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">valkey-cli</span><span style="color: #A5D6FF;"> ACL SETUSER studio reset on &#39;&gt;your-password&#39; &#39;~*&#39; &#39;+@read&#39; &#39;-@dangerous&#39; &#39;+select&#39; &#39;+info&#39; &#39;+slowlog|get&#39; &#39;+client|list&#39; &#39;+ping&#39;</span></span></code></pre>
+<p>Each piece of it maps to something on screen:</p>
+<ul>
+<li><code>+@read</code> covers <code>SCAN</code>, <a rel="external" href="https://valkey.io/commands/type/"><code>TYPE</code></a> and <code>DBSIZE</code> for the key explorer, and the value reads behind it.</li>
+<li><code>-@dangerous</code> takes back the risky commands as a category instead of one at a time.
+<code>KEYS</code> is in it, which is the command the first half of this post is about, and so are <code>SORT</code>, <code>FLUSHALL</code> and the rest of the set Valkey itself marks as dangerous.
+Order matters here: a specific grant placed after a category revocation still applies, which is why <code>+info</code>, <code>+slowlog|get</code> and <code>+client|list</code> below keep working even though <code>@dangerous</code> lists those commands too.</li>
+<li><code>+select</code> lets the connection switch between the numbered databases a server keeps.
+Without it, a connection configured for anything past database 0 cannot reach it.
+<code>~*</code> is not scoped to one database, so combined with <code>+select</code> this grant covers keys in every database on the server, not only the one a client happens to open on.</li>
+<li><code>+info</code> is the overview: uptime, connected clients, <code>maxclients</code>, <code>used_memory</code>, and the keyspace hit and miss counters behind the cache hit ratio.</li>
+<li><code>+slowlog|get</code> is the slow command list, read with <a rel="external" href="https://valkey.io/commands/slowlog-get/"><code>SLOWLOG GET 10</code></a>.
+Entries include the arguments a slow command ran with, so treat this the way you would treat log access: whoever holds <code>studio</code> can see data that passed through those arguments.</li>
+<li><code>+client|list</code> is the session list, which includes each connection's address, port, and authenticated username.</li>
+<li><code>+ping</code> is the connection check the client runs when it opens the connection.</li>
+</ul>
+<p><code>reset</code> at the front is doing more work than it looks like.
+Without it the rules are added to whatever the user already had, so running this against an existing <code>studio</code> leaves every earlier permission in place and you get a user that reads the list above and still writes.
+With it the line is the whole grant, which is the only form worth copying into a runbook.
+One thing it does not cover: the password crosses the network on every <a rel="external" href="https://valkey.io/commands/auth/"><code>AUTH</code></a>.
+Any connection that is not a local socket needs transport layer security (TLS) with certificate verification underneath it, not plain TCP: <code>valkey-cli --tls --cacert &lt;ca-file&gt;</code> on the command line, and the equivalent certificate-verification setting in a GUI.</p>
+<p>Connected as <code>studio</code>, every panel fills in.
+A write does not:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>SET user:1 hacked</span></span>
+<span class="giallo-l"><span>NOPERM User studio has no permissions to run the &#39;set&#39; command</span></span></code></pre>
+<p>The refusal came from the server, and it reaches the query console as the error it is.
+Nothing in the tool decided it, which is the property worth having: the same restriction holds for anyone who takes those credentials and connects with <code>valkey-cli</code> instead.</p>
+<p>If you want writes, connect as a user that has them.
+The point is that the choice is recorded in <a rel="external" href="https://valkey.io/commands/acl-getuser/"><code>ACL GETUSER</code></a> on the server rather than in a client side setting, and Valkey 9.1 makes the grant finer with database level ACLs.</p>
+<h2 id="what-the-monitoring-views-read">What the monitoring views read</h2>
+<p>Valkey exposes its own operational state through a handful of read commands, and none of them need a client to make sense of them.
+<a rel="external" href="https://valkey.io/commands/info/"><code>INFO</code></a> returns uptime, connected clients, memory usage, and the keyspace hit and miss counters behind a cache hit ratio.
+<a rel="external" href="https://valkey.io/commands/client-list/"><code>CLIENT LIST</code></a> returns one line per open connection, including the ACL user it authenticated as.
+<code>SLOWLOG GET</code> returns the commands that took the longest to run, timestamped.
+<code>DBSIZE</code> returns the key count for the selected database.
+Anyone with a terminal and the right ACL grant already has all of this; a GUI does not add access, only a place to read it.</p>
+<p>LibreDB Studio's monitoring view is a thin layer over those same four commands:</p>
+<table><thead><tr><th>View</th><th>Command</th></tr></thead><tbody>
+<tr><td>Overview and metrics</td><td><code>INFO</code></td></tr>
+<tr><td>Key count</td><td><code>DBSIZE</code></td></tr>
+<tr><td>Sessions</td><td><code>CLIENT LIST</code></td></tr>
+<tr><td>Slow commands</td><td><code>SLOWLOG GET 10</code></td></tr>
+</tbody></table>
+<p>Each panel is the reply to one of those commands rendered as a table instead of a wall of text, nothing more.
+If <code>INFO</code> does not publish a field, the panel behind it has nothing to show.
+Anything on screen can be checked against <code>valkey-cli</code> in a few seconds, which is the right relationship between a graphical client and a server.</p>
+<h2 id="next-steps">Next steps</h2>
+<p>Create the restricted user before you point anything at a server that matters.
+It is one command, it survives whatever client someone reaches for next, and it is the only read-only access that holds.
+Then run <code>ACL GETUSER</code> against the users your own tooling connects as, and see whether the answer is the one you expected.
+The commands above are most of what LibreDB Studio reads from a Valkey server; the <a rel="external" href="https://github.com/libredb/libredb-studio/blob/main/docs/providers/redis.md">provider docs</a> cover the rest of what the connection supports, and <a rel="external" href="https://libredb.org">libredb.org</a> has more on the tool itself.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/kaya-abdullah.png" alt="photo of Abdullah Kaya" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Abdullah Kaya</h4>
+    
+    <a target="_blank" href="https://github.com/kaya-abdullah"><i class="icon icon-github-square"></i> @kaya-abdullah</a>
+    
+    <p>Abdullah maintains LibreDB Studio, an open source database GUI that runs in the browser and connects to Valkey alongside the relational and document databases a team already runs. Most of that work is about presenting engines that behave nothing alike through one interface without pretending they are the same, which is where the Valkey key browser in this post came from.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/browsing-a-valkey-keyspace-safely/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/browsing-a-valkey-keyspace-safely/&title=Browsing%20a%20Valkey%20keyspace%20safely%3A%20SCAN%2C%20INFO%2C%20and%20a%20read-only%20ACL%20user&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/browsing-a-valkey-keyspace-safely/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-prometheus-exporters/">&laquo; Valkey Metrics in Prometheus: redis_exporter and BetterDB</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/monitoring-valkey-with-prometheus/">Monitoring Valkey with Prometheus &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

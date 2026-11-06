@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-04.webp" />
+    
+    
+
+    <meta name="description" content="Extending Valkey using Rust SDK." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Valkey Modules Rust SDK updates</title>
+    <meta name="title" property="og:title" content="Valkey: Valkey Modules Rust SDK updates">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-04.webp" alt="Valkey Modules Rust SDK updates" class="feature-img">
+
+
+<h1>Valkey Modules Rust SDK updates</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="How-to">How-to</span>
+  
+  2025-05-20
+  
+    &middot; 
+    
+      
+      
+      <em>Dmitry Polyakovsky</em>
+    
+  
+</div>
+<p>In an earlier <a href="/valkey-io.github.io/pr-21/blog/modules-101/">article</a> we explored the process of building Valkey Modules to enable developers to add features such as new commands and data types to Valkey without modifying its core.
+We also introduced the <a rel="external" href="https://github.com/valkey-io/valkeymodule-rs">Valkey Modules Rust SDK</a> demonstrating how to use it to create a basic module.
+In this follow-up article, we’ll dive deeper into the SDK and highlight several new features and improvements introduced over the past year.
+This article assumes that the reader is well familiar with Rust and Valkey modules.</p>
+<h2 id="what-is-the-valkey-modules-rust-sdk">What is the Valkey Modules Rust SDK?</h2>
+<p>The SDK is based on <a rel="external" href="https://github.com/RedisLabsModules/redismodule-rs">Redis Modules Rust SDK</a> and provides abstraction APIs on top of Valkey's own modules API.
+For those familiar with Rust development the SDK is a Rust crate that can be added to <code>Cargo.toml</code> file like any other Rust dependency.
+It requires the underlying Valkey server to have appropriate module APIs but allows writing Valkey modules in Rust, without needing to use raw pointers or unsafe code.
+The recently released <a href="/valkey-io.github.io/pr-21/blog/introducing-bloom-filters/">Bloom Filters module</a> is built using this SDK and several of the developers who worked on the module contributed to the SDK.
+Let's deep dive into the new features.</p>
+<h2 id="client">Client</h2>
+<p>We begin with enhancements that give developers deeper insight into the clients connected to Valkey.
+The <code>Context</code> struct has been extended with several new functions that allow retrieving client specific data, such as client name, username or IP address.
+It provides Rust wrappers around <code>Module_GetClient*</code> functions in the underlying Valkey Module API.
+Most of these new functions return <code>ValkeyResult</code> so that the module developer can handle the error appropriately.
+The functions can be called for the current client or by specifying <code>client_id</code>.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #FF7B72;">fn</span><span style="color: #D2A8FF;"> my_client_cmd</span><span>(ctx</span><span style="color: #FF7B72;">: &amp;</span><span style="color: #FFA657;">Context</span><span>, _args</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> Vec</span><span>&lt;</span><span style="color: #FFA657;">ValkeyString</span><span>&gt;)</span><span style="color: #FF7B72;"> -&gt;</span><span style="color: #FFA657;"> ValkeyResult</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    let</span><span> client_id</span><span style="color: #FF7B72;"> =</span><span> ctx</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">get_client_id</span><span>();</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    let</span><span> username</span><span style="color: #FF7B72;"> =</span><span> ctx</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">get_client_username_by_id</span><span>(client_id);</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    Ok</span><span>(</span><span style="color: #FFA657;">ValkeyValue</span><span style="color: #FF7B72;">::</span><span style="color: #D2A8FF;">from</span><span>(username</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">to_string</span><span>()))</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">valkey_module!</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    ...</span></span>
+<span class="giallo-l"><span>    commands</span><span style="color: #FF7B72;">:</span><span> [</span></span>
+<span class="giallo-l"><span>        [</span><span style="color: #A5D6FF;">&quot;my_client_cmd&quot;</span><span>, my_client_cmd,</span><span style="color: #A5D6FF;"> &quot;&quot;</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>],</span></span>
+<span class="giallo-l"><span>    ]</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="auth-callback">Auth callback</h2>
+<p>Another key improvement is support for authentication callbacks introduced in Valkey 7.2.
+Thanks to the new features in the SDK Rust modules can now integrate directly with Valkey's auth flow, making it possible to implement custom authentication logic or enhance security policies on a per-client basis.
+One potential use case is to combine it with <code>ctx.get_client_ip</code> function described above to allow some users access only from specific IP addresses.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #FF7B72;">fn</span><span style="color: #D2A8FF;"> auth_callback</span><span>(</span></span>
+<span class="giallo-l"><span>    ctx</span><span style="color: #FF7B72;">: &amp;</span><span style="color: #FFA657;">Context</span><span>,</span></span>
+<span class="giallo-l"><span>    username</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> ValkeyString</span><span>,</span></span>
+<span class="giallo-l"><span>    _password</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> ValkeyString</span><span>,</span></span>
+<span class="giallo-l"><span>)</span><span style="color: #FF7B72;"> -&gt;</span><span style="color: #FFA657;"> Result</span><span>&lt;c_int,</span><span style="color: #FFA657;"> ValkeyError</span><span>&gt; {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> ctx</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">authenticate_client_with_acl_user</span><span>(</span><span style="color: #FF7B72;">&amp;</span><span>username)</span><span style="color: #FF7B72;"> ==</span><span style="color: #FFA657;"> Status</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">Ok</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        let</span><span> _client_ip</span><span style="color: #FF7B72;"> =</span><span> ctx</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">get_client_ip</span><span>()</span><span style="color: #FF7B72;">?</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        ...</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        return</span><span style="color: #FFA657;"> Ok</span><span>(</span><span style="color: #79C0FF;">AUTH_HANDLED</span><span>);</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    Ok</span><span>(</span><span style="color: #79C0FF;">AUTH_NOT_HANDLED</span><span>)</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">valkey_module!</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    ...</span></span>
+<span class="giallo-l"><span>    auth</span><span style="color: #FF7B72;">:</span><span> [auth_callback],</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="preload-validation">Preload validation</h2>
+<p>While the <code>valkey_module!</code> macro already provided an <code>init</code> callback to execute custom code during module load, it executed at the very end of the module load after new commands and data types were created.
+That can be useful but what if we wanted to stop module load before any of that happened?
+For example, we might need to restrict a module to be loaded only on specific version of Valkey.
+That's where the optional <code>preload</code> comes in.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #FF7B72;">fn</span><span style="color: #D2A8FF;"> preload_fn</span><span>(ctx</span><span style="color: #FF7B72;">: &amp;</span><span style="color: #FFA657;">Context</span><span>, _args</span><span style="color: #FF7B72;">: &amp;</span><span>[</span><span style="color: #FFA657;">ValkeyString</span><span>])</span><span style="color: #FF7B72;"> -&gt;</span><span style="color: #FFA657;"> Status</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    let</span><span> _version</span><span style="color: #FF7B72;"> =</span><span> ctx</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">get_server_version</span><span>()</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">unwrap</span><span>();</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // respond with Status::Ok or Status::Err to prevent loading</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    Status</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">Ok</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">valkey_module!</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    ...</span></span>
+<span class="giallo-l"><span>    preload</span><span style="color: #FF7B72;">:</span><span> preload_fn,</span></span>
+<span class="giallo-l"><span>    commands</span><span style="color: #FF7B72;">:</span><span> [],</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="filters">Filters</h2>
+<p>To execute custom code before specific Valkey commands we can use command filters which is now supported in the SDK.
+Filters can be leveraged to replace default commands with custom commands or modify arguments.
+Thanks to the abstractions provided by the SDK we simply need to create a Rust function and register it in the <code>valkey_module!</code> macro.
+Note of caution - since filters are executed before every command this code needs to be optimized for performance.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #FF7B72;">fn</span><span style="color: #D2A8FF;"> my_filter_fn</span><span>(_ctx</span><span style="color: #FF7B72;">: *mut</span><span style="color: #FFA657;"> RedisModuleCommandFilterCtx</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    let</span><span> cf_ctx</span><span style="color: #FF7B72;"> =</span><span style="color: #FFA657;"> CommandFilterCtx</span><span style="color: #FF7B72;">::</span><span style="color: #D2A8FF;">new</span><span>(ctx);</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // check the number of arguments</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> cf_ctx</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">args_count</span><span>()</span><span style="color: #FF7B72;"> !=</span><span style="color: #79C0FF;"> 3</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        return</span><span>;</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // get which command is being executed</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    let</span><span> _cmd</span><span style="color: #FF7B72;"> =</span><span> cf_ctx</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">cmd_get_try_as_str</span><span>()</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">unwrap</span><span>();</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // grab various args passed to the command</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    let</span><span> _all_args</span><span style="color: #FF7B72;"> =</span><span> cf_ctx</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">get_all_args_wo_cmd</span><span>();</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // replace command</span></span>
+<span class="giallo-l"><span>    cf_ctx</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">arg_replace</span><span>(</span><span style="color: #79C0FF;">0</span><span>,</span><span style="color: #A5D6FF;"> &quot;custom_cmd&quot;</span><span>);</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">valkey_module!</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    ...</span></span>
+<span class="giallo-l"><span>    filters</span><span style="color: #FF7B72;">:</span><span> [</span></span>
+<span class="giallo-l"><span>        [my_filter_fn,</span><span style="color: #79C0FF;"> VALKEYMODULE_CMDFILTER_NOSELF</span><span>],</span></span>
+<span class="giallo-l"><span>    ]</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="new-event-handlers">New event handlers</h2>
+<p>Reacting to server events can be very important to the module behavior.
+The SDK has expanded its support for registering event handlers, allowing developers to hook into more server-side events.
+We can use this to execute our own code on client connect/disconnect, server shutdown or specific key events.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span>#[client_changed_event_handler]</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">fn</span><span style="color: #D2A8FF;"> client_changed_event_handler</span><span>(_ctx</span><span style="color: #FF7B72;">: &amp;</span><span style="color: #FFA657;">Context</span><span>, client_event</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> ClientChangeSubevent</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    match</span><span> client_event {</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        ClientChangeSubevent</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">Connected</span><span style="color: #FF7B72;"> =&gt;</span><span> {}</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        ClientChangeSubevent</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">Disconnected</span><span style="color: #FF7B72;"> =&gt;</span><span> {}</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span>#[shutdown_event_handler]</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">fn</span><span style="color: #D2A8FF;"> shutdown_event_handler</span><span>(_ctx</span><span style="color: #FF7B72;">: &amp;</span><span style="color: #FFA657;">Context</span><span>, _event</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> u64</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    ...</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span>#[key_event_handler]</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">fn</span><span style="color: #D2A8FF;"> key_event_handler</span><span>(ctx</span><span style="color: #FF7B72;">: &amp;</span><span style="color: #FFA657;">Context</span><span>, key_event</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> KeyChangeSubevent</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    match</span><span> key_event {</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        KeyChangeSubevent</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">Deleted</span><span style="color: #FF7B72;"> =&gt;</span><span> {}</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        KeyChangeSubevent</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">Evicted</span><span style="color: #FF7B72;"> =&gt;</span><span> {}</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        KeyChangeSubevent</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">Overwritten</span><span style="color: #FF7B72;"> =&gt;</span><span> {}</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        KeyChangeSubevent</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">Expired</span><span style="color: #FF7B72;"> =&gt;</span><span> {}</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="custom-acl-categories-support">Custom ACL categories support</h2>
+<p>Valkey 8 introduced support for custom ACL categories which simplifies access control for custom commands introduced in a module.
+To implement that we need to enable <code>required-features = ["min-valkey-compatibility-version-8-0"]</code> in <code>Cargo.toml</code> and register new categories in <code>valkey_module!</code> macro.
+Then we can restrict our custom commands to these custom ACL categories.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #D2A8FF;">valkey_module!</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    ...</span></span>
+<span class="giallo-l"><span>    acl_categories</span><span style="color: #FF7B72;">:</span><span> [</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">        &quot;acl_one&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">        &quot;acl_two&quot;</span></span>
+<span class="giallo-l"><span>    ]</span></span>
+<span class="giallo-l"><span>    commands</span><span style="color: #FF7B72;">:</span><span> [</span></span>
+<span class="giallo-l"><span>        [</span><span style="color: #A5D6FF;">&quot;cmd1&quot;</span><span>, cmd1,</span><span style="color: #A5D6FF;"> &quot;write&quot;</span><span>,</span><span style="color: #79C0FF;">  0</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #A5D6FF;"> &quot;acl_one&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>        [</span><span style="color: #A5D6FF;">&quot;cmd2&quot;</span><span>, cmd2,</span><span style="color: #A5D6FF;"> &quot;&quot;</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #A5D6FF;"> &quot;acl_one acl_two&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>    ]</span></span></code></pre><h2 id="validating-rejecting-config-set">Validating / Rejecting CONFIG SET</h2>
+<p>Configuration flexibility is important but so is validation.
+The SDK now supports specifying optional callback functions to validate or reject custom configurations.
+This is available for <code>String</code>, <code>i64</code>, <code>bool</code> and <code>enum</code> configs.<br />
+Here is an example of such validation for <code>i64</code> custom config.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #D2A8FF;">lazy_static!</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    static ref</span><span style="color: #79C0FF;"> CONFIG_I64</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> ValkeyGILGuard</span><span>&lt;</span><span style="color: #FFA657;">i64</span><span>&gt;</span><span style="color: #FF7B72;"> =</span><span style="color: #FFA657;"> ValkeyGILGuard</span><span style="color: #FF7B72;">::</span><span style="color: #D2A8FF;">default</span><span>();</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">fn</span><span style="color: #D2A8FF;"> on_i64_config_set</span><span>&lt;</span><span style="color: #FFA657;">G</span><span>,</span><span style="color: #FFA657;"> T</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> ConfigurationValue</span><span>&lt;</span><span style="color: #FFA657;">i64</span><span>&gt;&gt;(</span></span>
+<span class="giallo-l"><span>    config_ctx</span><span style="color: #FF7B72;">: &amp;</span><span style="color: #FFA657;">ConfigurationContext</span><span>,</span></span>
+<span class="giallo-l"><span>    _name</span><span style="color: #FF7B72;">: &amp;</span><span style="color: #FFA657;">str</span><span>,</span></span>
+<span class="giallo-l"><span>    val</span><span style="color: #FF7B72;">: &amp;</span><span>&#39;</span><span style="color: #FFA657;">static T</span><span>,</span></span>
+<span class="giallo-l"><span>)</span><span style="color: #FF7B72;"> -&gt;</span><span style="color: #FFA657;"> Result</span><span>&lt;(),</span><span style="color: #FFA657;"> ValkeyError</span><span>&gt; {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> val</span><span style="color: #FF7B72;">.</span><span style="color: #D2A8FF;">get</span><span>(config_ctx)</span><span style="color: #FF7B72;"> ==</span><span> custom_logic_here {</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">        log_notice</span><span>(</span><span style="color: #A5D6FF;">&quot;log message here&quot;</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        Err</span><span>(</span><span style="color: #FFA657;">ValkeyError</span><span style="color: #FF7B72;">::</span><span style="color: #D2A8FF;">Str</span><span>(</span><span style="color: #A5D6FF;">&quot;error message here &quot;</span><span>))</span></span>
+<span class="giallo-l"><span>    }</span><span style="color: #FF7B72;"> else</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        Ok</span><span>(())</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">valkey_module!</span><span> {</span></span>
+<span class="giallo-l"><span>    configurations</span><span style="color: #FF7B72;">:</span><span> [</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">        i64</span><span style="color: #FF7B72;">:</span><span> [</span></span>
+<span class="giallo-l"><span>            [</span><span style="color: #A5D6FF;">&quot;my_i64&quot;</span><span>,</span><span style="color: #FF7B72;"> &amp;*</span><span style="color: #79C0FF;">CONFIG_I64</span><span>,</span><span style="color: #79C0FF;"> 10</span><span>,</span><span style="color: #79C0FF;"> 0</span><span>,</span><span style="color: #79C0FF;"> 1000</span><span>,</span><span style="color: #FFA657;"> ConfigurationFlags</span><span style="color: #FF7B72;">::</span><span style="color: #79C0FF;">DEFAULT</span><span>,</span><span style="color: #FFA657;"> Some</span><span>(</span><span style="color: #FFA657;">Box</span><span style="color: #FF7B72;">::</span><span style="color: #D2A8FF;">new</span><span>(on_configuration_changed)),</span><span style="color: #FFA657;"> Some</span><span>(</span><span style="color: #FFA657;">Box</span><span style="color: #FF7B72;">::</span><span style="color: #D2A8FF;">new</span><span>(</span><span style="color: #FFA657;">on_i64_config_set</span><span style="color: #FF7B72;">::</span><span>&lt;</span><span style="color: #FFA657;">ValkeyString</span><span>,</span><span style="color: #FFA657;"> ValkeyGILGuard</span><span>&lt;</span><span style="color: #FFA657;">i64</span><span>&gt;&gt;))],</span></span>
+<span class="giallo-l"><span>        ],</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        ...</span></span>
+<span class="giallo-l"><span>    ]</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="defrag">Defrag</h2>
+<p>For memory-sensitive applications, defragmentation is essential.
+The SDK now offers a safe and idiomatic Rust abstraction over the defrag API for custom data types.
+The new <code>Defrag</code> struct abstracts away the raw C FFI calls.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span style="color: #FF7B72;">static</span><span style="color: #79C0FF;"> MY_VALKEY_TYPE</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> ValkeyType</span><span style="color: #FF7B72;"> =</span><span style="color: #FFA657;"> ValkeyType</span><span style="color: #FF7B72;">::</span><span style="color: #D2A8FF;">new</span><span>(</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    &quot;mytype123&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">    0</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    raw</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">RedisModuleTypeMethods</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        ...</span></span>
+<span class="giallo-l"><span>        defrag</span><span style="color: #FF7B72;">:</span><span style="color: #FFA657;"> Some</span><span>(defrag),</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>);</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">unsafe extern</span><span style="color: #A5D6FF;"> &quot;C&quot;</span><span style="color: #FF7B72;"> fn</span><span style="color: #D2A8FF;"> defrag</span><span>(</span></span>
+<span class="giallo-l"><span>    defrag_ctx</span><span style="color: #FF7B72;">: *mut</span><span style="color: #FFA657;"> raw</span><span style="color: #FF7B72;">::</span><span style="color: #FFA657;">RedisModuleDefragCtx</span><span>,</span></span>
+<span class="giallo-l"><span>    _from_key</span><span style="color: #FF7B72;">: *mut</span><span style="color: #FFA657;"> RedisModuleString</span><span>,</span></span>
+<span class="giallo-l"><span>    value</span><span style="color: #FF7B72;">: *mut *mut</span><span> c_void,</span></span>
+<span class="giallo-l"><span>)</span><span style="color: #FF7B72;"> -&gt;</span><span style="color: #FFA657;"> i32</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    let</span><span> defrag</span><span style="color: #FF7B72;"> =</span><span style="color: #FFA657;"> Defrag</span><span style="color: #FF7B72;">::</span><span style="color: #D2A8FF;">new</span><span>(defrag_ctx);</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    ...</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">    0</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">valkey_module!</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    ...</span></span>
+<span class="giallo-l"><span>    data_types</span><span style="color: #FF7B72;">:</span><span> [</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">        MY_VALKEY_TYPE</span><span>,</span></span>
+<span class="giallo-l"><span>    ],</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    ...</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="redis-support">Redis support</h2>
+<p>Need your module to work with both Valkey and recent versions of Redis?
+The SDK includes a compatibility feature flag to ensure your module runs on both Valkey and Redis.
+Specify <code>use-redismodule-api</code> so that module used RedisModule API Initialization for backwards compatibility.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span>[features]</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">use-</span><span>redismodule</span><span style="color: #FF7B72;">-</span><span>api</span><span style="color: #FF7B72;"> =</span><span> [</span><span style="color: #A5D6FF;">&quot;valkey-module/use-redismodule-api&quot;</span><span>]</span></span>
+<span class="giallo-l"><span>default</span><span style="color: #FF7B72;"> =</span><span> []</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>cargo build</span><span style="color: #FF7B72;"> --</span><span>release</span><span style="color: #FF7B72;"> --</span><span>features</span><span style="color: #FF7B72;"> use-</span><span>redismodule</span><span style="color: #FF7B72;">-</span><span>api</span></span></code></pre><h2 id="unit-tests-and-memory-allocation">Unit tests and memory allocation</h2>
+<p>This feature enables writing unit tests to run outside of Valkey or Redis.
+Instead of using Valkey Allocator it relies on the System Allocator.<br />
+Unit tests allow us to perform much more granular testing and execute much faster.<br />
+The core logic lives in <code>alloc.rs</code> but developers only need to specify this feature in the module <code>Cargo.toml</code>.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="rust"><span class="giallo-l"><span>[features]</span></span>
+<span class="giallo-l"><span>enable</span><span style="color: #FF7B72;">-</span><span>system</span><span style="color: #FF7B72;">-</span><span>alloc</span><span style="color: #FF7B72;"> =</span><span> [</span><span style="color: #A5D6FF;">&quot;valkey-module/system-alloc&quot;</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>cargo test</span><span style="color: #FF7B72;"> --</span><span>features enable</span><span style="color: #FF7B72;">-</span><span>system</span><span style="color: #FF7B72;">-</span><span>alloc</span></span></code></pre><h2 id="conclusion">Conclusion</h2>
+<p>The Valkey Modules Rust SDK has seen exciting improvements over the past year, making it easier and more powerful to extend Valkey.
+But we are not stopping.
+Some of the ideas for future development include <a rel="external" href="https://github.com/valkey-io/valkeymodule-rs/issues/202">mock context support for unit testing</a>, <a rel="external" href="https://github.com/valkey-io/valkeymodule-rs/issues/203">enhanced context access within filters</a>, and <a rel="external" href="https://github.com/valkey-io/valkeymodule-rs/issues/204">environment specific configs</a> to streamline development and testing.
+Additionally, the introduction of <a rel="external" href="https://github.com/valkey-io/valkeymodule-rs/issues/205">crontab scheduling</a> will allow executing custom logic on a defined schedules using <code>cron_event_handler</code>.</p>
+<p>We hope this overview helped you understand how to leverage the SDK and inspired you to explore what's possible with Valkey modules.
+Stay tuned for future updates.</p>
+<p>We also want to express appreciation to the engineers who contributed to the SDK in the past year - <a rel="external" href="https://github.com/KarthikSubbarao">KarthikSubbarao</a>, <a rel="external" href="https://github.com/dmitrypol">dmitrypol</a>, <a rel="external" href="https://github.com/sachinvmurthy">sachinvmurthy</a>, <a rel="external" href="https://github.com/zackcam">zackcam</a>, <a rel="external" href="https://github.com/YueTang-Vanessa">YueTang-Vanessa</a>, <a rel="external" href="https://github.com/hahnandrew">hahnandrew</a>, <a rel="external" href="https://github.com/Mkmkme">Mkmkme</a>.</p>
+<h2 id="useful-links">Useful links</h2>
+<ul>
+<li><a rel="external" href="https://github.com/valkey-io/valkey">Valkey repo</a></li>
+<li><a rel="external" href="https://github.com/valkey-io/valkeymodule-rs">Valkey Modules Rust SDK</a></li>
+<li><a rel="external" href="https://code.visualstudio.com/docs/languages/rust">Rust in VS Code</a></li>
+</ul>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/dmitrypol.jpeg" alt="photo of Dmitry Polyakovsky" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Dmitry Polyakovsky</h4>
+    
+    <a target="_blank" href="https://github.com/dmitrypol"><i class="icon icon-github-square"></i> @dmitrypol</a>
+    
+    <p>Dmitry is a Consulting Member of Technical Staff at Oracle Cloud.</p>
+<p>Dmitry has used Redis for over 10 years for a variety of purposes.  He has written numerous blog articles, been interviewed by podcasts, presented at various conferences and built open-source libraries on top of Redis.  Currently Dmitry is working at Oracle Cloud as Tech Lead for OCI Cache service.  He is very excited to be part of the Valkey project.</p>
+<p>In his spare time Dmitry enjoys hiking in the Seattle area and spending time with his family.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-modules-rust-sdk-updates/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-modules-rust-sdk-updates/&title=Valkey%20Modules%20Rust%20SDK%20updates&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-modules-rust-sdk-updates/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/upgrade-stories-vol1/">&laquo; Upgrade Stories from the Community, Volume 1:</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/performance-optimization-methodology-for-valkey/">Performance Optimization Methodology for Valkey - Part 1 &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

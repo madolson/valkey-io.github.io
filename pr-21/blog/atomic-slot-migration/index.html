@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-05.webp" />
+    
+    
+
+    <meta name="description" content="Valkey 9.0 brings big changes and improvements to the underlying mechanisms of resharding. Find out how Atomic Slot Migration works, the benefits it brings, and the headaches it eliminates." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Resharding, Reimagined: Introducing Atomic Slot Migration</title>
+    <meta name="title" property="og:title" content="Valkey: Resharding, Reimagined: Introducing Atomic Slot Migration">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-05.webp" alt="Resharding, Reimagined: Introducing Atomic Slot Migration" class="feature-img">
+
+
+<h1>Resharding, Reimagined: Introducing Atomic Slot Migration</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2025-10-29
+  
+    &middot; 
+    
+      
+      
+      <em>Jacob Murphy</em>
+    
+  
+</div>
+<p>Managing the topology of a distributed database is one of the most critical and
+challenging tasks for any operator. For a high-performance system like Valkey,
+moving data slots between nodes —a process known as resharding— needs to be
+fast, reliable, and easy.</p>
+<p>Clustered Valkey has historically supported resharding through a process known
+as slot migration, where one or more of the 16,384 slots is moved from one shard
+to another. This slot migration process has historically led to many operational
+headaches. To address this, Valkey 9.0 introduced a powerful new feature that
+fundamentally improves this process: <strong>Atomic Slot Migration</strong>.</p>
+<p>Atomic Slot Migration includes many benefits that makes resharding painless.
+This includes:</p>
+<ul>
+<li>a simpler, one-shot command interface supporting multiple slot ranges in a
+single migration,</li>
+<li>built-in cancellation support and automated rollback on failure,</li>
+<li>improved large key handling,</li>
+<li>up to 9x faster slot migrations,</li>
+<li>greatly reduced client impact during migrations.</li>
+</ul>
+<p>Let's dive into how it works and what it means for you.</p>
+<h2 id="background-the-legacy-slot-migration-process">Background: The Legacy Slot Migration Process</h2>
+<p>Prior to Valkey 9.0, a slot migration from a source node to a target node was
+performed through the following steps:</p>
+<ol>
+<li>Send <code>&lt;target&gt;</code>: <code>CLUSTER SETSLOT &lt;slot&gt; IMPORTING &lt;source&gt;</code></li>
+<li>Send <code>&lt;source&gt;</code>: <code>CLUSTER SETSLOT &lt;slot&gt; MIGRATING &lt;target&gt;</code></li>
+<li>Send <code>&lt;source&gt;</code>: <code>CLUSTER GETKEYSINSLOT &lt;slot&gt; &lt;count&gt;</code></li>
+<li>Send <code>&lt;source&gt;</code>: <code>MIGRATE ...</code> for each key in the result of step 3</li>
+<li>Repeat 3 &amp; 4 until no keys are left in the slot on <code>&lt;source&gt;</code></li>
+<li>Send <code>&lt;target&gt;</code>: <code>CLUSTER SETSLOT &lt;slot&gt; NODE &lt;target&gt;</code></li>
+<li>Send <code>&lt;source&gt;</code>: <code>CLUSTER SETSLOT &lt;slot&gt; NODE &lt;target&gt;</code></li>
+</ol>
+<p>This was subject to the following problems:</p>
+<ul>
+<li><strong>Higher latency for client operations</strong>: All client writes and reads to keys
+in the migrating hash slot were subject to redirections through a special
+<code>-ASK</code> error response, which required re-execution of the command on the
+target node. Redirected responses meant unexpected latency spikes during
+migrations.</li>
+<li><strong>Multi-key operation unavailability</strong>: Commands like <code>MGET</code> and <code>MSET</code> which
+supply multiple keys could not always be served by a single node when slots
+were migrating. When this happened, clients would receive error responses and
+were expected to retry.</li>
+<li><strong>Problems with large keys/collections</strong>: Since the migration was performed
+one key at a time, large keys (e.g. collections with many elements) needed to
+be sent as a single command. Serialization of a large key required a large
+contiguous memory chunk on the source node and import of that payload required
+a similar large memory chunk and a large CPU burst on the target node. In some
+cases, the memory consumption was enough to trigger out-of-memory conditions
+on either side, or the CPU burst could be large enough to cause a failover on
+the target shard due to health probes not being served.</li>
+<li><strong>Slot migration latency</strong>: The overall latency of the slot migration was
+bounded by how quickly the operator could send the <code>CLUSTER GETKEYSINSLOT</code> and
+<code>MIGRATE</code> commands. Each batch of keys required a full round-trip-time between
+the operator's machine and the cluster, leaving a lot of waiting time that
+could be used to do data migration.</li>
+<li><strong>Lack of resilience to failure</strong>: If a failure condition was encountered, for
+example, the hash slot will not fit on the target node, undoing the slot
+migration is not well supported and requires replaying the listed steps in
+reverse. In some cases, the hash slot may have grown while the migration was
+underway, and may not fit on either the source or target node.</li>
+</ul>
+<h2 id="the-core-idea-migration-via-replication">The Core Idea: Migration via Replication</h2>
+<p>At its heart, the new atomic slot migration process closely resembles the
+concepts of replication and failover which serve as the backbone for high
+availability within Valkey. When atomic slot migration is requested, data is
+asynchronously sent from the old owner (the source node) to the new owner (the
+target node). Once all data is transferred and the target is completely caught
+up, the ownership is atomically transferred to the target node.</p>
+<p>This gets logically broken down into three phases:</p>
+<ol>
+<li><strong>Snapshot Phase</strong>: The source node first sends a point-in-time snapshot of
+all the data in the migrating slots to the target node. The snapshot is done
+asynchronously through a child process, allowing the parent process to
+continue serving requests. The snapshot is formatted as a stream of commands
+which the target node and its replica can consume verbatim.</li>
+<li><strong>Streaming Phase</strong>: While the snapshot is ongoing, the source node will keep
+track of all new mutations made to the migrating slots. Once the snapshotting
+completes, the source node streams all incremental changes for those slots to
+the target.</li>
+<li><strong>Finalization Phase</strong>: Once the stream of changes has been sent to the
+target, the source node briefly pauses mutations. Only once the target has
+fully processed these changes does it acquire ownership of the migrating
+slots and broadcast ownership to the cluster. When the source node discovers
+this, it knows it can delete the contents of those slots and redirect any
+paused clients to the new owner <strong>atomically</strong>.</li>
+</ol>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration/atomic-slot-migration-phases.png" alt="Diagram showing how how atomic slot migration is broken into the three phases" /></p>
+<h2 id="why-is-this-better">Why is this better?</h2>
+<p>By replicating the slot contents and atomically transferring ownership, Atomic
+Slot Migration provides many desirable properties over the previous mechanism:</p>
+<ul>
+<li><strong>Clients are unaware</strong>: Since the entire hash slot is replicated before any
+cleanup is done on the source node, clients are completely unaware of the slot
+migration, and no longer need to follow <code>ASK</code> redirections and retry errors
+for multi-key operations.</li>
+<li><strong>Keys no longer need to be atomically moved</strong>: Collections are moved as
+chunks of elements that are replayed as commands, preventing the reliability
+problems previously encountered when dumping and restoring a large collection.</li>
+<li><strong>A migration can easily be rolled back on cancellation or failure</strong>: Since
+Valkey places the hash slots in a staging area, they are easily wipe them
+independently of the rest of the database. Since this state is not broadcasted
+to the cluster, ending the migration is a straight-forward process of cleaning
+up the staging area and marking the migration as cancelled. Many failures,
+like out-of-memory, failover, or network partition can be handled completely
+by the engine.</li>
+<li><strong>Greatly lowered slot migration latency</strong>: Valkey is highly-optimized for
+replication. By batching the slot migrations and using this replication-like
+process, the end-to-end migration latency can lower by as much as 9x when
+compared to legacy slot migration through <code>valkey-cli</code>.</li>
+</ul>
+<h2 id="how-to-use-atomic-slot-migration">How to use Atomic Slot Migration</h2>
+<p>A new family of <code>CLUSTER</code> commands gives you full control over the migration
+lifecycle.</p>
+<ul>
+<li><a href="/valkey-io.github.io/pr-21/commands/cluster-migrateslots/"><code>CLUSTER MIGRATESLOTS SLOTSRANGE start-slot end-slot NODE node-id</code></a>
+<ul>
+<li>This command kicks off the migration. You can specify one or more slot
+ranges and the target node ID to begin pushing data. Multiple migrations can
+be queued in one command by repeating the SLOTSRANGE and NODE arguments.</li>
+</ul>
+</li>
+<li><a href="/valkey-io.github.io/pr-21/commands/cluster-cancelslotmigrations/"><code>CLUSTER CANCELSLOTMIGRATIONS</code></a>
+<ul>
+<li>Use this command to safely cancel all ongoing slot migrations originating
+from the node.</li>
+</ul>
+</li>
+<li><a href="/valkey-io.github.io/pr-21/commands/cluster-getslotmigrations/"><code>CLUSTER GETSLOTMIGRATIONS</code></a>
+<ul>
+<li>This gives you an observable log of recent and active migrations, allowing
+you to monitor the status, duration, and outcome of each job. Slot migration
+jobs are stored in memory, allowing for simple programmatic access and error
+handling.</li>
+</ul>
+</li>
+</ul>
+<h2 id="legacy-vs-atomic-head-to-head-results">Legacy vs. Atomic: Head-to-Head Results</h2>
+<p>Head-to-head experiments show the improvement provided by atomic slot migration.</p>
+<h3 id="test-setup">Test Setup</h3>
+<p>To make things reproducible, the test setup is outlined below:</p>
+<ul>
+<li>Valkey cluster nodes are <code>c4-standard-8</code> GCE VMs spread across GCP’s
+us-central1 region running Valkey 9.0.0</li>
+<li>Client machine is a separate <code>c4-standard-8</code> GCE VM in us-central1-f</li>
+<li>Rebalancing is accomplished with the <code>valkey-cli --cluster rebalance</code> command,
+with all parameters defaulted. The only exception is during scale in, where
+<code>--cluster-weight</code> is used to set the weights to only allocate to 3 shards.</li>
+<li>The cluster is filled with 40 GB of data consisting of 16 KB string valued
+keys</li>
+</ul>
+<h3 id="slot-migration-latency-who-s-faster">Slot Migration Latency: Who's Faster?</h3>
+<p>The experiment had two tests: one with no load and one with heavy read/write
+load. The heavy load is simulated using <a rel="external" href="https://github.com/RedisLabs/memtier_benchmark">memtier-benchmark</a> with a 1:10 set/get
+ratio on the client machine specified above.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration/legacy-vs-atomic-latency.png" alt="Chart showing time to scale in and out when under load, from the table below" /></p>
+<table>
+  <tr>
+    <th>Test Case</th>
+    <th>Legacy Slot Migration</th>
+    <th>Atomic Slot Migration</th>
+    <th>Speedup</th>
+  </tr>
+  <tr>
+    <td>No Load: 3 to 4 shards</td>
+    <td>1m42.089s</td>
+    <td>0m10.723s</td>
+    <td style="background-color:#228b22;">9.52x</td>
+  </tr>
+  <tr>
+    <td>No Load: 4 to 3 shards</td>
+    <td>1m20.270s</td>
+    <td>0m9.507s</td>
+    <td style="background-color:#36a336;">8.44x</td>
+  </tr>
+  <tr>
+    <td>Heavy Load: 3 to 4 shards</td>
+    <td>2m27.276s</td>
+    <td>0m30.995s</td>
+    <td style="background-color:#7fd37f;">4.75x</td>
+  </tr>
+  <tr>
+    <td>Heavy Load: 4 to 3 shards</td>
+    <td>2m5.328s</td>
+    <td>0m27.105s</td>
+    <td style="background-color:#86d686;">4.62x</td>
+  </tr>
+</table>
+<p>The main culprit here is unnecessary network round trips (RTTs) in legacy slot
+migration. Each slot requires:</p>
+<ul>
+<li>2 RTTs to call <code>SETSLOT</code> and begin the migration</li>
+<li>Each batch of keys in a slot requires:
+<ul>
+<li>1 RTT for <code>CLUSTER GETKEYSINSLOT</code></li>
+<li>1 RTT for <code>MIGRATE</code></li>
+<li>1 RTT for the actual migration of the key batch from source to target node</li>
+</ul>
+</li>
+<li>2 RTTs to call <code>SETSLOT</code> and end the migration</li>
+</ul>
+<p>Those round trip times add up. For this test case where we have:</p>
+<ul>
+<li>4096 slots to move</li>
+<li>160 keys per slot</li>
+<li><code>valkey-cli</code>'s default batch size of 10</li>
+</ul>
+<p>We need:</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration/legacy-rtt-formula.png" alt="Picture of the following formula rendered in LaTeX: RTTs = SlotsCount * (3 * KeysPerSlot/KeysPerBatch + 4) = 4096 * (3 * 160/10 + 4) = 212992" /></p>
+<p>Even with a 300 microsecond round trip time, legacy slot migration spends over a
+minute just waiting for those 212,992 round trips.</p>
+<p>By removing this overhead, atomic slot migration is now only bounded by the
+speed that one node can push data to another, achieving much faster end-to-end
+latency.</p>
+<h3 id="client-impact-how-would-applications-respond">Client Impact: How Would Applications Respond?</h3>
+<p>The experiment measured the throughput of a simulated
+<a rel="external" href="https://github.com/valkey-io/valkey-py">valkey-py</a> workload with 1:10 set/get
+ratio while doing each scaling event. Over three trial throughput averages are
+shown below.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration/legacy-vs-atomic-client-impact.png" alt="Chart showing queries per second over time. Atomic slot migration quickly dips and recovers, while legacy slot migration incurs a sustained dip" /></p>
+<p>Despite atomic slot migration causing a more acute throughput hit, you can see
+the recovery of the client application is much faster due to far fewer topology
+changes and an overall lower end-to-end latency. Each topology change needs to
+be handled by the Valkey client, so the quicker the topology changes are made,
+the sooner the impact ends. By collapsing the topology changes and performing
+atomic handover, atomic slot migration leads to less client impact overall than
+legacy slot migration.</p>
+<h2 id="under-the-hood-state-machines-and-control-commands">Under the Hood: State Machines and Control Commands</h2>
+<p>To coordinate the complex dance between the two nodes, a new internal command,
+<a href="/valkey-io.github.io/pr-21/commands/cluster-syncslots/"><code>CLUSTER SYNCSLOTS</code></a>, is introduced. This command
+orchestrates the state machine with the following sub-commands:</p>
+<ul>
+<li><code>CLUSTER SYNCSLOTS ESTABLISH SOURCE &lt;source-node-id&gt; NAME &lt;unique-migration-name&gt; SLOTSRANGE &lt;start&gt; &lt;end&gt; ...</code>
+<ul>
+<li>Informs the target node of an in progress slot migration and begins tracking
+the current connection as a slot migration link.</li>
+</ul>
+</li>
+<li><code>CLUSTER SYNCSLOTS SNAPSHOT-EOF</code>
+<ul>
+<li>Used as a marker to inform the target the full snapshot of the hash slot
+contents have been sent.</li>
+</ul>
+</li>
+<li><code>CLUSTER SYNCSLOTS REQUEST-PAUSE</code>
+<ul>
+<li>Informs the source node that the target has received all of the snapshot and
+is ready to proceed.</li>
+</ul>
+</li>
+<li><code>CLUSTER SYNCSLOTS PAUSED</code>
+<ul>
+<li>Used as a marker to inform the target no more mutations should occur as the
+source has paused mutations.</li>
+</ul>
+</li>
+<li><code>CLUSTER SYNCSLOTS REQUEST-FAILOVER</code>
+<ul>
+<li>Informs the source node that the target is fully caught up and ready to take
+over the hash slots.</li>
+</ul>
+</li>
+<li><code>CLUSTER SYNCSLOTS FAILOVER-GRANTED</code>
+<ul>
+<li>Informs the target node that the source node is still paused and takeover
+can be safely performed.</li>
+</ul>
+</li>
+<li><code>CLUSTER SYNCSLOTS FINISH</code>
+<ul>
+<li>Inform the replica of the target node that a migration is completed (or
+failed).</li>
+</ul>
+</li>
+<li><code>CLUSTER SYNCSLOTS CAPA</code>
+<ul>
+<li>Reserved command allowing capability negotiation.</li>
+</ul>
+</li>
+</ul>
+<p>The diagram below shows how <code>CLUSTER SYNCSLOTS</code> is used internally to drive a
+slot migration from start to finish:</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration/atomic-slot-migration-syncslots.png" alt="Diagram showing how Valkey uses CLUSTER SYNCSLOTS to drive atomic slot migration" /></p>
+<h2 id="get-started-today">Get Started Today!</h2>
+<p>This new Atomic slot migration is a massive step forward for Valkey cluster
+management. It provides a faster, more reliable, and overall easier mechanism
+for resharding your data.</p>
+<p>So, go <a href="/valkey-io.github.io/pr-21/download/">download Valkey 9.0</a> and try Atomic Slot Migration for
+yourself! A huge thank you to everyone in the community who contributed to the
+design and implementation.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/murphyjacob4.png" alt="photo of Jacob Murphy" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Jacob Murphy</h4>
+    
+    <a target="_blank" href="https://github.com/murphyjacob4"><i class="icon icon-github-square"></i> @murphyjacob4</a>
+    
+    <p>Jacob Murphy is a software engineer at Google Cloud based out of Kirkland, WA.
+Jacob is passionate about high performance code, database engines, and
+reliability. When not coding, Jacob's hobbies include DIY projects on his house,
+cooking, and traveling.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration/&title=Resharding%2C%20Reimagined%3A%20Introducing%20Atomic%20Slot%20Migration&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-9/">&laquo; Valkey 9.0: innovation, features, and improvements.</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/properly-secure-your-valkey-deployment/">How to Properly Secure Your Valkey Deployment &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-06.webp" />
+    
+    
+
+    <meta name="description" content="Valkey Search now enables querying across text, tags, and numeric data and analyzing results with aggregations." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Beyond Vectors: Introducing Full-Text Search and Aggregations to Valkey</title>
+    <meta name="title" property="og:title" content="Valkey: Beyond Vectors: Introducing Full-Text Search and Aggregations to Valkey">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-06.webp" alt="Beyond Vectors: Introducing Full-Text Search and Aggregations to Valkey" class="feature-img">
+
+
+<h1>Beyond Vectors: Introducing Full-Text Search and Aggregations to Valkey</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2026-03-17
+  
+    &middot; 
+    
+      
+      
+      <em>Karthik Subbarao</em>,
+    
+      
+      
+      <em>Allen Samuels</em>,
+    
+      
+      
+      <em>Brennan Cathcart</em>,
+    
+      
+      
+      <em>Chaitanya Nuthalapati</em>
+    
+  
+</div>
+<p>Valkey Search now lets you search across text, tag, numeric, and vector attributes in a single query, and analyze results with server-side aggregations at the low latency you expect from Valkey.
+Valkey Search enables searching terabytes of data with latency as low as microseconds, providing a flexible foundation for querying across a range of use cases, from powering in-app search experiences to recommendation systems and analyzing data to support in-app analytics and reporting dashboards.</p>
+<p>Until now, Valkey Search focused on vector similarity, enabling a wide range of workloads such as semantic search and AI workloads (see <a rel="external" href="https://valkey.io/blog/introducing-valkey-search/">launch blog</a>).
+But if you needed to filter your data by numeric attributes such as price ranges, match on exact attributes such as color or size, or search within text attributes such as product reviews, you had to build that yourself.</p>
+<p>With Valkey Search 1.2, that changes. In this post, we'll walk through what's new, show how it works, and explore the use cases these capabilities unlock.</p>
+<h2 id="searching-your-valkey-data">Searching Your Valkey Data</h2>
+<p>Valkey Search uses indexes to organize your data by searchable attributes, so queries can find matching keys without scanning every document. To get started with search, you first define an index over the attributes you want to search. Valkey Search supports four query types — full-text, tag, numeric range, and vector similarity, which you can use independently or combine with boolean operators. For example, consider an e-commerce retailer Acme.inc using Valkey to store their product catalog who creates an index like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.CREATE product_index ON HASH SCHEMA</span></span>
+<span class="giallo-l"><span>  description TEXT</span></span>
+<span class="giallo-l"><span>  color TAG</span></span>
+<span class="giallo-l"><span>  manufacturer TAG</span></span>
+<span class="giallo-l"><span>  price NUMERIC SORTABLE</span></span>
+<span class="giallo-l"><span>  rating NUMERIC SORTABLE</span></span>
+<span class="giallo-l"><span>  review vector HNSW 6 TYPE FLOAT32 DIM 768 DISTANCE_METRIC COSINE</span></span></code></pre>
+<p>This creates an index called <code>product_index</code> over hash keys, indexing <code>description</code> as a full-text searchable attribute, <code>color</code> and <code>manufacturer</code> as exact-match tags, <code>price</code> and <code>rating</code> as sortable numeric attributes, and <code>review</code> as a vector attribute for similarity search. With this index in place, you can now query across all four types:</p>
+<p><strong>Full-text Search:</strong> Full-text search (FTS) helps you retrieve relevant documents by matching words and phrases within larger text when you do not have an exact identifier or a structured attribute value.
+You can use full-text queries to retrieve documents by matching keywords, phrases, or patterns such as prefix, suffix, wildcard, and fuzzy queries (typo-tolerant), anywhere in your document index.
+You can use FTS to express constraints like "user reviews mentioning headphones with active noise cancellation <strong>and</strong> long battery life, but <strong>not</strong> weighing more than 3 ounces."
+Hence, full-text search is a powerful capability for workloads that search unstructured data rather than exact tags.
+Full-text search queries shine in use cases such as e-commerce and catalog searches to help users find products instantly across large inventories.
+The prefix/suffix pattern matching provided by full-text search makes it ideal for powering instant suggestions as users type, enabling discovery in search bars and product catalogs.
+Finally, fuzzy matching capabilities allow you to accurately match documents despite spelling variations, typos, or inconsistent formats to support typo-tolerant retrieval.
+For example, when a shopper on Acme.inc types "noise cancelling earphones" in the search bar, the app can search across descriptions to retrieve relevant products:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.SEARCH product_index &quot;noise canc*&quot;</span></span></code></pre>
+<p>This returns matching products with all their indexed attributes:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>1) (integer) 2</span></span>
+<span class="giallo-l"><span>2) &quot;product:1001&quot;</span></span>
+<span class="giallo-l"><span>3) 1) &quot;description&quot;</span></span>
+<span class="giallo-l"><span>   2) &quot;Wireless earphones with active noise cancelling and 30-hour battery life&quot;</span></span>
+<span class="giallo-l"><span>   3) &quot;color&quot;</span></span>
+<span class="giallo-l"><span>   ...</span></span>
+<span class="giallo-l"><span>4) &quot;product:1042&quot;</span></span>
+<span class="giallo-l"><span>   ...</span></span></code></pre>
+<p><strong>Tag Search:</strong> Tag queries filter documents by checking attribute values for exact matches against the provided value. Tag attributes are best for structured categorical data where queries rely on exact value matching.
+You can treat tag as a specialized alternative to text for attributes that you want to match as discrete values such as userIDs, categories, and status flags.
+This makes tag a great fit to express conditions like "category is earphones <strong>and</strong> size is small, but color is <strong>not</strong> red."
+Tag filtering shines in use cases such as streaming and gaming platforms to retrieve metadata by exact identifiers such as user ID, region, or genre to power real-time stats and fast in-app filtering.
+It is also well suited for session and user management, where you need to quickly locate active sessions and entitlements by exact identifiers such as session ID, device properties, or tenant ID across millions of documents.
+For example, when a shopper on Acme.inc filters for earphones manufactured by "shopnow" that are "white" in color, the app can query the tag index:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.SEARCH product_index &quot;@manufacturer:{shopnow} @color:{white}&quot;</span></span></code></pre>
+<p><strong>Numeric Range Queries:</strong> Range search retrieves documents by filtering and sorting over numeric and time attributes using comparisons such as greater than, less than, and between. This makes it ideal for applications that query attributes such as scores, price bands, time windows, inventory thresholds, distances, and timestamps.
+Valkey Search supports range-based queries with microsecond latencies, making it a strong fit for real-time leaderboards where you rank and retrieve content by numeric metrics such as scores, downloads, or engagement with updates reflected immediately.
+Range queries are also well suited for financial transactions or time series data, enabling ultra-fast lookups by amounts, fees, date ranges, and risk scores to power customer-facing applications, personalization, or real-time monitoring.
+For example, when a shopper on Acme.inc sets the price slider to $50–$100 and filters by 4-star and above, the app can query the numeric index:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.SEARCH product_index &quot;@price:[50 100] @rating:[4 +inf]&quot;</span></span></code></pre>
+<p><strong>Hybrid Queries:</strong> Valkey Search lets you combine full-text, tag, numeric range, and vector similarity clauses in a single query so you can retrieve relevant results.
+Hybrid queries are ideal for applications that need to query across multiple attribute types in one request. For example, a product discovery query might combine vector similarity over reviews for semantic meaning, a tag filter for category and availability, a numeric range for price, and full-text search over product titles — all in a single request.
+This eliminates the need to stitch together multiple queries or round-trips, making it a natural fit for recommendation systems, media platforms, and real-time operational workflows.
+Combining our examples from above, when a shopper on Acme.inc searches for "noise cancelling earphones" and filters for products in "white" color, under $150, that are good for running, the app can combine all of this into a single query:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.SEARCH product_index &quot;noise cancelling earphones @color:{white} @price:[0 150] =&gt;[KNN 5 @review $vector]&quot; PARAMS 2 vector &#39;VECTOR_REPRESENTATION&#39;</span></span></code></pre>
+<p>Here, the query is searching through vector representations of product reviews to find “earphones that are good for running”.</p>
+<h2 id="transform-your-valkey-data-with-aggregations">Transform Your Valkey Data with Aggregations</h2>
+<p>Aggregations help you analyze and summarize the results of a search query, instead of returning a raw list of matching documents.
+You can use <code>GROUPBY</code> to form groups on any indexed attribute such as category, brand, region, and time, apply <code>REDUCE</code> functions such as <code>COUNT</code>, <code>SUM</code>, and <code>AVG</code> to compute per-group statistics, and use <code>APPLY</code> to create computed attributes on the fly.
+You can then refine and shape the output with post-aggregation <code>FILTER</code>, <code>SORTBY</code>, and <code>LIMIT</code>, chaining stages together to build multi-step workflows in a single query.
+This makes aggregations a strong fit for low-latency lightweight analytics directly on indexed Valkey data, without the need to export large result sets to the application layer. Some applications of aggregations include:</p>
+<ol>
+<li>Faceted navigation and filtering: Power dynamic filtering UIs using aggregations to compute real-time counts over the current result set (for example by category, brand, price band, rating, or availability), enabling users to narrow down search results with instant feedback on available options. You can also group and count items by attribute such as genre, tags, language, or creator to power structured browsing and category-level summaries across large catalogs.</li>
+<li>Real-time statistics: Use aggregations to compute grouped rankings for powering in-app flows such as trending items by recent engagement, category leaders by revenue, or top performers by region.</li>
+<li>Analytics and reporting: Generate live counts and summary metrics to power operational dashboards, or generate on-demand reports for analysis and decision making without hitting backend databases.
+For example, Acme.inc can populate the count of earphones available from “shopnow” in each price band on the webpage using:</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.AGGREGATE product_index &quot;@manufacturer:{shopnow}&quot;</span></span>
+<span class="giallo-l"><span>APPLY &quot;floor(@price / 50) * 50&quot; AS price_band</span></span>
+<span class="giallo-l"><span>GROUPBY 1 @price_band</span></span>
+<span class="giallo-l"><span>REDUCE COUNT 0 AS product_count</span></span>
+<span class="giallo-l"><span>SORTBY 2 @price_band ASC</span></span></code></pre>
+<p>This filters for products from the "shopnow" manufacturer, uses <code>APPLY</code> to bucket each product's price into $50 bands (0–49, 50–99, 100–149, etc.), groups by those bands, counts products in each, and sorts by price band ascending — giving Acme.inc a price distribution histogram for that manufacturer's products.</p>
+<h2 id="under-the-hood">Under the Hood</h2>
+<h3 id="real-time-search-with-multi-threading">Real-time Search with Multi-threading</h3>
+<p>Valkey Search uses indexes to organize keys by the contents of their searchable attributes, ensuring reads remain fast and efficient as data grows.
+When you add, update, or delete an indexed key, the module receives the mutation event, extracts indexed attributes, queues the indexing work, and updates the index before acknowledging the write.
+Valkey Search is multi-threaded, so you can maximize ingestion throughput by using multiple parallel connections to saturate the index update process without pipelining on a single connection.
+Background worker threads process index updates, and the client receives a response only after the update is committed to the index.</p>
+<h3 id="read-after-write-consistency">Read-after-write Consistency</h3>
+<p>For workloads that require strict read-after-write behavior, you can configure your client to route search queries to primaries.
+A write only completes after its index updates are applied, so any search sent to the same primary after the write returns will see that change.
+If your application can tolerate some staleness, you can offload reads to replicas.
+On replicas, search is eventually consistent because replication and index maintenance are asynchronous, and each node maintains its own local indexes.
+Multi-key updates wrapped in a MULTI/EXEC transaction or Lua script are also atomically visible to search.
+Valkey Search exposes the index only after all attribute updates in the batch are applied.
+Separately, in cluster mode, read-after-write consistency applies per primary of the shard.
+If you write a key to a primary, searches sent to that primary see the change after the write returns, but a fan-out query spanning multiple shards does not have a single global transactional view.</p>
+<h3 id="scale-to-terabytes-of-data">Scale to Terabytes of Data</h3>
+<p>Valkey Search includes built-in support for cluster mode, enabling you to scale to terabytes of data without requiring application or client code changes.
+In cluster mode, Valkey Search creates indexes that span multiple shards by maintaining a separate index on each node for the keys belonging to that node's slot range. When you create, update, or drop an index on any primary, Valkey Search propagates that change to all nodes.
+You can scale read throughput by distributing Search queries evenly across primary nodes so that no single node becomes a bottleneck, or by routing some Search queries to replicas.
+You can increase throughput by scaling to instances with more vCPUs, allowing multithreading to scale throughput linearly for both querying and ingesting, or by adding replicas to increase query throughput.</p>
+<p>For queries, the coordinating node that receives the query request, packages a query plan and sends it to every shard (to run on either primaries or replicas).
+A node within each shard performs the search and fetches its matching keys, then returns results for the coordinator to merge. Because the fan-out and merge logic exists on every cluster node, any node can coordinate a query. For mutations, the primary owning the slot handles updates: when a key is added, updated, or deleted, only that primary updates its index directly, and the change replicates to its replicas.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>Valkey Search 1.2 extends search to text, tag, and numeric attribute types and adds result aggregation capabilities such as filtering, sorting, grouping, and computing metrics. Whether you're building cutting-edge AI applications, latency-sensitive search experiences, or integrating search into existing systems, we invite you to try it out.
+To get started with Valkey Search, visit the <a rel="external" href="https://github.com/valkey-io/valkey-search">Valkey Search GitHub repository</a> and the <a rel="external" href="https://hub.docker.com/r/valkey/valkey-bundle">Valkey Bundle on Docker Hub</a>. The official Valkey Bundle image provides the fastest path to running Valkey with preloaded modules, including Valkey Search, so you can begin building search and aggregation workflows without manual module setup. You can connect using official Valkey client libraries such as Valkey GLIDE, valkey-py, valkey-go, and valkey-java, as well as other Redis-compatible clients. Valkey Search is available under the BSD-3-Clause license. You can learn more about Valkey Search through our <a rel="external" href="https://valkey.io/topics/search/">documentation</a>.</p>
+<p>Get Involved: <a rel="external" href="https://github.com/valkey-io/valkey-search">Join the Valkey Search community</a>, file issues, open pull requests, or suggest improvements. We welcome contributions of all kinds - code, documentation, testing, and feedback. Your involvement helps make Valkey Search better for everyone.</p>
+<blockquote>
+<p><strong>Note:</strong> As of March 13, 2026, if you want to use Valkey Search 1.2 features on docker, use the current valkey/valkey-bundle:unstable image.</p>
+</blockquote>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/karthiksubbarao.jpg" alt="photo of Karthik Subbarao" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Karthik Subbarao</h4>
+    
+    <a target="_blank" href="https://github.com/karthiksubbarao"><i class="icon icon-github-square"></i> @karthiksubbarao</a>
+    
+    <p>Karthik Subbarao is a Software Engineer at AWS who is passionate about distributed systems, databases, Rust, and, in general, innovating through software development / technology.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/allenss.png" alt="photo of Allen Samuels" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Allen Samuels</h4>
+    
+    <a target="_blank" href="https://github.com/allenss-amazon"><i class="icon icon-github-square"></i> @allenss-amazon</a>
+    
+    <p>Allen Samuels is a Principal Engineer at AWS. He is passionate about distributed, performant systems. When not travelling the world for pleasure or playing duplicate bridge, Allen can be found in San Jose, California.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/bcathcart.jpeg" alt="photo of Brennan Cathcart" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Brennan Cathcart</h4>
+    
+    <a target="_blank" href="https://github.com/bcathcart"><i class="icon icon-github-square"></i> @bcathcart</a>
+    
+    <p>Brennan Cathcart is a Software Engineer at AWS, where he works on the technical challenges of vector similarity and full-text search infrastructure. Outside of his engineering role, Brennan is an avid traveler and a multi-sport athlete who can usually be found on the ice, the slopes, or the soccer pitch.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/cnuthalapati.jpg" alt="photo of Chaitanya Nuthalapati" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Chaitanya Nuthalapati</h4>
+    
+    <a target="_blank" href="https://github.com/cnuthalapati"><i class="icon icon-github-square"></i> @cnuthalapati</a>
+    
+    <p>Chaitanya is a Senior Technical Product Manager in AWS In-Memory Database Services, focused on Amazon ElastiCache for Valkey.
+Previously, he built solutions with generative AI, machine learning, and graph networks.
+Off the clock, Chaitanya is busy collecting hobbies, which currently include tennis, skateboarding, and paddle-boarding.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-search-1_2/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-search-1_2/&title=Beyond%20Vectors%3A%20Introducing%20Full-Text%20Search%20and%20Aggregations%20to%20Valkey&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-search-1_2/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin/">&laquo; Introducing Valkey Admin: Visual Cluster Management for Valkey</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-tooling-primitives/">What Valkey&#39;s new primitives tell us about the tools we need &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

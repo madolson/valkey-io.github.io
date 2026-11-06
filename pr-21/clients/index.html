@@ -1,0 +1,2837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Clients</title>
+    <meta name="title" property="og:title" content="Valkey: Clients">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+  <script>document.documentElement.classList.add('js');</script>
+  
+  
+  
+
+  
+  
+  
+
+  
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+
+  
+  
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+  
+
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+    
+    
+    
+  
+    
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+    
+    
+    
+      
+    
+  
+    
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+    
+    
+    
+  
+    
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+    
+    
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+    
+      
+    
+  
+    
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+    
+    
+    
+  
+    
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+    
+  
+    
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+    
+  
+    
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+        
+      
+    
+      
+        
+      
+    
+      
+    
+      
+    
+    
+    
+    
+  
+
+  
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+    
+    
+      
+    
+  
+    
+    
+  
+    
+    
+      
+    
+  
+
+  
+  
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+    
+      
+        
+        
+      
+    
+  
+
+  <div class="catalog" data-catalog-root data-page="libraries">
+
+    
+    <header class="catalog-header">
+      <h1 class="catalog-title">Clients</h1>
+      <p class="catalog-lede">Client libraries and tools used for connecting to Valkey. Anything that speaks the Redis 7.2 wire protocol works with Valkey 7.2 and later, so most existing clients need no changes to migrate.</p>
+      <p class="catalog-crosslink">See also: <a href="/valkey-io.github.io/pr-21/integrations/">Integrations</a></p>
+    </header>
+    
+
+    
+    
+    <div class="toolbar" data-toolbar>
+      <div class="field field-search">
+        <label for="catalog-q">Search</label>
+        <span class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input id="catalog-q" type="search" class="search-input" data-search-input
+                 placeholder="Search clients…" autocomplete="off" aria-label="Search">
+        </span>
+      </div>
+      <div class="field field-toggle">
+        <span class="toggle-label" aria-hidden="true">Valkey</span>
+        <button type="button" class="fp-toggle" data-first-party-toggle
+                role="switch" aria-checked="false">
+          <span class="fp-toggle-track" aria-hidden="true"><span class="fp-toggle-thumb"></span></span>
+          <span class="fp-toggle-text">Maintained by Valkey</span>
+        </button>
+      </div>
+      <div class="field field-sort">
+        <label id="catalog-sort-label">Sort</label>
+        <button type="button" id="catalog-sort" class="sort-control" data-sort-control
+                aria-labelledby="catalog-sort-label catalog-sort-text">
+          <span class="sort-control-text" id="catalog-sort-text" data-sort-text>Name A–Z</span>
+          <svg class="sort-control-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 4v16"></path><path d="M4 8l3-4 3 4"></path>
+            <path d="M13 6h7"></path><path d="M13 12h5"></path><path d="M13 18h3"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+
+    <div class="sr-only" role="status" data-result-count data-noun="clients" data-noun-one="client"></div>
+
+    
+    
+    <div class="filterbar" data-facet="language" data-select="multi">
+      <span class="filterbar-label">Language</span>
+      <div class="pills">
+        <button type="button" class="filter-pill" data-value="__all__" aria-pressed="true">All</button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Python" aria-pressed="false">
+            Python <span class="pill-count" data-count>2</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Node.js" aria-pressed="false">
+            Node.js <span class="pill-count" data-count>2</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Java" aria-pressed="false">
+            Java <span class="pill-count" data-count>3</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Go" aria-pressed="false">
+            Go <span class="pill-count" data-count>2</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="PHP" aria-pressed="false">
+            PHP <span class="pill-count" data-count>3</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Swift" aria-pressed="false">
+            Swift <span class="pill-count" data-count>1</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="C#" aria-pressed="false">
+            C# <span class="pill-count" data-count>1</span></button>
+        
+          
+          
+          <button type="button" class="filter-pill" data-value="Ruby" aria-pressed="false">
+            Ruby <span class="pill-count" data-count>1</span></button>
+        
+      </div>
+    </div>
+    
+
+    <section class="catalog-grid" data-catalog>
+
+      
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey glide python"
+                 data-search="valkey glide python designed for reliability, optimized performance, and high-availability. glide is a multi-language client with one shared rust core and per-language bindings. python"
+                 data-desc="designed for reliability, optimized performance, and high-availability. glide is a multi-language client with one shared rust core and per-language bindings."
+                 data-language="Python"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://glide.valkey.io/getting-started/quickstart/?lang=python">Valkey GLIDE Python</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#3572A5;color:#fff">Py</span>Python</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install valkey-glide</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install valkey-glide"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(4)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+                <li class="feature-badge" title="Iterate keys consistently across every shard, tracking slot migrations that happen mid-scan." data-feature="scan">SCAN family</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost." data-feature="az">AZ affinity</li>
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-glide/tree/main/python">Repository</a>
+            <a class="link-site" href="https://glide.valkey.io/getting-started/quickstart/?lang=python">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey-py"
+                 data-search="valkey-py the community fork of the long-standing python client, maintained by the valkey project. familiar synchronous and asyncio apis. python"
+                 data-desc="the community fork of the long-standing python client, maintained by the valkey project. familiar synchronous and asyncio apis."
+                 data-language="Python"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://valkey-py.readthedocs.io/en/latest/">valkey-py</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#3572A5;color:#fff">Py</span>Python</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">The community fork of the long-standing Python client, maintained by the Valkey project. Familiar synchronous and asyncio APIs.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pip install valkey</code></span>
+            <button type="button" class="copy-btn" data-copy="pip install valkey"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(4)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Keep hot values in the application process and let the server invalidate them, removing a round trip entirely." data-feature="csc">Client-side caching</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Reuse a pool of established connections rather than dialing one per command." data-feature="pool">Connection pooling</li>
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">MIT</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-py">Repository</a>
+            <a class="link-site" href="https://valkey-py.readthedocs.io/en/latest/">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey glide node.js"
+                 data-search="valkey glide node.js designed for reliability, optimized performance, and high-availability. glide is a multi-language client with one shared rust core and per-language bindings. node.js"
+                 data-desc="designed for reliability, optimized performance, and high-availability. glide is a multi-language client with one shared rust core and per-language bindings."
+                 data-language="Node.js"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://glide.valkey.io/getting-started/quickstart/?lang=node">Valkey GLIDE Node.js</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#f1e05a;color:#000">Js</span>Node.js</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">npm install @valkey/valkey-glide</code></span>
+            <button type="button" class="copy-btn" data-copy="npm install @valkey/valkey-glide"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(4)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+                <li class="feature-badge" title="Iterate keys consistently across every shard, tracking slot migrations that happen mid-scan." data-feature="scan">SCAN family</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost." data-feature="az">AZ affinity</li>
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-glide/tree/main/node">Repository</a>
+            <a class="link-site" href="https://glide.valkey.io/getting-started/quickstart/?lang=node">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="iovalkey"
+                 data-search="iovalkey a friendly fork of a widely used node.js client, tracking valkey. promise-based api, lua scripting and cluster support. node.js"
+                 data-desc="a friendly fork of a widely used node.js client, tracking valkey. promise-based api, lua scripting and cluster support."
+                 data-language="Node.js"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/valkey-io/iovalkey/blob/v0.4.0/README.md#quick-start">iovalkey</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#f1e05a;color:#000">Js</span>Node.js</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">A friendly fork of a widely used Node.js client, tracking Valkey. Promise-based API, Lua scripting and cluster support.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">npm install iovalkey</code></span>
+            <button type="button" class="copy-btn" data-copy="npm install iovalkey"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+              
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(3)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Reuse a pool of established connections rather than dialing one per command." data-feature="pool">Connection pooling</li>
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">MIT</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/iovalkey">Repository</a>
+            <a class="link-site" href="https://github.com/valkey-io/iovalkey/blob/v0.4.0/README.md#quick-start">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey glide java"
+                 data-search="valkey glide java designed for reliability, optimized performance, and high-availability. pick the classifier that matches your platform: osx-aarch_64, linux-aarch_64 or linux-x86_64. java"
+                 data-desc="designed for reliability, optimized performance, and high-availability. pick the classifier that matches your platform: osx-aarch_64, linux-aarch_64 or linux-x86_64."
+                 data-language="Java"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://glide.valkey.io/getting-started/quickstart/?lang=java">Valkey GLIDE Java</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#b07219;color:#fff">Jv</span>Java</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Designed for reliability, optimized performance, and high-availability. Pick the classifier that matches your platform: osx-aarch_64, linux-aarch_64 or linux-x86_64.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">implementation &#39;io.valkey:valkey-glide:2.+&#39;</code></span>
+            <button type="button" class="copy-btn" data-copy="implementation &#39;io.valkey:valkey-glide:2.+&#39;"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(4)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+                <li class="feature-badge" title="Iterate keys consistently across every shard, tracking slot migrations that happen mid-scan." data-feature="scan">SCAN family</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost." data-feature="az">AZ affinity</li>
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-glide/tree/main/java">Repository</a>
+            <a class="link-site" href="https://glide.valkey.io/getting-started/quickstart/?lang=java">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey-java"
+                 data-search="valkey-java the jedis-derived java client maintained under valkey-io. blocking api, connection pooling and cluster support. java"
+                 data-desc="the jedis-derived java client maintained under valkey-io. blocking api, connection pooling and cluster support."
+                 data-language="Java"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/valkey-io/valkey-java/blob/v5.5.0/README.md#getting-started">valkey-java</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#b07219;color:#fff">Jv</span>Java</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">The Jedis-derived Java client maintained under valkey-io. Blocking API, connection pooling and cluster support.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">implementation &#39;io.valkey:valkey-java:5.+&#39;</code></span>
+            <button type="button" class="copy-btn" data-copy="implementation &#39;io.valkey:valkey-java:5.+&#39;"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(2)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Announce client capabilities so the server can hand off slot redirections cleanly during upgrades and failover." data-feature="capa">Advanced capabilities</li>
+                
+              
+                
+                <li class="feature-badge" title="Reuse a pool of established connections rather than dialing one per command." data-feature="pool">Connection pooling</li>
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">MIT</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-java">Repository</a>
+            <a class="link-site" href="https://github.com/valkey-io/valkey-java/blob/v5.5.0/README.md#getting-started">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="redisson"
+                 data-search="redisson a java client that extends valkey with distributed locks, caches, executor services and live objects. client-side caching and spring, hibernate, quarkus and jcache integrations. java"
+                 data-desc="a java client that extends valkey with distributed locks, caches, executor services and live objects. client-side caching and spring, hibernate, quarkus and jcache integrations."
+                 data-language="Java"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://redisson.pro/docs/getting-started/">redisson</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#b07219;color:#fff">Jv</span>Java</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">A Java client that extends Valkey with distributed locks, caches, executor services and Live Objects. Client-side caching and Spring, Hibernate, Quarkus and JCache integrations.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">implementation &#39;org.redisson:redisson:4.+&#39;</code></span>
+            <button type="button" class="copy-btn" data-copy="implementation &#39;org.redisson:redisson:4.+&#39;"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(7)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+                <li class="feature-badge" title="Iterate keys consistently across every shard, tracking slot migrations that happen mid-scan." data-feature="scan">SCAN family</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost." data-feature="az">AZ affinity</li>
+                
+              
+                
+                <li class="feature-badge" title="Keep hot values in the application process and let the server invalidate them, removing a round trip entirely." data-feature="csc">Client-side caching</li>
+                
+              
+                
+                <li class="feature-badge" title="Announce client capabilities so the server can hand off slot redirections cleanly during upgrades and failover." data-feature="capa">Advanced capabilities</li>
+                
+              
+                
+                <li class="feature-badge" title="Reuse a pool of established connections rather than dialing one per command." data-feature="pool">Connection pooling</li>
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/redisson/redisson">Repository</a>
+            <a class="link-site" href="https://redisson.pro/docs/getting-started/">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey glide go"
+                 data-search="valkey glide go designed for reliability, optimized performance, and high-availability. glide is a multi-language client with one shared rust core and per-language bindings. go"
+                 data-desc="designed for reliability, optimized performance, and high-availability. glide is a multi-language client with one shared rust core and per-language bindings."
+                 data-language="Go"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://glide.valkey.io/getting-started/quickstart/?lang=go">Valkey GLIDE Go</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#00ADD8;color:#fff">Go</span>Go</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">go get github.com/valkey-io/valkey-glide/go/v2</code></span>
+            <button type="button" class="copy-btn" data-copy="go get github.com/valkey-io/valkey-glide/go/v2"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(4)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+                <li class="feature-badge" title="Iterate keys consistently across every shard, tracking slot migrations that happen mid-scan." data-feature="scan">SCAN family</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost." data-feature="az">AZ affinity</li>
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-glide/tree/main/go">Repository</a>
+            <a class="link-site" href="https://glide.valkey.io/getting-started/quickstart/?lang=go">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey-go"
+                 data-search="valkey-go a fast go client with automatic pipelining, server-assisted client-side caching and generic-typed command building. go"
+                 data-desc="a fast go client with automatic pipelining, server-assisted client-side caching and generic-typed command building."
+                 data-language="Go"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://pkg.go.dev/github.com/valkey-io/valkey-go#readme-getting-started">valkey-go</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#00ADD8;color:#fff">Go</span>Go</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">A fast Go client with automatic pipelining, server-assisted client-side caching and generic-typed command building.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">go get github.com/valkey-io/valkey-go</code></span>
+            <button type="button" class="copy-btn" data-copy="go get github.com/valkey-io/valkey-go"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(6)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost." data-feature="az">AZ affinity</li>
+                
+              
+                
+                <li class="feature-badge" title="Keep hot values in the application process and let the server invalidate them, removing a round trip entirely." data-feature="csc">Client-side caching</li>
+                
+              
+                
+                <li class="feature-badge" title="Announce client capabilities so the server can hand off slot redirections cleanly during upgrades and failover." data-feature="capa">Advanced capabilities</li>
+                
+              
+                
+                <li class="feature-badge" title="Reuse a pool of established connections rather than dialing one per command." data-feature="pool">Connection pooling</li>
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-go">Repository</a>
+            <a class="link-site" href="https://pkg.go.dev/github.com/valkey-io/valkey-go#readme-getting-started">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="phpredis"
+                 data-search="phpredis a client implemented as a php extension in c. supports clustering, sentinel, client-side sharding and storing php sessions. php"
+                 data-desc="a client implemented as a php extension in c. supports clustering, sentinel, client-side sharding and storing php sessions."
+                 data-language="PHP"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/phpredis/phpredis/blob/6.3.0/README.md#connect-open">phpredis</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#4F5D95;color:#fff">PHP</span>PHP</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">A client implemented as a PHP extension in C. Supports clustering, Sentinel, client-side sharding and storing PHP sessions.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pie install phpredis/phpredis</code></span>
+            <button type="button" class="copy-btn" data-copy="pie install phpredis/phpredis"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+              
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(2)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Reuse a pool of established connections rather than dialing one per command." data-feature="pool">Connection pooling</li>
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">PHP-3.01</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/phpredis/phpredis">Repository</a>
+            <a class="link-site" href="https://github.com/phpredis/phpredis/blob/6.3.0/README.md#connect-open">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="predis"
+                 data-search="predis a pure-php client with no extension to compile. supports clustering, replication and transparent key prefixing. php"
+                 data-desc="a pure-php client with no extension to compile. supports clustering, replication and transparent key prefixing."
+                 data-language="PHP"
+                 data-first-party="false">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://github.com/predis/predis/blob/v3.6.1/README.md#connecting-to-redis">predis</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#4F5D95;color:#fff">PHP</span>PHP</span>
+              
+            </div>
+          </div>
+
+          <p class="entry-desc">A pure-PHP client with no extension to compile. Supports clustering, replication and transparent key prefixing.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">composer require predis/predis</code></span>
+            <button type="button" class="copy-btn" data-copy="composer require predis/predis"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(1)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">MIT</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/predis/predis">Repository</a>
+            <a class="link-site" href="https://github.com/predis/predis/blob/v3.6.1/README.md#connecting-to-redis">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey-swift"
+                 data-search="valkey-swift a swift client built on swift concurrency and nio, for server-side swift and apple platforms. swift"
+                 data-desc="a swift client built on swift concurrency and nio, for server-side swift and apple platforms."
+                 data-language="Swift"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://swiftpackageindex.com/valkey-io/valkey-swift/documentation/valkey/getting-started">valkey-swift</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#F05138;color:#fff">Sw</span>Swift</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">A Swift client built on Swift Concurrency and NIO, for server-side Swift and Apple platforms.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">swift package add-dependency https://github.com/valkey-io/valkey-swift</code></span>
+            <button type="button" class="copy-btn" data-copy="swift package add-dependency https://github.com/valkey-io/valkey-swift"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(3)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Announce client capabilities so the server can hand off slot redirections cleanly during upgrades and failover." data-feature="capa">Advanced capabilities</li>
+                
+              
+                
+                <li class="feature-badge" title="Reuse a pool of established connections rather than dialing one per command." data-feature="pool">Connection pooling</li>
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-swift">Repository</a>
+            <a class="link-site" href="https://swiftpackageindex.com/valkey-io/valkey-swift/documentation/valkey/getting-started">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey glide c#"
+                 data-search="valkey glide c# designed for reliability, optimized performance, and high-availability. the .net client over the shared rust core, with stackexchange.redis api compatibility. c#"
+                 data-desc="designed for reliability, optimized performance, and high-availability. the .net client over the shared rust core, with stackexchange.redis api compatibility."
+                 data-language="C#"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://glide.valkey.io/getting-started/quickstart/?lang=c%23">Valkey GLIDE C#</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#178600;color:#fff">C#</span>C#</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Designed for reliability, optimized performance, and high-availability. The .NET client over the shared Rust core, with StackExchange.Redis API compatibility.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">dotnet add package Valkey.Glide</code></span>
+            <button type="button" class="copy-btn" data-copy="dotnet add package Valkey.Glide"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+              
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(4)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+                <li class="feature-badge" title="Iterate keys consistently across every shard, tracking slot migrations that happen mid-scan." data-feature="scan">SCAN family</li>
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Reuse a pool of established connections rather than dialing one per command." data-feature="pool">Connection pooling</li>
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-glide-csharp">Repository</a>
+            <a class="link-site" href="https://glide.valkey.io/getting-started/quickstart/?lang=c%23">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey glide php"
+                 data-search="valkey glide php designed for reliability, optimized performance, and high-availability. glide is a multi-language client with one shared rust core and per-language bindings. php"
+                 data-desc="designed for reliability, optimized performance, and high-availability. glide is a multi-language client with one shared rust core and per-language bindings."
+                 data-language="PHP"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://glide.valkey.io/getting-started/quickstart/?lang=php">Valkey GLIDE PHP</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#4F5D95;color:#fff">PHP</span>PHP</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Designed for reliability, optimized performance, and high-availability. GLIDE is a multi-language client with one shared Rust core and per-language bindings.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">pie install valkey-io/valkey-glide-php</code></span>
+            <button type="button" class="copy-btn" data-copy="pie install valkey-io/valkey-glide-php"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+              
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(4)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf." data-feature="pubsub">Pub/Sub</li>
+                
+              
+                
+                <li class="feature-badge" title="Iterate keys consistently across every shard, tracking slot migrations that happen mid-scan." data-feature="scan">SCAN family</li>
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost." data-feature="az">AZ affinity</li>
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-glide-php">Repository</a>
+            <a class="link-site" href="https://glide.valkey.io/getting-started/quickstart/?lang=php">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+        
+        
+        
+        
+        <article class="entry-card"
+                 data-name-lower="valkey glide ruby"
+                 data-search="valkey glide ruby designed for reliability, optimized performance, and high-availability. a synchronous ruby client over the shared rust core, prebuilt for linux and apple silicon macos. ruby"
+                 data-desc="designed for reliability, optimized performance, and high-availability. a synchronous ruby client over the shared rust core, prebuilt for linux and apple silicon macos."
+                 data-language="Ruby"
+                 data-first-party="true">
+          <div class="entry-head">
+            <h2 class="entry-name">
+              <a href="https://glide.valkey.io/getting-started/quickstart/?lang=ruby">Valkey GLIDE Ruby</a>
+            </h2>
+            <div class="entry-tags">
+              <span class="chip chip-language"><span class="lang-badge" aria-hidden="true"
+                      style="background:#701516;color:#fff">Rb</span>Ruby</span>
+              <span class="chip chip-project"><img class="chip-icon" src="/valkey-io.github.io/pr-21/img/Valkey-logo.svg" alt="" aria-hidden="true">Valkey</span>
+            </div>
+          </div>
+
+          <p class="entry-desc">Designed for reliability, optimized performance, and high-availability. A synchronous Ruby client over the shared Rust core, prebuilt for Linux and Apple silicon macOS.</p>
+
+          
+          
+          <div class="entry-anchor">
+          <div class="entry-anchor-top">
+          
+          <div class="cmd">
+            <span class="cmd-scroll"><code class="install-cmd">gem install valkey-glide-rb</code></span>
+            <button type="button" class="copy-btn" data-copy="gem install valkey-glide-rb"
+                    aria-label="Copy install command">Copy</button>
+          </div>
+          
+
+          
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+            
+          
+            
+              
+            
+          
+            
+          
+            
+          
+            
+          
+          <details class="disc">
+            <summary>Advanced features supported <span class="disc-count">(2)</span></summary>
+            
+            <ul class="feature-list">
+              
+                
+                <li class="feature-badge" title="Route read commands to replicas instead of the primary, spreading read load across the topology." data-feature="replica">Replica reads</li>
+                
+              
+                
+              
+                
+              
+                
+              
+                
+              
+                
+                <li class="feature-badge" title="Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost." data-feature="az">AZ affinity</li>
+                
+              
+                
+              
+                
+              
+                
+              
+            </ul>
+            
+          </details>
+          </div>
+
+          <div class="entry-anchor-bottom">
+          <dl class="kv"><dt>License</dt><dd><span class="num">Apache-2.0</span></dd></dl>
+
+          <footer class="entry-foot">
+            <a class="link-repo" href="https://github.com/valkey-io/valkey-glide-ruby">Repository</a>
+            <a class="link-site" href="https://glide.valkey.io/getting-started/quickstart/?lang=ruby">Documentation</a>
+          </footer>
+          </div>
+          </div>
+        </article>
+      
+
+      
+
+      
+      <div class="empty-state" data-empty-state hidden>
+        <p class="empty-msg">No clients match your current search and filters.</p>
+        <ul class="empty-recovery" data-recovery>
+          <li><button type="button" data-recover="clear-filters">Clear filters</button></li>
+          <li><button type="button" data-recover="clear-search">Clear search</button></li>
+        </ul>
+      </div>
+
+    </section>
+
+    
+    <section class="legend" data-legend aria-label="Feature definitions">
+      <h2 class="legend-title">Feature definitions</h2>
+      <dl class="legend-list">
+        
+        
+        <div class="legend-item" data-feature="replica">
+          <dt class="legend-term">Replica reads</dt>
+          <dd class="legend-def">Route read commands to replicas instead of the primary, spreading read load across the topology.</dd>
+        </div>
+        
+        
+        
+        
+        
+        <div class="legend-item" data-feature="pubsub">
+          <dt class="legend-term">Pub/Sub</dt>
+          <dd class="legend-def">Re-subscribe to channels and patterns automatically after a reconnect or topology change, so subscribers never go silently deaf.</dd>
+        </div>
+        
+        
+        
+        <div class="legend-item" data-feature="scan">
+          <dt class="legend-term">SCAN family</dt>
+          <dd class="legend-def">Iterate keys consistently across every shard, tracking slot migrations that happen mid-scan.</dd>
+        </div>
+        
+        
+        
+        
+        
+        <div class="legend-item" data-feature="az">
+          <dt class="legend-term">AZ affinity</dt>
+          <dd class="legend-def">Prefer replicas in the client’s own availability zone to cut cross-AZ latency and transfer cost.</dd>
+        </div>
+        
+        
+        
+        <div class="legend-item" data-feature="csc">
+          <dt class="legend-term">Client-side caching</dt>
+          <dd class="legend-def">Keep hot values in the application process and let the server invalidate them, removing a round trip entirely.</dd>
+        </div>
+        
+        
+        
+        <div class="legend-item" data-feature="capa">
+          <dt class="legend-term">Advanced capabilities</dt>
+          <dd class="legend-def">Announce client capabilities so the server can hand off slot redirections cleanly during upgrades and failover.</dd>
+        </div>
+        
+        
+        
+        <div class="legend-item" data-feature="pool">
+          <dt class="legend-term">Connection pooling</dt>
+          <dd class="legend-def">Reuse a pool of established connections rather than dialing one per command.</dd>
+        </div>
+        
+        
+      </dl>
+    </section>
+    
+
+    
+    <h2 class="submission-heading">Add your client, tool or integration</h2>
+    <p class="submission-lede">Building something on Valkey - a client, a module, a tool, or an AI integration? We'd love to see it here alongside the rest. Everything on this page lives in valkey-io repo, so adding yours is just a pull request away.</p>
+    <a class="submission-cta" href="https://github.com/valkey-io/valkey-io.github.io/blob/main/.github/PULL_REQUEST_TEMPLATE/add_library.md">Add your library</a>
+  </div>
+
+  <noscript>
+    <p class="catalog-nojs-note">Showing every library. Interactive filtering, search, and sorting require JavaScript.</p>
+  </noscript>
+
+
+  <script defer src="/valkey-io.github.io/pr-21/assets/js/libraries.js"></script>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

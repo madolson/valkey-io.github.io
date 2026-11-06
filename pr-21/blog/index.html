@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="Stay up to date with the latest news, tutorials, and updates from the Valkey team." />
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Blog</title>
+    <meta name="title" property="og:title" content="Valkey: Blog">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+  <div class="styled-title">
+    <h1>Blog</h1>
+    <p>Stay up to date with the latest news, tutorials, and updates from the Valkey team.</p>
+  </div>
+
+<div class="left-aside">
+    <main>
+        <div class="blog-inner">
+            
+  
+  
+  <div class="blog-type-filters" hidden>
+    <label for="blog-type-select" class="sr-only">Filter posts by type</label>
+    <select id="blog-type-select">
+      <option value="All">All Types</option>
+      
+      <option value="Announcements">Announcements</option>
+      
+      <option value="Community Highlight">Community Highlight</option>
+      
+      <option value="Events">Events</option>
+      
+      <option value="How-to">How-to</option>
+      
+      <option value="Technical Deep Dive">Technical Deep Dive</option>
+      
+    </select>
+  </div>
+  
+  <ul class="blog-list">
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/large-object-caching/">How Valkey 9.0 reduces the large object noisy neighbor problem</a></h2>
+      <div class="meta">Tuesday November  3, 2026</div>
+      <p>A few 10MB requests per second wrecked the tail latency of a 100K req/s workload on Valkey 8.1. Reply copy avoidance in Valkey 9.0 cuts p99.9 from 26.2ms to 3.10ms.</p>
+    </li>
+    
+    
+    
+    <li data-type="Events">
+      
+      <span class="blog-type-badge" data-type="Events">Events</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/Valkeyconf-closing-keynote/">Valkey's Next Chapter: Durability and Beyond</a></h2>
+      <div class="meta">Thursday October 29, 2026</div>
+      <p>Technical recap of the ValkeyConf 2026 closing keynote by Harkrishn Patro and Viktor Söderqvist. Covers features in development including durability, Cluster V2, data tiering, and active-active replication.</p>
+    </li>
+    
+    
+    
+    <li data-type="How-to">
+      
+      <span class="blog-type-badge" data-type="How-to">How-to</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/testing-without-a-server-fakevalkey/">Testing without a server: using FakeValkey, the in-memory test double for Valkey</a></h2>
+      <div class="meta">Monday October 26, 2026</div>
+      <p>FakeValkey runs the Valkey command set inside your Python test process, with no server, container, or network connection.
+Here is how to use it, how it keeps pace with Valkey, and when you still need a real server.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-glide-ruby-client/">Introducing the Valkey GLIDE Ruby Client: Now Generally Available!</a></h2>
+      <div class="meta">Thursday October 22, 2026</div>
+      <p>The Ruby client for Valkey GLIDE, valkey-glide-rb, is now generally available, bringing GLIDE's shared Rust core, proactive connection management, cluster topology handling, and native observability to the Ruby ecosystem.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/kv-caching-on-valkey/">KV caching on Valkey: 2× faster responses and 25% more requests</a></h2>
+      <div class="meta">Tuesday October 20, 2026</div>
+      <p>Your GPUs spend part of every request re-reading context they already processed. We moved the KV cache to Valkey, and the same two GPU nodes served 25% more requests with replies streaming twice as fast.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/ValkeyConf2026/">ValkeyConf 2026: Nobody Owns Valkey. That's Why It's Working.</a></h2>
+      <div class="meta">Thursday October 15, 2026</div>
+      <p>ValkeyConf 2026 brought the community to Prague to explore Valkey 9.2, performance improvements, AI infrastructure, and open governance.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/announcing-planet-valkey/">Announcing Planet Valkey</a></h2>
+      <div class="meta">Wednesday October 14, 2026</div>
+      <p>I am pleased to announce the launch of Planet Valkey: a single destination for Valkey content.</p>
+    </li>
+    
+    
+    
+    <li data-type="How-to">
+      
+      <span class="blog-type-badge" data-type="How-to">How-to</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/monitoring-valkey-with-prometheus/">Monitoring Valkey with Prometheus</a></h2>
+      <div class="meta">Monday September 28, 2026</div>
+      <p>Learn how to expose Valkey metrics to Prometheus, visualize them in Grafana, and choose the right exporter for your deployment.</p>
+    </li>
+    
+    
+    
+    <li data-type="How-to">
+      
+      <span class="blog-type-badge" data-type="How-to">How-to</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/browsing-a-valkey-keyspace-safely/">Browsing a Valkey keyspace safely: SCAN, INFO, and a read-only ACL user</a></h2>
+      <div class="meta">Thursday September 24, 2026</div>
+      <p>Pointing a graphical client at a Valkey server that is taking traffic raises two questions: how to safely collect data from the server, and how to properly authorize the access. This post covers how LibreDB Studio answers the first and best practices for the second.</p>
+    </li>
+    
+    
+    
+    <li data-type="How-to">
+      
+      <span class="blog-type-badge" data-type="How-to">How-to</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-prometheus-exporters/">Valkey Metrics in Prometheus: redis_exporter and BetterDB</a></h2>
+      <div class="meta">Tuesday September 22, 2026</div>
+      <p>A starting point for monitoring Valkey with Prometheus: two exporters, per-pod and cluster-wide metrics.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/keeping-up-with-ai-valkey-security/">Keeping up with AI: Valkey security in 2026</a></h2>
+      <div class="meta">Thursday September 17, 2026</div>
+      <p>Valkey published more security advisories in the first eight months of 2026 than in its first twenty-one. AI made bugs cheaper to find. This post covers how the Valkey community is keeping up.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/finding-big-keys-in-a-running-valkey-cluster/">Finding big keys in a running Valkey cluster with Valkey Admin</a></h2>
+      <div class="meta">Thursday September 10, 2026</div>
+      <p>Valkey Admin 1.1 adds big key detection, so you can find the largest keys across every shard of a running cluster from a single view, without parsing an RDB file offline or writing your own SCAN loop.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration-acl-requirements/">Analyzing Atomic Slot Migration ACL requirements</a></h2>
+      <div class="meta">Tuesday September  1, 2026</div>
+      <p>Explains the ACL permissions required by Atomic Slot Migration and how to debug permission failures</p>
+    </li>
+    
+    
+    
+    <li data-type="How-to">
+      
+      <span class="blog-type-badge" data-type="How-to">How-to</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/what-is-valkey-benchmark/">Simulating Real Workloads with valkey-benchmark</a></h2>
+      <div class="meta">Tuesday August 25, 2026</div>
+      <p>A practical guide to shaping valkey-benchmark's default run into a realistic workload simulation</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/9.1-memory-efficiency/">Reducing Memory Overhead in Valkey 9.1</a></h2>
+      <div class="meta">Thursday August 13, 2026</div>
+      <p>With Valkey 9.1, per-key memory overhead is cut by up to 44% for strings and up to 8.5 bytes per sorted set member, without changing a single command or configuration.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/modern-ai-workloads-mapping-to-valkey/">How modern AI workloads map to Valkey primitives</a></h2>
+      <div class="meta">Wednesday August  5, 2026</div>
+      <p>A horizontal tour of the AI inference stack - semantic caching, KV cache offload, hybrid retrieval, admission control, and observability - and the Valkey primitives each layer maps to.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/unlocked-healthy-opps/">The Power of Community: Driving Innovation across the Valkey Ecosystem</a></h2>
+      <div class="meta">Thursday July 30, 2026</div>
+      <p>The community gathered at the Valkey Unlocked Conference to celebrate two years of innovation and ecosystem growth. In a keynote titled, *The Power of Community*, Sailesh Krishnamurthy (VP of Engineering at Google)</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/harbor-chose-valkey/">Harbor Chose Valkey</a></h2>
+      <div class="meta">Tuesday July 28, 2026</div>
+      <p>With v2.15.2, Harbor replaced Redis with Valkey as its internal cache backend. Here is why the CNCF graduated container registry made the switch and how you can run it today.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/secret-life-of-data/">The secret life of data in Valkey</a></h2>
+      <div class="meta">Tuesday July 21, 2026</div>
+      <p>If you’ve used Valkey for very long you’re probably well aware of the different data types, however what lies under the surface of these types could be the missing piece of your cost optimization strategy.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/percona-spotlight/">Caching up with the Community: Deep Dive with Percona’s Kyle Davis</a></h2>
+      <div class="meta">Thursday July  9, 2026</div>
+      <p>This segment features Kyle Davis, Percona's General Manager of the Redis and Valkey Ecosystem, explores how Valkey complements relational databases with high-performance in-memory caching, simplifies application development through native data structures, and enables low-latency workloads at scale. The conversation also covers the memory efficiency improvements and database-level ACLs introduced in Valkey 9.1, making it easier to consolidate secure, multi-tenant deployments.</p>
+    </li>
+    
+    
+    
+    <li data-type="Events">
+      
+      <span class="blog-type-badge" data-type="Events">Events</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkeyconf-26/">ValkeyConf: The Valkey Community Comes to Prague</a></h2>
+      <div class="meta">Tuesday June 30, 2026</div>
+      <p>Announcing ValkeyConf 2026 on October 5, 2026 in Prague, Czechia</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/unlockedconference-recap/">Unlocked Seattle: The Best Systems Let You Sleep At Night </a></h2>
+      <div class="meta">Thursday June 11, 2026</div>
+      <p>Unlocked Seattle brought together the engineers behind some of the world’s largest systems to share the hard-earned lessons that keep infrastructure reliable at 3AM.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/managing-connection-storms-in-valkey-at-scale/">Managing Connection Storms in Valkey at Scale</a></h2>
+      <div class="meta">Wednesday June 10, 2026</div>
+      <p>When Valkey metrics look fine but your app is failing, the problem is often connection storms, retry floods, and fleet-wide coordination.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/momento/">Caching up with the Community: A Conversation with Daniela Miao on Valkey and Momento</a></h2>
+      <div class="meta">Wednesday June  3, 2026</div>
+      <p>This segment features Daniela Miao, Co-founder and CTO of Momento, discussing her journey into open source, the technical advantages of building on Valkey, and how high-scale infrastructure supports some of the world's largest live events.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/">Valkey 9.1 delivers improvements in security, performance, and more</a></h2>
+      <div class="meta">Tuesday May 19, 2026</div>
+      <p>The Valkey community is excited to announce Valkey version 9.1. This latest release includes new functionality and improvements for security, observability, performance, efficiency, and tooling from over eighty contributors. Let's take a look at a few of the highlights in this release.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/">Introducing Valkey Admin 1.0: Visual Cluster Management for Valkey</a></h2>
+      <div class="meta">Tuesday May 12, 2026</div>
+      <p>Valkey Admin is a new open source observability and management tool from the Valkey project that brings cluster visibility, data inspection, and troubleshooting into a single view. It ships as a native desktop application for macOS and Linux, and as a containerized web deployment on Docker and Kubernetes.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/ai-agent-memory-with-valkey-and-mem0/">Reduce Token Cost for LLMs: AI Agent Memory with Valkey and Mem0</a></h2>
+      <div class="meta">Tuesday May  5, 2026</div>
+      <p>This blog dives into how agent memory works and details an implementation using Valkey.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-swift-1.0/">Valkey-swift - Announcing 1.0 Release</a></h2>
+      <div class="meta">Thursday April 30, 2026</div>
+      <p>We are excited to announce the 1.0 release of valkey-swift, a client library for Valkey written in Swift.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/on-release-candidates/">On release candidates</a></h2>
+      <div class="meta">Tuesday April 28, 2026</div>
+      <p>A release candidate just came out for Valkey. You’ve likely heard of the term before but do you know what it really means?</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-at-laracon-india-2026/">Valkey Meets Laravel: Bridging Open Source Communities at Laracon India 2026</a></h2>
+      <div class="meta">Thursday April 23, 2026</div>
+      <p>Valkey participated as a sponsor at Laracon India 2026, connecting with 900 attendees and demonstrating how Valkey can power Laravel applications with zero vendor lock-in and zero code changes.</p>
+    </li>
+    
+    
+    
+    <li data-type="Events">
+      
+      <span class="blog-type-badge" data-type="Events">Events</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/victory-at-hackncstate/">Victory at HackNC State: Innovating for the Telecom Industry with Valkey</a></h2>
+      <div class="meta">Wednesday April 15, 2026</div>
+      <p>HackNCState hackathon experience by the winning team</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/spring-data-valkey/">Announcing Spring Data Valkey: A New Season for High-Performance Spring Applications</a></h2>
+      <div class="meta">Wednesday April  1, 2026</div>
+      <p>Introducing Spring Data Valkey, a new open source Spring Data module that provides first-class integration between Valkey and the Spring ecosystem.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-tooling-primitives/">What Valkey's new primitives tell us about the tools we need</a></h2>
+      <div class="meta">Friday March 27, 2026</div>
+      <p>Valkey ships powerful operational primitives like COMMANDLOG, SLOT-STATS, and upcoming per-thread I/O metrics — but without purpose-built tooling, much of that value goes unrealized.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-search-1_2/">Beyond Vectors: Introducing Full-Text Search and Aggregations to Valkey</a></h2>
+      <div class="meta">Tuesday March 17, 2026</div>
+      <p>Valkey Search now enables querying across text, tags, and numeric data and analyzing results with aggregations.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin/">Introducing Valkey Admin: Visual Cluster Management for Valkey</a></h2>
+      <div class="meta">Wednesday February 25, 2026</div>
+      <p>Valkey Admin is an open-source desktop application that provides visual cluster topology, hot key detection, performance diagnostics, and interactive key management for Valkey clusters without piecing together CLI commands. Now in preview!</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/operational-lessons/">Operational Lessons from Large-Scale Valkey Deployments</a></h2>
+      <div class="meta">Thursday February 19, 2026</div>
+      <p>Production lessons on tail latency, migrations, and scale from engineers operating Valkey at real-world scale.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-newsletter-new/">Don’t Miss What’s Next in Valkey — Subscribe Now</a></h2>
+      <div class="meta">Wednesday February  4, 2026</div>
+      <p>Valkey is moving fast — and the easiest way to stay ahead is to subscribe to the official Valkey newsletter. From new releases and roadmap milestones to community highlights and upcoming events, our newsletter is your single source of truth for everything happening across the Valkey ecosystem.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/2025-year-end/">Valkey 2025 Year-End Review: Reflecting on Progress and Looking Ahead</a></h2>
+      <div class="meta">Thursday January 22, 2026</div>
+      <p>This past year marked an important chapter for Valkey, one defined by growth, collaboration, and a shared commitment to building an open, high-performance key-value store for everyone.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-helm-chart/">Valkey Helm: The new way to deploy Valkey on Kubernetes</a></h2>
+      <div class="meta">Tuesday January  6, 2026</div>
+      <p>A guide on why the new Valkey Helm chart exists, how it helps, and how to migrate from Bitnami.</p>
+    </li>
+    
+    
+    
+    <li data-type="How-to">
+      
+      <span class="blog-type-badge" data-type="How-to">How-to</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/properly-secure-your-valkey-deployment/">How to Properly Secure Your Valkey Deployment</a></h2>
+      <div class="meta">Friday December 12, 2025</div>
+      <p>Learn how to secure your Valkey deployment with defense in depth through network configuration, authentication, access controls, and operational best practices for production environments</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/atomic-slot-migration/">Resharding, Reimagined: Introducing Atomic Slot Migration</a></h2>
+      <div class="meta">Wednesday October 29, 2025</div>
+      <p>Valkey 9.0 brings big changes and improvements to the underlying mechanisms of resharding. Find out how Atomic Slot Migration works, the benefits it brings, and the headaches it eliminates.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-9/">Valkey 9.0: innovation, features, and improvements.</a></h2>
+      <div class="meta">Tuesday October 21, 2025</div>
+      <p> 
+For Valkey's second major release, Valkey 9.0 brings innovation, long-requested features, and improvements to classic features updated for today’s workloads.
+Read on to find out all the team packed into this release.
+    </p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/1-billion-rps/">Scaling a Valkey Cluster to 1 Billion Request per Second</a></h2>
+      <div class="meta">Monday October 20, 2025</div>
+      <p>Learn about the internal workings of cluster mode and the improvements which helped to scale to 1 Billion RPS with the latest Valkey 9.0 release</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/50-million-zsets/">How Valkey 8.1 Handles 50 Million Sorted Set Inserts</a></h2>
+      <div class="meta">Thursday October  2, 2025</div>
+      <p> 
+The latest Valkey 8.1 release introduces a redesigned hash table and other optimizations that promise lower memory usage and higher throughput. In this post, we put Valkey 8.1 under pressure by benchmarking it against Valkey 8.0, inserting 50 million members into a sorted set and measuring memory consumption and throughput along the way.
+    </p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hash-fields-expiration/">Introducing Hash Field Expirations</a></h2>
+      <div class="meta">Tuesday September 30, 2025</div>
+      <p> 
+    One of Valkey’s greatest strengths has always been its built-in ability to expire keys.
+    This simple but powerful feature helps developers keep datasets fresh, automatically clear caches, and enforce session lifetimes — all without extra application logic.
+    But until now, expiration worked only at the level of entire keys.  
+    In this post, we’ll explore how Valkey 9.0 introduces per-field expiration for hash objects, 
+    the challenges we faced designing it, the tradeoffs we considered, and the benchmarks that guided our final implementation.  
+    We’ll also walk through practical examples to show how you can start using this feature today.
+    </p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/numbered-databases/">Numbered Databases in Valkey 9.0</a></h2>
+      <div class="meta">Thursday September 25, 2025</div>
+      <p>Valkey 9.0 brings new namespacing abilities to cluster mode. In this blog you'll learn about numbered databases, how they've changed in the recent release, limitations, and how you can use them to efficiently solve a variety of otherwise challenging problems.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-investment-in-open-source/">Valkey: An Investment in Open Source</a></h2>
+      <div class="meta">Tuesday September 16, 2025</div>
+      <p>Valkey was founded just over a year ago to keep high-performance key/value storage in the open source community: free from vendor lock-in and restrictive licenses.</p>
+    </li>
+    
+    
+    
+    <li data-type="Events">
+      
+      <span class="blog-type-badge" data-type="Events">Events</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/keyspace-schedule/">What you'll see at Keyspace 2025</a></h2>
+      <div class="meta">Tuesday August 12, 2025</div>
+      <p>I sat on the selection committee for Keyspace and was floored by the number and quality of submissions we received. It's truly amazing to see the talent and depth of experience that is present in the Valkey community manifest in a slate of presentations aimed to interest both experienced and new Valkey users.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-swift/">Introducing valkey-swift, the Swift client for Valkey</a></h2>
+      <div class="meta">Monday August  4, 2025</div>
+      <p>The new Swift client for Valkey is now in preview. Learn about its features and how it brings the performance of Valkey to the Swift language.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-on-k0rdent/">Using k0rdent MultiClusterService Template for Valkey on Kubernetes</a></h2>
+      <div class="meta">Monday July 21, 2025</div>
+      <p>Learn how to deploy and manage Valkey across multiple Kubernetes clusters using k0rdent's template-driven approach for simplified multi-cluster application delivery.</p>
+    </li>
+    
+    
+    
+    <li data-type="Events">
+      
+      <span class="blog-type-badge" data-type="Events">Events</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/keyspace-save-the-date/">Save the Date August 28, 2025: Keyspace</a></h2>
+      <div class="meta">Thursday July 10, 2025</div>
+      <p>Join the Valkey crew on August 28, 2025 in Amsterdam for the first ever Valkey conference: Keyspace!</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-search/">Introducing Vector Search To Valkey</a></h2>
+      <div class="meta">Monday July  7, 2025</div>
+      <p>Learn how to build high-performance, reliable vector similarity search with valkey-search.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-enhanced-json-capabilities-in-valkey/">Introducing Enhanced JSON Capabilities in Valkey</a></h2>
+      <div class="meta">Monday June 30, 2025</div>
+      <p>Learn about the new Valkey JSON with some real-world examples and application.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/">valkey-bundle: One stop shop for real-time applications</a></h2>
+      <div class="meta">Monday June 23, 2025</div>
+      <p>Introducing valkey-bundle a single-container solution that combines Valkey with JSON, Bloom filters, Vector Similarity Search, and LDAP authentication capabilities to power development of real-time applications</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/performance-optimization-methodology-for-valkey/">Performance Optimization Methodology for Valkey - Part 1</a></h2>
+      <div class="meta">Tuesday May 27, 2025</div>
+      <p>Performance Optimization Methodology for Valkey</p>
+    </li>
+    
+    
+    
+    <li data-type="How-to">
+      
+      <span class="blog-type-badge" data-type="How-to">How-to</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-modules-rust-sdk-updates/">Valkey Modules Rust SDK updates</a></h2>
+      <div class="meta">Tuesday May 20, 2025</div>
+      <p>Extending Valkey using Rust SDK.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/upgrade-stories-vol1/">Upgrade Stories from the Community, Volume 1:</a></h2>
+      <div class="meta">Wednesday May 14, 2025</div>
+      <p>Two new Valkey users describe what it's really like to upgrade</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-bloom-filters/">Introducing Bloom Filters for Valkey</a></h2>
+      <div class="meta">Wednesday April  9, 2025</div>
+      <p>Learn how to use bloom filters to perform large-scale membership testing with significant memory savings.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-1-0-ga/">Valkey 8.1: Continuing to Deliver Enhanced Performance and Reliability</a></h2>
+      <div class="meta">Wednesday April  2, 2025</div>
+      <p>Valkey 8.1 is now generally available! Come learn about the exciting improvements in performance, reliability, and observability that are available in this new version.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/new-hash-table/">A new hash table</a></h2>
+      <div class="meta">Friday March 28, 2025</div>
+      <p>Designing a state-of-the art hash table</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/2025-03-4-go-client-in-public-preview/">Introducing the Valkey Glide Go Client: Now in Public Preview!</a></h2>
+      <div class="meta">Tuesday March  4, 2025</div>
+      <p>Valkey Glide now supports GO. Read to learn more about the new client designed for performance and developer productivity</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/az-affinity-strategy/">Reducing application latency and lowering Cloud bill by setting up your client library</a></h2>
+      <div class="meta">Wednesday January  8, 2025</div>
+      <p>By implementing AZ affinity routing in Valkey and using GLIDE, you can achieve lower latency and cost savings by routing requests to replicas in the same AZ as the client.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/2024-year-of-valkey/">2024: The Year of Valkey</a></h2>
+      <div class="meta">Friday December 20, 2024</div>
+      <p>The end of the calendar year is a great time to reflect, but for Valkey this particular year-end holds special meaning.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/">Pushing the limits of Valkey on a Raspberry Pi</a></h2>
+      <div class="meta">Thursday November 21, 2024</div>
+      <p>While most people won't go to production on a Raspberry Pi, we'll cover how to thoroughly performance test Valkey to understand how it works in production.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-ga/">Generally Available: Valkey 8.0.0</a></h2>
+      <div class="meta">Monday September 16, 2024</div>
+      <p>Today marks a milestone for the Valkey project: the first major release.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/unlock-one-million-rps-part2/">Unlock 1 Million RPS: Experience Triple the Speed with Valkey - part 2</a></h2>
+      <div class="meta">Friday September 13, 2024</div>
+      <p>Maximize the performance of your hardware with memory access amortization</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-memory-efficiency-8-0/">Storing more with less: Memory Efficiency in Valkey 8</a></h2>
+      <div class="meta">Wednesday September  4, 2024</div>
+      <p>Learn about the new memory efficiency improvements in Valkey 8 which reduces memory overhead, which allows more data to be stored in the same amount of memory.</p>
+    </li>
+    
+    
+    
+    <li data-type="Technical Deep Dive">
+      
+      <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/unlock-one-million-rps/">Unlock 1 Million RPS: Experience Triple the Speed with Valkey</a></h2>
+      <div class="meta">Monday August  5, 2024</div>
+      <p>Learn about the new performance improvements in Valkey 8 which reduces cost, improves latency and makes our environment greener.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-0-0-rc1/">Valkey 8.0: Delivering Enhanced Performance and Reliability</a></h2>
+      <div class="meta">Friday August  2, 2024</div>
+      <p>The first release candidate of Valkey 8.0 is now available! Come learn about the exciting improvements in performance, reliability, and observability that are available in this new version.</p>
+    </li>
+    
+    
+    
+    <li data-type="How-to">
+      
+      <span class="blog-type-badge" data-type="How-to">How-to</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/using-bitnami-valkey-chart/">Using Bitnami's Valkey chart</a></h2>
+      <div class="meta">Tuesday July  9, 2024</div>
+      <p>An introductory example using Bitnami's Valkey chart</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/whats-new-june-2024/">What's new in Valkey for June 2024</a></h2>
+      <div class="meta">Thursday June 27, 2024</div>
+      <p>What have people been saying about Valkey in June 2024? Read on to find out.</p>
+    </li>
+    
+    
+    
+    <li data-type="Community Highlight">
+      
+      <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/may-roundup/">What's new in Valkey for May 2024</a></h2>
+      <div class="meta">Friday May 24, 2024</div>
+      <p>It's become clear that people want to talk about Valkey and have been publishing blog posts/articles fervently. Here you'll find a collection of all the post I'm aware of in the last few weeks.</p>
+    </li>
+    
+    
+    
+    <li data-type="How-to">
+      
+      <span class="blog-type-badge" data-type="How-to">How-to</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/modules-101/">Valkey Modules 101</a></h2>
+      <div class="meta">Wednesday May  1, 2024</div>
+      <p>The idea of modules is to allow adding extra features (such as new commands and data types) to Valkey without making changes to the core code.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-7-2-5-out/">Valkey 7.2.5 GA is out!</a></h2>
+      <div class="meta">Tuesday April 16, 2024</div>
+      <p>Exciting times!I'm pleased to announce that you can start using the first generally available, stable Valkey release today.</p>
+    </li>
+    
+    
+    
+    <li data-type="Announcements">
+      
+      <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+      
+      <h2><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/hello-world/">SET first-blog-post "Hello, world"</a></h2>
+      <div class="meta">Thursday April 11, 2024</div>
+      <p>Welcome! For the inaugural blog post on valkey.io, I’d like to recap the story so far, what to look forward to, and then describe how this blog works.</p>
+    </li>
+    
+  </ul>
+  <p class="blog-no-results" hidden>No posts match this filter.</p>
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var select = document.getElementById('blog-type-select');
+    if (!select) return;
+    var items = document.querySelectorAll('.blog-list li');
+    var noResults = document.querySelector('.blog-no-results');
+    select.closest('.blog-type-filters').hidden = false;
+
+    function applyFilter(type) {
+      var visible = 0;
+      items.forEach(function(li) {
+        var show = type === 'All' || li.getAttribute('data-type') === type;
+        li.hidden = !show;
+        if (show) visible++;
+      });
+      noResults.hidden = visible > 0;
+    }
+
+    try {
+      var initial = decodeURIComponent(location.hash.slice(1));
+      if (initial) {
+        var option = Array.from(select.options).find(function(o) { return o.value === initial; });
+        if (option) { select.value = initial; applyFilter(initial); }
+      }
+    } catch(e) {}
+
+    select.addEventListener('change', function() {
+      var type = select.value;
+      applyFilter(type);
+      history.replaceState(null, '', type === 'All' ? location.pathname + location.search : '#' + encodeURIComponent(type));
+    });
+  });
+  </script>
+
+        </div>
+    </main>
+    <aside>
+        
+  <div class="blog-featured">
+    <h2>Featured</h2>
+    
+      
+      
+        
+          <div class="blog-featured-card">
+            
+              <img src="/valkey-io.github.io/pr-21/assets/media/featured/banner.png" alt="ValkeyConf 2026: Nobody Owns Valkey. That&#39;s Why It&#39;s Working. featured image" class="blog-featured-image"/>
+            
+            <div class="info">
+              <h4><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/ValkeyConf2026/">ValkeyConf 2026: Nobody Owns Valkey. That&#39;s Why It&#39;s Working.</a></h4>
+              <p>ValkeyConf 2026 brought the community to Prague to explore Valkey 9.2, performance improvements, AI infrastructure, and open governance.</p>
+            </div>
+          </div>
+        
+          <div class="blog-featured-card">
+            
+            <div class="info">
+              <h4><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/announcing-planet-valkey/">Announcing Planet Valkey</a></h4>
+              <p>I am pleased to announce the launch of Planet Valkey: a single destination for Valkey content.</p>
+            </div>
+          </div>
+        
+          <div class="blog-featured-card">
+            
+            <div class="info">
+              <h4><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/monitoring-valkey-with-prometheus/">Monitoring Valkey with Prometheus</a></h4>
+              <p>Learn how to expose Valkey metrics to Prometheus, visualize them in Grafana, and choose the right exporter for your deployment.</p>
+            </div>
+          </div>
+        
+          <div class="blog-featured-card">
+            
+              <img src="/valkey-io.github.io/pr-21/assets/media/featured/security-shield-clean.webp" alt="Keeping up with AI: Valkey security in 2026 featured image" class="blog-featured-image"/>
+            
+            <div class="info">
+              <h4><a href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/keeping-up-with-ai-valkey-security/">Keeping up with AI: Valkey security in 2026</a></h4>
+              <p>Valkey published more security advisories in the first eight months of 2026 than in its first twenty-one. AI made bugs cheaper to find. This post covers how the Valkey community is keeping up.</p>
+            </div>
+          </div>
+        
+  </div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="Join the Valkey community: contribute code, docs, and content, speak at events, and connect with other Valkey users." />
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Community</title>
+    <meta name="title" property="og:title" content="Valkey: Community">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+
+
+
+
+
+<section class="community-logo-band">
+  <div class="community-logo-band-inner">
+    <div class="community-logo-band-head">
+      <a class="community-home-kicker" href="/valkey-io.github.io/pr-21/participants/">Valkey participants</a>
+      <button class="community-logo-pause" type="button" id="communityLogoPause" aria-pressed="false" aria-label="Pause the scrolling participant logos">Pause</button>
+    </div>
+    <div class="community-logo-row" role="group" aria-label="Valkey participant organizations">
+      <div class="community-logo-track" id="communityLogoTrack">
+        
+<div class="community-logo-set"><span class="community-logo-cell" title="Aiven" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/aiven.svg" alt="Aiven Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Alibaba Cloud" style="--logo-height: 30px">
+        <img src="/valkey-io.github.io/pr-21/img/alibaba.png" alt="Alibaba Cloud Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Amazon Web Services" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/aws.svg" alt="AWS logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="BetterDB" style="--logo-height: 38px">
+        <img src="/valkey-io.github.io/pr-21/img/betterdb-trimmed.svg" alt="BetterDB Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="ByteDance" style="--logo-height: 36px">
+        <img src="/valkey-io.github.io/pr-21/img/bytedance.svg" alt="ByteDance logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="DigitalOcean" style="--logo-height: 36px">
+        <img src="/valkey-io.github.io/pr-21/img/digitalocean.svg" alt="DigitalOcean Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Ericsson" style="--logo-height: 38px">
+        <img src="/valkey-io.github.io/pr-21/img/ericsson-horizontal.svg" alt="Ericsson logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Freshworks" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/freshworks-horizontal.png" alt="Freshworks Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Google Cloud" style="--logo-height: 37px">
+        <img src="/valkey-io.github.io/pr-21/img/gcp.svg" alt="Google Cloud logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Heroku - Salesforce" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/heroku.svg" alt="Heroku Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="IONOS Cloud" style="--logo-height: 28px">
+        <img src="/valkey-io.github.io/pr-21/img/ionos-cloud.svg" alt="IONOS Cloud logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="LibreDB Studio" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/libredb-studio.svg" alt="LibreDB Studio Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Momento" style="--logo-height: 33px">
+        <img src="/valkey-io.github.io/pr-21/img/momento.svg" alt="Momento Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="NetApp Instaclustr" style="--logo-height: 22px">
+        <img src="/valkey-io.github.io/pr-21/img/netapp_instaclustr-trimmed.svg" alt="NetApp Instaclustr logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Oracle Cloud Infrastructure" style="--logo-height: 27px">
+        <img src="/valkey-io.github.io/pr-21/img/Oracle.svg" alt="Oracle logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Percona" style="--logo-height: 34px">
+        <img src="/valkey-io.github.io/pr-21/img/percona-horizontal.svg" alt="Percona Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Solanica" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/solanica-trimmed.svg" alt="Solanica Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Tencent Cloud" style="--logo-height: 36px">
+        <img src="/valkey-io.github.io/pr-21/img/tencent-cloud.svg" alt="Tencent Cloud" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="UpCloud" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/upcloud.svg" alt="UpCloud Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Vultr" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/vultr.svg" alt="Vultr Logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="anynines" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/anynines.svg" alt="anynines logo" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="k0rdent" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/k0rdent.svg" alt="K0rdent Logo" loading="eager" decoding="async">
+      </span></div>
+
+        
+<div class="community-logo-set" aria-hidden="true"><span class="community-logo-cell" title="Aiven" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/aiven.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Alibaba Cloud" style="--logo-height: 30px">
+        <img src="/valkey-io.github.io/pr-21/img/alibaba.png" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Amazon Web Services" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/aws.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="BetterDB" style="--logo-height: 38px">
+        <img src="/valkey-io.github.io/pr-21/img/betterdb-trimmed.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="ByteDance" style="--logo-height: 36px">
+        <img src="/valkey-io.github.io/pr-21/img/bytedance.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="DigitalOcean" style="--logo-height: 36px">
+        <img src="/valkey-io.github.io/pr-21/img/digitalocean.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Ericsson" style="--logo-height: 38px">
+        <img src="/valkey-io.github.io/pr-21/img/ericsson-horizontal.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Freshworks" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/freshworks-horizontal.png" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Google Cloud" style="--logo-height: 37px">
+        <img src="/valkey-io.github.io/pr-21/img/gcp.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Heroku - Salesforce" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/heroku.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="IONOS Cloud" style="--logo-height: 28px">
+        <img src="/valkey-io.github.io/pr-21/img/ionos-cloud.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="LibreDB Studio" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/libredb-studio.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Momento" style="--logo-height: 33px">
+        <img src="/valkey-io.github.io/pr-21/img/momento.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="NetApp Instaclustr" style="--logo-height: 22px">
+        <img src="/valkey-io.github.io/pr-21/img/netapp_instaclustr-trimmed.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Oracle Cloud Infrastructure" style="--logo-height: 27px">
+        <img src="/valkey-io.github.io/pr-21/img/Oracle.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Percona" style="--logo-height: 34px">
+        <img src="/valkey-io.github.io/pr-21/img/percona-horizontal.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Solanica" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/solanica-trimmed.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Tencent Cloud" style="--logo-height: 36px">
+        <img src="/valkey-io.github.io/pr-21/img/tencent-cloud.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="UpCloud" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/upcloud.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="Vultr" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/vultr.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="anynines" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/anynines.svg" alt="" loading="eager" decoding="async">
+      </span><span class="community-logo-cell" title="k0rdent" style="--logo-height: 44px">
+        <img src="/valkey-io.github.io/pr-21/img/k0rdent.svg" alt="" loading="eager" decoding="async">
+      </span></div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<section class="community-home-hero" style="background-image: linear-gradient(90deg, rgba(42, 29, 116, 0.78), rgba(71, 70, 183, 0.66), rgba(83, 105, 255, 0.58)), url('/valkey-io.github.io/pr-21/img/community/hero-community.jpg');">
+  <div class="community-home-hero-copy">
+    <h1>Built by the community. For the community.</h1>
+    <p>Every contributor started somewhere: a bug report, a talk, a line of code. This community is built one key at a time. Yours starts here.</p>
+  </div>
+</section>
+
+
+<div class="community-home-canvas">
+
+
+<section class="community-home-connect">
+  <div>
+    <h2>Connect with us</h2>
+    <p>Ask questions, share ideas, and meet the Valkey community.</p>
+  </div>
+  <div class="community-home-connect-actions">
+    
+    <a href="/valkey-io.github.io/pr-21/slack" class="community-home-btn">Join Slack</a>
+    
+    <a href="https://github.com/orgs/valkey-io/discussions" class="community-home-btn" target="_blank" rel="noopener">GitHub Discussions</a>
+    
+  </div>
+</section>
+
+
+
+
+<section class="community-home-photos" aria-label="Community in action">
+  <div class="community-home-section-head">
+    <h2 class="community-home-kicker">Community in action</h2>
+    <div class="community-home-carousel-controls">
+      <button class="community-home-carousel-button" id="communityPhotoPrev" type="button" aria-label="Previous community photos">&lsaquo;</button>
+      <span class="community-home-carousel-status" id="communityPhotoStatus" aria-live="polite"></span>
+      <button class="community-home-carousel-button" id="communityPhotoNext" type="button" aria-label="Next community photos">&rsaquo;</button>
+    </div>
+  </div>
+  <div class="community-home-photo-viewport">
+    <div class="community-home-photo-track" id="communityPhotoTrack">
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-01.e5424f80c5badaa7.jpg" alt="Two Valkey speakers presenting on a conference stage" width="800" height="533" decoding="async">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-02.745b25debb0c5090.jpg" alt="Valkey maintainers at the KeySpace Beijing community meetup" width="800" height="533" decoding="async">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-08.93c0d06b90e86f73.jpg" alt="Valkey China community members at the Tencent Cloud booth" width="800" height="533" decoding="async">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-12.c29b144f2197a7c1.jpg" alt="A speaker presenting at PyCon AU with Valkey as a sponsor" width="800" height="1422" decoding="async" loading="lazy" style="object-position: center 25%;">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-03.dd75f12dc413bc90.jpg" alt="Community members celebrating Valkey&#39;s second birthday" width="800" height="600" decoding="async" loading="lazy">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-07.8b3ffade2b6076df.jpg" alt="Contributors posing with a wooden Valkey logo at the birthday celebration" width="800" height="533" decoding="async" loading="lazy">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-05.756b755f531b0ff5.jpg" alt="Valkey team members greeting visitors at a conference booth" width="800" height="532" decoding="async" loading="lazy">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-13.95796eeb6ad014e5.jpg" alt="Valkey community members at the SCaLE conference booth" width="800" height="533" decoding="async" loading="lazy">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-09.e6593c23772e873f.jpg" alt="Panel discussion at the KeySpace Beijing community event" width="800" height="533" decoding="async" loading="lazy">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-10.4f4caa5d922d6374.jpg" alt="Valkey community members at the Unlocked Conference photo booth" width="800" height="600" decoding="async" loading="lazy">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-11.395ed48af9d40ee5.jpg" alt="Student contributors wearing Valkey shirts at a community event" width="800" height="447" decoding="async" loading="lazy">
+      </figure>
+      
+      
+      <figure>
+        <img src="https://madolson.github.io/valkey-io.github.io/pr-21/processed_images/community-photo-04.d5ea2a80893d7a11.jpg" alt="React Hyderabad and Valkey community members at a meetup hosted at Amazon" width="800" height="533" decoding="async" loading="lazy">
+      </figure>
+      
+    </div>
+  </div>
+</section>
+
+</div>
+
+
+<div class="community-section community-section-home">
+  <div class="community-header">
+    <h2 id="ways-to-contribute">Ways to contribute</h2>
+<p>Pick the path that matches how you want to help.</p>
+
+  </div>
+  
+  <div class="community-card-grid community-card-grid-centered">
+    
+    <div class="community-card">
+      <img src="/valkey-io.github.io/pr-21/img/icon-code.svg" alt="" class="community-card-icon" />
+      <h3>Contribute to Core</h3>
+      <p>Help build the Valkey engine itself. Browse open issues, read the contributing guide, and submit a pull request to the core repository.</p>
+      <div class="community-card-actions">
+        
+        <a href="https://github.com/valkey-io/valkey" class="btn" target="_blank" rel="noopener">GitHub Repository</a>
+        
+        <a href="https://github.com/valkey-io/valkey/blob/unstable/CONTRIBUTING.md" class="btn" target="_blank" rel="noopener">Contributing Guide</a>
+        
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="/valkey-io.github.io/pr-21/img/icon-modules.svg" alt="" class="community-card-icon" />
+      <h3>Contribute to Modules</h3>
+      <p>Extend Valkey&#39;s capabilities by contributing to modules such as Valkey Search, Valkey Bloom, Valkey JSON, or the Rust module SDK (valkeymodule-rs).</p>
+      <div class="community-card-actions">
+        
+        <a href="https://github.com/orgs/valkey-io/repositories" class="btn" target="_blank" rel="noopener">Valkey Modules on GitHub</a>
+        
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="/valkey-io.github.io/pr-21/img/icon-bug.svg" alt="" class="community-card-icon" />
+      <h3>Submit a Bug / Security Vulnerability</h3>
+      <p>If you encounter an issue while using Valkey, please help us improve the project by filing a bug report. For potential security issues, please follow our security policy instead of opening a public issue.</p>
+      <div class="community-card-actions">
+        
+        <a href="https://github.com/valkey-io/valkey/issues/new?assignees=&amp;labels=&amp;projects=&amp;template=bug_report.md&amp;title=%5BBUG%5D" class="btn" target="_blank" rel="noopener">Report a Bug</a>
+        
+        <a href="https://github.com/valkey-io/valkey/blob/unstable/SECURITY.md" class="btn" target="_blank" rel="noopener">Security Policy</a>
+        
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="/valkey-io.github.io/pr-21/img/icon-book.svg" alt="" class="community-card-icon" />
+      <h3>Contribute to Documentation</h3>
+      <p>Help make Valkey easier to learn and use. Documentation content, tutorials, and topic guides live in the valkey-doc repository and welcome pull requests.</p>
+      <div class="community-card-actions">
+        
+        <a href="https://github.com/valkey-io/valkey-doc" class="btn" target="_blank" rel="noopener">valkey-doc Repository</a>
+        
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="/valkey-io.github.io/pr-21/img/icon-bulb.svg" alt="" class="community-card-icon" />
+      <h3>Feature Requests</h3>
+      <p>We value your ideas! If you have a suggestion for a new feature, submit a feature request on GitHub and help shape the roadmap.</p>
+      <div class="community-card-actions">
+        
+        <a href="https://github.com/valkey-io/valkey/issues/new?assignees=&amp;labels=&amp;projects=&amp;template=feature_request.md&amp;title=%5BNEW%5D" class="btn" target="_blank" rel="noopener">Submit a Feature Request</a>
+        
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="/valkey-io.github.io/pr-21/img/icon-content.svg" alt="" class="community-card-icon" />
+      <h3>Content: Blogs / Videos</h3>
+      <p>Share your Valkey story. Write a blog post, record a demo, or contribute a tutorial video to help others learn from your experience.</p>
+      <div class="community-card-actions">
+        
+        <a href="https://github.com/valkey-io/community/blob/main/1.%20Community%20Blog%20Guidelines.md" class="btn" target="_blank" rel="noopener">Blog Guidelines</a>
+        
+        <a href="https://github.com/valkey-io/community/blob/main/2.%20Youtube-video-guideline.md" class="btn" target="_blank" rel="noopener">Video Guidelines</a>
+        
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="/valkey-io.github.io/pr-21/img/icon-users.svg" alt="" class="community-card-icon" />
+      <h3>Meetups / Events / Speak</h3>
+      <p>Join or organize a Valkey meetup, attend an upcoming event, or speak at one. Looking for speaking opportunities? CFPs are also posted in the #valkey-speakers channel on Slack.</p>
+      <div class="community-card-actions">
+        
+        <a href="/valkey-io.github.io/pr-21/community/meetup-groups/" class="btn">Meetup Groups &amp; Charter</a>
+        
+        <a href="https://github.com/valkey-io/valkey-io.github.io/issues/new?template=new-meetup-group.md" class="btn" target="_blank" rel="noopener">Start a New Meetup Group</a>
+        
+        <a href="/valkey-io.github.io/pr-21/events/" class="btn">Upcoming Events</a>
+        
+        <a href="/valkey-io.github.io/pr-21/slack" class="btn">Join #valkey-speakers on Slack</a>
+        
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="/valkey-io.github.io/pr-21/img/icon-news.svg" alt="" class="community-card-icon" />
+      <h3>Get the Latest News</h3>
+      <p>Stay updated and connect with us on our social media platforms and newsletter.</p>
+      <div class="community-card-actions">
+        
+        <a href="https://www.linkedin.com/company/valkey/" class="btn" target="_blank" rel="noopener">LinkedIn</a>
+        
+        <a href="https://bsky.app/profile/valkeyio.bsky.social" class="btn" target="_blank" rel="noopener">Bluesky</a>
+        
+        <a href="https://x.com/valkey_io" class="btn" target="_blank" rel="noopener">X</a>
+        
+        <a href="#email-signup" class="btn">Newsletter</a>
+        
+      </div>
+    </div>
+    
+    <div class="community-card">
+      <img src="/valkey-io.github.io/pr-21/img/icon-sheild.svg" alt="" class="community-card-icon" />
+      <h3>Code of Conduct</h3>
+      <p>Help keep the Valkey community welcoming, inclusive, and respectful for everyone.</p>
+      <div class="community-card-actions">
+        
+        <a href="/valkey-io.github.io/pr-21/code_of_conduct" class="btn">Read the Code of Conduct</a>
+        
+      </div>
+    </div>
+    
+  </div>
+  
+</div>
+
+<script src="/valkey-io.github.io/pr-21/assets/js/community.js" defer></script>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

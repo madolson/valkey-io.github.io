@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="Learn how to deploy and manage Valkey across multiple Kubernetes clusters using k0rdent&#39;s template-driven approach for simplified multi-cluster application delivery." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Using k0rdent MultiClusterService Template for Valkey on Kubernetes</title>
+    <meta name="title" property="og:title" content="Valkey: Using k0rdent MultiClusterService Template for Valkey on Kubernetes">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Using k0rdent MultiClusterService Template for Valkey on Kubernetes</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+  
+  2025-07-21
+  
+    &middot; 
+    
+      
+      
+      <em>Serhii Ivanov</em>
+    
+  
+</div>
+<p>Managing distributed applications across multiple Kubernetes clusters can be a complex and time-consuming process. This guide demonstrates how to streamline Valkey deployment using <a rel="external" href="https://k0rdent.io/">k0rdent's</a> <code>MultiClusterService</code> template, providing a practical example of modern multi-cluster application delivery.</p>
+<p>In this tutorial, we'll walk through deploying Valkey across Kubernetes clusters using k0rdent's template-driven approach. By the end of this guide, you will understand how to leverage k0rdent for simplified Valkey deployment and multi-cluster application management.</p>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>It is assumed that you have basic knowledge of:</p>
+<ul>
+<li>Valkey and its use cases</li>
+<li>Kubernetes clusters and core concepts</li>
+<li>Helm charts and package management</li>
+</ul>
+<p>You will also need the following tools installed:</p>
+<ul>
+<li><a rel="external" href="https://docs.docker.com/desktop/">Docker</a> (running as a daemon)</li>
+<li><a rel="external" href="https://kind.sigs.k8s.io/">kind</a> CLI</li>
+<li><a rel="external" href="https://kubernetes.io/docs/tasks/tools/">kubectl</a> CLI</li>
+<li><a rel="external" href="https://helm.sh/">helm</a> CLI</li>
+</ul>
+<h2 id="the-k0-family">The k0* Family</h2>
+<p>k0rdent is part of the k0* family of tools:</p>
+<ul>
+<li><strong><a rel="external" href="https://k0sproject.io/">k0s</a></strong>: Zero Friction Kubernetes Distribution</li>
+<li><strong><a rel="external" href="https://k0smotron.io/">k0smotron</a></strong>: k0s specific CAPI providers</li>
+<li><strong><a rel="external" href="https://k0rdent.io/">k0rdent</a></strong>: Multi-cluster management platform</li>
+</ul>
+<h2 id="what-is-k0rdent">What is k0rdent?</h2>
+<p>k0rdent is a Kubernetes-native, distributed container management platform that simplifies and automates the deployment, scaling, and lifecycle management of Kubernetes clusters across multi-cloud and hybrid environments by using a template-driven approach. You can think of it as a super control plane for multiple child clusters that are controlled by different CAPI providers across multi-cloud environments.</p>
+<p>All providers (infrastructure, cluster) are packaged as Helm templates and exposed to the consumer via an entry point object called <code>ClusterDeployment</code>. The <code>ClusterDeployment</code> object is what the consumer uses to declaratively define a new child cluster, and combined with credentials-related objects, this provides the consumer with a managed Kubernetes cluster on any platform that has existing CAPI providers.</p>
+<p>Check out this <a rel="external" href="https://www.cncf.io/blog/2025/02/24/introducing-k0rdent-design-deploy-and-manage-kubernetes-based-idps/">CNCF blog post</a> for additional information.</p>
+<h2 id="service-templates-and-application-delivery">Service Templates and Application Delivery</h2>
+<p>For any child cluster under k0rdent management, the consumer can control application delivery via service template objects, meaning that it is possible to install applications into the child clusters and have everything controlled from the super-control-plane (management cluster) where k0rdent itself runs.</p>
+<p>The k0rdent project maintains a public repository called the "<a rel="external" href="https://catalog.k0rdent.io/latest/">Catalog</a>" where you can find pre-built application service templates. While templates can be created locally, and there is no hard requirement to use the catalog, we'll use the catalog for a more streamlined experience with Valkey delivery to child clusters. You can find the Valkey template in the catalog at <a rel="external" href="https://catalog.k0rdent.io/latest/apps/valkey">https://catalog.k0rdent.io/latest/apps/valkey</a>.</p>
+<h2 id="demo-setup-overview">Demo Setup Overview</h2>
+<p>In this practical demonstration, we'll:</p>
+<ol>
+<li>Use Kind for the management cluster</li>
+<li>Deploy to a child cluster using Cluster API Provider Docker (CAPD)</li>
+<li>Use <a rel="external" href="https://github.com/hyperspike/valkey-operator">Hyperspike's Valkey Operator</a> to manage Valkey instances</li>
+</ol>
+<p>While we use Docker and Kind for simplicity, k0rdent supports any CAPI provider and can run on any Kubernetes distribution for production deployments.</p>
+<p>There is no better way of getting to know something than by doing it, so I encourage you to follow along with the steps if possible.</p>
+<h2 id="setting-up-the-management-cluster">Setting Up the Management Cluster</h2>
+<p>Let's start by creating a new Kind cluster with a mounted Docker socket:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">cat</span><span style="color: #FF7B72;"> &lt;&lt;</span><span> &#39;EOF&#39;</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> kind</span><span style="color: #A5D6FF;"> create cluster</span><span style="color: #79C0FF;"> --name</span><span style="color: #A5D6FF;"> kind</span><span style="color: #79C0FF;"> --config=-</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">kind: Cluster</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">apiVersion: kind.x-k8s.io/v1alpha4</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">nodes:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">- role: control-plane</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  extraMounts:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  - hostPath: /var/run/docker.sock</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    containerPath: /var/run/docker.sock</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    readOnly: false</span></span>
+<span class="giallo-l"><span>EOF</span></span></code></pre>
+<p>After Kind CLI is finished with its magic, let's install k0rdent into our new cluster:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">helm</span><span style="color: #A5D6FF;"> install kcm oci://ghcr.io/k0rdent/kcm/charts/kcm</span><span style="color: #79C0FF;"> --version 1.0.0 -n</span><span style="color: #A5D6FF;"> kcm-system</span><span style="color: #79C0FF;"> --create-namespace</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> wait</span><span style="color: #79C0FF;"> --for=condition=Ready=True</span><span style="color: #A5D6FF;"> management/kcm</span><span style="color: #79C0FF;"> --timeout=9000s</span></span></code></pre><h2 id="installing-the-valkey-service-template">Installing the Valkey Service Template</h2>
+<p>Now we need to install the Valkey service template like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">helm</span><span style="color: #A5D6FF;"> install valkey oci://ghcr.io/k0rdent/catalog/charts/valkey-service-template</span><span style="color: #79C0FF;"> --version 0.1.0 -n</span><span style="color: #A5D6FF;"> kcm-system</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> wait</span><span style="color: #79C0FF;"> --for=jsonpath=</span><span style="color: #A5D6FF;">&#39;{.status.valid}&#39;</span><span style="color: #79C0FF;">=true</span><span style="color: #A5D6FF;"> servicetemplate/valkey-0-1-0</span><span style="color: #79C0FF;"> -n</span><span style="color: #A5D6FF;"> kcm-system</span><span style="color: #79C0FF;"> --timeout=600s</span></span></code></pre><h2 id="setting-up-credentials">Setting Up Credentials</h2>
+<p>Let's now create a group of credentials-related objects that enable the CAPD provider to work:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> apply</span><span style="color: #79C0FF;"> -f</span><span style="color: #A5D6FF;"> -</span><span style="color: #FF7B72;"> &lt;&lt;</span><span>EOF</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">---</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">apiVersion: v1</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">kind: Secret</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">metadata:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  name: docker-cluster-secret</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  namespace: kcm-system</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  labels:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    k0rdent.mirantis.com/component: &quot;kcm&quot;</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">type: Opaque</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">---</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">apiVersion: k0rdent.mirantis.com/v1beta1</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">kind: Credential</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">metadata:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  name: docker-stub-credential</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  namespace: kcm-system</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">spec:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  description: Docker Credentials</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  identityRef:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    apiVersion: v1</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    kind: Secret</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    name: docker-cluster-secret</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    namespace: kcm-system</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">---</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">apiVersion: v1</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">kind: ConfigMap</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">metadata:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  name: docker-cluster-credential-resource-template</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  namespace: kcm-system</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  labels:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    k0rdent.mirantis.com/component: &quot;kcm&quot;</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  annotations:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    projectsveltos.io/template: &quot;true&quot;</span></span>
+<span class="giallo-l"><span>EOF</span></span></code></pre><h2 id="creating-the-child-cluster">Creating the Child Cluster</h2>
+<p>Now we are finally ready to create our new child cluster!</p>
+<p>Let's do that like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> apply</span><span style="color: #79C0FF;"> -f</span><span style="color: #A5D6FF;"> -</span><span style="color: #FF7B72;"> &lt;&lt;</span><span>EOF</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">---</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">apiVersion: k0rdent.mirantis.com/v1beta1</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">kind: ClusterDeployment</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">metadata:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  name: docker-hosted-cp</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  namespace: kcm-system</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">spec:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  template: docker-hosted-cp-1-0-0</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  credential: docker-stub-credential</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  config:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    clusterLabels: {}</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    clusterAnnotations: {}</span></span>
+<span class="giallo-l"><span>EOF</span></span></code></pre>
+<p>Note how we use <code>docker-hosted-cp-1-0-0</code> as the template for the new child cluster, this will give us a CAPD-based child cluster in <a rel="external" href="https://docs.k0rdent.io/head/admin/hosted-control-plane/">Hosted Control-Plane</a> mode.</p>
+<p>Now we wait for the child cluster to be <code>Ready</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> wait</span><span style="color: #79C0FF;"> --for=condition=Ready</span><span style="color: #A5D6FF;"> clusterdeployment/docker-hosted-cp</span><span style="color: #79C0FF;"> -n</span><span style="color: #A5D6FF;"> kcm-system</span><span style="color: #79C0FF;"> --timeout=600s</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> wait</span><span style="color: #79C0FF;"> --for=jsonpath=</span><span style="color: #A5D6FF;">&#39;{.status.phase}&#39;</span><span style="color: #79C0FF;">=Provisioned</span><span style="color: #A5D6FF;"> cluster/docker-hosted-cp</span><span style="color: #79C0FF;"> -n</span><span style="color: #A5D6FF;"> kcm-system</span><span style="color: #79C0FF;"> --timeout=600s</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> wait</span><span style="color: #79C0FF;"> --for=condition=Ready</span><span style="color: #A5D6FF;"> dockercluster/docker-hosted-cp</span><span style="color: #79C0FF;"> -n</span><span style="color: #A5D6FF;"> kcm-system</span><span style="color: #79C0FF;"> --timeout=600s</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> wait</span><span style="color: #79C0FF;"> --for=jsonpath=</span><span style="color: #A5D6FF;">&#39;{.status.ready}&#39;</span><span style="color: #79C0FF;">=true</span><span style="color: #A5D6FF;"> k0smotroncontrolplane/docker-hosted-cp-cp</span><span style="color: #79C0FF;"> -n</span><span style="color: #A5D6FF;"> kcm-system</span><span style="color: #79C0FF;"> --timeout=600s</span></span></code></pre><h2 id="verifying-the-child-cluster">Verifying the Child Cluster</h2>
+<p>Let's get the child cluster <code>kubeconfig</code> out and check if the cluster itself looks good:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #79C0FF;"> -n</span><span style="color: #A5D6FF;"> kcm-system get secret docker-hosted-cp-kubeconfig</span><span style="color: #79C0FF;"> -o</span><span style="color: #A5D6FF;"> jsonpath=&#39;{.data.value}&#39;</span><span style="color: #FF7B72;"> |</span><span style="color: #FFA657;"> base64</span><span style="color: #79C0FF;"> -d</span><span style="color: #FF7B72;"> &gt;</span><span style="color: #A5D6FF;"> docker-hosted-cp.kubeconfig</span></span>
+<span class="giallo-l"><span>KUBECONFIG</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;docker-hosted-cp.kubeconfig&quot;</span><span style="color: #FFA657;"> kubectl</span><span style="color: #A5D6FF;"> get pods</span><span style="color: #79C0FF;"> -A</span></span></code></pre>
+<p>Now we have almost everything setup for actual Valkey application delivery, we need to setup the storage provider inside our child cluster, let's use <code>local-path-provisioner</code> for simplicity:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span>KUBECONFIG</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;docker-hosted-cp.kubeconfig&quot;</span><span style="color: #FFA657;"> kubectl</span><span style="color: #A5D6FF;"> apply</span><span style="color: #79C0FF;"> -f</span><span style="color: #A5D6FF;"> https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.31/deploy/local-path-storage.yaml</span></span>
+<span class="giallo-l"><span>KUBECONFIG</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;docker-hosted-cp.kubeconfig&quot;</span><span style="color: #FFA657;"> kubectl</span><span style="color: #A5D6FF;"> patch storageclass local-path</span><span style="color: #79C0FF;"> -p</span><span style="color: #A5D6FF;"> &#39;{&quot;metadata&quot;: {&quot;annotations&quot;:{&quot;storageclass.kubernetes.io/is-default-class&quot;:&quot;true&quot;}}}&#39;</span></span></code></pre>
+<p><strong>Note:</strong> We should wait until all Pods in the child cluster are Ready, let's do that interactively, feel free to exit when pods are <code>Ready</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">watch</span><span style="color: #A5D6FF;"> KUBECONFIG=&quot;docker-hosted-cp.kubeconfig&quot; kubectl get pods</span><span style="color: #79C0FF;"> -A</span></span></code></pre><h2 id="deploying-valkey-using-multiclusterservice">Deploying Valkey Using <code>MultiClusterService</code></h2>
+<p>Whew, that was a lot of YAML, but we are finally here, and we can now see how k0rdent simplifies deploying Valkey into the child cluster!</p>
+<p>Let's first add a label to our new child cluster in the management cluster, where k0rdent is running, this label will be "group=demo":</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> label cluster docker-hosted-cp group=demo</span><span style="color: #79C0FF;"> -n</span><span style="color: #A5D6FF;"> kcm-system</span></span></code></pre>
+<p>This label is needed because we will be using a <code>MultiClusterService</code> object that can reference multiple child clusters for service/application delivery. In our case, we will use our Docker-based cluster, still, we should keep in mind that we are not restricted as to which cluster we deliver new services, it can be a single child cluster or a group of them.</p>
+<p>Ok, let's do this!</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> apply</span><span style="color: #79C0FF;"> -f</span><span style="color: #A5D6FF;"> -</span><span style="color: #FF7B72;"> &lt;&lt;</span><span>EOF</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">apiVersion: k0rdent.mirantis.com/v1alpha1</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">kind: MultiClusterService</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">metadata:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  name: valkey</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">spec:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  clusterSelector:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    matchLabels:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">      group: demo</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">  serviceSpec:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    services:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    - template: valkey-0-1-0</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">      name: valkey</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">      namespace: valkey-system</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">      values: |</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">        valkey:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">          spec:</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">            tls: false # when enabled, needs CertManager (and some configs) inside child-cluster</span></span>
+<span class="giallo-l"><span>EOF</span></span></code></pre>
+<p>In our case, <code>values.valkey.spec</code> that are exposed inside the template are Valkey Operator Helm Chart values.</p>
+<h2 id="verifying-the-deployment">Verifying the Deployment</h2>
+<p>Let's check the object status, we should see something similar to the example output:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">kubectl</span><span style="color: #A5D6FF;"> get MultiClusterService</span><span style="color: #79C0FF;"> -A</span></span></code></pre>
+<p>Expected output:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>NAME     SERVICES   CLUSTERS   AGE</span></span>
+<span class="giallo-l"><span>valkey   1/1        1/1        23s</span></span></code></pre>
+<p>Now, let's check how things look like inside the child cluster:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span>KUBECONFIG</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;docker-hosted-cp.kubeconfig&quot;</span><span style="color: #FFA657;"> kubectl</span><span style="color: #A5D6FF;"> get pods</span><span style="color: #79C0FF;"> -A</span></span></code></pre>
+<p>Expected output:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>NAMESPACE              NAME                                                READY   STATUS    RESTARTS   AGE</span></span>
+<span class="giallo-l"><span>kube-system            coredns-5555f45c94-bf9mb                            1/1     Running   0          23m</span></span>
+<span class="giallo-l"><span>kube-system            konnectivity-agent-tfsr8                            1/1     Running   0          21m</span></span>
+<span class="giallo-l"><span>kube-system            kube-proxy-thx5h                                    1/1     Running   0          21m</span></span>
+<span class="giallo-l"><span>kube-system            kube-router-6b7s8                                   1/1     Running   0          21m</span></span>
+<span class="giallo-l"><span>kube-system            metrics-server-7778865875-s9hsz                     1/1     Running   0          23m</span></span>
+<span class="giallo-l"><span>local-path-storage     local-path-provisioner-74f9666bc9-5xqlf             1/1     Running   0          16m</span></span>
+<span class="giallo-l"><span>projectsveltos         sveltos-agent-manager-79df48c686-8l6dk              1/1     Running   0          23m</span></span>
+<span class="giallo-l"><span>valkey-system          valkey-0                                            1/1     Running   0          64s</span></span>
+<span class="giallo-l"><span>valkey-system          valkey-operator-controller-manager-6dc5d6bf57-rbt9x 1/1     Running   0          78s</span></span></code></pre>
+<p>It might look like pure magic at first, but what you saw was how k0rdent simplifies application delivery.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Feel free to play around with the Valkey Operator by leveraging the <code>MultiClusterService</code> object together with additional Helm Chart values, and when finished, cleaning up the environment only requires deleting the Kind cluster.</p>
+<p>Want to explore more? Head over to the <a rel="external" href="https://docs.k0rdent.io/latest/">k0rdent docs</a>, and join our <a rel="external" href="https://cloud-native.slack.com/archives/C08A63Q4NCD">Slack community</a>.</p>
+<p>This is all for today, thanks for spending this time with me!</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/s3rj1k.jpg" alt="photo of Serhii Ivanov" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Serhii Ivanov</h4>
+    
+    <a target="_blank" href="https://github.com/s3rj1k"><i class="icon icon-github-square"></i> @s3rj1k</a>
+    
+    <p>Serhii Ivanov is a software engineer passionate about Golang, Kubernetes and OSS.</p>
+<p>Outside of work, he enjoys spending time with his family and learning new things.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-on-k0rdent/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-on-k0rdent/&title=Using%20k0rdent%20MultiClusterService%20Template%20for%20Valkey%20on%20Kubernetes&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-on-k0rdent/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/keyspace-save-the-date/">&laquo; Save the Date August 28, 2025: Keyspace</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-swift/">Introducing valkey-swift, the Swift client for Valkey &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

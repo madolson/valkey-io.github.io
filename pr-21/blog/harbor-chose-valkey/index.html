@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="With v2.15.2, Harbor replaced Redis with Valkey as its internal cache backend. Here is why the CNCF graduated container registry made the switch and how you can run it today." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Harbor Chose Valkey</title>
+    <meta name="title" property="og:title" content="Valkey: Harbor Chose Valkey">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Harbor Chose Valkey</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Community Highlight">Community Highlight</span>
+  
+  2026-07-28
+  
+    &middot; 
+    
+      
+      
+      <em>Edith Puclla</em>,
+    
+      
+      
+      <em>Orlin Vasilev</em>
+    
+  
+</div>
+<p>With Harbor v2.15.2, the Harbor team replaced Redis with Valkey as its internal cache backend. This was a deliberate open source choice that highlights the flexibility and resilience of the open source ecosystem.</p>
+<p><a rel="external" href="https://goharbor.io/">Harbor</a> is a CNCF graduated open source container registry, a place where organizations can store, manage, and secure container images, Helm charts, OCI artifacts, CNAB (Cloud Native Application Bundles), and AI models via ModelPack. Among organizations that self-host their container registries for production Kubernetes environments, Harbor is one of the most widely adopted solutions. What you might not know is that Harbor has always depended on Redis under the hood. With v2.15.2, that changed.</p>
+<p>The Harbor team opened <a rel="external" href="https://github.com/goharbor/harbor/issues/22935">issue #22935</a> in March 2026, merged <a rel="external" href="https://github.com/goharbor/harbor/pull/23157">PR #23157</a> on April 28, and shipped the change in <a rel="external" href="https://github.com/goharbor/harbor/releases/tag/v2.15.2">v2.15.2</a>. The reason is simple: <strong>open source projects benefit from dependencies with clear governance models that align with their own community values.</strong></p>
+<h2 id="why-harbor-uses-a-cache">Why Harbor uses a cache</h2>
+<p>Harbor is not a simple file server. Every time someone pushes or pulls an image, Harbor is doing a lot of work simultaneously. Things like:</p>
+<ul>
+<li><strong>Session storage</strong> stores user login sessions</li>
+<li><strong>Manifest cache</strong> serves OCI manifest data without hitting the database on every pull.</li>
+<li><strong>Job queue</strong> manages background tasks like vulnerability scans, garbage collection, and replication jobs.</li>
+<li><strong>Quota counter</strong> for tracking push concurrency per project.</li>
+</ul>
+<p>All of this needs a fast in-memory store. That was why Redis has been part of Harbor since the beginning; it is the engine behind every interaction with the registry. Now with Valkey, Harbor keeps doing exactly the same work, with a better open source foundation underneath.</p>
+<h2 id="what-makes-it-the-right-choice-for-harbor">What makes it the right choice for Harbor:</h2>
+<ul>
+<li><strong>BSD 3-Clause license</strong>: permissive, with fewer legal risks and fewer restrictions than non open source alternatives.</li>
+<li><strong>Wire compatible</strong>: same RESP protocol as Redis; no application-level RESP changes were required, while Harbor’s image/build templates were updated to valkey-photon.</li>
+<li><strong>Actively maintained</strong>: governed by the Linux Foundation with a clear release cadence.</li>
+<li><strong>Production ready</strong>:  available as a fully managed service on Amazon ElastiCache, Google Cloud Memorystore, OCI Cache, Aiven, DigitalOcean, Momento, Vultr, and <a rel="external" href="https://valkey.io/participants/">other providers</a>, or self-hosted on your own infrastructure.</li>
+<li><strong>Performance</strong>: Valkey has continued improving beyond its 7.2 foundation. <a rel="external" href="https://valkey.io/blog/valkey-9-1-delivers-improvements-in-security-performance-and-more/">Valkey 9.1</a> delivers up to 2 million requests per second in <a rel="external" href="https://valkey.io/performance/">official benchmarks</a>, more than double the throughput of Valkey 7.2</li>
+</ul>
+<p>For Harbor, the migration was clean. Same protocol, few application code changes, and a dependency that is fully aligned with open source principles.</p>
+<h2 id="install-harbor-with-valkey">Install Harbor with Valkey</h2>
+<p>Harbor v2.15.2 ships with <code>valkey-photon</code> as its internal cache image. However, the official Helm chart has not been updated yet to reflect this; it still defaults to the Redis image. To run Harbor with Valkey today, we override the internal cache image with <code>goharbor/valkey-photon</code> from Docker Hub.</p>
+<p>First, add the Harbor Helm repo:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">helm</span><span style="color: #A5D6FF;"> repo add harbor https://helm.goharbor.io</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">helm</span><span style="color: #A5D6FF;"> repo update</span></span></code></pre>
+<p>Then install Harbor pointing to the Valkey image:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">helm</span><span style="color: #A5D6FF;"> install harbor harbor/harbor</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">  --namespace</span><span style="color: #A5D6FF;"> harbor</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">  --create-namespace</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">  --set</span><span style="color: #A5D6FF;"> expose.type=nodePort</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">  --set</span><span style="color: #A5D6FF;"> expose.tls.enabled=</span><span style="color: #79C0FF;">false</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">  --set</span><span style="color: #A5D6FF;"> externalURL=http://</span><span style="color: #FF7B72;">&lt;</span><span style="color: #A5D6FF;">node-i</span><span>p</span><span style="color: #FF7B72;">&gt;</span><span style="color: #A5D6FF;">:30002</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">  --set</span><span style="color: #A5D6FF;"> harborAdminPassword=&quot;your-secure-password&quot;</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">  --set</span><span style="color: #A5D6FF;"> redis.internal.image.repository=goharbor/valkey-photon</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">  --set</span><span style="color: #A5D6FF;"> redis.internal.image.tag=v2.15.2</span></span></code></pre>
+<p>The first lines are basic setup so Harbor can start and be accessible. The last two lines tell the Helm chart to use the <code>valkey-photon</code> image from Docker Hub instead of the default Redis one.</p>
+<p>The Harbor team chose Valkey not only for technical compatibility, but also because it aligns with Harbor's commitment to open source sustainability. And it is a reminder that the open source ecosystem can respond quickly and effectively when a foundational dependency changes direction.</p>
+<p>Harbor v2.15.2 is out. <a rel="external" href="https://github.com/goharbor/harbor/releases/tag/v2.15.2">Try the latest release of Harbor</a> today!</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/edithpuclla.png" alt="photo of Edith Puclla" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Edith Puclla</h4>
+    
+    <a target="_blank" href="https://github.com/edithturn"><i class="icon icon-github-square"></i> @edithturn</a>
+    
+    <p>Edith Puclla is Percona's Technical Educator for Valkey, where she creates technical content, videos, demos, and learning resources to help users and the community better understand Valkey and open source data infrastructure.</p>
+<p>Originally from Peru and now living in the United Kingdom, Edith studied Computer Engineering and has worked across software development, DevOps, and technology education. She is a CNCF Ambassador and Docker Captain, and has supported open source communities for more than seven years through talks, mentoring, content creation, event organization, documentation, and community initiatives.</p>
+<p>Outside of work, Edith enjoys running and loves to spend time with her family!</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/orlinvasilev.png" alt="photo of Orlin Vasilev" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Orlin Vasilev</h4>
+    
+    <a target="_blank" href="https://github.com/orlinvasilev"><i class="icon icon-github-square"></i> @orlinvasilev</a>
+    
+    <p>Orlin Vasilev is Open Source and Cloud Native Technology Advocate at SAP. Community Manager for Project Harbor and Project K3s as part of the Cloud Native team. Second term CNCF Ambassador and driving the biggest Meetup Group in Bulgaria and Kubernetes Community Days Sofia organizer. KubeCon CfP review board member and co-chair for Track 101 and Community. Previously SysAdmin/Dev/SRE/System engineering roles for over 15 years! Located in Bulgaria, Europe! Father of two - a girl and a boy! Passionate snowboarder, DIY and semi-professional BBQ Pitmaster and baker.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/harbor-chose-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/harbor-chose-valkey/&title=Harbor%20Chose%20Valkey&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/harbor-chose-valkey/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/secret-life-of-data/">&laquo; The secret life of data in Valkey</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/unlocked-healthy-opps/">The Power of Community: Driving Innovation across the Valkey Ecosystem &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

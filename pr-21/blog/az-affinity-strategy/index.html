@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-04.webp" />
+    
+    
+
+    <meta name="description" content="By implementing AZ affinity routing in Valkey and using GLIDE, you can achieve lower latency and cost savings by routing requests to replicas in the same AZ as the client." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Reducing application latency and lowering Cloud bill by setting up your client library</title>
+    <meta name="title" property="og:title" content="Valkey: Reducing application latency and lowering Cloud bill by setting up your client library">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-04.webp" alt="Reducing application latency and lowering Cloud bill by setting up your client library" class="feature-img">
+
+
+<h1>Reducing application latency and lowering Cloud bill by setting up your client library</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2025-01-08
+  
+    &middot; 
+    
+      
+      
+      <em>Asaf Porat Stoler</em>,
+    
+      
+      
+      <em>Adar Guma Ovadya</em>,
+    
+      
+      
+      <em>Muhammad Awawdi</em>
+    
+  
+</div>
+<p>How can adjusting your client library help you reduce Cloud costs and improve latency?</p>
+<p>In this post, we dive into <strong>Availability Zone (AZ) affinity routing</strong> mechanics, showing how it optimizes your application's performance and cost using <strong>Valkey GLIDE (General Language Independent Driver for the Enterprise)</strong>. We also guide you through how to configure GLIDE to benefit from other key features.</p>
+<p>GLIDE is an official open-source Valkey client library. GLIDE is designed for reliability, optimized performance, and high-availability, for Valkey and Redis-based applications. GLIDE is a multi-language client that supports Java, Python, and Node.js, with further languages in development. GLIDE recently added support for a key feature AZ affinity routing, which enables Valkey-based applications to direct calls specifically to server nodes in the same AZ as the client. This minimizes cross-AZ traffic, reduces latency, and lowers cloud expenses.</p>
+<p>Before we explore AZ affinity routing, let’s understand what availability zones are, how different <strong>read strategies</strong> work and how they impact your application.</p>
+<h2 id="choosing-the-right-read-strategy-for-your-application">Choosing the Right Read Strategy for Your Application</h2>
+<p>Distributed applications rely on scalability and resilience, often achieved by techniques like caching, sharding, and high availability. Valkey enhances these systems by acting as a robust caching layer, reducing database load and accelerating read operations. Its sharding capabilities distribute data across multiple nodes, ensuring efficient storage and access patterns, while its high availability features safeguard uptime by replicating data across the primary and replica nodes. This combination enables distributed applications to handle high traffic and recover quickly from failures, ensuring consistent performance.</p>
+<p>In Valkey-based applications, selecting the right read strategy is required for optimizing performance and cost. Read strategies determine how read-only commands are routed, balancing factors like data freshness, latency, and throughput.
+Understanding the infrastructure that supports these strategies is key to leveraging them effectively.</p>
+<p><strong>Availability Zones</strong> are isolated locations within Cloud regions that provide redundancy and fault tolerance. They are physically separated but connected through low-latency networks. Major cloud providers like AWS, Oracle and GCP implement the concept of AZs. However, using resources across different AZs can incur increased latency and cost.
+GLIDE takes advantage of this infrastructure by routing reads to replica nodes within the same AZ, enabling faster responses and improved user experience.
+This is particularly advantageous for applications that prioritize read throughput and can tolerate slightly stale data. For instance, websites with personalized recommendation engines rely on displaying content quickly to users rather than ensuring every update is perfectly synchronized.
+Additionally, one of the most common use cases for caching is to store database query results, allowing applications to trade off absolute freshness for better performance, scalability, and cost-effectiveness. The read-from-replica strategies introduces minimal additional staleness, making it an efficient choice for such scenarios.
+GLIDE provides flexible options tailored to your application’s needs:</p>
+<ul>
+<li><code>PRIMARY</code>: Always read from the primary to ensure the freshness of data.</li>
+<li><code>PREFER_REPLICA</code>: Distribute requests among all replicas in a round-robin manner. If no replica is available, fall back to the primary.</li>
+<li><code>AZ_AFFINITY</code>: Prioritize replicas in the same AZ as the client. If no replicas are available in the zone, fall back to other replicas or the primary if needed.</li>
+<li><code>AZ_AFFINITY_REPLICAS_AND_PRIMARY</code>: Prioritize replicas in the same AZ as the client. If no replicas are available in the zone, fall back to the primary in the same AZ. If neither are available, fall back to other replicas or the primary in other zones.</li>
+</ul>
+<p>In Valkey 8,  <code>availability-zone</code> configuration was introduced, allowing clients to specify the AZ for each Valkey server. GLIDE leverages this new configuration to empower its users with the ability to use AZ Affinity routing. At the time of writing, GLIDE is the only Valkey client library supporting the AZ Affinity strategies, offering a unique advantage.</p>
+<h2 id="az-affinity-routing-advantages">AZ Affinity routing advantages</h2>
+<ol>
+<li>
+<p><strong>Reduce Data Transfer Costs</strong> Cross-zone data transfer often incurs additional charges in Cloud environments. By ensuring operations are directed to nodes within the same AZ, you can minimize or eliminate these costs.</p>
+<p><strong>Example:</strong> An application in AWS with a Valkey cluster of 2 shards, each with 1 primary and 2 replicas, the instance type is m7g.xlarge. The cluster processes 250MB of data per second and to simplify the example 100% of the traffic is read operation. 50% of this traffic crosses AZs at a cost of $0.01 per GB, the monthly cross-AZ data transfer cost would be approximately $3,285. In addition the cost of the cluster is $0.252 per hour per node. Total of $1,088 per month. By implementing AZ affinity routing, you can reduce the total cost from $4,373 to $1,088, as all traffic remains within the same AZ.</p>
+</li>
+<li>
+<p><strong>Minimize Latency</strong> Distance between AZs within the same region— for example, in AWS, is typically up to 60 miles (100 kilometers)—adds extra roundtrip latency, usually in the range of 500µs to 1000µs. By ensuring requests remain within the same AZ, you can reduce latency and improve the responsiveness of your application.</p>
+<p><strong>Example 1:</strong>
+Consider a cluster with three nodes, one primary and two replicas. Each node is located in a different availability zone. The client located in az-2 along with replica-1.</p>
+<p><strong>With <code>PREFER_REPLICA</code> strategy</strong>:
+In this case, the client will read commands from any replica that is available. It may be located in a different AZ as shown below, and the average latency is, for example, 800 microseconds.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/PREFER_REPLICA_strategy.png" alt="PREFER_REPLICA Read strategy latency example" /></p>
+<p><strong>With <code>AZ_AFFINITY</code> strategy</strong>:
+In this case, the client will read commands from a replica in the same client's AZ and the average latency is, for example, about 300 microseconds.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/AZ_AFFINITY_strategy.png" alt="AZ_AFFINITY Read strategy latency example" /></p>
+<p><strong>Example 2:</strong>
+Consider a cluster with three nodes, one primary and two replicas. Each node is located in a different availability zone. The client located in az-2 along with the primary node. The replicas are located in az-1 and az-3.</p>
+<p><strong>With <code>AZ_AFFINITY</code> strategy</strong>:
+In this case, the client attempts to read from a replica in the same AZ. Since none are available in az-2, it falls back to a replica in another AZ, such as az-1 or az-3.<br />
+and the average latency is, for example, about 800 microseconds.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/AZ_AFFINITY_strategy2.png" alt="AZ_AFFINITY Read strategy latency example" /></p>
+<p><strong>With <code>AZ_AFFINITY_REPLICAS_AND_PRIMARY</code> strategy</strong>:<br />
+In this case, the client first attempts to read from a replica in the same AZ. Since no local replica exists, it reads from the primary located in az-2. The average latency is, for example, about 300 microseconds.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/AZ_AFFINITY_REPLICAS_AND_PRIMARY_strategy.png" alt="AZ_AFFINITY_REPLICAS_AND_PRIMARY Read strategy latency example" /></p>
+</li>
+</ol>
+<h2 id="configuring-az-affinity-connections-with-glide">Configuring AZ Affinity Connections with GLIDE</h2>
+<p>Setting up AZ affinity routing in GLIDE is simple, allowing you to leverage its full potential with just a few configuration steps. Let’s walk through the steps to enable this feature in your application.</p>
+<h3 id="steps-to-set-up-az-affinity-routing-in-glide">Steps to Set Up AZ Affinity Routing in GLIDE</h3>
+<ol>
+<li>
+<p>Configure Valkey nodes availability zone -
+Assign each Valkey node to a specific AZ based on its physical or virtual location within the Cloud provider's region.
+The initial configuration must to be done with a separate management client on node initialization, as the clients gets the info from the replicas on the first reconnect.
+In some managed services like Amazon ElastiCache, this mapping is configured automatically and this step is not required.</p>
+<p>For each node, run the following command and change the AZ and routing address as appropriate:</p>
+<p><strong>Python:</strong></p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span>client.config_set({</span><span style="color: #A5D6FF;">&quot;availability-zone&quot;</span><span>: az}, </span></span>
+<span class="giallo-l"><span style="color: #FFA657;">                    route</span><span style="color: #FF7B72;">=</span><span>ByAddressRoute(</span><span style="color: #FFA657;">host</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;address.example.com&quot;</span><span>,</span><span style="color: #FFA657;"> port</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">6379</span><span>))</span></span></code></pre>
+<p><strong>Java:</strong></p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="java"><span class="giallo-l"><span>client.</span><span style="color: #D2A8FF;">configSet</span><span>(Map.</span><span style="color: #D2A8FF;">of</span><span>(</span><span style="color: #A5D6FF;">&quot;availability-zone&quot;</span><span>, az),</span><span style="color: #FF7B72;"> new</span><span style="color: #D2A8FF;"> ByAddressRoute</span><span>(</span><span style="color: #A5D6FF;">&quot;address.example.com&quot;</span><span>,</span><span style="color: #79C0FF;"> 6379</span><span>))</span></span></code></pre>
+<p><strong>Node.js:</strong></p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="javascript"><span class="giallo-l"><span>client.</span><span style="color: #D2A8FF;">configSet</span><span>({</span><span style="color: #A5D6FF;">&quot;availability-zone&quot;</span><span>: az}, { route: {type:</span><span style="color: #A5D6FF;"> &quot;routeByAddress&quot;</span><span>, host:</span><span style="color: #A5D6FF;">&quot;address.example.com&quot;</span><span>, port:</span><span style="color: #79C0FF;">6379</span><span>}})</span></span></code></pre></li>
+<li>
+<p>Configure GLIDE with AZ-Specific Targeting -
+Here are Python, Java, and Node.JS examples showing how to set up an AZ affinity client that directs calls to nodes in the same AZ as the client.</p>
+<p><strong>Python:</strong></p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #FF7B72;">from</span><span> glide</span><span style="color: #FF7B72;"> import</span><span> (</span></span>
+<span class="giallo-l"><span>    GlideClient,</span></span>
+<span class="giallo-l"><span>    GlideClientConfiguration,</span></span>
+<span class="giallo-l"><span>    NodeAddress,</span></span>
+<span class="giallo-l"><span>    ReadFrom</span></span>
+<span class="giallo-l"><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Determine the client&#39;s AZ (this could be fetched from the cloud provider&#39;s metadata service)</span></span>
+<span class="giallo-l"><span>client_az</span><span style="color: #FF7B72;"> =</span><span style="color: #A5D6FF;"> &#39;us-east-1a&#39;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Initialize Valkey client with preference for the client&#39;s AZ</span></span>
+<span class="giallo-l"><span>addresses</span><span style="color: #FF7B72;"> =</span><span> [NodeAddress(</span><span style="color: #FFA657;">host</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;address.example.com&quot;</span><span>,</span><span style="color: #FFA657;"> port</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">6379</span><span>)]</span></span>
+<span class="giallo-l"><span>client_config</span><span style="color: #FF7B72;"> =</span><span> GlideClusterClientConfiguration(addresses,</span><span style="color: #FFA657;"> read_from</span><span style="color: #FF7B72;">=</span><span>ReadFrom.</span><span style="color: #79C0FF;">AZ_AFFINITY</span><span>,</span><span style="color: #FFA657;"> client_az</span><span style="color: #FF7B72;">=</span><span>client_az)</span></span>
+<span class="giallo-l"><span>client</span><span style="color: #FF7B72;"> = await</span><span> GlideClusterClient.create(client_config)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Write operation (route to the primary&#39;s slot owner)</span></span>
+<span class="giallo-l"><span>client.set(</span><span style="color: #A5D6FF;">&quot;key1&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;val1&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;"># Get will read from one of the replicas in the same client&#39;s availability zone if one exits.</span></span>
+<span class="giallo-l"><span>value</span><span style="color: #FF7B72;"> =</span><span> client.get(</span><span style="color: #A5D6FF;">&quot;key1&quot;</span><span>)</span></span></code></pre>
+<p><strong>Java:</strong></p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="java"><span class="giallo-l"><span style="color: #8B949E;">// Initialize Valkey client with preference for the client&#39;s AZ</span></span>
+<span class="giallo-l"><span>GlideClusterClientConfiguration config</span><span style="color: #FF7B72;"> =</span><span> GlideClusterClientConfiguration.</span><span style="color: #D2A8FF;">builder</span><span>()</span></span>
+<span class="giallo-l"><span>    .</span><span style="color: #D2A8FF;">address</span><span>(NodeAddress.</span><span style="color: #D2A8FF;">builder</span><span>()</span></span>
+<span class="giallo-l"><span>        .</span><span style="color: #D2A8FF;">host</span><span>(</span><span style="color: #A5D6FF;">&quot;address.example.com&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>        .</span><span style="color: #D2A8FF;">port</span><span>(</span><span style="color: #79C0FF;">6379</span><span>)</span></span>
+<span class="giallo-l"><span>        .</span><span style="color: #D2A8FF;">build</span><span>())</span></span>
+<span class="giallo-l"><span>    .</span><span style="color: #D2A8FF;">readFrom</span><span>(ReadFrom.AZ_AFFINITY)</span></span>
+<span class="giallo-l"><span>    .</span><span style="color: #D2A8FF;">clientAZ</span><span>(</span><span style="color: #A5D6FF;">&quot;us-east-1a&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    .</span><span style="color: #D2A8FF;">build</span><span>()</span></span>
+<span class="giallo-l"><span>GlideClusterClient client</span><span style="color: #FF7B72;"> =</span><span> GlideClusterClient.</span><span style="color: #D2A8FF;">createClient</span><span>(config).</span><span style="color: #D2A8FF;">get</span><span>();</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;">// Write operation (route to the primary&#39;s slot owner)</span></span>
+<span class="giallo-l"><span>client.</span><span style="color: #D2A8FF;">set</span><span>(</span><span style="color: #A5D6FF;">&quot;key1&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;val1&quot;</span><span>).</span><span style="color: #D2A8FF;">get</span><span>();</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;">// Get will read from one of the replicas in the same client&#39;s availability zone if one exits.</span></span>
+<span class="giallo-l"><span>client.</span><span style="color: #D2A8FF;">get</span><span>(</span><span style="color: #A5D6FF;">&quot;key1&quot;</span><span>).</span><span style="color: #D2A8FF;">get</span><span>();</span></span></code></pre>
+<p><strong>Node.js:</strong></p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="javascript"><span class="giallo-l"><span style="color: #FF7B72;">import</span><span> GlideClusterClient</span><span style="color: #FF7B72;"> from</span><span style="color: #A5D6FF;"> &quot;@valkey/valkey-glide&quot;</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">const</span><span style="color: #79C0FF;"> addresses</span><span style="color: #FF7B72;"> =</span><span> [</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span>        host:</span><span style="color: #A5D6FF;"> &quot;address.example.com&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>        port:</span><span style="color: #79C0FF;"> 6379</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>];</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;">// Initialize Valkey client with preference for the client&#39;s AZ</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">const</span><span style="color: #79C0FF;"> client</span><span style="color: #FF7B72;"> = await</span><span> GlideClusterClient.</span><span style="color: #D2A8FF;">createClient</span><span>({</span></span>
+<span class="giallo-l"><span>    addresses: addresses,</span></span>
+<span class="giallo-l"><span>    readFrom:</span><span style="color: #A5D6FF;"> &quot;AZAffinity&quot;</span><span style="color: #FF7B72;"> as</span><span style="color: #FFA657;"> ReadFrom</span><span>,</span></span>
+<span class="giallo-l"><span>    clientAz:</span><span style="color: #A5D6FF;"> &quot;us-east-1a&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>});</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">// Write operation (route to the primary&#39;s slot owner)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">await</span><span> client.</span><span style="color: #D2A8FF;">set</span><span>(</span><span style="color: #A5D6FF;">&quot;key1&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;val1&quot;</span><span>);</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">// Get will read from one of the replicas in the same client&#39;s availability zone if one exits.</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">await</span><span> client.</span><span style="color: #D2A8FF;">get</span><span>(</span><span style="color: #A5D6FF;">&quot;key1&quot;</span><span>);</span></span></code></pre></li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>By implementing AZ affinity routing in Valkey and using GLIDE, you can achieve lower latency and cost savings by routing requests to replicas in the same AZ as the client.</p>
+<hr />
+<p><em>Updated May 2025 to cover the <code>AZ_AFFINITY_REPLICAS_AND_PRIMARY</code> strategy and a corresponding example.</em></p>
+<h3 id="further-reading">Further Reading</h3>
+<ul>
+<li><a rel="external" href="https://github.com/valkey-io/valkey-glide">Valkey GLIDE GitHub Repository</a></li>
+<li><a rel="external" href="https://valkey.io/">Valkey Documentation</a></li>
+<li><a rel="external" href="https://github.com/valkey-io/valkey-glide/wiki/Python-wrapper#read-strategy">Valkey GLIDE read strategy documentation in Python</a></li>
+<li><a rel="external" href="https://github.com/valkey-io/valkey-glide/wiki/Java-Wrapper#read-strategy">Valkey GLIDE read strategy documentation in Java</a></li>
+<li><a rel="external" href="https://github.com/valkey-io/valkey-glide/wiki/NodeJS-wrapper#read-strategy">Valkey GLIDE read strategy documentation in NodeJS</a></li>
+</ul>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/asafport.png" alt="photo of Asaf Porat Stoler" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Asaf Porat Stoler</h4>
+    
+    <a target="_blank" href="https://github.com/asafpamzn"><i class="icon icon-github-square"></i> @asafpamzn</a>
+    
+    <p>Asaf Porat Stoler is a software development manager on the Amazon In-Memory Databases team. Asaf has over 20 years of experience in storage systems, data reduction, and in-memory databases. Currently, he is focused on Amazon ElastiCache performance and on Valkey GLIDE. Outside of work, he enjoys sports, hiking, and spending time with his family.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/adarovadya.jpeg" alt="photo of Adar Guma Ovadya" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Adar Guma Ovadya</h4>
+    
+    <a target="_blank" href="https://github.com/adarovadya"><i class="icon icon-github-square"></i> @adarovadya</a>
+    
+    <p>Adar is a software engineer at AWS, deeply passionate about distributed systems, performance optimization, and exploring side-channel attacks. In her free time, she enjoys discovering new coffee spots, baking delicious treats, and traveling with her family.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/muhammadawawdi.jpeg" alt="photo of Muhammad Awawdi" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Muhammad Awawdi</h4>
+    
+    <a target="_blank" href="https://github.com/mo-amzn"><i class="icon icon-github-square"></i> @mo-amzn</a>
+    
+    <p>Muhammad is a software engineer at AWS ElastiCache, building Valkey GLIDE and large-scale distributed systems. When he’s not building faster tech, he’s lifting weights, grilling barbecue, or geeking out over the latest innovations.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/az-affinity-strategy/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/az-affinity-strategy/&title=Reducing%20application%20latency%20and%20lowering%20Cloud%20bill%20by%20setting%20up%20your%20client%20library&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/az-affinity-strategy/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/2024-year-of-valkey/">&laquo; 2024: The Year of Valkey</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/2025-03-4-go-client-in-public-preview/">Introducing the Valkey Glide Go Client: Now in Public Preview! &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

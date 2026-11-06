@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-07.webp" />
+    
+    
+
+    <meta name="description" content="While most people won&#39;t go to production on a Raspberry Pi, we&#39;ll cover how to thoroughly performance test Valkey to understand how it works in production." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Pushing the limits of Valkey on a Raspberry Pi</title>
+    <meta name="title" property="og:title" content="Valkey: Pushing the limits of Valkey on a Raspberry Pi">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-07.webp" alt="Pushing the limits of Valkey on a Raspberry Pi" class="feature-img">
+
+
+<h1>Pushing the limits of Valkey on a Raspberry Pi</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2024-11-21
+  
+    &middot; 
+    
+      
+      
+      <em>David Tippett</em>
+    
+  
+</div>
+<p>While doing extensive performance testing on a Raspberry Pi is silly, it's made me realize the complexity of performance testing. For example, in some of the tests below I ended up managing to use all of the resources of the Raspberry Pi and achieved terrible performance. Every application has different performance characteristics so we'll walk through what factors to consider when it comes to deploying Valkey.</p>
+<h2 id="the-test-environment">The test environment</h2>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/images/cm4.png" alt="Picture of the Compute Module 4 credit Raspberry Pi Ltd (CC BY-SA)" /></p>
+<p>For hardware we are going to be using a Raspberry Pi <a rel="external" href="https://www.raspberrypi.com/products/compute-module-4/?variant=raspberry-pi-cm4001000">Compute Module 4 (CM4)</a>. It's a single board computer (SBC) that comes with a tiny 1.5Ghz 4-core Broadcom CPU and 8GB of system memory. This is hardly the first device someone would pick when deciding on a production system. Using the CM4 makes it easy to showcase how to optimize Valkey depending on your different hardware constraints.</p>
+<p>Our operating system will be a 64-bit Debian based operating system (OS) called <a rel="external" href="https://www.raspbian.org/">Rasbian</a>. This distribution is specifically modified to perform well on the CM4. Valkey will run in a docker container orchestrated with docker compose. I like deploying in containers as it simplifies operations. If you'd like to follow along here is <a rel="external" href="https://docs.docker.com/engine/install/debian/">a guide for installing Docker</a>. Make sure to continue to the <a rel="external" href="https://docs.docker.com/engine/install/linux-postinstall/">second page of the installation process</a> as well. It's easy to miss and skipping it could make it harder to follow along.</p>
+<p>We'll be using two CM4s for testing. The first will host Valkey and the second will host the benchmarking software. This setup probably better reflects how most people will run in production. Benchmarking is being done with redis-benchmark because it can be installed with <code>sudo apt install redis-tools</code>. Valkey does have its own benchmark utility that comes installed with Valkey. To use valkey-benchmark instead you would need to install Valkey on the benchmarking server or spin up a container and connect into it. Functionally, they both operate nearly the same as of the writing of this article.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/images/test_setup.png" alt="Test architecture showing two nodes: a Benchmark server with the ip of 10.0.11.221 with an arrow pointing to a Valkey server with an ip of 10.0.1.136" /></p>
+<h2 id="setting-up-our-environment">Setting up our environment</h2>
+<p>Below is a straightforward docker compose file that will start a single Valkey container. This container will bind Valkey to port 6379 on the host device. This means that is exposed to anyone with access to your network! This is important for us to access it from the benchmarking server.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="yaml"><span class="giallo-l"><span style="color: #8B949E;"># valkey.yaml</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">services</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  valkey-1</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    image</span><span>:</span><span style="color: #A5D6FF;"> valkey/valkey:latest</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    hostname</span><span>:</span><span style="color: #A5D6FF;"> valkey1</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    command</span><span>:</span><span style="color: #A5D6FF;"> valkey-server --port 6379 --requirepass ${VALKEY_PASSWORD} --io-threads ${IO_THREADS} --save &quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    volumes</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> ./data:/data</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    network_mode</span><span>:</span><span style="color: #A5D6FF;"> host</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #7EE787;">volumes</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  data</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    driver</span><span>:</span><span style="color: #A5D6FF;"> local</span></span></code></pre>
+<p>Since we are exposing this to our internal network we will create a password for our default user. I used <code>head -16 /dev/urandom | openssl sha1</code> to generate a random password. Because of how fast Valkey can process requests a brute force attack could try hundreds of thousands of passwords per second. After generating that password, I put it in a <code>.env</code> file in the same directory as our docker compose.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;">#.env</span></span>
+<span class="giallo-l"><span>VALKEY_PASSWORD</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">e41fb9818502071d592b36b99f63003019861dad</span></span>
+<span class="giallo-l"><span>NODE_IP</span><span style="color: #FF7B72;">=&lt;</span><span style="color: #A5D6FF;">VALKEY</span><span style="color: #FFA657;"> SERVER</span><span style="color: #A5D6FF;"> I</span><span>P</span><span style="color: #FF7B72;">&gt;</span></span>
+<span class="giallo-l"><span>IO_THREADS</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">1</span></span></code></pre>
+<p>Now by running <code>docker compose -f valkey.yaml up -d</code> Valkey server will start with password we set!</p>
+<h2 id="baseline-test">Baseline test</h2>
+<p>Now we are ready to do some baseline testing. We will log into the benchmarking server. If you haven't installed redis-benchmark yet you can do so with <code>sudo apt install redis-tools</code>.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">redis-benchmark</span><span style="color: #79C0FF;"> -n 1000000 -t</span><span style="color: #A5D6FF;"> set,get</span><span style="color: #79C0FF;"> -P 16 -q -a</span><span style="color: #FF7B72;"> &lt;</span><span style="color: #A5D6FF;">PASSWORD FROM .en</span><span>v</span><span style="color: #FF7B72;">&gt;</span><span style="color: #79C0FF;"> --threads 5 -h 10.0.1.136</span></span></code></pre>
+<p>Test breakdown:</p>
+<ul>
+<li><code>-n</code> - this will run 1,000,000 operations using the commands in -t</li>
+<li><code>-t</code> - will run the set and get tests</li>
+<li><code>-P</code> - this specifies that we would like the tests to use 16 pipelines (send 16 operations per request).</li>
+<li><code>-q</code> - silences the output to show only the final results</li>
+<li><code>-a</code> - use the specified password</li>
+<li><code>-h</code> - run the test against the specified host</li>
+<li><code>--threads</code> - how many threads to generate test data from</li>
+</ul>
+<p>Honestly, I was astonished by the first set of results I got. Sure, I expected Valkey to be fast but this speed from a single board computer?? ON A SINGLE THREAD?? It's amazing.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">redis-benchmark</span><span style="color: #79C0FF;"> -n 1000000 -t</span><span style="color: #A5D6FF;"> set,get</span><span style="color: #79C0FF;"> -P 16 -q -a</span><span style="color: #A5D6FF;"> e41fb9818502071d592b36b99f63003019861dad</span><span style="color: #79C0FF;"> --threads 5 -h 10.0.1.136</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">SET:</span><span style="color: #79C0FF;"> 173040.33</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">4.503</span><span style="color: #A5D6FF;"> msec</span><span>                    </span></span>
+<span class="giallo-l"><span style="color: #FFA657;">GET:</span><span style="color: #79C0FF;"> 307031.00</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">2.455</span><span style="color: #A5D6FF;"> msec</span></span></code></pre>
+<p>Between the two tests we averaged 240,000 requests per second.</p>
+<h2 id="raising-the-cpu-clock-speed">Raising the CPU clock speed</h2>
+<p>Since Valkey is a single threaded application, it makes sense that higher clock speeds would lead to more performance. I don't expect most people will overclock their servers in production. Different servers may be available with different CPU clock speeds.</p>
+<p><strong>Note:</strong> Clock speeds generally are only comparable between CPU's with a similar architecture. For example, you could reasonably compare clock speeds between an 12th generation Intel i5 and a 12th generation Intel i7. If the 12th gen i7 had a max clock speed of 5Ghz that doesn't necessarily mean it will be slower than a AMD Ryzen 9 9900X clocked at 5.6Ghz.</p>
+<p>If you're following along on a Pi of your own I've outlined the steps to overclock your CM4 below. Otherwise, you can skip to the results section below.</p>
+<p><strong>Warning</strong> Just a reminder overclocking your device can cause damage to your device. Please use caution and do your own research for settings that are safe.</p>
+<ol>
+<li>Open the below file
+<ul>
+<li><code>sudo nano /boot/firmware/config.txt</code></li>
+</ul>
+</li>
+<li>At the end of the file add this section below the <code>[all]</code> tag<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>[all]</span></span>
+<span class="giallo-l"><span>over_voltage=8</span></span>
+<span class="giallo-l"><span>arm_freq=2200</span></span></code></pre></li>
+<li>Restart the Pi and log back in <code>sudo restart now</code></li>
+</ol>
+<p>We've just increased the speed of the Pi by 47% by raising the clock speed from 1.5Ghz to 2.2Ghz. Now lets re-run our test and see how things look!</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">redis-benchmark</span><span style="color: #79C0FF;"> -n 1000000 -t</span><span style="color: #A5D6FF;"> set,get</span><span style="color: #79C0FF;"> -P 16 -q -a</span><span style="color: #A5D6FF;"> e41fb9818502071d592b36b99f63003019861dad</span><span style="color: #79C0FF;"> --threads 5 -h 10.0.1.136</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">SET:</span><span style="color: #79C0FF;"> 394368.41</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">1.223</span><span style="color: #A5D6FF;"> msec</span><span>                    </span></span>
+<span class="giallo-l"><span style="color: #FFA657;">GET:</span><span style="color: #79C0FF;"> 438058.53</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">1.135</span><span style="color: #A5D6FF;"> msec</span><span> </span></span></code></pre>
+<p>We're up to 416,000 requests per second (reminder this is the average between the two operations). The mathematicians out there might notice that this speed up is a lot more than the expected 47% increase. It's a 73% increase in requests per second. What's happening?!</p>
+<h2 id="adding-io-threading">Adding IO Threading</h2>
+<p>With all these gains I was super excited to try the new <a rel="external" href="https://valkey.io/blog/unlock-one-million-rps/">IO threading available</a> in Valkey 8. First we will take down the previous running docker instance with <code>docker compose -f valkey.yaml down</code>. Then we will modify the <code>.env</code> file's <code>IO_THREADS</code> parameter to 5.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #8B949E;">#.env</span></span>
+<span class="giallo-l"><span>VALKEY_PASSWORD</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">e41fb9818502071d592b36b99f63003019861dad</span></span>
+<span class="giallo-l"><span>NODE_IP</span><span style="color: #FF7B72;">=&lt;</span><span style="color: #A5D6FF;">VALKEY</span><span style="color: #FFA657;"> SERVER</span><span style="color: #A5D6FF;"> I</span><span>P</span><span style="color: #FF7B72;">&gt;</span></span>
+<span class="giallo-l"><span>IO_THREADS</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">5</span></span>
+<span class="giallo-l"></span></code></pre>
+<p>Then we can <code>docker compose -f valkey.yaml up -d</code> to start it again. Remote into the benchmarking server to start the test and...?</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">redis-benchmark</span><span style="color: #79C0FF;"> -n 10000000 -t</span><span style="color: #A5D6FF;"> set,get</span><span style="color: #79C0FF;"> -P 16 -q -a</span><span style="color: #A5D6FF;"> e41fb9818502071d592b36b99f63003019861dad</span><span style="color: #79C0FF;"> --threads 5 -h 10.0.1.136</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">SET:</span><span style="color: #79C0FF;"> 345494.75</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">0.911</span><span style="color: #A5D6FF;"> msec</span><span>                    </span></span>
+<span class="giallo-l"><span style="color: #FFA657;">GET:</span><span style="color: #79C0FF;"> 327858.09</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">0.879</span><span style="color: #A5D6FF;"> msec</span><span>  </span></span></code></pre>
+<p>Wait a second... These results are worse than the ones before? We went from 416k requests per second to 336k.... What's happening?</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/images/io_threads.png" alt="A picture of the valkey server with 4 cores represented as boxes. In each of the four core boxes there are other boxes. 2 cores have 1 IO Thread Box, 1 Core has 2 IO thread boxes, and the last one has 1 IO Thread box along with a Valkey Process box." /></p>
+<p>We have over-subscribed our CPU. This means we've created more worker threads than CPU cores. When a thread is under constant load it is competing with other threads on that core for resources. Not to mention, they are also competing with the Valkey process for resources.</p>
+<p>That's why <a rel="external" href="https://github.com/valkey-io/valkey/blob/a62d1f177b7888ec88035a0a1ce600fbc2280ce7/valkey.conf#L1337-L1341">Valkey recommends</a> setting the number of threads to be a value less than the number of cores you have. For our little 4 core server lets change the <code>IO_THREADS</code> parameter to be 2 threads in the <code>.env</code> file and try again.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">redis-benchmark</span><span style="color: #79C0FF;"> -n 10000000 -t</span><span style="color: #A5D6FF;"> set,get</span><span style="color: #79C0FF;"> -P 16 -q -a</span><span style="color: #A5D6FF;"> e41fb9818502071d592b36b99f63003019861dad</span><span style="color: #79C0FF;"> --threads 5 -h 10.0.1.136</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">SET:</span><span style="color: #79C0FF;"> 609050.44</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">0.831</span><span style="color: #A5D6FF;"> msec</span><span>                    </span></span>
+<span class="giallo-l"><span style="color: #FFA657;">GET:</span><span style="color: #79C0FF;"> 521186.22</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">0.719</span><span style="color: #A5D6FF;"> msec</span></span></code></pre>
+<p>Much better! Now we are seeing around 565,000 requests per second. Thats a 35% increase in performance across both metrics! Not to mention in the picture below you can see that we have 100% utilization across all of our CPU's which means there's no more room for improvement!</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/images/io_threading_htop.png" alt="A picture of an HTOP window showing all four of our CPU&#39;s at 100% utilization." /></p>
+<p>Right? Well believe it or not we can squeeze even more performance out of our little CM4!</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/images/io_threading_arch.png" alt="A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first core box is the Valkey process and in the next two there are IO Threads. The valkey process has a loop showing it communicating with both of the IO threads. It also has a bracket showing it managing all the memory." /></p>
+<p>Above is a representative outline of what's happening on the server. The Valkey process has to take up valuable cycles managing the IO Threads. Not only that it has to perform a lot of work to manage all the memory assigned to it. That's a lot of work for a single process.</p>
+<p>Now there is actually one more optimization we can use to make single threaded Valkey even faster. Valkey recently has done a substantial amount of work to support speculative execution. This work allows Valkey to predict which values will be needed from memory in future processing steps. This way Valkey server doesn't have to wait for memory access which is an order of magnitude slower than L1 caches. While I won't go through the details of how this works as there's already a <a rel="external" href="https://valkey.io/blog/unlock-one-million-rps-part2/">great blog that describes how to take advantage of these optimizations</a>. Here are the results:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">redis-benchmark</span><span style="color: #79C0FF;"> -n 10000000 -t</span><span style="color: #A5D6FF;"> set,get</span><span style="color: #79C0FF;"> -P 16 -q -a</span><span style="color: #A5D6FF;"> e41fb9818502071d592b36b99f63003019861dad</span><span style="color: #79C0FF;"> --threads 5 -h 10.0.1.136</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">SET:</span><span style="color: #79C0FF;"> 632791.25</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">1.191</span><span style="color: #A5D6FF;"> msec</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">GET:</span><span style="color: #79C0FF;"> 888573.00</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">0.695</span><span style="color: #A5D6FF;"> msec</span></span></code></pre>
+<p>While these results are better they are a bit confusing. After talking with some of Valkey's maintainers it seems there may be something different in the way that Rasbian is configured when it comes to memory writes. In their testing the <code>GET/SET</code> requests were nearly identical but in my testing so far the write speed seems to always be behind read speed. If you think you know why please reach out!</p>
+<h2 id="clustered-valkey">Clustered Valkey</h2>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/images/valkey_clustered.png" alt="A picture of our Valkey server with the 4 core boxes and to the right of them is a memory box. In the first three core boxes are Valkey processes. Each of them has a bracket around a portion of the memory." /></p>
+<p>For our last step we are going to spin up a Valkey cluster. This cluster will have individual instances of Valkey running that each will be responsible for managing their own keys. This way each instance can execute operations in parallel much more easily.</p>
+<p>I am not going into detail with how the keyspaces work but <a rel="external" href="https://valkey.io/topics/cluster-tutorial/">here is a good 101 guide</a> for understanding clustering in Valkey.</p>
+<p>First we'll stop our previous Valkey container <code>docker compose -f valkey.yaml down</code>. Now we can create our docker compose file for the cluster. Because each of these are exposed on the host they will all need to be using different ports. Additionally, all of them need to be aware they are started in cluster mode so they can redirect requests to the appropriate instance.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="yaml"><span class="giallo-l"><span style="color: #8B949E;"># valkey-cluster.yaml</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">services</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  valkey-node-1</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    hostname</span><span>:</span><span style="color: #A5D6FF;"> valkey1</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    image</span><span>:</span><span style="color: #A5D6FF;"> valkey/valkey:latest</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    command</span><span>:</span><span style="color: #A5D6FF;"> valkey-server --port 6379 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD} --save &quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    volumes</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> ./data1:/data</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    network_mode</span><span>:</span><span style="color: #A5D6FF;"> host</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  valkey-node-2</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    hostname</span><span>:</span><span style="color: #A5D6FF;"> valkey2</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    image</span><span>:</span><span style="color: #A5D6FF;"> valkey/valkey:latest</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    command</span><span>:</span><span style="color: #A5D6FF;"> valkey-server --port 6380 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD} --save &quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    volumes</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> ./data2:/data</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    network_mode</span><span>:</span><span style="color: #A5D6FF;"> host</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  valkey-node-3</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    hostname</span><span>:</span><span style="color: #A5D6FF;"> valkey3</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    image</span><span>:</span><span style="color: #A5D6FF;"> valkey/valkey:latest</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    command</span><span>:</span><span style="color: #A5D6FF;"> valkey-server --port 6381 --cluster-enabled yes --cluster-config-file nodes.conf --cluster-node-timeout 5000 --requirepass ${VALKEY_PASSWORD} --save &quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    volumes</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #A5D6FF;"> ./data3:/data</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    network_mode</span><span>:</span><span style="color: #A5D6FF;"> host</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #7EE787;">volumes</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  data1</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    driver</span><span>:</span><span style="color: #A5D6FF;"> local</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  data3</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    driver</span><span>:</span><span style="color: #A5D6FF;"> local</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  data2</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    driver</span><span>:</span><span style="color: #A5D6FF;"> local</span></span></code></pre>
+<p>Run <code>docker compose -f valkey-cluster.yaml up -d</code> to start the cluster.
+There is one more step to get the cluster running.
+Find the name of one of your nodes with <code>docker ps --format '{{.Names}}'</code>.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">docker</span><span style="color: #A5D6FF;"> ps</span><span style="color: #79C0FF;"> --format</span><span style="color: #A5D6FF;"> &#39;{{.Names}}</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">kvtest-valkey-node-1-1</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">kvtest-valkey-node-3-1</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">kvtest-valkey-node-2-1</span></span></code></pre>
+<p>I'll use the first container to finish the cluster creation. Once the containers have started up we have to tell them the details they need to use for the cluster. Below I am using the IP of the host and the port configurations of all the containers to create the cluster. This is because these addresses need to be accessible from the benchmarking server.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">docker</span><span style="color: #A5D6FF;"> exec</span><span style="color: #79C0FF;"> -it</span><span style="color: #A5D6FF;"> kvtest-valkey-node-1-1 valkey-cli</span><span style="color: #79C0FF;"> --cluster</span><span style="color: #A5D6FF;"> create 10.0.1.136:6379 10.0.1.136:6380 10.0.1.136:6381</span><span style="color: #79C0FF;"> -a</span><span style="color: #A5D6FF;"> e41fb9818502071d592b36b99f63003019861dad</span></span></code></pre>
+<p>Now we can run our benchmark! We need to add the <code>--cluster</code> flag to our benchmarking command. Also, because this is so fast I ended up moving from 1 million requests to 10 million requests. That way we can make sure Valkey has time to fully utilize all it's resources.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">redis-benchmark</span><span style="color: #79C0FF;"> -n 10000000 -t</span><span style="color: #A5D6FF;"> set,get</span><span style="color: #79C0FF;"> -P 16 -q --threads 10 --cluster -a</span><span style="color: #A5D6FF;"> e41fb9818502071d592b36b99f63003019861dad</span><span style="color: #79C0FF;"> --threads 5 -h 10.0.1.136</span><span> </span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Cluster</span><span style="color: #A5D6FF;"> has</span><span style="color: #79C0FF;"> 3</span><span style="color: #A5D6FF;"> master nodes:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FFA657;">Master</span><span style="color: #A5D6FF;"> 0: 219294612b44226fa32482871cf21025ff531875 10.0.1.136:6380</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Master</span><span style="color: #A5D6FF;"> 1: e5d85b970551c27065f1552f5358f4add6114d98 10.0.1.136:6381</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">Master</span><span style="color: #A5D6FF;"> 2: 1faf3d0dd22e518eec11fd46c0de6ce18cd15cfe 10.0.1.136:6379</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FFA657;">SET:</span><span style="color: #79C0FF;"> 1122838.50</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">0.575</span><span style="color: #A5D6FF;"> msec</span><span>                     </span></span>
+<span class="giallo-l"><span style="color: #FFA657;">GET:</span><span style="color: #79C0FF;"> 1188071.75</span><span style="color: #A5D6FF;"> requests per second, p50=</span><span style="color: #79C0FF;">0.511</span><span style="color: #A5D6FF;"> msec</span><span>  </span></span></code></pre>
+<p><strong>1,155,000 requests per second</strong>. We've managed to double our requests per second. All this on a single board computer that's the size of a credit card.</p>
+<p>While this is far from what I would recommend for a production server these are the same steps I'd recommend to someone evaluating Valkey. It's important test with a single instance to start finding the optimal settings. Then you can begin to scale up your test by adding either more IO Threads or Valkey instances.</p>
+<p>Testing should mirror your production workload as best it can. This test is using synthetic data. That's why I'd recommend checking out the documentation to find what other settings you may need to test with. For example, we tested with the default settings of 50 client connections and 3 byte payloads. Your production workload may look different so explore all the settings! You may find that IO threading works better for your use case than I did in this case.</p>
+<p>If you enjoyed this read make sure to check out my blog <a rel="external" href="https://tippybits.com">TippyBits.com</a> where I post content like this on a regular basis. Stay curious my friends!</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/dtaivpp.jpeg" alt="photo of David Tippett" />
+    
+  </div>
+  <div class="author-info">
+    <h4>David Tippett</h4>
+    
+    <a target="_blank" href="https://github.com/dtaivpp"><i class="icon icon-github-square"></i> @dtaivpp</a>
+    
+    <p>David Tippett currently is building search at GitHub. He has nearly a decade of experience building data systems to make search more understandable, systems more observable, and infrastructure more robust. If you enjoy open source or reading technical deep dives make sure to check out his website <a rel="external" href="https://tippybits.com">TippyBits.com</a>.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/&title=Pushing%20the%20limits%20of%20Valkey%20on%20a%20Raspberry%20Pi&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/testing-the-limits/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-ga/">&laquo; Generally Available: Valkey 8.0.0</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/2024-year-of-valkey/">2024: The Year of Valkey &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

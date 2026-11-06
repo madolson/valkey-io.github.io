@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//img/valkey-logo-og.png" />
+    
+    
+
+    <meta name="description" content="Technical recap of the ValkeyConf 2026 closing keynote by Harkrishn Patro and Viktor Söderqvist. Covers features in development including durability, Cluster V2, data tiering, and active-active replication." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Valkey&#39;s Next Chapter: Durability and Beyond</title>
+    <meta name="title" property="og:title" content="Valkey: Valkey&#39;s Next Chapter: Durability and Beyond">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+
+<h1>Valkey&#39;s Next Chapter: Durability and Beyond</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Events">Events</span>
+  
+  2026-10-29
+  
+    &middot; 
+    
+      
+      
+      <em>Harkrishn Patro</em>,
+    
+      
+      
+      <em>Viktor Söderqvist</em>,
+    
+      
+      
+      <em>Crystal Pham</em>
+    
+  
+</div>
+<div style="position: relative; width: 100%; padding-bottom: 56.25%; height: 0; overflow: hidden; margin: 24px 0;">
+  <iframe src="https://www.youtube-nocookie.com/embed/2OaLqzYljlQ" title="Closing Keynote: Valkey's Next Chapter: Durability and Beyond" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>
+<blockquote>
+<p><strong>TL;DR:</strong> Closing keynote recap: Valkey's next chapter focuses on four interconnected areas: durability, Cluster V2, data tiering, and active-active replication. Together, these efforts aim to deliver stronger consistency guarantees, more efficient storage, and geographically distributed writes while preserving Valkey's high-performance architecture.</p>
+</blockquote>
+<h2 id="low-latency-is-cool-losing-data-isn-t">Low Latency Is Cool. Losing Data Isn't.</h2>
+<p>Fast writes are great. But what happens when a node crashes, your dataset outgrows memory, or multiple regions need to write to the same data?</p>
+<p>At <a rel="external" href="https://events.linuxfoundation.org/valkeyconf/">ValkeyConf 2026</a>, Valkey maintainers and Technical Steering Committee (TSC) members <a rel="external" href="https://uk.linkedin.com/in/harkrishn-patro">Harkrishn Patro (Apple)</a> and <a rel="external" href="https://github.com/zuiderkwast">Viktor Söderqvist (Ericsson)</a> took the stage for the closing keynote, <a rel="external" href="https://www.youtube.com/watch?v=2OaLqzYljlQ">"Valkey's Next Chapter: Durability and Beyond"</a>, to outline what's next for Valkey 10 and beyond.</p>
+<p>Their focus was extending what developers can reliably build with Valkey without sacrificing the performance and simplicity that made it useful in the first place.</p>
+<h2 id="durability-if-valkey-says-ok-the-write-should-stick">Durability: If Valkey Says "OK," the Write Should Stick</h2>
+<p>On a single node, Valkey is already durable. With AOF and <code>appendfsync always</code>, a write is fsynced to disk before the client sees "OK," so it survives a crash. Across multiple nodes, that guarantee doesn't hold. Replication is asynchronous, so the primary acknowledges a write before its replicas have it. If the primary fails in that window, the promoted replica never saw the write and the acknowledged data is lost.</p>
+<p>For caching, that tradeoff is often acceptable. For workloads requiring stronger data guarantees, it becomes a limitation.</p>
+<p>The proposed durability work introduces synchronous replication and stronger consistency.</p>
+<p>When a write arrives, the primary applies it in-memory but marks the affected keys as uncommitted. The system continues processing commands while holding responses that depend on uncommitted data until the required replication acknowledgments arrive.</p>
+<p>Replicas also avoid exposing uncommitted writes, ensuring clients don't read data that could disappear after failover.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/Valkeyconf-closing-keynote/Valkey_Durability.gif" alt="Proposed synchronous replication: writes are acknowledged after required replica confirmation" /></p>
+<p>Disk persistence introduces another consideration. With append-only files (AOF), changes must be written and synchronized using <code>fsync</code> before acknowledgment. Periodic RDB snapshots alone cannot provide the same durability guarantees.</p>
+<p>Viktor also discussed achieving durability through synchronous replication without local disk persistence. This approach depends on preventing failed nodes from restarting with stale state, particularly in ephemeral Kubernetes environments.</p>
+<h2 id="cluster-v2-gossip-has-its-limits">Cluster V2: Gossip Has Its Limits</h2>
+<p>Valkey's existing cluster architecture relies on a full-mesh gossip protocol for node communication, failure detection, and topology changes.</p>
+<p>Each node maintains its own view of the cluster, exchanging updates asynchronously. While effective for existing deployments, this approach introduces scalability limitations as clusters grow.</p>
+<p>During testing with approximately 1,000 nodes, cluster communication alone consumed around 5% CPU, even without application traffic.</p>
+<p>Cluster V2 proposes a different approach using Raft, a leader-based distributed consensus algorithm.</p>
+<p>Instead of nodes independently propagating topology changes, Raft elects a leader to coordinate cluster-level decisions. Changes are committed after acknowledgment from a majority of participating nodes, providing a consistent view of cluster metadata.</p>
+<p>This matters because <strong>durability and cluster coordination are closely connected.</strong></p>
+<p>Synchronous replication requires reliable agreement on which replicas are eligible for failover. If nodes disagree about cluster membership or topology, data might be acknowledged by an inactive node and return inconsistent results to the user.</p>
+<h2 id="data-tiering-not-every-key-needs-to-stay-in-memory">Data Tiering: Not Every Key Needs to Stay In-Memory</h2>
+<p>Valkey's in-memory architecture delivers high throughput and low latency, but keeping increasingly large datasets entirely in-memory comes at a cost.</p>
+<p>Data tiering, one of the community's most requested capabilities, aims to separate frequently accessed data from colder data.</p>
+<p>Under the proposed design, hot data remains in-memory while less frequently accessed data moves to lower-cost storage on disk.</p>
+<p>Rather than requiring developers to manually select which keys move between storage tiers, Valkey would automatically determine data placement based on access patterns.</p>
+<p>When a client requests cold data, asynchronous retrieval would fetch it from storage without blocking the main thread. Only clients waiting on that data would experience the additional latency, while requests for resident data continue.</p>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/Valkeyconf-closing-keynote/Valkey_Data_Tiering.gif" alt="Data tiering: hot data remains in-memory while cold data moves to lower-cost storage" /></p>
+<p>Applications could potentially maintain larger datasets without provisioning enough memory to hold every key, preserving in-memory performance for frequently accessed data while reducing overall storage costs.</p>
+<h2 id="active-active-everyone-can-write-now-what">Active-Active: Everyone Can Write. Now What?</h2>
+<p>Active-active replication introduces another challenge: allowing geographically distributed clusters to accept writes simultaneously.</p>
+<p>The difficulty isn't simply replicating data between regions. It's determining what happens when different regions modify the same data, particularly during network partitions.</p>
+<p>The community is exploring bidirectional replication, replication-state tracking, and conflict-resolution mechanisms to support eventual consistency.</p>
+<p>One potential starting point is a mesh topology, where clusters exchange updates directly while avoiding cyclic replication paths.</p>
+<p>For conflict resolution, last-write-wins is being considered as an initial approach. However, its simplicity introduces tradeoffs, since the latest write may overwrite another valid update.</p>
+<p>Conflict-free replicated data types (CRDTs) are also being explored as a possible future direction for workloads requiring more sophisticated merge semantics.</p>
+<p>Some applications require local writes during partitions, accepting temporary divergence until connectivity returns and state converges.</p>
+<h2 id="four-features-one-bigger-test-keep-valkey-simple">Four Features. One Bigger Test: Keep Valkey Simple</h2>
+<p>These capabilities address different problems, but their underlying architectures overlap.</p>
+<p>Durability tracks committed writes. Cluster V2 coordinates distributed state. Data tiering manages data placement. Active-active tracks replication and reconciliation across regions.</p>
+<p>Rather than building entirely separate mechanisms, the community is exploring reusable components that keep Valkey maintainable and understandable.</p>
+<h2 id="more-capabilities-same-valkey-simplicity">More Capabilities. Same Valkey Simplicity.</h2>
+<p>Valkey's next chapter isn't just about making data access faster. It's about making more workloads possible without losing the simplicity that developers depend on.</p>
+<p>All of this is still in development, and the design decisions being made now will shape what Valkey becomes next. Follow along or contribute:</p>
+<ul>
+<li>Durability: <a rel="external" href="https://github.com/valkey-io/valkey/issues/3037">#3037</a></li>
+<li>Cluster V2: <a rel="external" href="https://github.com/valkey-io/valkey/issues/3856">#3856</a></li>
+<li>Data tiering: <a rel="external" href="https://github.com/valkey-io/valkey/issues/3326">#3326</a></li>
+<li>Active-active: <a rel="external" href="https://github.com/valkey-io/valkey/issues/512">#512</a></li>
+</ul>
+<p>The developers working on these are on the <a rel="external" href="https://valkey.io/slack">Valkey Slack</a>.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/hpatro.jpeg" alt="photo of Harkrishn Patro" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Harkrishn Patro</h4>
+    
+    <a target="_blank" href="https://github.com/hpatro"><i class="icon icon-github-square"></i> @hpatro</a>
+    
+    <p>Harkrishn is passionate about distributed systems, databases, anything related to data.</p>
+<p>In his spare time, Harkrishn loves to play badminton or go for a hike with friends and family. He also watches lots of horror movies (with half-open eyes) to keep his loving wife, Pooja, company.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/zuiderkwast.jpeg" alt="photo of Viktor Söderqvist" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Viktor Söderqvist</h4>
+    
+    <a target="_blank" href="https://github.com/zuiderkwast"><i class="icon icon-github-square"></i> @zuiderkwast</a>
+    
+    <p>Viktor is an open source developer from Ericsson and one of the maintainers of Valkey.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/crystalpham.jpeg" alt="photo of Crystal Pham" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Crystal Pham</h4>
+    
+    <p>Crystal Pham is a Marketing Communications Manager at the Linux Foundation supporting the Valkey project. She is deeply passionate about open source and applies strategic marketing to advance open communication, innovation, and inclusive communities.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/Valkeyconf-closing-keynote/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/Valkeyconf-closing-keynote/&title=Valkey%27s%20Next%20Chapter%3A%20Durability%20and%20Beyond&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/Valkeyconf-closing-keynote/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/testing-without-a-server-fakevalkey/">&laquo; Testing without a server: using FakeValkey, the in-memory test double for Valkey</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/large-object-caching/">How Valkey 9.0 reduces the large object noisy neighbor problem &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

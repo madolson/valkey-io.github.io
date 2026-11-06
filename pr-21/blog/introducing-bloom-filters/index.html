@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-02.webp" />
+    
+    
+
+    <meta name="description" content="Learn how to use bloom filters to perform large-scale membership testing with significant memory savings." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Introducing Bloom Filters for Valkey</title>
+    <meta name="title" property="og:title" content="Valkey: Introducing Bloom Filters for Valkey">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-02.webp" alt="Introducing Bloom Filters for Valkey" class="feature-img">
+
+
+<h1>Introducing Bloom Filters for Valkey</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2025-04-09
+  
+    &middot; 
+    
+      
+      
+      <em>Karthik Subbarao</em>
+    
+  
+</div>
+<p>The Valkey project is introducing Bloom Filters as a new data type via <a rel="external" href="https://github.com/valkey-io/valkey-bloom/">valkey-bloom</a> (BSD-3 licensed), an official Valkey Module which is compatible with Valkey versions &gt;= 8.0. Bloom filters provide efficient, large-scale membership testing, improving performance and offering significant memory savings for high-volume applications.</p>
+<p>As an example, to handle advertisement deduplication workloads and answer the question, "Has this customer seen this ad before?", Valkey developers could use the SET data type.
+This is done by adding the customer IDs (of those who viewed an ad) into a <code>SET</code> object representing a particular advertisement. However, the problem with this approach is high memory usage since every item in the set is allocated.
+This article demonstrates how using the bloom filter data type from valkey-bloom can achieve significant memory savings, more than 93% in our example workload, while exploring its implementation, technical details, and practical recommendations.</p>
+<h2 id="introduction">Introduction</h2>
+<p>Bloom filters are a space efficient probabilistic data structure that supports adding elements and checking whether elements were previously added. False positives are possible, where a filter incorrectly indicates that an element exists even though it was not added.
+However, Bloom Filters guarantee that false negatives do not occur, meaning that an element that was added successfully will never be reported as not existing.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/bloomfilter_bitvector.png" alt="Bloom Filter Bit Vector" />
+<em>Image taken from <a rel="external" href="https://en.wikipedia.org/wiki/Bloom_filter#/media/File:Bloom_filter.svg">source</a></em></p>
+<p>When adding an item to a bloom filter, K different hash functions compute K corresponding bits from the bit vector, which are then set to 1.
+Checking existence involves the same hash functions - if any bit is 0, the item is definitely absent; if all bits are 1, the item likely exists (with a defined false positive probability).
+This bit-based approach, rather than full item allocation, makes bloom filters very space efficient with the trade off being potential false positives.</p>
+<p>Valkey-Bloom introduces bloom filters as a new data type to Valkey, providing both scalable and non-scalable variants.
+It is API compatible with the bloom filter command syntax of the official Valkey client libraries including valkey-py, valkey-java, valkey-go (as well as the equivalent Redis libraries).</p>
+<h2 id="data-type-overview">Data type overview</h2>
+<p>The "Bloom Object" is the main bloom data type structure. This is what gets created with any bloom filter creation command and this structure can act either as a "scaling bloom filter" or "non scaling bloom filter" depending on the user configuration.
+It consists of a vector of "Sub Filters" with length &gt;= 1 in case of scaling and only 1 in case of non scaling.</p>
+<p>The "Sub Filter" is an inner structure which is created and used within the "Bloom Object". It tracks the capacity, number of items added, and an instance of a Bloom Filter (of the specified properties).</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/bloomfilter_datatype.png" alt="bloom filter data type" /></p>
+<p><strong>Non Scaling</strong></p>
+<p>When non-scaling filters reach their capacity, if a user tries to add a new/unique item, an error is returned.
+You can create a non scaling bloom filter using <code>BF.RESERVE</code> or <code>BF.INSERT</code> commands.
+Example:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>BF.RESERVE &lt;filter-name&gt; &lt;error-rate&gt; &lt;capacity&gt; NONSCALING</span></span></code></pre>
+<p><strong>Scaling</strong></p>
+<p>When scaling filters reach their capacity, if a user adds an item to the bloom filter, a new sub filter is created and added to the vector of sub filters.
+This new bloom sub filter will have a larger capacity (previous_bloomfilter_capacity * expansion_rate of the bloom filter).
+When checking whether an item exists on a scaled out bloom filter (<code>BF.EXISTS</code>/<code>BF.MEXISTS</code>), we look through each filter (from oldest to newest) in the sub filter vector and perform a check operation on each one.
+Similarly, to add a new item to the bloom filter, we check through all the filters to see if the item already exists and the item is added to the current filter if it does not exist.
+Any default creation as a result of <code>BF.ADD</code>, <code>BF.MADD</code>, <code>BF.INSERT</code> will be a scalable bloom filter.</p>
+<p><strong>Common Bloom filter properties</strong></p>
+<p>Capacity - The number of unique items that can be added before a bloom filter scales out occurs (in case of scalable bloom filters) or before any command which inserts a new item will return an error (in case of non scalable bloom filters).</p>
+<p>False Positive Rate (FP) - The rate that controls the probability of item add/exists operations being false positives. Example: 0.001 means 1 in every 1000 operations can be a false positive.</p>
+<h2 id="use-cases-memory-savings">Use cases / Memory Savings</h2>
+<p>In this example, we are simulating a very common use case of bloom filters: Advertisement Deduplication. Applications can utilize bloom filters to track whether an advertisement / promotion has already been shown to a customer and use this to prevent showing it again to the customer.</p>
+<p>Let us assume we have 500 unique advertisements and our service has 5M customers. Both advertisements and customers are identified by a UUID (36 characters).</p>
+<p>Without bloom filters, applications could use the <code>SET</code> Valkey data type such that they have a unique <code>SET</code> for every advertisement.
+Then, they can use the <code>SADD</code> command to track every customer who has already seen this particular advertisement by adding them to the set.
+To check if a customer has seen the ad, the <code>SISMEMBER</code> or <code>SMISMEMBER</code> command can be used. This means we have 500 sets, each with 5M members. This will require ~152.57 GB of <code>used_memory</code> on a Valkey 8.0 server.</p>
+<p>With bloom filters, applications can create a unique bloom filter for every advertisement with the <code>BF.RESERVE</code> or <code>BF.INSERT</code> command.
+Here, they can specify the exact capacity they require: 5M - which means 5M items can be added to the bloom filter. For every customer that the advertisement is shown to, the application can add the UUID of the customer onto the specific filter.
+To check if a customer has seen the ad, the <code>BF.EXISTS</code> or <code>BF.MEXISTS</code> command can be used. So, we have 500 bloom filters, each with a capacity of 5M.
+This will require variable memory depending on the false positive rate. In all cases (even stricter false positive rates), we can see there is a significant memory optimization compared to using the <code>SET</code> data type.</p>
+<table><thead><tr><th>Number of Bloom Filters</th><th>Capacity</th><th>FP Rate</th><th>FP Rate Description</th><th>Total Used Memory (GB)</th><th>Memory Saved % compared to SETS</th></tr></thead><tbody>
+<tr><td>500</td><td>5000000</td><td>0.01</td><td>One in every 100</td><td>2.9</td><td><strong>98.08%</strong></td></tr>
+<tr><td>500</td><td>5000000</td><td>0.001</td><td>One in every 1K</td><td>4.9</td><td><strong>96.80%</strong></td></tr>
+<tr><td>500</td><td>5000000</td><td>0.00001</td><td>One in every 100K</td><td>7.8</td><td><strong>94.88%</strong></td></tr>
+<tr><td>500</td><td>5000000</td><td>0.0000002</td><td>One in every 5M</td><td>9.8</td><td><strong>93.60%</strong></td></tr>
+</tbody></table>
+<p>In this example, we are able to benefit from 93% - 98% savings in memory usage when using Bloom Filters compared to the <code>SET</code> data type. Depending on your workload, you can expect similar results.</p>
+<p><img src="/valkey-io.github.io/pr-21/assets/media/pictures/bloomfilter_memusage.png" alt="SET vs Bloom Filter Memory Usage Comparison" /></p>
+<h2 id="large-bloom-filters-and-recommendations">Large Bloom Filters and Recommendations</h2>
+<p>To improve server performance during serialization and deserialization of bloom filters, we have added validation on the memory usage per object.
+The default memory usage limit of a bloom filter is defined by the <code>BF.BLOOM-MEMORY-USAGE-LIMIT</code> configuration which has a default value of 128 MB.
+However, the value can be tuned using the configuration above.</p>
+<p>The implication of the memory limit is that operations involving bloom filter creations or scaling out, that result in a bloom filter with overall memory usage over the limit, will return an error. Example:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; BF.ADD ad1_filter user1</span></span>
+<span class="giallo-l"><span>(error) ERR operation exceeds bloom object memory limit</span></span></code></pre>
+<p>This poses an issue to users where their scalable bloom filters can reach the memory limit after some number of days of data population and it starts failing scale outs during the insertion of unique items.</p>
+<p>As a solution, to help users understand at what capacity their bloom filter will hit the memory limit, valkey-bloom has two options.
+These are useful to check beforehand to ensure that your bloom filter will not fail scale outs or creations later on as part of your workload.</p>
+<ol>
+<li>Perform a memory check prior to bloom filter creation</li>
+</ol>
+<p>We can use the <code>VALIDATESCALETO</code> option of the <code>BF.INSERT</code> command to perform a validation whether the filter is within the memory limit.
+If it is not within the limits, the command will return an error. In the example below, we see that filter1 cannot scale out and reach the capacity of 26214301 due to the memory limit. However, it can scale out and reach a capacity of 26214300.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; BF.INSERT filter1 VALIDATESCALETO 26214301</span></span>
+<span class="giallo-l"><span>(error) ERR provided VALIDATESCALETO causes bloom object to exceed memory limit</span></span>
+<span class="giallo-l"><span>127.0.0.1:6379&gt; BF.INSERT filter1 VALIDATESCALETO 26214300 ITEMS item1</span></span>
+<span class="giallo-l"><span>1) (integer) 1</span></span></code></pre>
+<ol start="2">
+<li>Check the maximum capacity that an existing scalable bloom filter can expand to</li>
+</ol>
+<p>We can use the <code>BF.INFO</code> command to find out the maximum capacity that the scalable bloom filter can expand to hold. In this case, we can see the filter can hold 26214300 items (after scaling out until the memory limit).</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>127.0.0.1:6379&gt; BF.INFO filter1 MAXSCALEDCAPACITY</span></span>
+<span class="giallo-l"><span>(integer) 26214300</span></span></code></pre>
+<p>To get an idea of what the memory usage looks like for the max capacity of an individual non scaling filter, we have a table below.
+With a 128MB limit and default false positive rate, we can create a bloom filter with 112M as the capacity. With a 512MB limit, a bloom filter can hold 448M items.</p>
+<table><thead><tr><th>Non Scaling Filter - Capacity</th><th>FP Rate</th><th>Memory Usage (MB)</th><th>Notes</th></tr></thead><tbody>
+<tr><td>112M</td><td>0.01</td><td>~128</td><td>Default FP Rate and Default Memory Limit</td></tr>
+<tr><td>74M</td><td>0.001</td><td>~128</td><td>Custom FP Rate and Default Memory Limit</td></tr>
+<tr><td>448M</td><td>0.01</td><td>~512</td><td>Default FP Rate and Custom Memory Limit</td></tr>
+<tr><td>298M</td><td>0.001</td><td>~512</td><td>Custom FP Rate and Custom Memory Limit</td></tr>
+</tbody></table>
+<h2 id="performance">Performance</h2>
+<p>The bloom commands which involve adding items or checking the existence of items have a time complexity of O(N * K) where N is the number of elements being inserted and K is the number of hash functions used by the bloom filter.
+This means that both <code>BF.ADD</code> and <code>BF.EXISTS</code> are both O(K) as they only operate on one item.</p>
+<p>In scalable bloom filters, we increase the number of hash function based checks during add/exists operations with each scale out; Each sub filter requires at least one hash function and this number increases as the false positive rate becomes stricter with scale outs due to the <a rel="external" href="https://valkey.io/topics/bloomfilters/#advanced-properties">tightening ratio</a>.
+For this reason, it is recommended that users choose a capacity and expansion rate after evaluating the use case / workload to avoid several scale outs and reduce the number of checks.</p>
+<p>Example: For a bloom filter to achieve an overall capacity of 10M with a starting capacity of 100K and expansion rate of 1, it will require 100 sub filters (after 99 scale outs).
+Instead, with the same starting capacity of 100K and expansion rate of 2, a bloom filter can achieve an overall capacity of ~12.7M with just 7 sub filters.
+Alternatively, with the same expansion rate of 1 and starting capacity of 1M, a bloom filter can achieve an overall capacity of 10M with 10 sub filters.
+Both approaches significantly reduce the number of checks per item add / exists operation.</p>
+<p>The other bloom filter commands are O(1) time complexity: <code>BF.CARD</code>, <code>BF.INFO</code>, <code>BF.RESERVE</code>, and <code>BF.INSERT</code> (when no items are provided).</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>valkey-bloom offers an efficient solution for high-volume membership testing through bloom filters, providing significant memory usage savings compared to traditional data types.
+This enhances Valkey's capability to handle various workloads including large-scale advertisement / event deduplication, fraud detection, and reducing disk / backend lookups more efficiently.</p>
+<p>To learn more about <a rel="external" href="https://github.com/valkey-io/valkey-bloom/">valkey-bloom</a>, you can read about the <a rel="external" href="https://valkey.io/topics/bloomfilters/">Bloom Filters data type</a> and follow the <a rel="external" href="https://github.com/valkey-io/valkey-bloom/blob/1.0.0/QUICK_START.md">quick start guide</a> to try it yourself.
+Additionally, to use valkey-bloom on Docker (along with other official modules), you can check out the <a rel="external" href="https://hub.docker.com/r/valkey/valkey-bundle">Valkey Extensions Docker Image</a>.</p>
+<p>Thank you to all those who helped develop the module:</p>
+<ul>
+<li>Karthik Subbarao (<a rel="external" href="https://github.com/KarthikSubbarao">KarthikSubbarao</a>)</li>
+<li>Cameron Zack (<a rel="external" href="https://github.com/zackcam">zackcam</a>)</li>
+<li>Vanessa Tang (<a rel="external" href="https://github.com/YueTang-Vanessa">YueTang-Vanessa</a>)</li>
+<li>Nihal Mehta (<a rel="external" href="https://github.com/nnmehta">nnmehta</a>)</li>
+<li>wuranxx (<a rel="external" href="https://github.com/wuranxx">wuranxx</a>)</li>
+</ul>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/karthiksubbarao.jpg" alt="photo of Karthik Subbarao" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Karthik Subbarao</h4>
+    
+    <a target="_blank" href="https://github.com/karthiksubbarao"><i class="icon icon-github-square"></i> @karthiksubbarao</a>
+    
+    <p>Karthik Subbarao is a Software Engineer at AWS who is passionate about distributed systems, databases, Rust, and, in general, innovating through software development / technology.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-bloom-filters/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-bloom-filters/&title=Introducing%20Bloom%20Filters%20for%20Valkey&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-bloom-filters/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-8-1-0-ga/">&laquo; Valkey 8.1: Continuing to Deliver Enhanced Performance and Reliability</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/upgrade-stories-vol1/">Upgrade Stories from the Community, Volume 1: &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

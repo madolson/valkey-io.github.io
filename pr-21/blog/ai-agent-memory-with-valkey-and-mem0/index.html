@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-08.webp" />
+    
+    
+
+    <meta name="description" content="This blog dives into how agent memory works and details an implementation using Valkey." />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Reduce Token Cost for LLMs: AI Agent Memory with Valkey and Mem0</title>
+    <meta name="title" property="og:title" content="Valkey: Reduce Token Cost for LLMs: AI Agent Memory with Valkey and Mem0">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-08.webp" alt="Reduce Token Cost for LLMs: AI Agent Memory with Valkey and Mem0" class="feature-img">
+
+
+<h1>Reduce Token Cost for LLMs: AI Agent Memory with Valkey and Mem0</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Technical Deep Dive">Technical Deep Dive</span>
+  
+  2026-05-05
+  
+    &middot; 
+    
+      
+      
+      <em>Chaitanya Nuthalapati</em>,
+    
+      
+      
+      <em>Allen Samuels</em>,
+    
+      
+      
+      <em>Meet Bhagdev</em>
+    
+  
+</div>
+<p>AI agent memory turns a stateless large language model (LLM) into an assistant that knows its users and delivers personalized, relevant responses. Implementing an agent memory layer can cut token cost by up to 90% and keep responses under 2 seconds (<a rel="external" href="https://mem0.ai/research-3">Mem0 benchmarks</a>). Without memory, responses lose relevance, users repeat themselves, and token costs climb as raw history accumulates.</p>
+<p>This post walks through how agent memory works and provides practical guidance, including an implementation using Valkey and Mem0 (an open-source memory framework), when to use file-based context versus a store-backed memory layer, infrastructure requirements for the storage layer, and best practices.</p>
+<h2 id="breaking-down-ai-agent-interactions">Breaking Down AI Agent Interactions</h2>
+<p>A single turn in agentic applications consists of a message from the user and the agent response. Fulfilling that turn may require multiple steps: calling tools, querying databases, or reasoning through sub-tasks. <strong>State memory</strong> keeps track of task execution so the agent can continue from one step to the next. It records things like information collected, steps completed, and pending tasks. The state is often temporary, but in production systems it is commonly saved so work can resume after an interruption. For example, it ensures workflow continuity for tasks such as submitting an insurance claim or completing a multi-step checkout, so retries or users leaving mid-execution do not repeat the same work. It also supports multi-agent collaboration, where state acts as shared memory so one agent can work with another on the same workflow without each one having to reconstruct progress. State also supports human-in-the-loop flows, where the agent pauses for a human to provide input before continuing to the next step. You can use Valkey with frameworks such as <a rel="external" href="https://pypi.org/project/langgraph-checkpoint-aws/">LangGraph checkpoints</a> for workflow-state persistence and resume primitives for this scope.</p>
+<p>Beyond a single turn, a session is the full sequence of messages in one conversation. <strong>Session memory</strong> captures what the agent needs from the current conversation to interpret the next turn correctly. It is typically managed through message history, trimming, or compaction. This supports use cases such as resolving implicit references, where the user says "I liked the second one better" and the agent retains enough of the prior conversation to map those references to the right items. It also supports session continuity across devices and conversation-scoped constraints, such as "Keep this under $200". You can use Valkey with frameworks such as the <a rel="external" href="https://strandsagents.com/docs/community/session-managers/strands-valkey-session-manager/">Strands Valkey Session Manager</a> to persist conversation history and agent state across distributed environments. Under the hood, this is the same session-store pattern that applications have used Valkey for across web and mobile workloads, applied to conversation messages and agent state.</p>
+<p>When the user returns hours, days or weeks later and starts a new conversation, the agent needs context that outlasts any single conversation. <strong>Long-term memory</strong> includes persistent memory that the agent can reuse long after the current conversation ends. In practice, long-term memory often includes three forms: semantic memory for facts and preferences, episodic memory for past interactions and outcomes, and procedural memory for instructions or learned rules about how the agent should behave. Long-term memory helps the agent carry context across sessions, such as preferred languages, shopping choices, or shipping details so the user does not have to repeat them. You can use Valkey with frameworks such as <a rel="external" href="https://mem0.ai">Mem0</a> for memory operations including extraction, deduplication, consolidation, and scoped retrieval by user, agent, or session. <a rel="external" href="https://mem0.ai/research-3">Benchmarks from Mem0</a> show that memory can cut 90% of token costs and deliver sub-2s responses by retrieving only the memories that matter. For a full setup and step-by-step implementation walkthrough, follow the <a rel="external" href="https://mem0.ai/blog/build-persistent-memory-for-agentic-ai-applications-with-mem0-open-source-amazon-elasticache-for-valkey-and-amazon-neptune-analytics">Mem0 blog</a>.</p>
+<h2 id="how-to-add-memory-to-agents">How to Add Memory to Agents</h2>
+<p>There are two broad ways to add memory to agents, and the main distinctions are: who needs access to the memory, where it must be available, how long it should persist, and whether it must be queried dynamically. Broadly, memory is either file-based context loaded into the prompt at session start, or a store-backed memory layer that the agent reads from and writes to at runtime.</p>
+<p>Stable, shared guidance that is known before a session begins belongs in file-based context and is typically used for coding conventions, build commands, architecture notes, review checklists, and other persistent project instructions. <a rel="external" href="https://code.claude.com/docs/en/memory">CLAUDE.md</a>, <a rel="external" href="https://cursor.com/docs/context/rules">Cursor Rules</a>, and <a rel="external" href="https://developers.openai.com/codex/guides/agents-md">OpenAI AGENTS.md</a> are examples of this pattern. Claude Code uses CLAUDE.md for persistent instructions read at session start, Cursor Rules provides persistent project, team, and user rules, and OpenAI Codex reads AGENTS.md before doing any work.</p>
+<p>A store-backed memory layer is the better fit for dynamic, mutable memory learned during execution. For example, runtime-learned information like user preferences and task progress is tied to a specific scope and needs to remain available across the boundaries the agent operates in. A store-backed memory layer makes that practical by persisting runtime state, scoping it with identifiers and supporting centralized access control, auditing, and managed deletion.</p>
+<p>Long-running agents make persistent memory outside the prompt a hard requirement. Anthropic describes the problem directly: agents "work in discrete sessions, and each new session begins with no memory of what came before," and their workaround is an explicit progress file and git history that act as a durable memory store the next session can read (<a rel="external" href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents">Anthropic, Effective harnesses for long-running agents</a>). These systems operate across many context windows, and often multiple sessions or collaborating agents, so the active prompt alone cannot serve as the system's memory. This is where a store-backed memory layer like Valkey becomes useful, persisting runtime state outside the prompt and making it retrievable on demand across long-running workflows.</p>
+<h2 id="memory-layers-under-the-hood">Memory Layers: Under the Hood</h2>
+<p>This section uses Mem0 as an example to show what happens under the hood when the application writes and retrieves memory with Valkey. Mem0 represents each extracted fact as a discrete unit it calls a "memory", and stores it in Valkey with attributes for the memory content, scope, timestamps, metadata, and embedding. The sections below walk through how the application creates an index, stores memories, and retrieves memories against this index.</p>
+<h3 id="index-creation">Index Creation</h3>
+<p>Mem0 creates a Valkey Search index over those documents so the application can combine scope and attribute filtering with vector similarity search. The schema looks like this:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.CREATE {collection_name} ON HASH PREFIX 1 {prefix} SCHEMA</span></span>
+<span class="giallo-l"><span>    memory TEXT</span></span>
+<span class="giallo-l"><span>    embedding VECTOR HNSW 6 TYPE FLOAT32 DIM {dims} DISTANCE_METRIC COSINE</span></span>
+<span class="giallo-l"><span>    user_id TAG agent_id TAG run_id TAG</span></span>
+<span class="giallo-l"><span>    created_at NUMERIC updated_at NUMERIC</span></span></code></pre>
+<p>The <code>memory</code> attribute stores the extracted fact in natural language, and the <code>embedding</code> attribute stores its vector representation. Scope attributes <code>user_id</code>, <code>agent_id</code>, and <code>run_id</code> let the system narrow retrieval to the right user, agent, or session before running vector search. <code>created_at</code> and <code>updated_at</code> timestamps support filtering, updates, and lifecycle management.</p>
+<h3 id="memory-storage">Memory Storage</h3>
+<p>Writing memories is a single call with conversation messages and identity attributes, and Mem0 handles extraction, deduplication, embedding, and storage.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span>messages</span><span style="color: #FF7B72;"> =</span><span> [ {</span><span style="color: #A5D6FF;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;user&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;content&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;I prefer to work with Python&quot;</span><span>},</span></span>
+<span class="giallo-l"><span>             {</span><span style="color: #A5D6FF;">&quot;role&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;assistant&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;content&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;Saved your language preference for Python.&quot;</span><span>}]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>memory.add(messages,</span><span style="color: #FFA657;"> user_id</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;user_123&quot;</span><span>,</span><span style="color: #FFA657;"> agent_id</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;assistant&quot;</span><span>,</span><span style="color: #FFA657;"> run_id</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;session_456&quot;</span><span>)</span></span></code></pre>
+<p>Under the hood, the write path has three stages. First, the application sends the latest user message and assistant response to Mem0's memory-ingestion pipeline, which makes an LLM call to identify facts, preferences, or decisions worth storing. A single turn can yield multiple candidates, each handled independently in the next two stages. Second, for each candidate, Mem0 issues an <a rel="external" href="https://valkey.io/commands/ft.search/">FT.SEARCH</a> against Valkey for similar existing memories and decides whether to add, update, delete, or ignore it.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.SEARCH {collection_name}</span></span>
+<span class="giallo-l"><span>    &quot;@user_id:{user_123} @agent_id:{assistant} @run_id:{session_456} =&gt;[KNN 5 @embedding $vec AS vector_score]&quot;</span></span>
+<span class="giallo-l"><span>    PARAMS 2 vec &lt;float32 bytes&gt; DIALECT 2 </span></span></code></pre>
+<p>Finally, for each candidate that resulted in an add or update, Mem0 writes the memory to Valkey with a single <a rel="external" href="https://valkey.io/commands/hset/">HSET</a>, which also updates the index in place so the new or changed memory is immediately searchable.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>HSET mem0:{memory_id}</span></span>
+<span class="giallo-l"><span>    memory_id {id} hash {content_hash} user_id user_123 agent_id assistant run_id session_456 metadata {...}</span></span>
+<span class="giallo-l"><span>    memory &quot;I prefer to work with Python&quot; embedding &lt;float32 bytes&gt;</span></span>
+<span class="giallo-l"><span>    created_at {ts} updated_at {ts}</span></span></code></pre><h3 id="memory-retrieval">Memory Retrieval</h3>
+<p>Memory retrieval starts when the application issues a natural-language query within a chosen scope.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span>results</span><span style="color: #FF7B72;"> =</span><span> memory.search(</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    query</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;What deployment preferences has this user shared?&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    user_id</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;user_123&quot;</span><span>,</span><span style="color: #FFA657;"> run_id</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;123&quot;</span><span>,</span><span style="color: #FFA657;"> agent_id</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;shopping_assistant&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">    limit</span><span style="color: #FF7B72;">=</span><span style="color: #79C0FF;">5</span><span>)</span></span></code></pre>
+<p>Under the hood, the read path has three stages. First, Mem0 converts the query into a vector. Second, Mem0 executes a hybrid search on Valkey by combining scope filters such as <code>user_id</code>, <code>agent_id</code>, or <code>run_id</code> as tag filters along with the query embedding to return the most semantically similar memories within that scope.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>FT.SEARCH {collection_name}</span></span>
+<span class="giallo-l"><span>    &quot;@user_id:{user_123} @agent_id:{shopping_assistant} @run_id:{123} =&gt;[KNN 5 @embedding $vec AS vector_score]&quot;</span></span>
+<span class="giallo-l"><span>    PARAMS 2 vec &lt;float32 bytes&gt; DIALECT 2</span></span></code></pre>
+<p>Finally, the top memories are returned with scores and metadata so the application can inject them into the next prompt. This lets the system retrieve only the small working set relevant to the current step instead of replaying the full conversation history on every turn.</p>
+<h2 id="storage-layer-considerations">Storage Layer Considerations</h2>
+<p>This section focuses on long-term memory, which puts the sharpest pressure on the storage layer. Unlike retrieval-augmented generation (RAG), which reads from a mostly static corpus, long-term memory is a live, mutation-heavy workload. A single interaction can produce several candidates, each triggering its own scoped lookup and an add, update, delete, or no-op decision. In practice, that means multiple small reads, searches, and writes per turn. The storage layer has to support the four requirements below so the agent can continuously learn, update, and reuse context.</p>
+<h3 id="1-scoped-ownership-and-isolation">1. Scoped ownership and isolation</h3>
+<p>Agent memory must preserve who a memory belongs to and where it applies. In practice, that means scoping by identifiers such as <code>user_id</code>, <code>agent_id</code>, and <code>run_id</code>. These attributes are declared as TAG type in the Mem0 index schema, so the system can combine ownership filtering with semantic search in a single query. Alternatively, scoping can be represented using key and hash operations through namespaces such as <code>("memories", "{user_id}")</code> or <code>("users", "{user_id}", "profile")</code>, which provide fast retrieval and strict isolation, as seen in <a rel="external" href="https://docs.langchain.com/oss/python/langchain/long-term-memory">LangGraph's store</a>. The choice is a tradeoff: TAG attributes keep ownership mutable and combine cleanly with vector search, while namespaced keys give stricter isolation and faster bulk scans but make re-scoping and cross-scope semantic search harder.</p>
+<h3 id="2-frequent-fast-mutation-with-read-after-write-visibility">2. Frequent &amp; fast mutation with read-after-write visibility</h3>
+<p>A single interaction can trigger multiple small memory operations, including similarity checks, updates, deletions, and inserts. The storage layer therefore needs to handle frequent small mutations at low latency, both during live memory formation and as stored memories are continuously revised over time. Slow writes force a bad tradeoff. Either the application waits for each write to commit before the next turn, which adds latency to every interaction, or it lets the next turn proceed against stale memory, which causes missed conflict resolution and duplicate memories. The risk is amplified in systems where multiple turns race to read and update the same state, such as collaborating agents or operational memory like checkpoints and cross-session work logs that require exact state.</p>
+<p>Valkey's short update latency removes the tradeoff by making memory updates become searchable in real time on the write path. In Valkey Search, the client that issued the mutation is blocked until the index updates complete, providing read-after-write visibility once the write returns. Multithreading strengthens this model under load: background worker threads process index updates, multiple parallel connections can saturate the indexing pipeline, and scaling to more vCPUs increases both ingest and query throughput.</p>
+<h3 id="3-fast-selective-retrieval-under-concurrent-reads-and-writes">3. Fast selective retrieval under concurrent reads and writes</h3>
+<p>The purpose of agent memory is to avoid loading the full conversation history or user profile into the prompt on every turn. Instead, the application stores facts externally and retrieves only the subset that is relevant to the current task. That means the storage layer needs to support selective retrieval under tight latency budgets, often combining scope filters such as user, agent, or session with search and ranking over the memory corpus. Further, the storage layer must sustain high concurrent read and write traffic without letting foreground retrieval slow down, because memory reads still sit on the live execution path for many agent turns. To add some numbers, Mem0's <a rel="external" href="https://mem0.ai/blog/long-term-memory-ai-agents">long-term memory architecture write-up</a> suggests the operating point modern memory systems should target: support for up to 10K memories per user and sub-50 ms retrieval to retrieve 20 memories at the scale of multi-million 1536-dimensional embeddings.</p>
+<p>Valkey Search combines scope filters and vector retrieval in a single query and chooses the least expensive hybrid execution strategy based on filter selectivity. It runs on a multi-threaded, in-memory index that scales query and ingest throughput linearly with more vCPUs, so memory maintenance and live retrieval run concurrently without pushing reads off the inference path. <a rel="external" href="https://valkey.io/topics/search/">Valkey Search reports</a> single-digit millisecond latency and over 99% recall at billions of vectors.</p>
+<h3 id="4-mature-caching-and-data-life-controls">4. Mature caching and data life controls</h3>
+<p>Memory systems should provide Time-to-Live (TTL) controls to automatically expire memories to ensure freshness, and precise deletion controls for conflict resolution, privacy, and compliance. Valkey provides mature data life controls such as per-document expiration with <a rel="external" href="https://valkey.io/commands/expire/">EXPIRE</a> and <a rel="external" href="https://valkey.io/commands/ttl/">TTL</a>, removal of expiration with <a rel="external" href="https://valkey.io/commands/persist/">PERSIST</a>, and support for non-blocking deletion with <a rel="external" href="https://valkey.io/commands/unlink/">UNLINK</a>. Valkey also supports hash-field expiration and introspection with commands such as <a rel="external" href="https://valkey.io/commands/hexpire/">HEXPIRE</a> and <a rel="external" href="https://valkey.io/commands/httl/">HTTL</a>, making it easier to apply different retention windows within a single memory document. Together, these primitives let teams mix short-lived session memory, persistent long-term memory, and precise cleanup without building a separate lifecycle subsystem in the application.</p>
+<h3 id="open-source-storage-options-a-side-by-side">Open Source Storage Options: A Side-by-Side</h3>
+<p>The table below uses the following scale to compare three popular vector search solutions. Best fit means a native, first-class primitive where the requirement is the default behavior. Strong fit means production-ready but may require configuration or carry known tradeoffs. Supported means achievable but with workarounds, application-level implementation, or tradeoffs that developers must actively manage.</p>
+<table><thead><tr><th>Requirement</th><th>Valkey Search</th><th>Postgres + pgvector</th><th>OpenSearch</th></tr></thead><tbody>
+<tr><td><strong>Selective scoped retrieval on the live turn</strong></td><td><strong>Best fit:</strong> one query can combine scope filters with vector retrieval. Valkey Search automatically chooses the least expensive hybrid-query execution strategy based on filter selectivity. (<a rel="external" title="Valkey Search Query Syntax" href="https://valkey.io/topics/search-query/">Valkey Search query syntax</a>)</td><td><strong>Supported</strong>, filtering is applied after the index scan with ANN indexes, so selective filters can reduce scoped recall unless you raise search effort or use iterative scans. (<a rel="external" title="pgvector: Filtering" href="https://github.com/pgvector/pgvector#filtering">pgvector filtering</a>)</td><td><strong>Strong fit:</strong> OpenSearch provides efficient filtered k-NN, but behavior still depends on filtering mode and engine, so recall/latency tradeoffs are more configuration-sensitive. (<a rel="external" title="Efficient k-NN filtering" href="https://docs.opensearch.org/latest/vector-search/filter-search-knn/efficient-knn-filtering/">OpenSearch k-NN filtering</a>)</td></tr>
+<tr><td><strong>Resume, handoff, long-running work</strong></td><td><strong>Best fit:</strong> writes are acknowledged only after index updates complete, so the next search on the same primary sees the committed state, providing read after write by default with no refresh interval or per-request flag. (<a rel="external" title="Valkey Search 1.2: Read-after-write Consistency" href="https://valkey.io/blog/valkey-search-1_2/">Valkey Search read-after-write</a>)</td><td><strong>Best fit:</strong> after the writer commits, <code>READ COMMITTED</code> ensures each subsequent statement sees rows committed before the query began, providing read-after-commit. (<a rel="external" title="PostgreSQL: Read Committed Isolation Level" href="https://www.postgresql.org/docs/current/transaction-iso.html#XACT-READ-COMMITTED">PostgreSQL Read Committed</a>)</td><td><strong>Strong fit:</strong> read-after-write is available via <code>refresh=true</code> or <code>wait_for</code>, but the default is <code>false</code>, so writes are not searchable until the next refresh interval. (<a rel="external" title="OpenSearch Index Document: refresh parameter" href="https://docs.opensearch.org/latest/api-reference/document-apis/index-document/#refresh">OpenSearch refresh parameter</a>)</td></tr>
+<tr><td><strong>High-throughput concurrent reads and writes</strong></td><td><strong>Strong fit:</strong> Valkey Search is multi-threaded for indexing and query work, and Valkey 8 improves I/O threading for high-QPS workloads. (<a rel="external" title="Valkey 8: unlocking one million RPS with I/O threading" href="https://valkey.io/blog/unlock-one-million-rps/">Valkey 8 I/O threading</a>)</td><td><strong>Strong fit:</strong> Postgres supports non-blocking row-level concurrency, but high concurrency often requires external connection pooling. pgvector HNSW ingestion also adds vector-index maintenance overhead. (<a rel="external" title="Accelerate HNSW indexing and searching with pgvector" href="https://aws.amazon.com/blogs/database/accelerate-hnsw-indexing-and-searching-with-pgvector-on-amazon-aurora-postgresql-compatible-edition-and-amazon-rds-for-postgresql/">AWS pgvector HNSW blog</a>)</td><td><strong>Supported:</strong> OpenSearch supports bulk indexing for high-throughput writes, but under concurrent workloads, faster search visibility comes with a cost: <code>refresh=true</code> adds indexing overhead, while <code>wait_for</code> adds write latency. (<a rel="external" title="OpenSearch Bulk API" href="https://docs.opensearch.org/latest/api-reference/document-apis/bulk/">OpenSearch Bulk API</a>)</td></tr>
+<tr><td><strong>Expiry, deletion, retention</strong></td><td><strong>Best fit:</strong> built-in TTL, async delete, and attribute-level expiry make session expiry and targeted cleanup straightforward. (<a rel="external" title="Valkey Command: HEXPIRE" href="https://valkey.io/commands/hexpire/">Valkey HEXPIRE</a>)</td><td><strong>Supported:</strong> PostgreSQL does not provide a built-in document TTL or EXPIRE-style primitive; lifecycle management is typically implemented with scheduled jobs such as <code>pg_cron</code>, while precise row-level cleanup is possible with <code>DELETE</code>. (<a rel="external" title="pg_cron" href="https://github.com/citusdata/pg_cron">pg_cron</a>)</td><td><strong>Supported:</strong> OpenSearch can auto-delete entire indexes on a schedule but has no built-in way to expire individual documents on a timer, so per-memory TTLs need to be implemented in the application. (<a rel="external" title="OpenSearch Index State Management" href="https://docs.opensearch.org/latest/im-plugin/ism/index/">OpenSearch ISM</a>)</td></tr>
+</tbody></table>
+<h2 id="production-patterns">Production Patterns</h2>
+<p><strong>Anonymous-to-Authenticated Migration:</strong> Many applications start with an anonymous session. When the user logs in, the agent needs to migrate session memories from the anonymous identifier to the authenticated user ID. In Valkey, this is a straightforward per-memory update, and because indexed attributes are refreshed on each write, the migrated memories become searchable under the new user ID immediately after the update completes:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="python"><span class="giallo-l"><span style="color: #8B949E;"># After user authenticates, migrate anonymous memories</span></span>
+<span class="giallo-l"><span>anonymous_memories</span><span style="color: #FF7B72;"> =</span><span> memory.get_all(</span><span style="color: #FFA657;">user_id</span><span style="color: #FF7B72;">=</span><span style="color: #A5D6FF;">&quot;anon_session_abc&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">for</span><span> mem</span><span style="color: #FF7B72;"> in</span><span> anonymous_memories:</span></span>
+<span class="giallo-l"><span>    memory.update(mem[</span><span style="color: #A5D6FF;">&quot;id&quot;</span><span>],</span><span style="color: #FFA657;"> data</span><span style="color: #FF7B72;">=</span><span>{</span><span style="color: #A5D6FF;">&quot;user_id&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;authenticated_user_123&quot;</span><span>})</span></span></code></pre>
+<p>This pattern depends on two Valkey properties established earlier: low-latency writes, so the migration completes in the time of a single user action, and read-after-write visibility on the Search index, so the next retrieval sees the memories under the new <code>user_id</code>.</p>
+<p><strong>Concurrency and Consistency:</strong> In distributed agent systems, memory bugs often come from overlapping writes or stale reads. Two agent turns may try to update the same memory at nearly the same time, causing lost updates, or one agent may read older state while another has already written a correction. Common mitigations are to serialize memory mutations per user or scope with a short-lived lock and, for high-impact attributes, version writes so downstream agents can require a minimum memory version before acting. Valkey provides the primitives for both patterns through <a rel="external" href="https://valkey.io/commands/set/"><code>SET</code></a> <code>NX PX</code> for lightweight locks and <a rel="external" href="https://valkey.io/commands/incr/"><code>INCR</code></a> for atomic version counters, while the coordination policy lives in the application.</p>
+<p><strong>Observability &amp; Auditing:</strong> Mem0 memory events and history help explain memory-driven LLM behavior, including why a fact was added, updated, deleted, or later retrieved, while Valkey provides storage- and index-level signals. If you need a Valkey-side audit stream for memory mutations, enable notify-keyspace-events and subscribe to keyspace or keyevent Pub/Sub channels; use MONITOR only for short-lived debugging. Latency regressions break turn responsiveness, so watch <code>memory_search_latency_p99</code> and <code>memory_write_latency_p99</code>. Memory drift breaks personalization, so watch memory counts per user or scope, mutation rates by outcome (add, update, delete, noop), and retrieval score distributions. Storage-layer issues break everything, so watch Valkey's <code>FT.INFO</code> for index state and <code>INFO</code> for server state.</p>
+<p><strong>Memory Index Health:</strong> For indexes using the hierarchical navigable small world (HNSW), frequent deletes or overwrites can leave the index less efficient over time, increasing memory usage and degrading recall. In practice, monitor index health with FT.INFO and plan periodic rebuilds during low-traffic windows.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Agent memory turns stateless LLM calls into persistent, context-aware interactions. The core mechanics are consistent across frameworks: extract facts from conversations, embed for semantic retrieval, and scope access by user, agent, and session. The storage layer underneath determines how these operations perform at scale, particularly under the fan-out, write visibility, and lifecycle management patterns that distinguish agent memory from single-query RAG. This post walked through how memory works with Mem0 and Valkey, covering the schema design, write and read pipelines, scoped retrieval patterns, and lifecycle controls. The same architectural patterns apply regardless of which memory framework or storage backend you choose.</p>
+<p>Start with the configuration above by following this <a rel="external" href="https://mem0.ai/blog/build-persistent-memory-for-agentic-ai-applications-with-mem0-open-source-amazon-elasticache-for-valkey-and-amazon-neptune-analytics">blog</a>, point it at your Valkey cluster, and iterate on your scoping and retention policies as your agent's memory needs evolve.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/cnuthalapati.jpg" alt="photo of Chaitanya Nuthalapati" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Chaitanya Nuthalapati</h4>
+    
+    <a target="_blank" href="https://github.com/cnuthalapati"><i class="icon icon-github-square"></i> @cnuthalapati</a>
+    
+    <p>Chaitanya is a Senior Technical Product Manager in AWS In-Memory Database Services, focused on Amazon ElastiCache for Valkey.
+Previously, he built solutions with generative AI, machine learning, and graph networks.
+Off the clock, Chaitanya is busy collecting hobbies, which currently include tennis, skateboarding, and paddle-boarding.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/allenss.png" alt="photo of Allen Samuels" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Allen Samuels</h4>
+    
+    <a target="_blank" href="https://github.com/allenss-amazon"><i class="icon icon-github-square"></i> @allenss-amazon</a>
+    
+    <p>Allen Samuels is a Principal Engineer at AWS. He is passionate about distributed, performant systems. When not travelling the world for pleasure or playing duplicate bridge, Allen can be found in San Jose, California.</p>
+
+  </div>
+</div>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/mbhagdev.jpeg" alt="photo of Meet Bhagdev" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Meet Bhagdev</h4>
+    
+    <a target="_blank" href="https://github.com/meet-bhagdev"><i class="icon icon-github-square"></i> @meet-bhagdev</a>
+    
+    <p>Meet is a Senior Manager, PMT-ES at AWS, leading the product management team for Amazon ElastiCache and Amazon MemoryDB. He is passionate about open source, databases, and analytics, and spends his time working with customers to understand their requirements and build delightful experiences.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/ai-agent-memory-with-valkey-and-mem0/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/ai-agent-memory-with-valkey-and-mem0/&title=Reduce%20Token%20Cost%20for%20LLMs%3A%20AI%20Agent%20Memory%20with%20Valkey%20and%20Mem0&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/ai-agent-memory-with-valkey-and-mem0/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-swift-1.0/">&laquo; Valkey-swift - Announcing 1.0 Release</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-valkey-admin-1-0-visual-cluster-management-for-valkey/">Introducing Valkey Admin 1.0: Visual Cluster Management for Valkey &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

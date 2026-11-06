@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/random-02.webp" />
+    
+    
+
+    <meta name="description" content="Introducing valkey-bundle a single-container solution that combines Valkey with JSON, Bloom filters, Vector Similarity Search, and LDAP authentication capabilities to power development of real-time applications" />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; valkey-bundle: One stop shop for real-time applications</title>
+    <meta name="title" property="og:title" content="Valkey: valkey-bundle: One stop shop for real-time applications">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/random-02.webp" alt="valkey-bundle: One stop shop for real-time applications" class="feature-img">
+
+
+<h1>valkey-bundle: One stop shop for real-time applications</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2025-06-23
+  
+    &middot; 
+    
+      
+      
+      <em>Roberto Luna-Rojas</em>
+    
+  
+</div>
+<p><img src="https://madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/images/valkey-bundle.png" alt="valkey-bundle" /></p>
+<p>Are you looking to build low-latency, high-performance, feature-rich applications without the hassle of managing multiple dependencies? Meet <em>valkey-bundle</em> your new best friend in the world of modern application development!</p>
+<p><em>valkey-bundle</em> enhances developer productivity by providing easy access to four tools in addition to the Valkey 8.1.1 through one container: <a rel="external" href="https://github.com/valkey-io/valkey-json">Valkey JSON</a>, <a rel="external" href="https://github.com/valkey-io/valkey-bloom">Valkey Bloom</a>, <a rel="external" href="https://github.com/valkey-io/valkey-search">Valkey Search</a>, and <a rel="external" href="https://github.com/valkey-io/valkey-ldap">Valkey LDAP</a>. <em>valkey-bundle</em> enables teams to leverage native JSON support for reliable document data handling, while implementing efficient data filtering using bloom, vector similarity search and handling authentication through LDAP. You have all these modules to pick from, mix and match for your requirements.</p>
+<p><em>valkey-bundle</em> provides a simplified development experience that eliminates dependency conflicts and reduces setup time with a single container deployment, teams can simplify their CI/CD pipelines while maintaining consistency across development and production environments.</p>
+<p>From a security perspective, <em>valkey-bundle</em> integrates enterprise grade authentication through Valkey LDAP, enabling cohesive integration with existing identity providers while maintaining strict access controls. This built-in security layer on top of existing Valkey Access Control Lists (<a rel="external" href="https://valkey.io/topics/acl/">ACL</a>) ensures that your data remains protected without sacrificing performance or adding complexity to your architecture.</p>
+<p>Besides the technical capabilities that <em>valkey-bundle</em> provides my favorite thing about this new solution is to see the Valkey community working together releasing modules catering to different use cases driven by Valkey users requests in an open forum in the discussions section of the project for example: <a rel="external" href="https://github.com/orgs/valkey-io/discussions/212">Implement JSON and search</a>, <a rel="external" href="https://github.com/orgs/valkey-io/discussions/119">FEATURE: JSON/ReJSON</a>, <a rel="external" href="https://github.com/orgs/valkey-io/discussions/108">Modules</a>, and <a rel="external" href="https://github.com/orgs/valkey-io/discussions/215">FEATURE: Bloom Filters</a>.</p>
+<p>In this blog post, we go over how to get started with the new single container to deploy <em>valkey-bundle</em>, understand the different modules included within, and we will dive into a real-life use case with a simple Ad Platform.</p>
+<h2 id="getting-started-with-valkey-bundle">Getting Started with <em>valkey-bundle</em></h2>
+<p><em>valkey-bundle</em> is generally available as version 8.1 includes Valkey 8.1, valkey-json 1.0, valkey-bloom 1.0, valkey-search 1.0 and valkey-ldap 1.0 out of the box in a single container, you have the ability to deploy the container as standalone valkey or in cluster mode.</p>
+<p>Start your <em>valkey-bundle</em> instance:</p>
+<ol>
+<li>Get the latest version of the container image</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> docker pull valkey/valkey-bundle</span></span></code></pre>
+<ol start="2">
+<li>Run a standalone valkey using the default port</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> docker run</span><span style="color: #79C0FF;"> --name</span><span style="color: #A5D6FF;"> my-valkey-bundle</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">    -p</span><span style="color: #A5D6FF;"> 6379:6379</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">    -d</span><span style="color: #A5D6FF;"> valkey/valkey-bundle</span></span></code></pre>
+<ol start="3">
+<li>Connect to the same container we have previously created using the built-in <code>valkey-cli</code>:</li>
+</ol>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> docker exec</span><span style="color: #79C0FF;"> -it</span><span style="color: #A5D6FF;"> my-valkey-bundle</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    valkey-cli</span><span style="color: #79C0FF;"> -h</span><span style="color: #A5D6FF;"> localhost</span><span style="color: #79C0FF;"> -p 6379 -3</span></span></code></pre>
+<p>List the available modules using the <a rel="external" href="https://valkey.io/commands/info/"><code>INFO</code></a> command.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>my-valkey-bundle:6379&gt; INFO modules</span></span>
+<span class="giallo-l"><span># Modules</span></span>
+<span class="giallo-l"><span>module:name=bf,ver=10000,api=1,filters=0,usedby=[],using=[],options=[]</span></span>
+<span class="giallo-l"><span>module:name=search,ver=10000,api=1,filters=0,usedby=[],using=[],options=[handle-io-errors|handle-repl-async-load|no-implicit-signal-modified]</span></span>
+<span class="giallo-l"><span>module:name=json,ver=10010,api=1,filters=0,usedby=[],using=[],options=[handle-io-errors]</span></span>
+<span class="giallo-l"><span>module:name=ldap,ver=16777471,api=1,filters=0,usedby=[],using=[],options=[]</span></span></code></pre><h2 id="valkey-bundle-features-and-cli-examples"><em>valkey-bundle</em> Features and CLI Examples</h2>
+<p>Each module in <em>valkey-bundle</em> addresses specific challenges for modern applications with low latency requirements that currently use Valkey and would like to add the functionality of JSON, VSS Search, Bloom filters, and LDAP. In this section, we explore each module currently included in <em>valkey-bundle</em> 8.1.1, understand the technical capabilities and constraints by CLI examples.</p>
+<h3 id="json-document-storage-and-querying">JSON Document Storage and Querying</h3>
+<p><a rel="external" href="https://github.com/valkey-io/valkey-json">Valkey JSON</a> brings native <a rel="external" href="https://en.wikipedia.org/wiki/JSON">JSON</a> support to your applications, eliminating the need to serialize/deserialize data or maintain complex object-relational mappings. It implements the <a rel="external" href="https://datatracker.ietf.org/doc/html/rfc7159.html">RFC7159</a> and <a rel="external" href="https://ecma-international.org/publications-and-standards/standards/ecma-404/">ECMA-404</a> JSON standards, providing a foundation for storing and querying structured data. With support for <a rel="external" href="https://en.wikipedia.org/wiki/JSONPath">JSONPath</a> queries, you can perform complex query operations on nested data structures without writing custom parsing logic.</p>
+<p><strong>Key Capabilities and Constraints:</strong></p>
+<ul>
+<li><strong>Document Size</strong>: Configurable maximum document size (default: no limit) via <code>json.max-document-size</code></li>
+<li><strong>Nesting Depth</strong>: Maximum nesting level of 128 for objects/arrays (configurable via <code>json.max-path-limit</code>)</li>
+<li><strong>Path Syntax</strong>: Supports both enhanced JSONPath and restricted syntax
+<ul>
+<li>Enhanced syntax includes recursive descent (<code>..</code>), wildcards (<code>*</code>), array slices (<code>[start:end:step]</code>), and complex filters</li>
+<li>Filter expressions support comparisons (<code>==</code>, <code>!=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>&lt;</code>, <code>&lt;=</code>) and logical operators (<code>&amp;&amp;</code>, <code>||</code>)</li>
+</ul>
+</li>
+<li><strong>Performance</strong>: O(1) for direct path operations, scaling to O(N) for recursive or filtered queries</li>
+<li><strong>Memory Monitoring</strong>: Use <a rel="external" href="https://valkey.io/commands/json.debug/"><code>JSON.DEBUG</code></a><code> MEMORY &lt;key&gt;</code> or <a rel="external" href="https://valkey.io/commands/memory-usage/"><code>MEMORY USAGE</code></a> <key> to track memory usage</li>
+<li><strong>Performance Tip</strong>: Use specific paths in <code>JSON.GET</code> for better performance.</li>
+</ul>
+<p>Let's now explore a few commands using an example for a user profile, with a few attributes and nested elements.</p>
+<p>Sample document for key <code>user:6379</code></p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="json"><span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    &quot;name&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;Val Key&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    &quot;address&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">        &quot;city&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;New York&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">        &quot;zip&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;10001&quot;</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    &quot;orders&quot;</span><span>: [</span></span>
+<span class="giallo-l"><span>        {</span><span style="color: #7EE787;">&quot;id&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;ord1&quot;</span><span>,</span><span style="color: #7EE787;"> &quot;total&quot;</span><span>:</span><span style="color: #79C0FF;"> 99.99</span><span>},</span></span>
+<span class="giallo-l"><span>        {</span><span style="color: #7EE787;">&quot;id&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;ord2&quot;</span><span>,</span><span style="color: #7EE787;"> &quot;total&quot;</span><span>:</span><span style="color: #79C0FF;"> 150.50</span><span>}</span></span>
+<span class="giallo-l"><span>    ]</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Store and retrieve JSON document with nested elements and arrays using <code>valkey-cli</code> with the <a rel="external" href="https://valkey.io/commands/json.set/"><code>JSON.SET</code></a> command.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; JSON.SET user:6379 $ &#39;{&quot;name&quot;: &quot;Val Key&quot;,&quot;address&quot;: {&quot;city&quot;: &quot;New York&quot;,&quot;zip&quot;: &quot;10001&quot;},&quot;orders&quot;: [{&quot;id&quot;: &quot;ord1&quot;, &quot;total&quot;: 99.99},{&quot;id&quot;: &quot;ord2&quot;, &quot;total&quot;: 150.50}]}&#39;</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Complex query with filters to retrieve orders where total is over 100 from within the array in the document for the given user, we'll use <a rel="external" href="https://valkey.io/commands/json.get/"><code>JSON.GET</code></a> command.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; JSON.GET user:6379 &#39;$.orders[?(@.total &gt; 100)]&#39;</span></span>
+<span class="giallo-l"><span>&quot;[{\&quot;id\&quot;:\&quot;ord2\&quot;,\&quot;total\&quot;:150.50}]&quot;</span></span></code></pre>
+<p>Perform <em>Array</em> operations by inserting an item to the orders list using <a rel="external" href="https://valkey.io/commands/json.arrappend/"><code>JSON.ARRAPPEND</code></a> command.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; JSON.ARRAPPEND user:6379 $.orders &#39;{&quot;id&quot;: &quot;ord3&quot;,&quot;total&quot;: 75.25}&#39;</span></span>
+<span class="giallo-l"><span>1) (integer) 3</span></span></code></pre>
+<p><a rel="external" href="https://github.com/valkey-io/valkey-json">Valkey JSON</a> version <a rel="external" href="https://github.com/valkey-io/valkey-json/releases/tag/1.0.0">1.0.0</a> included in <em>valkey-bundle</em> was released on Tuesday April 1st 2025. If you would like to dive deeper see more details in the <a rel="external" href="https://valkey.io/topics/valkey-json/">Valkey JSON Documentation</a> and explore the list of <a rel="external" href="https://valkey.io/commands/#json">commands</a> included.</p>
+<h3 id="efficient-data-filtering-with-bloom-filters">Efficient Data Filtering with Bloom Filters</h3>
+<p><a rel="external" href="https://github.com/valkey-io/valkey-bloom">Valkey Bloom</a> implements space-efficient probabilistic data structures that allow membership testing. Use cases are de-duplication, filtering, and avoid one-hit-wonders in caching (data that is accessed exactly once and then never requested again). <a rel="external" href="https://en.wikipedia.org/wiki/Bloom_filter">Bloom filters</a> can reduce memory usage by up to 98% compared to the <code>SET</code> data structure while maintaining fast lookup times.</p>
+<p><strong>Key Capabilities and Constraints</strong></p>
+<ul>
+<li><strong>Memory Efficiency</strong>
+<ul>
+<li>Default memory limit of 128MB per filter (configurable via <a rel="external" href="https://valkey.io/topics/bloomfilters/"><code>BF.BLOOM-MEMORY-USAGE-LIMIT</code></a>)</li>
+<li>Example: With 0.01 (1%) false positive rate can probabilistic-ally track 112M items within 128MB.</li>
+<li>Achieves 93-98% memory savings compared to the <code>SET</code> data structure for items using UUIDs for uniqueness.</li>
+</ul>
+</li>
+<li><strong>Scaling Options</strong>
+<ul>
+<li><strong>Non-scaling filters</strong>: Fixed capacity for better performance.</li>
+<li><strong>Scaling filters</strong>: Dynamic growth with configurable expansion rate.</li>
+</ul>
+</li>
+<li><strong>Performance Characteristics</strong>
+<ul>
+<li><strong>Time complexity</strong>: Bloom filter operations take <strong>O(k)</strong> time because you must compute k different hash functions and access k different bit positions in the array for every insert or lookup operation. The time complexity is independent of the number of items stored or the size of the bit array - it only depends on the number of hash functions configured for the filter.</li>
+</ul>
+</li>
+<li><strong>Performance Tip:</strong> Start with larger initial capacities to avoid scaling.</li>
+<li><strong>Accuracy Control</strong>
+<ul>
+<li>Configurable false positive rate (default: 0.01 or 1%) a tradeoff between time and space for accuracy.</li>
+<li>Guaranteed zero false negatives.</li>
+<li>Tightening ratio for maintaining accuracy during scale-out.</li>
+</ul>
+</li>
+</ul>
+<p>Create a non-scaling (fixed memory) filter with specific parameters with <a rel="external" href="https://valkey.io/commands/bf.reserve/"><code>BF.RESERVE</code></a>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; BF.RESERVE non_scaling_filter 0.001 1000000 NONSCALING</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Create a scaling filter with custom expansion using <a rel="external" href="https://valkey.io/commands/bf.insert/"><code>BF.INSERT</code></a>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; BF.INSERT scaling_filter EXPANSION 4 ITEMS item1 item2</span></span>
+<span class="giallo-l"><span>1) (integer) 1</span></span>
+<span class="giallo-l"><span>2) (integer) 1</span></span></code></pre>
+<p>Check filter capacity and stats using <a rel="external" href="https://valkey.io/commands/bf.info/"><code>BF.INFO</code></a> for fixed filter</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; BF.INFO non_scaling_filter CAPACITY</span></span>
+<span class="giallo-l"><span>(integer) 1000000</span></span></code></pre>
+<p>Check filter capacity and stats for scaling filter</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; BF.INFO scaling_filter MAXSCALEDCAPACITY</span></span>
+<span class="giallo-l"><span>(integer) 34952500</span></span></code></pre>
+<p>Bulk operations, use <a rel="external" href="https://valkey.io/commands/bf.madd/"><code>BF.MADD</code></a> to track multiple elements at once:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; BF.MADD non_scaling_filter item1 item2 item3</span></span>
+<span class="giallo-l"><span>1) (integer) 1</span></span>
+<span class="giallo-l"><span>2) (integer) 1</span></span>
+<span class="giallo-l"><span>3) (integer) 1</span></span></code></pre>
+<p>Check for multiple items in a single roundtrip using <a rel="external" href="https://valkey.io/commands/bf.mexists/"><code>BF.MEXISTS</code></a>, if we try to get an item that does not exist (item4), we get a Zero as response.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; BF.MEXISTS non_scaling_filter item1 item2 item4</span></span>
+<span class="giallo-l"><span>1) (integer) 1</span></span>
+<span class="giallo-l"><span>2) (integer) 1</span></span>
+<span class="giallo-l"><span>3) (integer) 0</span></span></code></pre>
+<p><a rel="external" href="https://github.com/valkey-io/valkey-bloom">Valkey Bloom</a> version <a rel="external" href="https://github.com/valkey-io/valkey-bloom/releases/tag/1.0.0">1.0.0</a> included in <em>valkey-bundle</em> was released on Tuesday April 1st 2025. If you would like to learn more details, commands and examples see the <a rel="external" href="https://valkey.io/topics/bloomfilters/">Valkey Bloom Documentation</a> and the blog <a rel="external" href="https://valkey.io/blog/introducing-bloom-filters/">Introducing Bloom Filters for Valkey</a>.</p>
+<h3 id="high-performance-vector-similarity-search">High-Performance Vector Similarity Search</h3>
+<p><a rel="external" href="https://github.com/valkey-io/valkey-search">Valkey Search</a> provides your application with high performance vector similarity search capabilities, essential for modern AI-driven applications. It delivers single digit millisecond latency at 99% recall even with billions of vectors through optimized implementations of Approximate Nearest Neighbor (<a rel="external" href="https://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximation_methods">ANN</a>) search with Hierarchical navigable small world (<a rel="external" href="https://en.wikipedia.org/wiki/Hierarchical_navigable_small_world">HNSW</a>) and exact matching using K-Nearest Neighbors (<a rel="external" href="https://en.wikipedia.org/wiki/Nearest_neighbor_search#Approximation_methods">KNN</a>) algorithms.</p>
+<p><strong>Key Capabilities and Constraints</strong></p>
+<ul>
+<li><strong>Vector Specifications</strong>
+<ul>
+<li>Supports <code>FLOAT32</code> vectors</li>
+<li>Multiple distance metrics: <code>L2</code> (Euclidean), <code>IP</code> (Inner Product), <code>Cosine</code></li>
+<li>HNSW parameters for performance tuning
+<ul>
+<li><code>M</code>: Maximum outgoing edges (default: 16, max: 512)</li>
+<li><code>EF_CONSTRUCTION</code>: Build-time accuracy (default: 200, max: 4,096)</li>
+<li><code>EF_RUNTIME</code>: Query-time accuracy (default: 10, max: 4,906)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Hybrid Query Support</strong>
+<ul>
+<li>Tag indexes for exact matching
+<ul>
+<li>Case-insensitive by default,</li>
+<li>Configurable separators (default: comma)</li>
+<li>Prefix and exact matching supported</li>
+</ul>
+</li>
+<li>Numeric indexes for range queries
+<ul>
+<li>Supports inclusive/exclusive ranges</li>
+<li>Infinite bounds using <code>-inf</code> and <code>+inf</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Performance Optimization</strong>
+<ul>
+<li>Automatic query planning between pre-filtering and inline-filtering</li>
+<li>Configurable block size for memory allocation (<code>--hnsw-block-size</code>)</li>
+<li>Linear scaling with CPU cores for both queries and ingestion</li>
+</ul>
+</li>
+<li><strong>Resource Management</strong>
+<ul>
+<li>Configurable thread pools for readers and writers</li>
+<li>Default: matches physical CPU core count</li>
+<li>Cluster mode support for horizontal scaling</li>
+</ul>
+</li>
+</ul>
+<p>Create an index with HNSW configuration with <a rel="external" href="https://valkey.io/commands/ft.create/"><code>FT.CREATE</code></a>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; FT.CREATE productIndex \</span></span>
+<span class="giallo-l"><span>    ON JSON PREFIX 1 product: \</span></span>
+<span class="giallo-l"><span>    SCHEMA $.vector AS vector \</span></span>
+<span class="giallo-l"><span>    VECTOR HNSW 10 \</span></span>
+<span class="giallo-l"><span>        TYPE FLOAT32 \</span></span>
+<span class="giallo-l"><span>        DIM 20 \</span></span>
+<span class="giallo-l"><span>        DISTANCE_METRIC COSINE \</span></span>
+<span class="giallo-l"><span>        M 4 \</span></span>
+<span class="giallo-l"><span>        EF_CONSTRUCTION 100 \</span></span>
+<span class="giallo-l"><span>            $.category AS category TAG \</span></span>
+<span class="giallo-l"><span>            $.price AS price NUMERIC</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Perform Hybrid query combining vector similarity with filters using <a rel="external" href="https://valkey.io/commands/ft.search/"><code>FT.SEARCH</code></a><code> index query</code>:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; FT.SEARCH productIndex &quot;*=&gt;[KNN 5 @vector $query_vector] @category:{electronics} @price:[100 500]&quot; \</span></span>
+<span class="giallo-l"><span>    PARAMS 2 query_vector &quot;$encoded_vector&quot;</span></span></code></pre>
+<p><a rel="external" href="https://github.com/valkey-io/valkey-search">Valkey Search</a> version <a rel="external" href="https://github.com/valkey-io/valkey-search/releases/tag/1.0.1">1.0.1</a> included in <em>valkey-bundle</em> was released on Wednesday June 11th 2025. If you would like to learn more about the capabilities and opportunities this module provides see the <a rel="external" href="https://valkey.io/topics/search/">Valkey Search Documentation</a>.</p>
+<h3 id="enhanced-security-with-existing-mechanisms-with-ldap">Enhanced Security with existing Mechanisms with LDAP</h3>
+<p><a rel="external" href="https://github.com/valkey-io/valkey-ldap">Valkey LDAP</a> integrates with your existing identity management infrastructure, providing robust authentication without requiring additional user management systems. It supports both simple <em>bind</em> and <em>search+bind</em> modes, making it compatible with various LDAP directory structures. This flexibility ensures that you can maintain enterprise security standards while leveraging the power of <em>valkey-bundle</em>.</p>
+<p><strong>Key Features</strong></p>
+<ol>
+<li><strong>Authentication Modes</strong>
+<ol>
+<li><strong>Bind Mode</strong>: Fast, direct authentication when usernames match DN patterns</li>
+<li><strong>Search+Bind Mode</strong>: Flexible authentication for complex directory structures</li>
+</ol>
+</li>
+<li><strong>Security Features</strong>
+<ol>
+<li>TLS/SSL support</li>
+<li>Connection pooling</li>
+<li>High availability with multiple LDAP servers</li>
+<li>Integration with the Valkey ACL system</li>
+</ol>
+</li>
+</ol>
+<p><strong>Basic configuration</strong></p>
+<p>Simple bind mode setup to our imaginary LDAP server:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; CONFIG SET ldap.servers &quot;ldap://ldap.valkey.io:389&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; CONFIG SET ldap.bind_dn_prefix &quot;cn=&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; CONFIG SET ldap.bind_dn_suffix &quot;,ou=users,dc=valkey,dc=io&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Enable TLS:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; CONFIG SET ldap.use_starttls yes</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; CONFIG SET ldap.tls_ca_cert_path &quot;/path/to/ca.crt&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p><strong>User Management</strong></p>
+<p>Create LDAP-authenticated user</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER valkey on resetpass +@all</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Authenticate</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; AUTH valkey &quot;ldap_password&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p><strong>Performance Tips:</strong></p>
+<ul>
+<li>Use bind mode when possible (faster)</li>
+<li>Adjust connection pool size for high traffic:</li>
+</ul>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; CONFIG SET ldap.connection_pool_size 5</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<ul>
+<li>Configure multiple LDAP servers for reliability</li>
+</ul>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; CONFIG SET ldap.servers &quot;ldap://main:389,ldap://backup:389&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p><a rel="external" href="https://github.com/valkey-io/valkey-ldap">Valkey LDAP</a> version <a rel="external" href="https://github.com/valkey-io/valkey-ldap/releases/tag/1.0.0">1.0.0</a> included in <em>valkey-bundle</em> was released on Sunday June 13th 2025. If you would like to learn more details about the capabilities read the <a rel="external" href="https://valkey.io/topics/ldap/">LDAP Authentication Documentation</a>.</p>
+<h2 id="getting-ready-for-production-deployment">Getting Ready for Production Deployment</h2>
+<p>Deploying <em>valkey-bundle</em> in production requires careful consideration of persistence, configuration, monitoring, and security. These foundational elements ensure your application maintains data integrity, performs optimally, and scales reliably under production workloads.</p>
+<p>For example:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> docker run</span><span style="color: #79C0FF;"> --name</span><span style="color: #A5D6FF;"> my-valkey-bundle</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">    -d</span><span style="color: #A5D6FF;"> valkey/valkey-bundle</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    valkey-server</span><span style="color: #79C0FF;"> --save 60 1</span></span></code></pre><h3 id="custom-configuration">Custom Configuration</h3>
+<p>A well-structured configuration file is essential for production deployments as it provides centralized control over all module settings, security parameters, and performance tuning options. The configuration below demonstrates a production-ready setup that balances performance, security, and resource utilization across all <em>valkey-bundle</em> modules.</p>
+<p>This sample configuration file includes optimized settings for:</p>
+<ul>
+<li>JSON module with reasonable document size limits and nesting depth controls</li>
+<li>Bloom filters with production-appropriate memory limits and false positive rates</li>
+<li>Search module with thread pools sized for typical server hardware</li>
+<li>LDAP integration with TLS security and connection pooling</li>
+<li>Valkey settings for memory management and persistence</li>
+</ul>
+<p>Note: This is not an official nor recommended configuration is only for demonstration purposes of the module settings.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span># Valkey settings</span></span>
+<span class="giallo-l"><span>port 6379</span></span>
+<span class="giallo-l"><span>bind 127.0.0.1</span></span>
+<span class="giallo-l"><span>protected-mode yes</span></span>
+<span class="giallo-l"><span>requirepass &quot;strong_password&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>################################## JSON Module ###################################</span></span>
+<span class="giallo-l"><span># Maximum document size (in bytes, 0 = unlimited)</span></span>
+<span class="giallo-l"><span>json.max-document-size 1048576</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Maximum nesting depth for JSON documents</span></span>
+<span class="giallo-l"><span>json.max-path-limit 32</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>################################## Bloom Module #################################</span></span>
+<span class="giallo-l"><span># Default initial capacity for new bloom filters</span></span>
+<span class="giallo-l"><span>bf.bloom-capacity 100000</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Default false positive rate</span></span>
+<span class="giallo-l"><span>bf.bloom-fp-rate 0.01</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Memory usage limit per bloom filter (in bytes)</span></span>
+<span class="giallo-l"><span>bf.bloom-memory-usage-limit 134217728  # 128MB</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Default expansion rate for scaling filters</span></span>
+<span class="giallo-l"><span>bf.bloom-expansion 2</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>################################## Search Module ###############################</span></span>
+<span class="giallo-l"><span># Thread configuration for search operations</span></span>
+<span class="giallo-l"><span>search.reader-threads 8</span></span>
+<span class="giallo-l"><span>search.writer-threads 4</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># HNSW graph configuration</span></span>
+<span class="giallo-l"><span>search.hnsw-block-size 10000</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Enable cluster mode</span></span>
+<span class="giallo-l"><span>search.use-coordinator no</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Log level (debug, verbose, notice, warning)</span></span>
+<span class="giallo-l"><span>search.log-level notice</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>################################## LDAP Module #################################</span></span>
+<span class="giallo-l"><span># LDAP server configuration</span></span>
+<span class="giallo-l"><span>ldap.servers &quot;ldap://primary:389,ldap://backup:389&quot;</span></span>
+<span class="giallo-l"><span>ldap.auth_mode &quot;search+bind&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># TLS configuration</span></span>
+<span class="giallo-l"><span>ldap.use_starttls yes</span></span>
+<span class="giallo-l"><span>ldap.tls_ca_cert_path &quot;/path/to/ca.crt&quot;</span></span>
+<span class="giallo-l"><span>ldap.tls_cert_path &quot;/path/to/client.crt&quot;</span></span>
+<span class="giallo-l"><span>ldap.tls_key_path &quot;/path/to/client.key&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Search+bind mode settings</span></span>
+<span class="giallo-l"><span>ldap.search_base &quot;ou=users,dc=valkey,dc=io&quot;</span></span>
+<span class="giallo-l"><span>ldap.search_filter &quot;objectClass=person&quot;</span></span>
+<span class="giallo-l"><span>ldap.search_attribute &quot;uid&quot;</span></span>
+<span class="giallo-l"><span>ldap.search_bind_dn &quot;cn=readonly,dc=valkey,dc=io&quot;</span></span>
+<span class="giallo-l"><span>ldap.search_bind_passwd &quot;readonly_password&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Performance tuning</span></span>
+<span class="giallo-l"><span>ldap.connection_pool_size 5</span></span>
+<span class="giallo-l"><span>ldap.timeout_connection 5</span></span>
+<span class="giallo-l"><span>ldap.timeout_ldap_operation 3</span></span>
+<span class="giallo-l"><span>ldap.failure_detector_interval 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>################################## Common Settings #############################</span></span>
+<span class="giallo-l"><span># Memory and performance</span></span>
+<span class="giallo-l"><span>maxmemory 4gb</span></span>
+<span class="giallo-l"><span>maxmemory-policy allkeys-lru</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Persistence</span></span>
+<span class="giallo-l"><span>save 900 1</span></span>
+<span class="giallo-l"><span>save 300 10</span></span>
+<span class="giallo-l"><span>save 60 10000</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span># Logging</span></span>
+<span class="giallo-l"><span>loglevel notice</span></span>
+<span class="giallo-l"><span>logfile &quot;/var/log/valkey/valkey.log&quot;</span></span></code></pre>
+<p>Load the file as follows:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">$</span><span style="color: #A5D6FF;"> docker run</span><span style="color: #79C0FF;"> -v</span><span style="color: #A5D6FF;"> /valkey/my-valkey-bundle.conf:/usr/local/etc/valkey</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">    --name</span><span style="color: #A5D6FF;"> my-valkey-bundle</span><span style="color: #FF7B72;"> \</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    valkey/valkey-bundle</span></span></code></pre><h2 id="real-world-example-personalized-ad-platform">Real-World Example: Personalized Ad Platform</h2>
+<p>Consider a typical scenario: you're building a recommendation engine for an ad platform that needs to process JSON data, perform similarity searches, and efficiently track user interactions. Traditionally, this would require integrating and maintaining multiple services, each with its own configuration, deployment, and scaling considerations. With <em>valkey-bundle</em>, these capabilities are available out-of-the-box, all through a unified interface.</p>
+<p>Let's explore how we would go about creating a system that could handle complex user profiles, deliver personalized recommendations, prevent ad fatigue, and maintain enterprise grade security.</p>
+<h3 id="managing-rich-user-profiles-with-valkey-json">Managing Rich User Profiles with Valkey JSON</h3>
+<p>First, we needed a flexible way to store user profiles. Valkey JSON proved perfect for this with its native JSON support. Here's what our sample user profile might look like:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="json"><span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  &quot;user_id&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;u123456&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  &quot;personal&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    &quot;name&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;Val Key&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    &quot;email&quot;</span><span>:</span><span style="color: #A5D6FF;"> &quot;valkey@valkey.io&quot;</span></span>
+<span class="giallo-l"><span>  },</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  &quot;preferences&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    &quot;categories&quot;</span><span>: [</span><span style="color: #A5D6FF;">&quot;electronics&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;sports&quot;</span><span>],</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">    &quot;brands&quot;</span><span>: [</span><span style="color: #A5D6FF;">&quot;nike&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;apple&quot;</span><span>]</span></span>
+<span class="giallo-l"><span>  },</span></span>
+<span class="giallo-l"><span style="color: #7EE787;">  &quot;embedding&quot;</span><span>: [</span><span style="color: #79C0FF;">0.23</span><span>,</span><span style="color: #79C0FF;"> 0.45</span><span>,</span><span style="color: #79C0FF;"> 0.67</span><span>]</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>The beauty of using Valkey JSON is how easily we can update specific fields for user with id <code>u123456</code>.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; JSON.SET user:u123456 . &#39;{&quot;user_id&quot;: &quot;u123456&quot;,&quot;personal&quot;: {&quot;name&quot;: &quot;Val Key&quot;,&quot;email&quot;: &quot;valkey@valkey.io&quot;},&quot;preferences&quot;: {&quot;categories&quot;: [&quot;electronics&quot;, &quot;sports&quot;],&quot;brands&quot;: [&quot;nike&quot;, &quot;apple&quot;]},&quot;embedding&quot;: [0.23, 0.45, 0.67]}&#39;</span></span>
+<span class="giallo-l"><span>OK </span></span></code></pre>
+<p>Update user preferences by adding the automotive category.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; JSON.ARRAPPEND user:u123456 $.preferences.categories &#39;&quot;automotive&quot;&#39;</span></span>
+<span class="giallo-l"><span>1) (integer) 3</span></span></code></pre><h3 id="smart-recommendations-with-vector-search">Smart Recommendations with Vector Search</h3>
+<p>Here's where things get interesting. We use Valkey Search to implement vector similarity matching for product recommendations. Each product and user preference is represented as a high-dimensional vector, allowing us to find similar items quickly.</p>
+<p>Create a vector similarity index.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; FT.CREATE product_idx ON JSON </span></span>
+<span class="giallo-l"><span>  PREFIX 1 product: </span></span>
+<span class="giallo-l"><span>  SCHEMA </span></span>
+<span class="giallo-l"><span>    $.embedding AS embedding VECTOR HNSW 6 </span></span>
+<span class="giallo-l"><span>      TYPE FLOAT32 </span></span>
+<span class="giallo-l"><span>      DIM 128 </span></span>
+<span class="giallo-l"><span>      DISTANCE_METRIC COSINE </span></span>
+<span class="giallo-l"><span>    $.category AS category TAG</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>This setup allows us to find similar products while applying business rules like category filters and price ranges. The HNSW algorithm ensures we get results in milliseconds, even with millions of products.</p>
+<p>Here's how we can fetch similar products based on user preferences:</p>
+<p>Get the preference vector from the user with Id u123456</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; SET user_vector `JSON.GET user:u123456 $.embedding`</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Find similar products in the same category</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; FT.SEARCH product_idx &quot;*=&gt;[KNN 5 @embedding $user_vector] @category:{electronics}&quot; </span></span>
+<span class="giallo-l"><span>    PARAMS 2 user_vector &quot;$user_vector&quot;</span></span></code></pre>
+<p>This query combines vector similarity search with category filtering, ensuring recommendations are both relevant and contextual.</p>
+<h3 id="preventing-ad-fatigue-with-bloom-filters">Preventing Ad Fatigue with Bloom Filters</h3>
+<p>Nobody likes seeing the same ad repeatedly. We use Valkey Bloom to efficiently track which user each ad has been shown. The beauty of Bloom filters is their space efficiency, we can track millions of impressions using minimal memory.</p>
+<p>Track ad impressions by the Ad Id</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; BF.RESERVE ad:a789012 0.01 10000000</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; BF.ADD ad:a789012 &quot;user:u123456&quot;</span></span>
+<span class="giallo-l"><span>(integer) 1</span></span></code></pre>
+<p>Quick check before showing an ad</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; BF.EXISTS ad:a789012 &quot;user:u123456&quot;</span></span>
+<span class="giallo-l"><span>(integer) 1</span></span></code></pre>
+<p>Try a different user for the same Ad Id.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; BF.EXISTS ad:a789012 &quot;user:u234567&quot;</span></span>
+<span class="giallo-l"><span>(integer) 0</span></span></code></pre>
+<p>With a false positive rate of just 1%, we maintain accuracy while using about 93% less memory compared to the <code>SET</code> data structure.</p>
+<h3 id="securing-it-all-with-ldap-authentication">Securing It All with LDAP Authentication</h3>
+<p>Our Ad Platform needs to support multiple teams with different access levels - from account managers and content creators to data analysts and administrators. Valkey LDAP allows us to leverage existing corporate directories while implementing fine-grained access control.</p>
+<h4 id="directory-structure-and-role-mapping">Directory Structure and Role Mapping</h4>
+<p>First, let's set up our LDAP integration to map organizational roles:</p>
+<p>Configure LDAP connection with out imaginary Valkey LDAP</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; CONFIG SET ldap.servers &quot;ldaps://ldap.valkey.io:636&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; CONFIG SET ldap.search_base &quot;ou=employees,dc=valkey,dc=io&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; CONFIG SET ldap.search_filter &quot;(objectClass=user)&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; CONFIG SET ldap.search_attribute &quot;uid&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Enable TLS for secure communication</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; CONFIG SET ldap.use_starttls yes</span></span>
+<span class="giallo-l"><span>OK</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&gt; CONFIG SET ldap.tls_ca_cert_path &quot;/etc/valkey/certs/ca.crt&quot;</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre><h4 id="role-based-access-control">Role-Based Access Control</h4>
+<p>We'll create different access levels using Valkey ACLs that map to LDAP groups:</p>
+<p>Account Managers - Can view and modify client campaigns</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER account_manager on resetpass +@read +@write -@admin &gt;client_secret</span></span>
+<span class="giallo-l"><span>    ~campaign:* </span></span>
+<span class="giallo-l"><span>    ~client:* </span></span>
+<span class="giallo-l"><span>    ~analytics:*</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Content Creators - Can manage ad content and view basic analytics</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER content_creator on resetpass +@read +@write -@admin &gt;content_secret</span></span>
+<span class="giallo-l"><span>    ~ad:* </span></span>
+<span class="giallo-l"><span>    ~content:* </span></span>
+<span class="giallo-l"><span>    &amp;analytics:basic:*</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>Data Analysts - Read-only access to all analytics data</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER data_analyst on resetpass +@read -@write -@admin &gt;analyst_secret</span></span>
+<span class="giallo-l"><span>    ~analytics:* </span></span>
+<span class="giallo-l"><span>    &amp;campaign:*</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre>
+<p>System Administrators - Full access</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>&gt; ACL SETUSER admin on resetpass +@all &gt;admin_secret</span></span>
+<span class="giallo-l"><span>OK</span></span></code></pre><h2 id="conclusion">Conclusion</h2>
+<p><em>valkey-bundle</em> enables modern application development of latency-sensitive and high-throughput workloads by combining essential tools in a single, maintainable container. Whether you're building a startup MVP or scaling enterprise applications, <em>valkey-bundle</em> provides the foundation for efficient, reliable, and maintainable systems.</p>
+<p>Ready to get started? Here's how you can begin using <em>valkey-bundle</em> today:</p>
+<p><strong>Quick Start:</strong></p>
+<ol>
+<li>Pull the latest valkey-bundle container: <code>docker pull valkey/valkey-bundle</code></li>
+<li>Run your first instance: <code>docker run --name my-valkey-bundle -p 6379:6379 -d valkey/valkey-bundle</code></li>
+<li>Connect and explore: <code>docker exec -it my-valkey-bundle valkey-cli</code></li>
+</ol>
+<p><strong>Next Steps:</strong></p>
+<ul>
+<li><strong>Experiment</strong>: Try the JSON, Bloom, Search, and LDAP examples from this guide</li>
+<li><strong>Learn More</strong>: Visit the <a rel="external" href="https://valkey.io/docs">Valkey Documentation</a> for comprehensive guides</li>
+<li><strong>Get Support</strong>: Join the <a rel="external" href="https://github.com/valkey-io/valkey/discussions">Valkey Community</a> for questions and discussions</li>
+<li><strong>Contribute</strong>: Help improve <em>valkey-bundle</em> by reporting issues or contributing features on <a rel="external" href="https://github.com/valkey-io/valkey-bundle">GitHub</a></li>
+</ul>
+<p>Start building your next low-latency, high-performance application with <em>valkey-bundle</em> your one-stop shop for modern data infrastructure needs.</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/rlunar.jpg" alt="photo of Roberto Luna-Rojas" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Roberto Luna-Rojas</h4>
+    
+    <a target="_blank" href="https://github.com/rlunar"><i class="icon icon-github-square"></i> @rlunar</a>
+    
+    <p>Roberto Luna Rojas is a Sr Developer Advocate for Valkey based in the USA, originally from Mexico. He tries to get the most out of in-memory databases one bit at the time. When not in front of the computer, he loves spending time with his family, listening to music, and watching movies, TV shows, and sports.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/&title=valkey-bundle%3A%20One%20stop%20shop%20for%20real-time%20applications&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/valkey-bundle-one-stop-shop-for-low-latency-modern-applications/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/performance-optimization-methodology-for-valkey/">&laquo; Performance Optimization Methodology for Valkey - Part 1</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/introducing-enhanced-json-capabilities-in-valkey/">Introducing Enhanced JSON Capabilities in Valkey &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>

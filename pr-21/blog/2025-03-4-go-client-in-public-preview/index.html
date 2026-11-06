@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <meta name="MSSmartTagsPreventParsing" content="true" />
+    <meta name="Copyright" content="" />
+    <meta name="keywords" content="open-source, valkey" />
+    <meta property="og:image" content="https://madolson.github.io/valkey-io.github.io/pr-21//assets/media/featured/default.webp" />
+    
+    
+
+    <meta name="description" content="Valkey Glide now supports GO. Read to learn more about the new client designed for performance and developer productivity" />
+    
+
+    <!-- Favicons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/valkey-io.github.io/pr-21/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/valkey-io.github.io/pr-21/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/valkey-io.github.io/pr-21/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/valkey-io.github.io/pr-21/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/valkey-io.github.io/pr-21/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/valkey-io.github.io/pr-21/img/favicon/favicon.ico">
+    <meta name="msapplication-TileColor" content="#2d89ef">
+    <meta name="msapplication-TileImage" content="/valkey-io.github.io/pr-21/img/favicon/mstile-144x144.png">
+    <meta name="msapplication-config" content="/valkey-io.github.io/pr-21/img/favicon/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    <title>Valkey &middot; Introducing the Valkey Glide Go Client: Now in Public Preview!</title>
+    <meta name="title" property="og:title" content="Valkey: Introducing the Valkey Glide Go Client: Now in Public Preview!">
+
+    <link rel="stylesheet" href="/valkey-io.github.io/pr-21/css/styles.css">
+    <link rel="alternate" type="application/atom+xml" title="Atom feed" href="https://madolson.github.io/valkey-io.github.io/pr-21/atom.xml" />
+
+    <!-- Nav JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/nav.js"></script>
+
+    <!-- Carousel JS -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/carousel.js"></script>
+
+    <!-- Copy-to-clipboard for .copy-code blocks -->
+    <script src="/valkey-io.github.io/pr-21/assets/js/copy-code.js"></script>
+
+    
+
+    
+</head>
+<script>
+// Banner state management: Check localStorage before DOM renders to prevent layout shift
+// and ensure banner visibility state is consistent with user's previous interactions.
+(function() {
+  const bannerClosedTime = localStorage.getItem('bannerClosedTime');
+  if (bannerClosedTime) {
+    const closedTime = parseInt(bannerClosedTime, 10);
+    const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in ms
+    if (Date.now() - closedTime < twentyFourHours) {
+      document.documentElement.classList.add('banner-hidden');
+    } else {
+      // Clear expired timestamp
+      localStorage.removeItem('bannerClosedTime');
+    }
+  }
+})();
+</script>
+<body
+  
+  ><div id="pr-preview-banner" style="background:#fff4ce;color:#3b2f00;border-bottom:1px solid #e0b100;padding:8px 16px;font:15px/1.4 sans-serif;text-align:center">
+  Preview of <a href="https://github.com/valkey-io/valkey-io.github.io/pull/21">pull request #21</a> at commit <code>268217f749</code>.
+  This is not the real site: <a href="https://valkey.io/">go to valkey.io</a>.
+</div>
+<div class="header">
+    <div class="width-limiter">
+      <a href="/valkey-io.github.io/pr-21/" class="logo">
+        <img src="/valkey-io.github.io/pr-21/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      </a>
+      <div role="button" 
+        class="btn-menu"
+        onclick="window.toggleHeaderMenu();"
+      ></div>
+      <nav role="navigation" aria-label="Main">
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/download/">Download</a>
+
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/docs/">Documentation</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/commands/">Command Reference</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/clients/">Clients</a>
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/integrations/">Integrations</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/blog/">Blog</a>
+        <div class="has-submenu">
+          <a role="menuitem" href="/valkey-io.github.io/pr-21/community/">Community</a>
+          <div class="submenu">
+            <a role="menuitem" href="/valkey-io.github.io/pr-21/events/">Events</a>
+            <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
+          </div>
+        </div>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/participants/">Participants</a>
+        <a role="menuitem" href="/valkey-io.github.io/pr-21/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
+          <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          GitHub
+          <!-- Star count will be injected here by JS -->
+        </a>
+        
+      </nav>
+    </div>
+  </div>
+  <div class="body">
+      
+
+<div class="blog-single">
+    <main>
+        <div class="main-inner">
+            
+
+
+  <img src="/valkey-io.github.io/pr-21/assets/media/featured/default.webp" alt="Introducing the Valkey Glide Go Client: Now in Public Preview!" class="feature-img">
+
+
+<h1>Introducing the Valkey Glide Go Client: Now in Public Preview!</h1>
+<div class="meta">
+  
+  
+  
+  <span class="blog-type-badge" data-type="Announcements">Announcements</span>
+  
+  2025-03-04
+  
+    &middot; 
+    
+      
+      
+      <em>Niharika Bhavaraju</em>
+    
+  
+</div>
+<p>Valkey-Glide is pleased to announce the public preview release of the GLIDE(General Language Independent Driver for the Enterprise) Go client. This release brings the power and reliability of Valkey to Go developers with an API designed for performance and developer productivity.</p>
+<p>Valkey GLIDE is a multi-language client for Valkey, designed for operational excellence and incorporating best practices refined through years of experience. GLIDE ensures a consistent and unified client experience across applications, regardless of the programming language.</p>
+<p>Currently, GLIDE supports Java, Node.js, and Python. This announcement introduces the Valkey GLIDE support for Go, expanding support to Go developers and providing new connectivity to Valkey servers, including both standalone and cluster deployments.</p>
+<h2 id="why-you-should-be-excited">Why You Should Be Excited</h2>
+<p>The Go client extends Valkey GLIDE to the Go community, offering a robust, client that's built on the battle-tested Rust core. This client library is a thoughtfully designed experience for Go developers who need reliable, high-performance data access.</p>
+<h2 id="key-features">Key Features</h2>
+<h3 id="advanced-cluster-topology-management">Advanced Cluster Topology Management</h3>
+<p>Connect to your Valkey cluster with minimal configuration. The client automatically detects the entire cluster topology and configures connection management based on industry best practices.</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="go"><span class="giallo-l"><span>config</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClusterClientConfiguration</span><span>().</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithAddress</span><span>(</span><span style="color: #FF7B72;">&amp;</span><span style="color: #FFA657;">api</span><span>.</span><span style="color: #FFA657;">NodeAddress</span><span>{Host:</span><span style="color: #A5D6FF;"> &quot;localhost&quot;</span><span>, Port:</span><span style="color: #79C0FF;"> 6379</span><span>})</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>client, err</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClusterClient</span><span>(config)</span></span></code></pre>
+<p>The Go client provides advanced topology managements features such as:</p>
+<h4 id="automatic-topology-discovery">Automatic Topology Discovery</h4>
+<p>GLIDE automatically discovers all cluster nodes from a single seed node, eliminating the need to manually configure every node address. The NodeAddress can be an IP address, hostname, or fully qualified domain name (FQDN).</p>
+<h4 id="dynamic-topology-maintenance">Dynamic Topology Maintenance</h4>
+<p>Cluster topology can change over time as nodes are added, removed, or when slot ownership changes. GLIDE implements several mechanisms to maintain an accurate view of the cluster:</p>
+<ul>
+<li><strong>Proactive Topology Monitoring</strong>: GLIDE performs periodic background checks for cluster topology changes. This approach ensures a comprehensive and up-to-date view of the cluster, improving availability and reducing tail latency.</li>
+<li><strong>Consensus-Based Resolution</strong>: GLIDE queries multiple nodes for their topology view and selects the one with the highest agreement, reducing the risk of stale or incorrect mappings and ensuring a more accurate and up-to-date cluster view, improving the overall availability of the cluster.</li>
+<li><strong>Efficient Resource Management</strong>: GLIDE employs an efficient algorithm to compare node views and dynamically throttles client-management requests to prevent overloading Valkey servers, ensuring a balance between maintaining an up-to-date topology map and optimizing resource utilization.</li>
+</ul>
+<h3 id="enhanced-connection-management">Enhanced Connection Management</h3>
+<p>Connection management in distributed systems presents unique challenges that impact performance, reliability, and resource utilization. The Go client addresses these challenges with reliable solutions:</p>
+<h4 id="proactive-reconnection">Proactive Reconnection</h4>
+<p>GLIDE implements a background monitoring system for connection states. By detecting disconnections and initiating reconnections preemptively, the client eliminates the reconnection latency typically experienced when a request discovers a broken connection.</p>
+<h4 id="connection-storm-prevention">Connection Storm Prevention</h4>
+<p>When network events occur, connection storms can overwhelm servers with simultaneous reconnection attempts. GLIDE mitigates this risk through backoff algorithm with jitter that distributes reconnection attempts over time, protecting servers from sudden connection surges.</p>
+<p>Robust connection handling with automatic reconnection strategies ensures your application remains resilient even during network instability:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="go"><span class="giallo-l"><span style="color: #8B949E;">// Configure a custom reconnection strategy with exponential backoff</span></span>
+<span class="giallo-l"><span>config</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClientConfiguration</span><span>().</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithAddress</span><span>(</span><span style="color: #FF7B72;">&amp;</span><span style="color: #FFA657;">api</span><span>.</span><span style="color: #FFA657;">NodeAddress</span><span>{Host:</span><span style="color: #A5D6FF;"> &quot;localhost&quot;</span><span>, Port:</span><span style="color: #79C0FF;"> 6379</span><span>}).</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithReconnectStrategy</span><span>(api.</span><span style="color: #D2A8FF;">NewBackoffStrategy</span><span>(</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">        5</span><span>,</span><span style="color: #8B949E;"> // Initial delay in milliseconds</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">        10</span><span>,</span><span style="color: #8B949E;"> // Maximum attempts</span></span>
+<span class="giallo-l"><span style="color: #79C0FF;">        50</span><span style="color: #8B949E;"> // Maximum delay in milliseconds</span></span>
+<span class="giallo-l"><span>    ))</span></span></code></pre><h4 id="multiplexed-connection">Multiplexed Connection</h4>
+<p>Rather than maintaining connection pools, GLIDE establishes a single multiplexed connection per cluster node. This architectural choice:</p>
+<ul>
+<li>Minimizes the total number of TCP connections to servers</li>
+<li>Reduces system call overhead</li>
+<li>Maintains high throughput through efficient connection pipelining</li>
+<li>Decreases server-side connection management burden</li>
+</ul>
+<h3 id="built-for-performance">Built for Performance</h3>
+<p>The Go client is designed from the ground up with performance in mind while still being simple to use.
+The Go client provides a synchronous API for simplicity and compatibility with existing Go key-value store clients. While each individual command is blocking (following the familiar patterns in the ecosystem), the client is fully thread-safe and designed for concurrent usage:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="go"><span class="giallo-l"><span style="color: #8B949E;">// Example of concurrent execution using goroutines</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">func</span><span style="color: #D2A8FF;"> performConcurrentOperations</span><span>(</span><span style="color: #FFA657;">client</span><span style="color: #FF7B72;"> *</span><span style="color: #FFA657;">api</span><span>.</span><span style="color: #FFA657;">GlideClient</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    var</span><span> wg</span><span style="color: #FFA657;"> sync</span><span>.</span><span style="color: #FFA657;">WaitGroup</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // Launch 10 concurrent operations</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    for</span><span> i</span><span style="color: #FF7B72;"> :=</span><span style="color: #79C0FF;"> 0</span><span>; i</span><span style="color: #FF7B72;"> &lt;</span><span style="color: #79C0FF;"> 10</span><span>; i</span><span style="color: #FF7B72;">++</span><span> {</span></span>
+<span class="giallo-l"><span>        wg.</span><span style="color: #D2A8FF;">Add</span><span>(</span><span style="color: #79C0FF;">1</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        go func</span><span>(</span><span style="color: #FFA657;">idx</span><span style="color: #FF7B72;"> int</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">            defer</span><span> wg.</span><span style="color: #D2A8FF;">Done</span><span>()</span></span>
+<span class="giallo-l"><span>            key</span><span style="color: #FF7B72;"> :=</span><span> fmt.</span><span style="color: #D2A8FF;">Sprintf</span><span>(</span><span style="color: #A5D6FF;">&quot;key:</span><span style="color: #FF7B72;">%d</span><span style="color: #A5D6FF;">&quot;</span><span>, idx)</span></span>
+<span class="giallo-l"><span>            value</span><span style="color: #FF7B72;"> :=</span><span> fmt.</span><span style="color: #D2A8FF;">Sprintf</span><span>(</span><span style="color: #A5D6FF;">&quot;value:</span><span style="color: #FF7B72;">%d</span><span style="color: #A5D6FF;">&quot;</span><span>, idx)</span></span>
+<span class="giallo-l"><span>            </span></span>
+<span class="giallo-l"><span style="color: #8B949E;">            // Each command blocks within its goroutine, but all 10 run concurrently</span></span>
+<span class="giallo-l"><span>            _, err</span><span style="color: #FF7B72;"> :=</span><span> client.</span><span style="color: #D2A8FF;">Set</span><span>(key, value)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">            if</span><span> err</span><span style="color: #FF7B72;"> !=</span><span style="color: #79C0FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span>                fmt.</span><span style="color: #D2A8FF;">Printf</span><span>(</span><span style="color: #A5D6FF;">&quot;Error setting </span><span style="color: #FF7B72;">%s</span><span style="color: #A5D6FF;">: </span><span style="color: #FF7B72;">%v\n</span><span style="color: #A5D6FF;">&quot;</span><span>, key, err)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">                return</span></span>
+<span class="giallo-l"><span>            }</span></span>
+<span class="giallo-l"><span>            </span></span>
+<span class="giallo-l"><span>            result, err</span><span style="color: #FF7B72;"> :=</span><span> client.</span><span style="color: #D2A8FF;">Get</span><span>(key)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">            if</span><span> err</span><span style="color: #FF7B72;"> !=</span><span style="color: #79C0FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span>                fmt.</span><span style="color: #D2A8FF;">Printf</span><span>(</span><span style="color: #A5D6FF;">&quot;Error getting </span><span style="color: #FF7B72;">%s</span><span style="color: #A5D6FF;">: </span><span style="color: #FF7B72;">%v\n</span><span style="color: #A5D6FF;">&quot;</span><span>, key, err)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">                return</span></span>
+<span class="giallo-l"><span>            }</span></span>
+<span class="giallo-l"><span>            </span></span>
+<span class="giallo-l"><span>            fmt.</span><span style="color: #D2A8FF;">Printf</span><span>(</span><span style="color: #A5D6FF;">&quot;Result for </span><span style="color: #FF7B72;">%s</span><span style="color: #A5D6FF;">: </span><span style="color: #FF7B72;">%s\n</span><span style="color: #A5D6FF;">&quot;</span><span>, key, result)</span></span>
+<span class="giallo-l"><span>        }(i)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span>    wg.</span><span style="color: #D2A8FF;">Wait</span><span>()</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Under the hood, the client efficiently handles these concurrent requests by:</p>
+<ol>
+<li>Using a single multiplexed connection per node to pipeline concurrent commands, minimizing socket overhead and system resources</li>
+<li>Implementing thread-safe command execution</li>
+<li>Efficiently routing concurrent commands to the appropriate server nodes</li>
+</ol>
+<p>While the current API is synchronous, the implementation is specifically optimized for concurrent usage through Go's native goroutines. We would love feedback about whether to add async/channel-based APIs in future releases.</p>
+<h2 id="getting-started">Getting Started</h2>
+<p>You can add Valkey GLIDE to your project with the following two commands:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="shellscript"><span class="giallo-l"><span style="color: #FFA657;">go</span><span style="color: #A5D6FF;"> get github.com/valkey-io/valkey-glide/go</span></span>
+<span class="giallo-l"><span style="color: #FFA657;">go</span><span style="color: #A5D6FF;"> mod tidy</span></span></code></pre>
+<p>Then, you can get started connecting to a Valkey standalone server, running locally on port 6379, with the following sample applications:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="go"><span class="giallo-l"><span style="color: #FF7B72;">package</span><span style="color: #FFA657;"> main</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">import</span><span> (</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    &quot;</span><span style="color: #FFA657;">fmt</span><span style="color: #A5D6FF;">&quot;</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    &quot;</span><span style="color: #FFA657;">github.com/valkey-io/valkey-glide/go/api</span><span style="color: #A5D6FF;">&quot;</span></span>
+<span class="giallo-l"><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">func</span><span style="color: #D2A8FF;"> main</span><span>() {</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // Connect to a standalone Valkey server</span></span>
+<span class="giallo-l"><span>    config</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClientConfiguration</span><span>().</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">        WithAddress</span><span>(</span><span style="color: #FF7B72;">&amp;</span><span style="color: #FFA657;">api</span><span>.</span><span style="color: #FFA657;">NodeAddress</span><span>{Host:</span><span style="color: #A5D6FF;"> &quot;localhost&quot;</span><span>, Port:</span><span style="color: #79C0FF;"> 6379</span><span>})</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span>    client, err</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClient</span><span>(config)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> err</span><span style="color: #FF7B72;"> !=</span><span style="color: #79C0FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span>        fmt.</span><span style="color: #D2A8FF;">Println</span><span>(</span><span style="color: #A5D6FF;">&quot;Error:&quot;</span><span>, err)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        return</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    defer</span><span> client.</span><span style="color: #D2A8FF;">Close</span><span>()</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // Test the connection</span></span>
+<span class="giallo-l"><span>    result, err</span><span style="color: #FF7B72;"> :=</span><span> client.</span><span style="color: #D2A8FF;">Ping</span><span>()</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> err</span><span style="color: #FF7B72;"> !=</span><span style="color: #79C0FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span>        fmt.</span><span style="color: #D2A8FF;">Println</span><span>(</span><span style="color: #A5D6FF;">&quot;Error:&quot;</span><span>, err)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        return</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>    fmt.</span><span style="color: #D2A8FF;">Println</span><span>(result)</span><span style="color: #8B949E;"> // PONG</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // Store and retrieve a value</span></span>
+<span class="giallo-l"><span>    client.</span><span style="color: #D2A8FF;">Set</span><span>(</span><span style="color: #A5D6FF;">&quot;hello&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;valkey&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    value, _</span><span style="color: #FF7B72;"> :=</span><span> client.</span><span style="color: #D2A8FF;">Get</span><span>(</span><span style="color: #A5D6FF;">&quot;hello&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    fmt.</span><span style="color: #D2A8FF;">Println</span><span>(value)</span><span style="color: #8B949E;"> // valkey</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h3 id="cluster-mode-connection-setup">Cluster Mode Connection Setup</h3>
+<p>Need to work with a Valkey cluster?</p>
+<p>Just as easy! The Go client automatically discovers your entire cluster topology from a single seed node. The following sample shows how to connect to a Valkey cluster through a node running locally on port 7001:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="go"><span class="giallo-l"><span style="color: #FF7B72;">package</span><span style="color: #FFA657;"> main</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">import</span><span> (</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    &quot;</span><span style="color: #FFA657;">fmt</span><span style="color: #A5D6FF;">&quot;</span></span>
+<span class="giallo-l"><span style="color: #A5D6FF;">    &quot;</span><span style="color: #FFA657;">github.com/valkey-io/valkey-glide/go/api</span><span style="color: #A5D6FF;">&quot;</span></span>
+<span class="giallo-l"><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #FF7B72;">func</span><span style="color: #D2A8FF;"> main</span><span>() {</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // Specify the address of any single node in your cluster</span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // This example connects to a local cluster node on port 7001</span></span>
+<span class="giallo-l"><span>    host</span><span style="color: #FF7B72;"> :=</span><span style="color: #A5D6FF;"> &quot;localhost&quot;</span></span>
+<span class="giallo-l"><span>    port</span><span style="color: #FF7B72;"> :=</span><span style="color: #79C0FF;"> 7001</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span style="color: #8B949E;">    // Connect to a Valkey cluster through any node</span></span>
+<span class="giallo-l"><span>    config</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClusterClientConfiguration</span><span>().</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">        WithAddress</span><span>(</span><span style="color: #FF7B72;">&amp;</span><span style="color: #FFA657;">api</span><span>.</span><span style="color: #FFA657;">NodeAddress</span><span>{Host: host, Port: port})</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span>    client, err</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClusterClient</span><span>(config)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> err</span><span style="color: #FF7B72;"> !=</span><span style="color: #79C0FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span>        fmt.</span><span style="color: #D2A8FF;">Println</span><span>(</span><span style="color: #A5D6FF;">&quot;There was an error: &quot;</span><span>, err)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        return</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span>    res, err</span><span style="color: #FF7B72;"> :=</span><span> client.</span><span style="color: #D2A8FF;">Ping</span><span>()</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">    if</span><span> err</span><span style="color: #FF7B72;"> !=</span><span style="color: #79C0FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span>        fmt.</span><span style="color: #D2A8FF;">Println</span><span>(</span><span style="color: #A5D6FF;">&quot;There was an error: &quot;</span><span>, err)</span></span>
+<span class="giallo-l"><span style="color: #FF7B72;">        return</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>    fmt.</span><span style="color: #D2A8FF;">Println</span><span>(res)</span><span style="color: #8B949E;"> // PONG</span></span>
+<span class="giallo-l"><span>    client.</span><span style="color: #D2A8FF;">Close</span><span>()</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="advanced-configuration-options">Advanced Configuration Options</h2>
+<h3 id="read-strategies-for-optimized-performance">Read Strategies for Optimized Performance</h3>
+<p>Balance consistency and throughput with flexible read strategies:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="go"><span class="giallo-l"><span style="color: #8B949E;">// Configure to prefer replicas for read operations</span></span>
+<span class="giallo-l"><span>config</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClusterClientConfiguration</span><span>().</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithAddress</span><span>(</span><span style="color: #FF7B72;">&amp;</span><span style="color: #FFA657;">api</span><span>.</span><span style="color: #FFA657;">NodeAddress</span><span>{Host:</span><span style="color: #A5D6FF;"> &quot;cluster.example.com&quot;</span><span>, Port:</span><span style="color: #79C0FF;"> 6379</span><span>}).</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithReadFrom</span><span>(api.PreferReplica)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>client, err</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClusterClient</span><span>(config)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;">// Write to primary</span></span>
+<span class="giallo-l"><span>client.</span><span style="color: #D2A8FF;">Set</span><span>(</span><span style="color: #A5D6FF;">&quot;key1&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;value1&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #8B949E;">// Automatically reads from a replica (round-robin)</span></span>
+<span class="giallo-l"><span>result, err</span><span style="color: #FF7B72;"> :=</span><span> client.</span><span style="color: #D2A8FF;">Get</span><span>(</span><span style="color: #A5D6FF;">&quot;key1&quot;</span><span>)</span></span></code></pre>
+<p>Available strategies:</p>
+<ul>
+<li><strong>PRIMARY</strong>: Always read from primary nodes for the freshest data</li>
+<li><strong>PREFER_REPLICA</strong>: Distribute reads across replicas in round-robin fashion, falling back to primary when needed</li>
+</ul>
+<p>Planned for future release:</p>
+<ul>
+<li><strong>AZ_AFFINITY</strong>: (Coming soon) Prefer replicas in the same availability zone as the client</li>
+</ul>
+<h3 id="authentication-and-tls">Authentication and TLS</h3>
+<p>Secure your connections with built-in authentication and TLS support:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="go"><span class="giallo-l"><span style="color: #8B949E;">// Configure with authentication</span></span>
+<span class="giallo-l"><span>config</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClientConfiguration</span><span>().</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithAddress</span><span>(</span><span style="color: #FF7B72;">&amp;</span><span style="color: #FFA657;">api</span><span>.</span><span style="color: #FFA657;">NodeAddress</span><span>{Host:</span><span style="color: #A5D6FF;"> &quot;localhost&quot;</span><span>, Port:</span><span style="color: #79C0FF;"> 6379</span><span>}).</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithCredentials</span><span>(api.</span><span style="color: #D2A8FF;">NewServerCredentials</span><span>(</span><span style="color: #A5D6FF;">&quot;username&quot;</span><span>,</span><span style="color: #A5D6FF;"> &quot;password&quot;</span><span>)).</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithUseTLS</span><span>(</span><span style="color: #79C0FF;">true</span><span>)</span><span style="color: #8B949E;"> // Enable TLS for encrypted connections</span></span></code></pre><h3 id="request-timeout-and-handling">Request Timeout and Handling</h3>
+<p>Fine-tune timeout settings for different workloads:</p>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="go"><span class="giallo-l"><span style="color: #8B949E;">// Set a longer timeout for operations that may take more time</span></span>
+<span class="giallo-l"><span>config</span><span style="color: #FF7B72;"> :=</span><span> api.</span><span style="color: #D2A8FF;">NewGlideClientConfiguration</span><span>().</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithAddress</span><span>(</span><span style="color: #FF7B72;">&amp;</span><span style="color: #FFA657;">api</span><span>.</span><span style="color: #FFA657;">NodeAddress</span><span>{Host:</span><span style="color: #A5D6FF;"> &quot;localhost&quot;</span><span>, Port:</span><span style="color: #79C0FF;"> 6379</span><span>}).</span></span>
+<span class="giallo-l"><span style="color: #D2A8FF;">    WithRequestTimeout</span><span>(</span><span style="color: #79C0FF;">500</span><span>)</span><span style="color: #8B949E;"> // 500ms timeout</span></span></code></pre><h2 id="behind-the-scenes-technical-architecture">Behind the Scenes: Technical Architecture</h2>
+<p>The Valkey GLIDE Go client is built on top of the Valkey GLIDE core. The core framework is written in Rust (lib.rs), which exposes public functions. These functions are converted to a C header file using Cbindgen. The Go client then uses CGO to call these C functions, providing Go developers with an idiomatic interface while leveraging Rust's performance advantages. This architecture ensures consistent behavior across all Valkey GLIDE language implementations (Java, Python, Node.js, and Go) while maintaining performance and reliability.</p>
+<h3 id="component-details">Component details</h3>
+<pre class="giallo" style="color: #E6EDF3; background-color: #0D1117;" ><code data-lang="plain"><span class="giallo-l"><span>+------------+      +------+      +------------+      +------------+      +------------+</span></span>
+<span class="giallo-l"><span>|            |      |      |      |            |      |            |      |            |</span></span>
+<span class="giallo-l"><span>|    Go      |-----&gt;|      |-----&gt;|  C Header  |-----&gt;|    Rust    |-----&gt;|   Valkey   |</span></span>
+<span class="giallo-l"><span>|  Client    |      |  CGO |      |  cbindgen  |      |    Core    |      |   Server   |</span></span>
+<span class="giallo-l"><span>|            |&lt;-----|      |&lt;-----|            |&lt;-----|            |&lt;-----|            |</span></span>
+<span class="giallo-l"><span>|            |      |      |      |            |      |            |      |            |</span></span>
+<span class="giallo-l"><span>+------------+      +------+      +------------+      +------------+      +------------+</span></span></code></pre>
+<ul>
+<li><strong>Go Client</strong>: The language-specific interface for Go developers</li>
+<li><strong>CGO</strong>: Allows Go code to call C functions</li>
+<li><strong>Cbindgen</strong>: Automates the generation of C header files from Rust public APIs</li>
+<li><strong>Rust Core</strong>: High-performance framework that connects to and communicates with Valkey servers</li>
+<li><strong>Rust FFI Library</strong>: Enables cross-language function calls between Rust and other languages</li>
+</ul>
+<h2 id="join-the-journey">Join the Journey</h2>
+<p>This public preview is just the beginning. We're actively developing and enhancing the Go wrapper, and we'd love your feedback and contributions. Try it out in your projects, share your experiences, and help us make it even better!
+You can join our development journey by:</p>
+<ul>
+<li>Submitting issues or feature requests on our <a rel="external" href="https://github.com/valkey-io/valkey-glide/issues">GitHub Issues page</a></li>
+<li>Joining discussions in our <a rel="external" href="https://github.com/valkey-io/valkey-glide/discussions">GitHub Discussions forum</a></li>
+</ul>
+<h2 id="looking-forward">Looking Forward</h2>
+<p>As we move toward general availability, we'll be expanding command support, enhancing performance, and adding even more features to make the Valkey GLIDE Go client a great choice for Go developers.</p>
+<p>Checkout our <a rel="external" href="https://github.com/valkey-io/valkey-glide/tree/main/go">Valkey GLIDE go client</a> for the source code.
+For implementation examples, please refer to the <a rel="external" href="https://github.com/valkey-io/valkey-glide/blob/main/go/README.md">README of the Go examples</a> for instructions on running the Standalone and Cluster examples.</p>
+<p>For a complete reference of all available commands and their parameters, explore the <a rel="external" href="https://pkg.go.dev/github.com/valkey-io/valkey-glide/go/api">Go API documentation on pkg.go.dev</a>, which provides detailed information on method signatures, parameters, and return types.</p>
+<h2 id="contributors">Contributors</h2>
+<p>A huge thank you to all the contributors who have made this possible - your dedication and expertise have created something truly special for the Go community.</p>
+<p><a rel="external" href="https://github.com/janhavigupta007">Janhavi Gupta</a> (Google Cloud Platform)</p>
+<p><a rel="external" href="https://github.com/niharikabhavaraju">Niharika Bhavaraju</a> (Google Cloud Platform)</p>
+<p><a rel="external" href="https://github.com/EdricCua">Edric Cuartero</a> (Google Cloud Platform)</p>
+<p><a rel="external" href="https://github.com/omangesg">Omkar Mestry</a> (Google Cloud Platform)</p>
+<p><a rel="external" href="https://github.com/Yury-Fridlyand">Yury Fridlyand</a> (Improving)</p>
+<p><a rel="external" href="https://github.com/prateek-kumar-improving">Prateek Kumar</a> (Improving)</p>
+<p>Kudos to <a rel="external" href="https://github.com/aaron-congo">Aaron Congo</a> who created the backbone of the client 🚀 and to <a rel="external" href="https://github.com/umit">Umit Unal</a>, <a rel="external" href="https://github.com/MikeMwita">Michael</a> for their contributions!</p>
+
+
+        </div>
+    </main>
+    <aside>
+        
+<div class="blog-authors">
+  
+    <h2>About the authors</h2>
+    
+      
+      
+      <div class="author-container">
+  <div class="author-photo-container">
+    
+    <img class="author-photo" src="/valkey-io.github.io/pr-21/assets/media/authors/niharikab.jpg" alt="photo of Niharika Bhavaraju" />
+    
+  </div>
+  <div class="author-info">
+    <h4>Niharika Bhavaraju</h4>
+    
+    <a target="_blank" href="https://github.com/niharikabhavaraju"><i class="icon icon-github-square"></i> @niharikabhavaraju</a>
+    
+    <p>Niharika Bhavaraju is a software engineer with expertise in Golang, currently working on the Valkey client(Valkey-Glide). She has over a 7 years of experience building backend systems, APIs and high performance applications.
+Outside of work, Niharika finds harmony in music and singing, recharges among mountain landscapes, basks in sunshine and chases adrenaline rush.</p>
+
+  </div>
+</div>
+    
+  
+</div>
+
+<!-- This file was imported from jekyllcodex.org following this guide: https://jekyllcodex.org/without-plugin/share-buttons/. We want to thank jekyllcodex.org for providing this file and guide. -->
+
+
+<div class="share-container">Share on: 
+    <div id="share-buttons">
+        <div class="facebook" title="Share this on Facebook" onclick="window.open('https://www.facebook.com/share.php?u=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/2025-03-4-go-client-in-public-preview/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1343 12v264h-157q-86 0-116 36t-30 108v189h293l-39 296h-254v759h-306v-759h-255v-296h255v-218q0-186 104-288.5t277-102.5q147 0 228 12z"/></svg></div>
+        <div class="linkedin" title="Share this on Linkedin" onclick="window.open('https://www.linkedin.com/shareArticle?mini=true&url=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/2025-03-4-go-client-in-public-preview/&title=Introducing%20the%20Valkey%20Glide%20Go%20Client%3A%20Now%20in%20Public%20Preview%21&summary=&source=');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M477 625v991h-330v-991h330zm21-306q1 73-50.5 122t-135.5 49h-2q-82 0-132-49t-50-122q0-74 51.5-122.5t134.5-48.5 133 48.5 51 122.5zm1166 729v568h-329v-530q0-105-40.5-164.5t-126.5-59.5q-63 0-105.5 34.5t-63.5 85.5q-11 30-11 81v553h-329q2-399 2-647t-1-296l-1-48h329v144h-2q20-32 41-56t56.5-52 87-43.5 114.5-15.5q171 0 275 113.5t104 332.5z"/></svg></div>
+        <div class="mail" title="Share this through Email" onclick="window.open('mailto:?&body=https%3A//madolson.github.io/valkey-io.github.io/pr-21/blog/2025-03-4-go-client-in-public-preview/');"><svg viewBox="0 0 1792 1792" xmlns="http://www.w3.org/2000/svg"><path d="M1792 710v794q0 66-47 113t-113 47h-1472q-66 0-113-47t-47-113v-794q44 49 101 87 362 246 497 345 57 42 92.5 65.5t94.5 48 110 24.5h2q51 0 110-24.5t94.5-48 92.5-65.5q170-123 498-345 57-39 100-87zm0-294q0 79-49 151t-122 123q-376 261-468 325-10 7-42.5 30.5t-54 38-52 32.5-57.5 27-50 9h-2q-23 0-50-9t-57.5-27-52-32.5-54-38-42.5-30.5q-91-64-262-182.5t-205-142.5q-62-42-117-115.5t-55-136.5q0-78 41.5-130t118.5-52h1472q65 0 112.5 47t47.5 113z"/></svg></div>
+    </div>
+</div>
+<div class="blog-nav">
+  
+  <a class="prev" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/az-affinity-strategy/">&laquo; Reducing application latency and lowering Cloud bill by setting up your client library</a>
+  
+  
+  <a class="next" href="https://madolson.github.io/valkey-io.github.io/pr-21/blog/new-hash-table/">A new hash table &raquo; </a>
+  
+</div>
+
+    </aside>
+</div>
+
+  </div>
+  <div class="footer">
+      <div class="row">
+        <div class="col col-6 icon-links">
+          <a href="https://valkey.io/slack" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            Slack
+          </a>
+          <a href="https://github.com/valkey-io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/company/valkey/" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            LinkedIn
+          </a>
+          <a href="https://x.com/valkey_io" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            X.com
+          </a>
+          <a href="https://www.youtube.com/@valkeyproject" target="_blank">
+            <img src="/valkey-io.github.io/pr-21/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            YouTube
+          </a>
+          <a href="/valkey-io.github.io/pr-21/connect">
+            <img src="/valkey-io.github.io/pr-21/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+            Connect
+          </a>
+        </div>
+        <div class="col col-6 links">
+          <a href="/valkey-io.github.io/pr-21/code_of_conduct">Code of Conduct</a>
+          <a href="/valkey-io.github.io/pr-21/community/meetup-groups/">Meetup Groups</a>
+          <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
+          <a href="https://planet.valkey.io/" target="_blank">Planet</a>
+          <a href="/valkey-io.github.io/pr-21/about">About</a>
+          <a href="/valkey-io.github.io/pr-21/leadership">Leadership</a>
+          <a href="/valkey-io.github.io/pr-21/topics/faq">FAQ</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="row">
+        <div class="row footer-email-list" id="email-signup">
+    <div class="col col-4">
+        <h2>Subscribe for updates, event info, and the latest Valkey news</h2>
+
+        <p>Stay connected with everything happening in the Valkey ecosystem: news, community stories, updates, and opportunities to get involved.</p>
+        <p>Subscriptions are open to all, so invite a friend or teammate. Thanks for joining and happy reading!</p>
+    </div>
+    <div class="footer-form col col-8">
+        <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+        <script>
+        hbspt.forms.create({
+            portalId: "8112310",
+            formId: "7d793edf-4628-41c5-8c66-1a40a5b345b6",
+            region: "na1"
+        });
+        </script>
+    </div>
+</div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer_bottom">
+        <p>&copy; Valkey contributors.</p>
+        <p>Valkey and the Valkey logo are trademarks of LF Projects, LLC.</p>
+        <p>
+          <a href="https://lfprojects.org/policies/trademark-policy/">Trademark Policy</a>.
+          <a href="https://lfprojects.org/policies/privacy-policy/">Privacy Policy</a>.
+          <a href="https://lfprojects.org/policies/terms-of-use/">Terms of Use</a>.
+          For other policies, please see <a href="https://lfprojects.org/">lfprojects.org</a>.
+        </p>
+        <p>Valkey includes certain 3-Clause BSD-licensed Redis code from Redis Ltd. and other source code. Redis Ltd. is
+          not the source of that other source code. Redis is a registered trademark of Redis Ltd.</p>
+        <p>
+          Logo design by <a href="https://github.com/dizys" target="_blank">Ziyang.</a>
+        </p>
+      </div>
+      
+    </div>
+    
+
+</body>
+</html>
