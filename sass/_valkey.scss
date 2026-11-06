@@ -525,6 +525,13 @@ p {
 
   }
 
+  // Headings in the docs content (topic and command pages) get the same
+  // margins as headings in blog posts (.blog-single). The rule above is for the
+  // sidebar and other compact headings, and has no top margin.
+  .main-inner > h2:not(:first-child) {
+    margin: 4rem 0 0.5rem;
+  }
+
   main {
     flex: 1;
     padding: 2rem;
@@ -798,7 +805,7 @@ p {
 
   aside {
     background-color: #f1f0fa;
-    background-image: url('/img/aside-banner.webp');
+    background-image: url('../img/aside-banner.webp');
     width: 33%;
     max-width: 420px;
     height: calc(0px + 100vh);
@@ -1232,7 +1239,7 @@ aside {
 
 .keyspace-2025 {
   .styled-title {
-    background-image: url("/events/keyspace-2025/keyspace-nebula-new.jpg");
+    background-image: url("../events/keyspace-2025/keyspace-nebula-new.jpg");
     background-size: cover;
   }
   .body {
@@ -1721,7 +1728,7 @@ html.banner-hidden .banner {
   background-size: cover;
   background-position: right center;
   background-color: #30186e;
-  background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)), url('/img/hero-bg.webp');
+  background-image: linear-gradient(to bottom, rgba(48, 24, 110, 0.15), rgba(48, 24, 110, 0.75)), url('../img/hero-bg.webp');
   display: flex;
   align-items: center;
   justify-content: center;

@@ -204,12 +204,12 @@
 {% endcomponent nav_command_map %}
 
 {#- A menu entry's commands, in a toggle that's open if `open` is true. -#}
-{% component nav_command_list(commands, current_command, label, open) %}
+{% component nav_command_list(commands, current_command, label, open, base="") %}
 <details class="docs-menu-commands-toggle"{% if open %} open{% endif %}>
     <summary><span class="sr-only">{{ label }}</span></summary>
     <ul class="docs-menu-commands" aria-label="{{ label }}">
         {%- for command in commands %}
-        <li><a href="/commands/{{ command.slug }}/"
+        <li><a href="{{ base }}/commands/{{ command.slug }}/"
             {%- if command.slug == current_command %} class="docs-menu-current" aria-current="page"{% endif %}>{{ command.name }}</a></li>
         {%- endfor %}
     </ul>
@@ -248,7 +248,7 @@
     The current topic, if it has commands, isn't a link to itself: the whole
     row is the toggle for its commands instead.
 -#}
-{% component nav_menu_item(slug, title, source, current, related, extra, commands=[], current_command="", label="") %}
+{% component nav_menu_item(slug, title, source, current, related, extra, commands=[], current_command="", label="", base="") %}
 {%- set badge = extra.nav_badges[source] | default(value="") -%}
 {%- if commands and slug == current %}
 <li>
@@ -260,14 +260,14 @@
         {%- if not label %}{% set label %}{{< nav_topic_title slug={slug} title={title} extra={extra} />}}{% endset %}{% endif %}
         <ul class="docs-menu-commands" aria-label="{{ label | trim }} commands">
             {%- for command in commands %}
-            <li><a href="/commands/{{ command.slug }}/">{{ command.name }}</a></li>
+            <li><a href="{{ base }}/commands/{{ command.slug }}/">{{ command.name }}</a></li>
             {%- endfor %}
         </ul>
     </details>
 </li>
 {%- else %}
 <li{% if commands %} class="docs-menu-has-commands"{% endif %}>
-    <a href="/topics/{{ slug }}/"
+    <a href="{{ base }}/topics/{{ slug }}/"
         {%- if slug == current %} class="docs-menu-current" aria-current="page"
         {%- elif slug == related %} class="docs-menu-related"{% endif %}>
         {{- "" -}}{{< nav_topic_title slug={slug} title={title} extra={extra} />}}
@@ -275,7 +275,7 @@
     </a>
     {%- if commands %}
     {%- if not label %}{% set label %}{{< nav_topic_title slug={slug} title={title} extra={extra} />}}{% endset %}{% endif %}
-    {{< nav_command_list commands={commands} current_command={current_command} label={(label | trim) ~ " commands"} open={slug == related} />}}
+    {{< nav_command_list commands={commands} current_command={current_command} label={(label | trim) ~ " commands"} open={slug == related} base={base} />}}
     {%- endif %}
 </li>
 {%- endif %}
@@ -287,19 +287,19 @@
     listed. It's rendered where nav.yml has a section with the id
     "command-reference", or at the end of the menu if there's none.
 -#}
-{% component nav_command_reference(title, index, on_command_reference) %}
+{% component nav_command_reference(title, index, on_command_reference, base="") %}
 {%- set groups = load_data(path="../_data/groups.json", required=false) %}
 {%- set used_groups = [c.group for c in index] %}
 <li>
     <details{% if on_command_reference %} open{% endif %}>
         <summary>{{ title }}</summary>
         <ul>
-            <li><a href="/commands/"{% if on_command_reference %} class="docs-menu-current" aria-current="page"{% endif %}>All commands</a></li>
+            <li><a href="{{ base }}/commands/"{% if on_command_reference %} class="docs-menu-current" aria-current="page"{% endif %}>All commands</a></li>
             {%- if groups %}
             {#- groups.json uses "-" where the command JSON uses "_", e.g. "sorted-set". -#}
             {%- for key in groups | keys | sort %}
             {%- if key | replace(from="-", to="_") in used_groups %}
-            <li><a href="/commands/#{{ key }}">{{ groups[key].display }}</a></li>
+            <li><a href="{{ base }}/commands/#{{ key }}">{{ groups[key].display }}</a></li>
             {%- endif %}
             {%- endfor %}
             {%- endif %}
@@ -323,12 +323,12 @@
                (groups) that have documented commands.
       on_command_reference: true on the command reference page.
 -#}
-{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false) %}
+{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false, base="") %}
 <nav class="docs-menu" aria-label="Documentation">
     <ul class="docs-menu-sections">
     {%- for section in nav %}
         {%- if section.id == "command-reference" %}
-        {{< nav_command_reference title={section.title} index={index} on_command_reference={on_command_reference} />}}
+        {{< nav_command_reference title={section.title} index={index} on_command_reference={on_command_reference} base={base} />}}
         {%- else %}
         <li>
             <details{% if section.id == open %} open{% endif %}>
@@ -337,11 +337,11 @@
                 <ul>
                     {%- if section.landing %}
                     {%- set commands = command_map[section.landing] if section.landing in command_map else [] %}
-                    {{< nav_menu_item slug={section.landing} title="Overview" source={"" if section_badge else section.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} label={section.title} />}}
+                    {{< nav_menu_item slug={section.landing} title="Overview" source={"" if section_badge else section.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} label={section.title} base={base} />}}
                     {%- endif %}
                     {%- for entry in section.topics %}
                     {%- set commands = command_map[entry.topic] if entry.topic in command_map else [] %}
-                    {{< nav_menu_item slug={entry.topic} title={entry.title} source={"" if section_badge and entry.source == section.source else entry.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} />}}
+                    {{< nav_menu_item slug={entry.topic} title={entry.title} source={"" if section_badge and entry.source == section.source else entry.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} base={base} />}}
                     {%- endfor %}
                     {%- set other_key = "section:" ~ section.id %}
                     {%- if other_key in command_map %}
@@ -350,7 +350,7 @@
                             <summary{% if related == other_key %} class="docs-menu-related"{% endif %}>Other commands</summary>
                             <ul class="docs-menu-commands" aria-label="{{ section.title }} commands">
                                 {%- for command in command_map[other_key] %}
-                                <li><a href="/commands/{{ command.slug }}/"
+                                <li><a href="{{ base }}/commands/{{ command.slug }}/"
                                     {%- if command.slug == current_command %} class="docs-menu-current" aria-current="page"{% endif %}>{{ command.name }}</a></li>
                                 {%- endfor %}
                             </ul>
@@ -363,7 +363,7 @@
         {%- endif %}
     {%- endfor %}
         {%- if "command-reference" not in [x.id for x in nav] %}
-        {{< nav_command_reference title="Command reference" index={index} on_command_reference={on_command_reference} />}}
+        {{< nav_command_reference title="Command reference" index={index} on_command_reference={on_command_reference} base={base} />}}
         {%- endif %}
     </ul>
 </nav>

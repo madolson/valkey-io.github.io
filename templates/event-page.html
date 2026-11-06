@@ -8,7 +8,7 @@
 {% if not page.extra.external_url %}
 <div class="styled-title event-title">
     <h1>{% if page.extra and page.extra.event_logo %}
-            <img src="{{page.extra.event_logo}}" alt="{{page.title}}" />
+            <img src="{% if page.extra.event_logo is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ page.extra.event_logo }}" alt="{{page.title}}" />
         {% else %}
             {{ page.title }}
         {% endif %}
@@ -18,7 +18,7 @@
 <div class="event-single">
     <main>
        
-        {% block main_content %}{{ page.content | safe }}{% endblock main_content %}
+        {% block main_content %}{{< with_base_path html={page.content} base={base_path} />}}{% endblock main_content %}
 
     </main>
 </div>

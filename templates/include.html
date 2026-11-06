@@ -2,6 +2,6 @@
 
 {% block main_content %}
 {% set loaded_file = load_data(path= page.extra.include_file) %}
-{{ loaded_file | markdown | safe }}
+{{< with_base_path html={loaded_file | markdown} base={base_path} />}}
 
 {% endblock main_content %}

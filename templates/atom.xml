@@ -1,4 +1,4 @@
-{# built from https://github.com/getzola/zola/blob/master/components/templates/src/builtins/rss.xml / MIT #}<?xml version="1.0" encoding="UTF-8"?>
+{# built from https://github.com/getzola/zola/blob/master/components/templates/src/builtins/rss.xml / MIT #}{% set base_path %}{{< base_path />}}{% endset %}<?xml version="1.0" encoding="UTF-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ lang }}">
     <title>{{ config.title }}
     {%- if term is defined and term %} - {{ term.name }}
@@ -48,9 +48,9 @@
         <link rel="alternate" type="text/html" href="{{ page.permalink | safe }}"/>
         <id>{{ page.permalink | safe }}</id>
         {% if page.summary %}
-        <summary type="html">{{ page.summary }}</summary>
+        <summary type="html">{% if base_path %}{{ page.summary | regex_replace(pattern="(?P<attr>\\b(?:href|src)=\")/(?P<rest>[^/])", rep="${attr}" ~ base_path ~ "/${rest}") }}{% else %}{{ page.summary }}{% endif %}</summary>
         {% else %}
-        <content type="html" xml:base="{{ page.permalink | escape_xml | safe }}">{{ page.content }}</content>
+        <content type="html" xml:base="{{ page.permalink | escape_xml | safe }}">{% if base_path %}{{ page.content | regex_replace(pattern="(?P<attr>\\b(?:href|src)=\")/(?P<rest>[^/])", rep="${attr}" ~ base_path ~ "/${rest}") }}{% else %}{{ page.content }}{% endif %}</content>
         {% endif %}
     </entry>
     {%- endif -%}

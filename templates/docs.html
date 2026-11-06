@@ -19,7 +19,7 @@
 {%- set content_with_fixed_links %}{{< fix_links_docs content={page_contents} />}}{% endset -%}
 
 
-{{ content_with_fixed_links  | markdown | safe }}
+{{< with_base_path html={content_with_fixed_links | markdown} base={base_path} />}}
 
 <h2>Alphabetical index</h2>
 {% for page in section.pages %}
@@ -44,7 +44,7 @@
     <ul class="topic-list">
         {% for topic in topic_list %}
             <li>
-                <a href="{{ topic.path }}">
+                <a href="{{ base_path }}{{ topic.path }}">
                     {{ topic.title }}
                     <span class="topic-description">{{ topic.description | safe }}</span>
                 </a>
@@ -60,5 +60,5 @@
 {% set nav_index = load_data(literal=nav_index_json, format="json") %}
 {% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
 {% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
-{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} />}}
+{{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} base={base_path} />}}
 {% endblock related_content %}

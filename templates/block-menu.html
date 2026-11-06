@@ -3,6 +3,6 @@
 
 {% block main_content %}
 <div class="block-menu">
-{{ page.content | markdown | safe }}
+{{< with_base_path html={page.content | markdown} base={base_path} />}}
 </div>
 {% endblock main_content %}

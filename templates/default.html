@@ -1,4 +1,4 @@
-{%- block head -%}{%- endblock -%}{% set preview_pr = get_env(name="VALKEY_PREVIEW_PR", default="") %}{# Pull request previews, see docs/pr-previews.md #}<!DOCTYPE html>
+{%- block head -%}{%- endblock -%}{% set base_path %}{{< base_path />}}{% endset %}{% set preview_pr = get_env(name="VALKEY_PREVIEW_PR", default="") %}{# Pull request previews, see docs/pr-previews.md #}<!DOCTYPE html>
 <html lang="{{ page?.lang | default(value=config.default_language) }}">
 {% include "includes/head.html" %}
 <script>
@@ -26,46 +26,46 @@
   {%- if config.extra.banner -%}
   <div class="banner">
     <div class="width-limiter">
-      {{ config.extra.banner | markdown | safe}}
+      {{< with_base_path html={config.extra.banner | markdown} base={base_path} />}}
     </div>
-    <a href="/" class="close-banner">
-      <img src="/img/icon-outline-close.svg" alt="Icon Close" width="16" height="16"/>
+    <a href="{{ base_path }}/" class="close-banner">
+      <img src="{{ base_path }}/img/icon-outline-close.svg" alt="Icon Close" width="16" height="16"/>
     </a>
   </div>
   {%- endif -%}
   <div class="header">
     <div class="width-limiter">
-      <a href="/" class="logo">
-        <img src="/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+      <a href="{{ base_path }}/" class="logo">
+        <img src="{{ base_path }}/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
       </a>
       <div role="button" 
         class="btn-menu"
         onclick="window.toggleHeaderMenu();"
       ></div>
       <nav role="navigation" aria-label="Main">
-        <a role="menuitem" href="/download/">Download</a>
+        <a role="menuitem" href="{{ base_path }}/download/">Download</a>
 
         <div class="has-submenu">
-          <a role="menuitem" href="/docs/">Documentation</a>
+          <a role="menuitem" href="{{ base_path }}/docs/">Documentation</a>
           <div class="submenu">
-            <a role="menuitem" href="/commands/">Command Reference</a>
-            <a role="menuitem" href="/topics/">Documentation by Topic</a>
-            <a role="menuitem" href="/clients/">Clients</a>
-            <a role="menuitem" href="/integrations/">Integrations</a>
+            <a role="menuitem" href="{{ base_path }}/commands/">Command Reference</a>
+            <a role="menuitem" href="{{ base_path }}/topics/">Documentation by Topic</a>
+            <a role="menuitem" href="{{ base_path }}/clients/">Clients</a>
+            <a role="menuitem" href="{{ base_path }}/integrations/">Integrations</a>
           </div>
         </div>
-        <a role="menuitem" href="/blog/">Blog</a>
+        <a role="menuitem" href="{{ base_path }}/blog/">Blog</a>
         <div class="has-submenu">
-          <a role="menuitem" href="/community/">Community</a>
+          <a role="menuitem" href="{{ base_path }}/community/">Community</a>
           <div class="submenu">
-            <a role="menuitem" href="/events/">Events</a>
+            <a role="menuitem" href="{{ base_path }}/events/">Events</a>
             <a role="menuitem" href="https://planet.valkey.io/" target="_blank">Planet</a>
           </div>
         </div>
-        <a role="menuitem" href="/participants/">Participants</a>
-        <a role="menuitem" href="/try-valkey/">Try Valkey</a>
+        <a role="menuitem" href="{{ base_path }}/participants/">Participants</a>
+        <a role="menuitem" href="{{ base_path }}/try-valkey/">Try Valkey</a>
         <a role="menuitem" href="https://github.com/valkey-io" target="_blank" class="github-button">
-          <img src="/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
+          <img src="{{ base_path }}/img/IconGithub.svg" alt="GitHub Icon" width="16" height="16" />
           GitHub
           <!-- Star count will be injected here by JS -->
         </a>
@@ -80,38 +80,38 @@
       <div class="row">
         <div class="col col-6 icon-links">
           <a href="https://valkey.io/slack" target="_blank">
-            <img src="/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
+            <img src="{{ base_path }}/img/IconSlack.svg" alt="Slack Icon" width="20" height="20" />
             Slack
           </a>
           <a href="https://github.com/valkey-io" target="_blank">
-            <img src="/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
+            <img src="{{ base_path }}/img/IconGithub.svg" alt="GitHub Icon" width="20" height="20" />
             GitHub
           </a>
           <a href="https://www.linkedin.com/company/valkey/" target="_blank">
-            <img src="/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
+            <img src="{{ base_path }}/img/IconLinkedin.svg" alt="LinkedIn Icon" width="20" height="20" />
             LinkedIn
           </a>
           <a href="https://x.com/valkey_io" target="_blank">
-            <img src="/img/IconX.svg" alt="X Icon" width="20" height="20" />
+            <img src="{{ base_path }}/img/IconX.svg" alt="X Icon" width="20" height="20" />
             X.com
           </a>
           <a href="https://www.youtube.com/@valkeyproject" target="_blank">
-            <img src="/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
+            <img src="{{ base_path }}/img/IconYoutube.svg" alt="YouTube Icon" width="24" height="24" />
             YouTube
           </a>
-          <a href="/connect">
-            <img src="/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
+          <a href="{{ base_path }}/connect">
+            <img src="{{ base_path }}/img/IconMail.svg" alt="Mail Icon" width="20" height="20" />
             Connect
           </a>
         </div>
         <div class="col col-6 links">
-          <a href="/code_of_conduct">Code of Conduct</a>
-          <a href="/community/meetup-groups/">Meetup Groups</a>
+          <a href="{{ base_path }}/code_of_conduct">Code of Conduct</a>
+          <a href="{{ base_path }}/community/meetup-groups/">Meetup Groups</a>
           <a href="https://github.com/orgs/valkey-io/discussions" target="_blank">Forum</a>
           <a href="https://planet.valkey.io/" target="_blank">Planet</a>
-          <a href="/about">About</a>
-          <a href="/leadership">Leadership</a>
-          <a href="/topics/faq">FAQ</a>
+          <a href="{{ base_path }}/about">About</a>
+          <a href="{{ base_path }}/leadership">Leadership</a>
+          <a href="{{ base_path }}/topics/faq">FAQ</a>
         </div>
       </div>
     </div>

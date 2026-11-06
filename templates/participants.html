@@ -6,16 +6,16 @@
 <div class="participant-list">
   {% for participant in participants %}
     <div class="participant-{{participant.name | lower() }}">
-      <a href="{{participant.link}}" class="participant-brand">
-        <img src="{{participant.image.path}}" alt="{{participant.image.alt}}" />
+      <a href="{% if participant.link is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ participant.link }}" class="participant-brand">
+        <img src="{% if participant.image.path is starting_with(pat="/") %}{{ base_path }}{% endif %}{{ participant.image.path }}" alt="{{participant.image.alt}}" />
       </a>
       <div class="participant-info">
         {% if participant.offering %}
           <h3>Valkey offering:</h3>
-          {{ participant.offering | markdown | safe }}
+          {{< with_base_path html={participant.offering | markdown} base={base_path} />}}
         {% endif %}
         <h3>About the organization:</h3>
-        {{ participant.company | markdown | safe }}
+        {{< with_base_path html={participant.company | markdown} base={base_path} />}}
       </div>
     </div>
   {% endfor %}

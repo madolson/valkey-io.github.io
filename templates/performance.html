@@ -7,7 +7,7 @@
 
 <div class="width-limiter">
     <main class="container">
-        {{ page.content | markdown | safe }}
+        {{< with_base_path html={page.content | markdown} base={base_path} />}}
 
         {% set perf = load_data(path="_data/perf.toml") %}
         {% for section in perf.sections %}
@@ -19,18 +19,18 @@
             {% endif %}
 
             {% if section.description %}
-            <p>{{ section.description | markdown | safe }}</p>
+            <p>{{< with_base_path html={section.description | markdown} base={base_path} />}}</p>
             {% endif %}
 
             {% if section.methodology %}
             <h3>Methodology</h3>
-            <p>{{ section.methodology | markdown | safe }}</p>
+            <p>{{< with_base_path html={section.methodology | markdown} base={base_path} />}}</p>
             {% endif %}
         </section>
         {% endfor %}
 
         <hr>
-        <p>For questions about performance or to contribute benchmarking data, visit our <a href="/community/">community
+        <p>For questions about performance or to contribute benchmarking data, visit our <a href="{{ base_path }}/community/">community
                 page</a> or join the discussion on <a href="https://github.com/orgs/valkey-io/discussions">GitHub</a>.
         </p>
     </main>
