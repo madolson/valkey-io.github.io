@@ -60,6 +60,7 @@
 {% endif %}
 {%- set content_with_fixed_links %}{{< fix_links_docs content={page_contents} />}}{% endset -%}
 {{ content_with_fixed_links | markdown | safe }}
+{{< nav_pager nav={nav_data} slug={page.slug} extra={config.extra} />}}
 {% endblock main_content %}
 
 {% block related_content %}

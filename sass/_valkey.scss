@@ -2480,6 +2480,60 @@ blockquote {
   margin: 1.5rem 0 2.5rem;
 }
 
+// Previous and next topic links at the end of a topic (nav_pager in
+// templates/macros/nav.html). The links look like the docs menu's. "Next"
+// stays on the right when there's no "Previous".
+.docs-pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #d5d9ec;
+
+  a {
+    display: flex;
+    flex-direction: column;
+    max-width: 50%;
+    padding: 0.6rem 1rem;
+    border-radius: 4px;
+    line-height: 1.35;
+
+    &:hover {
+      background-color: #d1d9ff;
+    }
+
+    &:focus-visible {
+      outline: 2px solid #2054B2;
+      outline-offset: 1px;
+    }
+  }
+
+  .docs-pager-next {
+    margin-left: auto;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .docs-pager-label {
+    font-size: 1.3rem;
+    color: #444;
+  }
+
+  .docs-pager-title {
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+
+    a {
+      max-width: none;
+    }
+  }
+}
+
 // Homepage blog cards: text-only cards stacked vertically, matching the release
 // cards in the other column.
 .homepage-blog-section {
