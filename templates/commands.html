@@ -12,7 +12,7 @@
 <!-- command search box -->
 <div class="search-container">
     <label>Search Commands:</label>
-    <input type="text" id="search-box" placeholder="Search commands..." onkeyup="searchCommands()" />
+    <input type="text" id="search-box" placeholder="Search commands..." oninput="onSearchInput()" />
 </div>
 
 <!-- No results message -->
@@ -61,8 +61,8 @@
    guarantees the iteration order of a group_by map, so sort the keys. #}
 {% for command_group_name in grouped | keys | sort %}
     {% set command_group = grouped[command_group_name] %}
-    <div class="command-group">
-        {% set command_group_description_name = command_group_name | replace(from="_", to="-") %}
+    {% set command_group_description_name = command_group_name | replace(from="_", to="-") %}
+    <div class="command-group" data-group="{{ command_group_description_name }}" data-group-name="{{ group_descriptions[command_group_description_name].display }}">
         <h2 id="{{command_group_description_name}}">{{ group_descriptions[command_group_description_name].display }}
             <span>{{ group_descriptions[command_group_description_name].description }}</span>
         </h2>
@@ -107,6 +107,55 @@ function searchCommands() {
     // Show/hide no results message based on search results
     noResultsMessage.style.display = totalVisible === 0 ? "block" : "none";
 }
+
+// A URL like /commands/#hash shows only that command group, with its name in
+// the search box. The group key of the filter in effect, or null.
+var activeGroup = null;
+
+function showGroupFromHash() {
+    var key = decodeURIComponent(window.location.hash.slice(1));
+    var groups = document.querySelectorAll(".command-group");
+    var group = Array.prototype.find.call(groups, function (g) {
+        return g.dataset.group === key;
+    });
+    var box = document.getElementById("search-box");
+    if (group) {
+        activeGroup = key;
+        box.value = group.dataset.groupName;
+        groups.forEach(function (g) {
+            g.style.display = g === group ? "" : "none";
+        });
+        group.querySelectorAll(".command-entry").forEach(function (item) {
+            item.style.display = "";
+        });
+        document.getElementById("no-results-message").style.display = "none";
+        document.querySelector(".search-container").scrollIntoView();
+    } else if (!key && activeGroup) {
+        // Back to a URL without a hash.
+        activeGroup = null;
+        box.value = "";
+        searchCommands();
+    }
+}
+
+// Editing the box is a command name search over all groups. Drop the hash so
+// a reload doesn't bring the group back.
+function onSearchInput() {
+    activeGroup = null;
+    if (window.location.hash) {
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+        // replaceState doesn't fire hashchange; the menu listens for it.
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+    }
+    searchCommands();
+}
+
+showGroupFromHash();
+window.addEventListener("hashchange", showGroupFromHash);
+// The browser scrolls to the group's heading after this runs, hiding the box.
+window.addEventListener("load", function () {
+    if (activeGroup) document.querySelector(".search-container").scrollIntoView();
+});
 </script>
 
 <script>
