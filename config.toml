@@ -47,6 +47,11 @@ review_list = [
     "/topics/distlock/"
 ]
 
+# The docs menu's Download entry, with the release lines, goes at the end of
+# this nav.yml section, which the download pages open. It goes at the start of
+# the menu if there's no such section.
+docs_menu_download_section = "getting-started"
+
 # Links to pages outside the documentation, shown in the docs menu like
 # section titles. Each goes after the nav.yml section with the id in `after`,
 # or at the end of the menu if there's no such section.

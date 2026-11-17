@@ -12,6 +12,7 @@
 {% elif page is defined and page.extra?.tag %}
     {% set download_line = (page.extra.tag | split(pat="."))[:2] | join(sep=".") %}
 {% endif %}
+{#- The same menu setup as docs.html and commands.html. #}
 {% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
 {% set nav_data = load_data(literal=nav_json, format="json") %}
 {% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
