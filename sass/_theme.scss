@@ -23,6 +23,9 @@ $dark-tokens: (
   // Catalog: transparent end of the install-command fade, and the copy-failed label.
   surface-muted-clear: rgba(#0b3550, 0),
   text-danger: #f28b9e,
+  // Community photo hero: overlay and the color shown before the photo loads.
+  hero-overlay: linear-gradient(90deg, rgba(#011a29, 0.86), rgba(#04263a, 0.80), rgba(#0b3550, 0.76)),
+  hero-fallback: #04263a,
 );
 
 @mixin dark-tokens {
