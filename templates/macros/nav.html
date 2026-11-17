@@ -143,7 +143,7 @@
     {%- if page.extra?.command_name -%}
         {%- set_global index = [...index, {"name": page.extra.command_name, "container": page.extra.command_container, "group": page.extra.command_group, "slug": page.slug}] -%}
     {%- else -%}
-        {%- for json_path in [extra.command_json_path, extra.command_bloom_json_path, extra.command_json_json_path, extra.command_search_json_path] -%}
+        {%- for json_path in [extra.command_json_path, extra.command_bloom_json_path, extra.command_json_json_path, extra.command_search_json_path, extra.command_large_object_json_path] -%}
             {%- set data = load_data(path=json_path ~ page.slug ~ ".json", required=false) -%}
             {%- if data -%}
                 {%- set key = data | keys | first -%}
@@ -309,13 +309,15 @@
 {% endcomponent nav_command_reference %}
 
 {#-
-    Links to pages outside the documentation. They're rendered after the
-    section with the id "client-development", or at the end of the menu if
-    there's none.
+    Links to pages outside the documentation, from extra.docs_menu_links in
+    config.toml. Each is rendered after the section whose id is its `after`,
+    or at the end of the menu if the merged menu has no such section.
 -#}
-{% component nav_page_links() -%}
-<li class="docs-menu-link"><a href="/clients/">Clients</a></li>
-<li class="docs-menu-link"><a href="/integrations/">Integrations</a></li>
+{% component nav_page_links(links) -%}
+{%- for link in links -%}
+<li class="docs-menu-link"><a href="{{ link.url }}">{{ link.title }}</a></li>{% if not loop.last %}
+{% endif %}
+{%- endfor %}
 {%- endcomponent nav_page_links %}
 
 {#-
@@ -383,6 +385,8 @@
 -#}
 {% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false, download_path="", download_line="") %}
 <nav class="docs-menu" aria-label="Documentation">
+    {%- set page_links = extra.docs_menu_links | default(value=[]) %}
+    {%- set section_ids = [x.id for x in nav] %}
     <ul class="docs-menu-sections">
         {%- if "getting-started" not in [x.id for x in nav] %}
         {{< nav_download path={download_path} line={download_line} />}}
@@ -425,15 +429,17 @@
             </details>
         </li>
         {%- endif %}
-        {%- if section.id == "client-development" %}
-        {{< nav_page_links />}}
+        {%- set links_here = [l for l in page_links if l.after == section.id] %}
+        {%- if links_here %}
+        {{< nav_page_links links={links_here} />}}
         {%- endif %}
     {%- endfor %}
         {%- if "command-reference" not in [x.id for x in nav] %}
         {{< nav_command_reference title="Command reference" index={index} on_command_reference={on_command_reference} />}}
         {%- endif %}
-        {%- if "client-development" not in [x.id for x in nav] %}
-        {{< nav_page_links />}}
+        {%- set links_left = [l for l in page_links if l.after not in section_ids] %}
+        {%- if links_left %}
+        {{< nav_page_links links={links_left} />}}
         {%- endif %}
     </ul>
 </nav>
