@@ -240,18 +240,10 @@
     {%- if section.landing -%}{%- set_global order = [...order, section.landing] -%}{%- endif -%}
     {%- set_global order = [...order, ...[t.topic for t in section.topics]] -%}
 {%- endfor -%}
-{%- set found = false -%}
-{%- set last = "" -%}
-{%- set prev = "" -%}
-{%- set next = "" -%}
-{%- for topic in order -%}
-    {%- if found and not next -%}{%- set_global next = topic -%}{%- endif -%}
-    {%- if topic == slug and not found -%}
-        {%- set_global found = true -%}
-        {%- set_global prev = last -%}
-    {%- endif -%}
-    {%- set_global last = topic -%}
-{%- endfor -%}
+{%- set at = [i for i in range(end=order | length) if order[i] == slug] -%}
+{%- set i = at | first if at else -1 -%}
+{%- set prev = order[i - 1] if i > 0 else "" -%}
+{%- set next = order[i + 1] if i >= 0 and i + 1 < order | length else "" -%}
 {%- if prev or next %}
 <nav class="docs-pager" aria-label="Previous and next topics">
     {%- if prev %}

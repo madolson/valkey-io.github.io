@@ -226,6 +226,11 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 </table>
 {% endif %}
 
+{# Every command page, module commands included, is built from a description in valkey-doc (see build/init-commands.sh). #}
+<div class="edit_box">
+    See an error?
+    <a href="https://github.com/valkey-io/valkey-doc/edit/main/commands/{{ page.slug }}.md">Update this Page on GitHub!</a>
+</div>
 {% endblock main_content %}
 
 {% block related_content %}
@@ -239,10 +244,4 @@ Instead of using <code>{{ command_title }}</code> use <div class="replaced-by">{
 {% else %}
 {{< nav_menu nav={nav_data} extra={config.extra} command_map={nav_command_map} index={nav_index} />}}
 {% endif %}
-
-{# Every command page, module commands included, is built from a description in valkey-doc (see build/init-commands.sh). #}
-<div class="edit_box">
-    See an error?
-    <a href="https://github.com/valkey-io/valkey-doc/edit/main/commands/{{ page.slug }}.md">Update this Page on GitHub!</a>
-</div>
 {% endblock related_content %}
