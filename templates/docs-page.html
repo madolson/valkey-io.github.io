@@ -59,7 +59,8 @@
 <hr />
 {% endif %}
 {%- set content_with_fixed_links %}{{< fix_links_docs content={page_contents} />}}{% endset -%}
-{{ content_with_fixed_links | markdown | safe }}
+{%- set content_html %}{{ content_with_fixed_links | markdown | safe }}{% endset -%}
+{{< heading_links content={content_html} />}}
 {% endblock main_content %}
 
 {% block related_content %}

@@ -2140,6 +2140,24 @@ html.banner-hidden .banner {
   height: 1.6rem;
 }
 
+// "#" after each docs heading (heading_links in templates/macros/docs.html).
+// Shown while the heading is hovered or the link has focus, and always on
+// touch screens, which can't hover.
+.heading-link {
+  margin-left: 0.4em;
+  opacity: 0;
+
+  h2:hover > &,
+  h3:hover > &,
+  &:focus {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    opacity: 1;
+  }
+}
+
 // Amber rather than red: a release candidate is not broken, it is just not
 // finished. #7A4A00 on #FFF6E5 is 7.4:1.
 .release-prerelease-notice {
