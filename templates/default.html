@@ -43,7 +43,8 @@
   <div class="header">
     <div class="width-limiter">
       <a href="/" class="logo">
-        <img src="/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+        <img class="theme-logo-light" src="/img/valkey-horizontal.svg" alt="Valkey Logo" width="130" height="46"/>
+        <img class="theme-logo-dark" src="/img/valkey-horizontal-dark.svg" alt="Valkey Logo" width="130" height="46"/>
       </a>
       <div role="button" 
         class="btn-menu"
@@ -78,6 +79,10 @@
         </a>
         
       </nav>
+      <button type="button" class="theme-toggle" onclick="window.toggleTheme();" aria-label="Switch between dark and light mode" title="Switch between dark and light mode">
+        <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      </button>
     </div>
   </div>
   <div class="body">

@@ -10,6 +10,7 @@
 @import '../email-form';
 @import '../catalog';
 @import '../community';
+@import '../theme';
 
 /* Styling for Markdown Tables */
 table {
@@ -26,10 +27,10 @@ th {
 }
 
 td {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border, #ddd);
     padding: 8px;
 }
 
 tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: var(--surface-muted, #f2f2f2);
 }
