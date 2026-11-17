@@ -2210,6 +2210,51 @@ html.banner-hidden .banner {
   height: 1.6rem;
 }
 
+// Code blocks on docs pages, wrapped by copy-code.js. The button sits in the
+// top right corner of the dark block and stays put when the code scrolls.
+.copy-code-docs {
+  position: relative;
+
+  .copy-code-button {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    width: 3.6rem;
+    height: 3.6rem;
+    border: 1px solid #3d444d;
+    border-radius: 6px;
+    background: #151b23;
+    color: #9198a1;
+
+    &:hover {
+      background: #262c36;
+      color: #f0f6fc;
+    }
+
+    &.copied {
+      color: #3fb950;
+    }
+  }
+}
+
+// "#" after each docs heading (heading_links in templates/macros/docs.html).
+// Shown while the heading is hovered or the link has focus, and always on
+// touch screens, which can't hover.
+.heading-link {
+  margin-left: 0.4em;
+  opacity: 0;
+
+  h2:hover > &,
+  h3:hover > &,
+  &:focus {
+    opacity: 1;
+  }
+
+  @media (hover: none) {
+    opacity: 1;
+  }
+}
+
 // Amber rather than red: a release candidate is not broken, it is just not
 // finished. #7A4A00 on #FFF6E5 is 7.4:1.
 .release-prerelease-notice {
