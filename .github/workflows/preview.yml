@@ -65,5 +65,5 @@ jobs:
         env:
           URL: ${{ steps.deploy.outputs.url }}
         run: |
-          gh api "repos/$GITHUB_REPOSITORY/statuses/$HEAD_SHA" -f state=success \
+          gh api --silent "repos/$GITHUB_REPOSITORY/statuses/$HEAD_SHA" -f state=success \
             -f context=preview -f description="Netlify preview" -f target_url="$URL"
