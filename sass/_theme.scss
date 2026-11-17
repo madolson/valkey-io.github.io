@@ -20,6 +20,9 @@ $dark-tokens: (
   text-muted: $blue-dk-100,
   link: $blue-vibrant-200,
   border: #1d4a66,
+  // Catalog: transparent end of the install-command fade, and the copy-failed label.
+  surface-muted-clear: rgba(#0b3550, 0),
+  text-danger: #f28b9e,
 );
 
 @mixin dark-tokens {
@@ -63,6 +66,22 @@ html[data-theme="dark"] {
     padding: 0 1rem;
     background: #fff;
     border-radius: 8px;
+  }
+
+  // The Valkey mark in the catalog's Valkey chip is #123678 ink.
+  .catalog .chip-icon {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
+  // White on the light #6983ff fill is 3.3:1; darken the fill so the label passes AA.
+  .catalog .submission-cta {
+    background: #4b5fd6;
+    border-color: #4b5fd6;
+
+    &:hover {
+      background: #3d4fb8;
+      border-color: #3d4fb8;
+    }
   }
 
   // A darker take on the #6983ff to #bcb5e7 band, so it does not glare.
