@@ -2849,7 +2849,7 @@ blockquote {
     font-size: 1.6rem;
     color: var(--text-strong, #{$text});
 
-    &:hover:not(:disabled) { background-color: $background-darker; }
+    &:hover:not(:disabled) { background-color: var(--surface-muted, #{$background-darker}); }
     &:disabled { opacity: 0.3; cursor: default; }
   }
 }
@@ -2889,9 +2889,9 @@ blockquote {
   min-width: 0;
   overflow: hidden;
 
-  &.empty { background-color: $background-darker; }
+  &.empty { background-color: var(--surface-muted, #{$background-darker}); }
 
-  &.has-event { background-color: $highlight-lightest; }
+  &.has-event { background-color: var(--surface-selected, #{$highlight-lightest}); }
 
   .day-num {
     color: var(--text-muted, #{$text-light});
@@ -2943,7 +2943,7 @@ blockquote {
       margin: 0.5rem 0;
       font-size: 1.8rem;
 
-      a { color: $text; text-decoration: none; &:hover { color: $link-color; } }
+      a { color: var(--text-strong, #{$text}); text-decoration: none; &:hover { color: var(--link, #{$link-color}); } }
     }
 
     .event-card-badge {
@@ -2969,7 +2969,7 @@ blockquote {
       font-size: 1.4rem;
       margin: 0.3rem 0;
 
-      a { color: $link-color; }
+      a { color: var(--link, #{$link-color}); }
     }
   }
 }

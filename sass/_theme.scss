@@ -58,6 +58,18 @@ html[data-theme="dark"] {
     padding: 0.8rem;
   }
 
+  // Same chip for the Community page logo strip.
+  .community-logo-cell {
+    padding: 0 1rem;
+    background: #fff;
+    border-radius: 8px;
+  }
+
+  // A darker take on the #6983ff to #bcb5e7 band, so it does not glare.
+  .homepage-participants-section {
+    background: linear-gradient(180deg, #23338a 0%, #0a2f47 100%);
+  }
+
   .header nav .github-button img {
     filter: invert(1);
   }
