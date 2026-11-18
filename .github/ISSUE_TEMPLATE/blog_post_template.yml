@@ -24,9 +24,9 @@ body:
       description: |
         Pick the one that fits best. It becomes `blog_type` in the post's frontmatter.
 
-        - **Technical Deep Dive**: how a Valkey feature or internal works and why it works that way, with measurements. Not a list of features or a usage guide.
-        - **Announcements**: a release, or a new client, module, or project. Lead with the few changes that matter most and link the release notes for the rest.
-        - **How-to**: how to do one task with Valkey, step by step.
+        - **Technical Deep Dive**: How a Valkey feature or internal works and why it works that way. Not a list of features or a usage guide. Benchmarks are ideal!
+        - **Announcements**: a release for an official Valkey project. Lead with the few changes that matter most and link the release notes for the rest.
+        - **How-to**: how to do one task with Valkey, step by step. Can include third party tools if you represent that tool.
         - **Community Highlight**: how a team or contributor uses or builds on Valkey.
         - **Events**: an upcoming event, or a recap of one.
 
@@ -52,24 +52,24 @@ body:
       required: true
 
   - type: textarea
-    id: content
-    attributes:
-      label: Content
-      description: |
-        An outline, one line per section.
-        Start with the problem the reader has, then the solution.
-        Name the numbers or benchmarks you plan to show.
-        Aim for 500-1,200 words. If the outline won't fit, narrow the topic.
-    validations:
-      required: true
-
-  - type: textarea
     id: takeaways
     attributes:
       label: Key takeaways
       description: |
         One to three things a reader should know or do after reading, and what you want them to do next.
         If the post covers ground that documentation or release notes already cover, say what it adds.
+    validations:
+      required: true
+
+  - type: textarea
+    id: content
+    attributes:
+      label: Content
+      description: |
+        An outline of the post.
+        Start with the problem and hook that you will use to grab the reader.
+        Highlight the key points you would like the reader to know and support your takeaway.
+        Aim for 500-1,200 words. If the outline won't fit, narrow the topic.
     validations:
       required: true
 
