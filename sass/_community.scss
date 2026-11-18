@@ -13,7 +13,7 @@ $community-ink: #072150;
 .community-home-kicker {
   display: inline-block;
   margin: 0;
-  color: $community-blue-500;
+  color: var(--link, #{$community-blue-500});
   font-size: 1.1rem;
   font-weight: 800;
   letter-spacing: 0.16em;
@@ -21,7 +21,7 @@ $community-ink: #072150;
   text-decoration: none;
 
   &:hover {
-    color: $community-purple-800;
+    color: var(--text-accent, #{$community-purple-800});
   }
 }
 
@@ -30,10 +30,10 @@ $community-ink: #072150;
   align-items: center;
   justify-content: center;
   padding: 0.8rem 1.3rem;
-  border: 1px solid $community-ink;
+  border: 1px solid var(--text-accent, #{$community-ink});
   border-radius: 24px;
-  background: #fff;
-  color: $community-ink;
+  background: var(--surface, #fff);
+  color: var(--text-accent, #{$community-ink});
   font-size: 1.3rem;
   font-weight: 700;
   line-height: 1.2;
@@ -62,8 +62,8 @@ $community-ink: #072150;
 
 .community-logo-band {
   padding: 1.7rem 2rem 1.6rem;
-  background: #fff;
-  border-bottom: 1px solid #e9ebf4;
+  background: var(--surface, #fff);
+  border-bottom: 1px solid var(--border, #e9ebf4);
 }
 
 .community-logo-band-inner {
@@ -84,18 +84,18 @@ $community-ink: #072150;
 .community-logo-pause {
   flex: 0 0 auto;
   padding: 0.4rem 1.1rem;
-  border: 1px solid #bfc6dd;
+  border: 1px solid var(--border, #bfc6dd);
   border-radius: 20px;
-  background: #fff;
-  color: #47506b;
+  background: var(--surface, #fff);
+  color: var(--text-muted, #47506b);
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
 
   &:hover {
-    border-color: $community-purple-800;
-    color: $community-purple-800;
+    border-color: var(--text-accent, #{$community-purple-800});
+    color: var(--text-accent, #{$community-purple-800});
   }
 }
 
@@ -182,7 +182,8 @@ $community-ink: #072150;
   min-height: 320px;
   padding: 6rem 2rem;
   overflow: hidden;
-  background-color: #30186e;
+  background-color: var(--hero-fallback, #30186e);
+  background-image: var(--hero-overlay, linear-gradient(90deg, rgba(42, 29, 116, 0.78), rgba(71, 70, 183, 0.66), rgba(83, 105, 255, 0.58))), var(--hero-image);
   background-position: center;
   background-size: cover;
   color: #fff;
@@ -237,7 +238,7 @@ $community-ink: #072150;
   // gutter is the single, page-wide rule so everything lines up with the
   // header/footer content column (--max-width).
   padding: 0.1px 2rem;
-  background: #f8faff;
+  background: var(--surface-sunken, #f8faff);
 }
 
 // Connect with us -----------------------------------------------------------
@@ -249,7 +250,7 @@ $community-ink: #072150;
   max-width: var(--max-width);
   margin: 3.4rem auto;
   padding: 2.7rem 3.4rem;
-  background: #fff;
+  background: var(--surface, #fff);
   border-radius: 18px;
   box-shadow: 0 10px 28px rgba(60, 60, 130, 0.08);
 
@@ -261,14 +262,14 @@ $community-ink: #072150;
 
   h2 {
     margin: 0 0 0.6rem;
-    color: $community-purple-800;
+    color: var(--text-accent, #{$community-purple-800});
     font-size: 3rem;
     font-weight: 700;
   }
 
   p {
     margin: 0;
-    color: #47506b;
+    color: var(--text-muted, #47506b);
     font-size: 1.6rem;
   }
 }
@@ -304,16 +305,16 @@ $community-ink: #072150;
   width: 34px;
   height: 34px;
   padding: 0;
-  border: 1px solid #bfc6dd;
+  border: 1px solid var(--border, #bfc6dd);
   border-radius: 50%;
-  background: #fff;
-  color: $community-purple-800;
+  background: var(--surface, #fff);
+  color: var(--text-accent, #{$community-purple-800});
   font-size: 1.9rem;
   line-height: 1;
   cursor: pointer;
 
   &:hover:not(:disabled) {
-    border-color: $community-purple-800;
+    border-color: var(--text-accent, #{$community-purple-800});
   }
 
   &:disabled {
@@ -324,7 +325,7 @@ $community-ink: #072150;
 
 .community-home-carousel-status {
   min-width: 34px;
-  color: #606985;
+  color: var(--text-muted, #606985);
   font-size: 1.1rem;
   font-weight: 700;
   text-align: center;
@@ -378,7 +379,7 @@ $community-ink: #072150;
 // Section band colour and heading rhythm match the mockup; the shared
 // .community-section used by event subpages keeps its own colour.
 .community-section-home {
-  background: #edf2ff;
+  background: var(--surface-tint, #edf2ff);
   padding-bottom: 6rem; // band continues below the last row of tiles, as in the mockup
 
   .community-header {
@@ -388,12 +389,12 @@ $community-ink: #072150;
 
     h2 {
       margin: 0 0 0.8rem;
-      color: $community-purple-800;
+      color: var(--text-accent, #{$community-purple-800});
       font-size: 3.6rem;
     }
 
     p {
-      color: #576077;
+      color: var(--text-muted, #576077);
       font-size: 1.6rem;
     }
   }
@@ -427,7 +428,7 @@ $community-ink: #072150;
     }
 
     p {
-      color: #53586b;
+      color: var(--text-muted, #53586b);
       font-size: 1.5rem;
       line-height: 1.48;
       text-align: center;

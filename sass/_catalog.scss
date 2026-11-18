@@ -44,14 +44,14 @@ $cat-radius-lg: 16px;
   margin: 0 auto;
   padding: 10px 20px 0;
   @include sans-serif;
-  color: $cat-fg;
-  background: $cat-surface;
+  color: var(--text-strong, #{$cat-fg});
+  background: var(--surface, #{$cat-surface});
   line-height: 1.55;
   overflow-x: hidden;
 
   a,
   a:visited {
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
   }
 }
 
@@ -71,7 +71,7 @@ $cat-radius-lg: 16px;
     font-weight: 700;
     letter-spacing: -0.01em;
     line-height: 1.2;
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
   }
 
   .catalog-lede {
@@ -79,7 +79,7 @@ $cat-radius-lg: 16px;
     max-width: 82ch;
     font-size: 1.55rem;
     line-height: 1.5;
-    color: $cat-muted;
+    color: var(--text-muted, #{$cat-muted});
   }
 
   // Clients and integrations are separate pages, so each points to the other
@@ -89,7 +89,7 @@ $cat-radius-lg: 16px;
     max-width: 82ch;
     font-size: 1.55rem;
     line-height: 1.5;
-    color: $cat-muted;
+    color: var(--text-muted, #{$cat-muted});
 
     a {
       text-decoration: underline;
@@ -129,7 +129,7 @@ $cat-radius-lg: 16px;
     label,
     .toggle-label {
       font-size: 1.3rem;
-      color: $cat-muted;
+      color: var(--text-muted, #{$cat-muted});
     }
   }
 
@@ -149,7 +149,7 @@ $cat-radius-lg: 16px;
     transform: translateY(-50%);
     width: 16px;
     height: 16px;
-    color: $cat-muted;
+    color: var(--text-muted, #{$cat-muted});
     pointer-events: none;
   }
 
@@ -158,10 +158,10 @@ $cat-radius-lg: 16px;
     min-width: 0;
     height: 44px;
     padding: 1.1rem 1.4rem 1.1rem 4rem;
-    border: 1px solid $cat-border;
+    border: 1px solid var(--border, #{$cat-border});
     border-radius: $cat-radius;
-    background: $cat-surface;
-    color: $cat-fg;
+    background: var(--surface, #{$cat-surface});
+    color: var(--text-strong, #{$cat-fg});
     font: inherit;
     font-size: 1.5rem;
     outline: none;
@@ -180,10 +180,10 @@ $cat-radius-lg: 16px;
     width: 100%;
     height: 44px;
     padding: 1.1rem 1.4rem;
-    border: 1px solid $cat-border;
+    border: 1px solid var(--border, #{$cat-border});
     border-radius: $cat-radius;
-    background-color: $cat-surface;
-    color: $cat-fg;
+    background-color: var(--surface, #{$cat-surface});
+    color: var(--text-strong, #{$cat-fg});
     font: inherit;
     font-size: 1.5rem;
     cursor: pointer;
@@ -191,7 +191,7 @@ $cat-radius-lg: 16px;
     transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 
     &:hover {
-      border-color: rgba($cat-fg, 0.32);
+      border-color: var(--text-muted, #{rgba($cat-fg, 0.32)});
     }
 
     &:focus-visible {
@@ -209,7 +209,7 @@ $cat-radius-lg: 16px;
       flex: none;
       width: 16px;
       height: 16px;
-      color: $cat-muted;
+      color: var(--text-muted, #{$cat-muted});
     }
 
     // Descending state — flip the icon to signal reversed order.
@@ -229,10 +229,10 @@ $cat-radius-lg: 16px;
   gap: 0.9rem;
   height: 44px;
   padding: 0 1.4rem;
-  border: 1px solid $cat-border;
+  border: 1px solid var(--border, #{$cat-border});
   border-radius: $cat-radius;
-  background: $cat-surface;
-  color: $cat-muted;
+  background: var(--surface, #{$cat-surface});
+  color: var(--text-muted, #{$cat-muted});
   font: inherit;
   font-size: 1.4rem;
   cursor: pointer;
@@ -240,8 +240,8 @@ $cat-radius-lg: 16px;
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
 
   &:hover {
-    color: $cat-fg;
-    border-color: rgba($cat-fg, 0.32);
+    color: var(--text-strong, #{$cat-fg});
+    border-color: var(--text-muted, #{rgba($cat-fg, 0.32)});
   }
 
   &:focus-visible {
@@ -256,7 +256,7 @@ $cat-radius-lg: 16px;
     height: 18px;
     flex: none;
     border-radius: 999px;
-    background: $cat-border;
+    background: var(--border, #{$cat-border});
     transition: background 0.15s ease;
   }
 
@@ -275,7 +275,7 @@ $cat-radius-lg: 16px;
   // On state — accent fill, thumb slides right, text inks.
   &.is-on,
   &[aria-checked="true"] {
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
     border-color: rgba($cat-accent, 0.55);
     background: $cat-accent-soft;
 
@@ -314,7 +314,7 @@ $cat-radius-lg: 16px;
     font-size: 1.4rem;
     font-weight: 600;
     letter-spacing: 0.01em;
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
     margin-right: 0.2rem;
   }
 
@@ -330,17 +330,17 @@ $cat-radius-lg: 16px;
     gap: 0.7rem;
     padding: 0.9rem 1.4rem;
     min-height: 44px;
-    border: 1px solid $cat-border;
+    border: 1px solid var(--border, #{$cat-border});
     border-radius: 999px;
-    background: $cat-surface;
-    color: $cat-muted;
+    background: var(--surface, #{$cat-surface});
+    color: var(--text-muted, #{$cat-muted});
     font: inherit;
     font-size: 1.35rem;
     cursor: pointer;
 
     &:hover {
-      color: $cat-fg;
-      border-color: mix($cat-fg, $cat-border, 32%);
+      color: var(--text-strong, #{$cat-fg});
+      border-color: var(--text-muted, #{mix($cat-fg, $cat-border, 32%)});
     }
 
     &:focus-visible {
@@ -356,9 +356,9 @@ $cat-radius-lg: 16px;
 
     // Selected state — fills with ink, not accent.
     &[aria-pressed="true"] {
-      background: $cat-fg;
-      border-color: $cat-fg;
-      color: $cat-surface;
+      background: var(--text-strong, #{$cat-fg});
+      border-color: var(--text-strong, #{$cat-fg});
+      color: var(--surface, #{$cat-surface});
       font-weight: 600;
     }
 
@@ -367,7 +367,7 @@ $cat-radius-lg: 16px;
       min-width: 1.6em;
       padding: 0 0.5em;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.08);
+      background: var(--surface-muted, rgba(0, 0, 0, 0.08));
       font-size: 1.2rem;
       font-weight: 600;
       text-align: center;
@@ -375,7 +375,7 @@ $cat-radius-lg: 16px;
 
     &[aria-pressed="true"] .pill-count {
       background: rgba(255, 255, 255, 0.25);
-      color: $cat-surface;
+      color: var(--surface, #{$cat-surface});
     }
   }
 }
@@ -410,13 +410,13 @@ $cat-radius-lg: 16px;
   grid-row: span 3;
   row-gap: 1.2rem;
   padding: 2.4rem;
-  border: 1px solid $cat-border;
+  border: 1px solid var(--border, #{$cat-border});
   border-radius: $cat-radius-lg;
-  background: $cat-surface;
+  background: var(--surface, #{$cat-surface});
   min-width: 0;
 
   &:hover {
-    border-color: rgba($cat-fg, 0.26);
+    border-color: var(--text-muted, #{rgba($cat-fg, 0.26)});
   }
 
   .entry-head {
@@ -429,13 +429,13 @@ $cat-radius-lg: 16px;
     margin: 0;
     font-size: 1.9rem;
     font-weight: 600;
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
     line-height: 1.3;
     letter-spacing: -0.005em;
     word-break: break-word;
 
     a {
-      color: $cat-fg;
+      color: var(--text-strong, #{$cat-fg});
 
       &:hover {
         text-decoration: underline;
@@ -456,7 +456,7 @@ $cat-radius-lg: 16px;
     margin: 0;
     font-size: 1.45rem;
     line-height: 1.55;
-    color: $cat-muted;
+    color: var(--text-muted, #{$cat-muted});
     overflow-wrap: anywhere;
 
     // Marks the span of a description-only search match (JS-applied). Title
@@ -464,7 +464,7 @@ $cat-radius-lg: 16px;
     // obvious.
     mark.search-hit {
       background: $cat-accent-soft;
-      color: $cat-fg;
+      color: var(--text-strong, #{$cat-fg});
       border-radius: 3px;
       padding: 0 0.15em;
     }
@@ -497,17 +497,17 @@ $cat-radius-lg: 16px;
     gap: 0.4rem 1.2rem;
     margin: 0;
     font-size: 1.35rem;
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
 
     // The "License" label is secondary; the license name itself is primary and
     // should read as dark, high-contrast ink.
     dt {
-      color: $cat-muted;
+      color: var(--text-muted, #{$cat-muted});
     }
 
     dd {
       margin: 0;
-      color: $cat-fg;
+      color: var(--text-strong, #{$cat-fg});
     }
 
     .num {
@@ -523,12 +523,12 @@ $cat-radius-lg: 16px;
     flex-wrap: wrap;
     gap: 1.2rem;
     padding-top: 1.2rem;
-    border-top: 1px solid $cat-border;
+    border-top: 1px solid var(--border, #{$cat-border});
     font-size: 1.35rem;
 
     a {
-      color: $cat-fg;
-      border-bottom: 1px solid $cat-border;
+      color: var(--text-strong, #{$cat-fg});
+      border-bottom: 1px solid var(--border, #{$cat-border});
 
       &:hover {
         border-bottom-color: $cat-accent;
@@ -554,9 +554,9 @@ $cat-radius-lg: 16px;
 
 // Language chip (clients) — outlined neutral.
 .catalog .chip-language {
-  background: $cat-surface;
-  color: $cat-muted;
-  border: 1px solid $cat-border;
+  background: var(--surface, #{$cat-surface});
+  color: var(--text-muted, #{$cat-muted});
+  border: 1px solid var(--border, #{$cat-border});
 }
 
 // Small language monogram badge shown inside the language chip. Data-driven
@@ -585,15 +585,15 @@ $cat-radius-lg: 16px;
 
 // Tag chip (integrations) — filled ink-soft, no border (the "shelf label").
 .catalog .chip-tag {
-  background: $cat-fg-soft;
-  color: $cat-fg;
+  background: var(--surface-muted, #{$cat-fg-soft});
+  color: var(--text-strong, #{$cat-fg});
   border: 1px solid transparent;
 }
 
 // Valkey Project chip — accent-tinted, marks first-party entries on both pages.
 .catalog .chip-project {
   background: $cat-accent-soft;
-  color: mix(#000, $cat-accent, 22%);
+  color: var(--text-accent, #{mix(#000, $cat-accent, 22%)});
   border: 1px solid rgba($cat-accent, 0.4);
   font-weight: 600;
 }
@@ -617,9 +617,9 @@ $cat-radius-lg: 16px;
   justify-content: space-between;
   gap: 1.2rem;
   padding: 0.8rem 0.8rem 0.8rem 1.2rem;
-  border: 1px solid $cat-border;
+  border: 1px solid var(--border, #{$cat-border});
   border-radius: 8px;
-  background: $cat-bg;
+  background: var(--surface-muted, #{$cat-bg});
   min-width: 0;
 
   // Non-scrolling wrapper around the command. It stays fixed while the inner
@@ -645,7 +645,7 @@ $cat-radius-lg: 16px;
     right: 0;
     width: 3.2rem;
     pointer-events: none;
-    background: linear-gradient(to right, rgba($cat-bg, 0), $cat-bg);
+    background: linear-gradient(to right, var(--surface-muted-clear, #{rgba($cat-bg, 0)}), var(--surface-muted, #{$cat-bg}));
   }
 
   .install-cmd {
@@ -664,27 +664,27 @@ $cat-radius-lg: 16px;
     flex: 0 0 auto;
     min-height: 30px;
     padding: 0.5rem 0.9rem;
-    border: 1px solid $cat-border;
+    border: 1px solid var(--border, #{$cat-border});
     border-radius: 6px;
-    background: $cat-surface;
-    color: $cat-muted;
+    background: var(--surface, #{$cat-surface});
+    color: var(--text-muted, #{$cat-muted});
     font: inherit;
     font-size: 1.2rem;
     cursor: pointer;
 
     &:hover {
-      border-color: $cat-fg;
-      color: $cat-fg;
+      border-color: var(--text-strong, #{$cat-fg});
+      color: var(--text-strong, #{$cat-fg});
     }
 
     &.is-copied {
-      border-color: $cat-fg;
-      color: $cat-fg;
+      border-color: var(--text-strong, #{$cat-fg});
+      color: var(--text-strong, #{$cat-fg});
     }
 
     &.is-failed {
       border-color: $red-200;
-      color: $red-300;
+      color: var(--text-danger, #{$red-300});
     }
   }
 }
@@ -694,7 +694,7 @@ $cat-radius-lg: 16px;
 // ---------------------------------------------------------------------------
 
 .catalog .entry-card .disc {
-  border-top: 1px solid $cat-border;
+  border-top: 1px solid var(--border, #{$cat-border});
   padding-top: 1.2rem;
   font-size: 1.3rem;
 
@@ -710,7 +710,7 @@ $cat-radius-lg: 16px;
     list-style: none;
     font-size: 1.35rem;
     font-weight: 400;
-    color: $cat-muted;
+    color: var(--text-muted, #{$cat-muted});
     cursor: pointer;
 
     &::-webkit-details-marker {
@@ -722,8 +722,8 @@ $cat-radius-lg: 16px;
       flex: none;
       width: 10px;
       height: 10px;
-      border-right: 1.5px solid $cat-muted;
-      border-bottom: 1.5px solid $cat-muted;
+      border-right: 1.5px solid var(--text-muted, #{$cat-muted});
+      border-bottom: 1.5px solid var(--text-muted, #{$cat-muted});
       transform: rotate(-45deg);
       transition: transform 0.15s ease;
     }
@@ -739,12 +739,12 @@ $cat-radius-lg: 16px;
   }
 
   .disc-count {
-    color: $cat-muted;
+    color: var(--text-muted, #{$cat-muted});
   }
 
   .disc-none {
     margin: 1.2rem 0 0;
-    color: $cat-muted;
+    color: var(--text-muted, #{$cat-muted});
     font-size: 1.3rem;
   }
 
@@ -768,7 +768,7 @@ $cat-radius-lg: 16px;
     align-items: baseline;
     padding: 0;
     background: none;
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
     font-size: 1.3rem;
     font-weight: 400;
     cursor: help;
@@ -778,7 +778,7 @@ $cat-radius-lg: 16px;
       font-family: "Fira Mono", Consolas, Menlo, Monaco, "Courier New", Courier, monospace;
       width: 12px;
       flex: none;
-      color: $cat-fg;
+      color: var(--text-strong, #{$cat-fg});
     }
   }
 }
@@ -790,9 +790,9 @@ $cat-radius-lg: 16px;
 .catalog .legend {
   margin: 0 0 5.6rem;
   padding: 2.4rem;
-  border: 1px solid $cat-border;
+  border: 1px solid var(--border, #{$cat-border});
   border-radius: $cat-radius-lg;
-  background: $cat-surface;
+  background: var(--surface, #{$cat-surface});
   font-size: 1.3rem;
 
   h2,
@@ -801,7 +801,7 @@ $cat-radius-lg: 16px;
     font-size: 1.9rem;
     font-weight: 600;
     letter-spacing: -0.005em;
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
   }
 
   dl {
@@ -821,12 +821,12 @@ $cat-radius-lg: 16px;
 
   dt {
     font-weight: 600;
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
   }
 
   dd {
     margin: 0 0 0.5rem;
-    color: $cat-muted;
+    color: var(--text-muted, #{$cat-muted});
   }
 }
 
@@ -838,9 +838,9 @@ $cat-radius-lg: 16px;
   grid-column: 1 / -1;
   padding: 4.4rem 2.8rem;
   text-align: center;
-  border: 1px dashed $cat-border;
+  border: 1px dashed var(--border, #{$cat-border});
   border-radius: $cat-radius-lg;
-  background: $cat-surface;
+  background: var(--surface, #{$cat-surface});
 
   &[hidden] {
     display: none;
@@ -851,7 +851,7 @@ $cat-radius-lg: 16px;
     max-width: 46ch;
     font-size: 1.45rem;
     font-weight: 600;
-    color: $cat-fg;
+    color: var(--text-strong, #{$cat-fg});
   }
 
   .empty-recovery {
@@ -866,16 +866,16 @@ $cat-radius-lg: 16px;
     button {
       min-height: 36px;
       padding: 0.7rem 1.2rem;
-      border: 1px solid $cat-border;
+      border: 1px solid var(--border, #{$cat-border});
       border-radius: $cat-radius;
-      background: $cat-surface;
-      color: $cat-fg;
+      background: var(--surface, #{$cat-surface});
+      color: var(--text-strong, #{$cat-fg});
       font: inherit;
       font-size: 1.35rem;
       cursor: pointer;
 
       &:hover {
-        border-color: $cat-fg;
+        border-color: var(--text-strong, #{$cat-fg});
       }
     }
   }
@@ -891,7 +891,7 @@ $cat-radius-lg: 16px;
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.2;
-  color: $cat-fg;
+  color: var(--text-strong, #{$cat-fg});
 }
 
 .catalog .submission-lede {
@@ -899,7 +899,7 @@ $cat-radius-lg: 16px;
   max-width: 82ch;
   font-size: 1.55rem;
   line-height: 1.5;
-  color: $cat-muted;
+  color: var(--text-muted, #{$cat-muted});
 }
 
 .catalog .submission-cta {
@@ -929,7 +929,7 @@ $cat-radius-lg: 16px;
   margin: 2rem auto;
   max-width: var(--max-width);
   padding: 0 20px;
-  color: $cat-muted;
+  color: var(--text-muted, #{$cat-muted});
   font-size: 1.4rem;
 }
 

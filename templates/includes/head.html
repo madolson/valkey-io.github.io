@@ -54,6 +54,17 @@
     Valkey
     {%- endif -%}">
 
+    <!-- Theme: runs before the stylesheet so the first paint already has the right theme. -->
+    <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('theme'); } catch (e) {}
+      if (t !== 'light' && t !== 'dark') {
+        t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+    </script>
     <link rel="stylesheet" href="/css/styles.css">
     <link rel="alternate" type="application/atom+xml" title="Atom feed" href="{{ get_url(path="atom.xml", trailing_slash=false) }}" />
 
@@ -62,6 +73,9 @@
 
     <!-- Carousel JS -->
     <script src="/assets/js/carousel.js"></script>
+
+    <!-- Theme toggle -->
+    <script src="/assets/js/theme.js"></script>
 
     <!-- Copy-to-clipboard for .copy-code blocks -->
     <script src="/assets/js/copy-code.js"></script>

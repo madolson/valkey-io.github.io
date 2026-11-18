@@ -1,0 +1,166 @@
+//
+// Dark theme
+//
+// The light theme has no tokens: every color that dark mode changes is written
+// as var(--token, <light color>), so light mode uses the fallback.
+// <html data-theme="dark"> is set before first paint by the inline script in
+// templates/includes/head.html. Without JS, the OS setting applies.
+//
+
+// Deep Blue Sea (#003b5c) family, with Open Sky for links.
+$dark-tokens: (
+  surface-sunken: #011a29,
+  surface: #04263a,
+  surface-tint: #0a2f47,
+  surface-muted: #0b3550,
+  surface-selected: #134a6e,
+  text: #d6e2ea,
+  text-strong: $blue-dk-000,
+  text-accent: $blue-vibrant-100,
+  text-muted: $blue-dk-100,
+  link: $blue-vibrant-200,
+  border: #1d4a66,
+  // Catalog: transparent end of the install-command fade, and the copy-failed label.
+  surface-muted-clear: rgba(#0b3550, 0),
+  text-danger: #f28b9e,
+  // Community photo hero: overlay and the color shown before the photo loads.
+  hero-overlay: linear-gradient(90deg, rgba(#011a29, 0.86), rgba(#04263a, 0.80), rgba(#0b3550, 0.76)),
+  hero-fallback: #04263a,
+);
+
+@mixin dark-tokens {
+  @each $name, $value in $dark-tokens {
+    --#{$name}: #{$value};
+  }
+  color-scheme: dark;
+}
+
+html[data-theme="dark"] {
+  @include dark-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    @include dark-tokens;
+  }
+}
+
+// Rules that a token alone cannot express. All are scoped to dark mode.
+@mixin dark-rules {
+  body {
+    color: var(--text);
+  }
+
+  // The wordmark is #1a2026 ink; swap in the light-ink copy.
+  .theme-logo-light { display: none !important; }
+  .theme-logo-dark { display: block !important; }
+
+  // Most participant and integration logos are dark ink on a transparent
+  // background. Give them a light chip rather than inverting brand colors.
+  .participant-list .participant-brand img,
+  .homepage-participants-carousel img {
+    background: #fff;
+    border-radius: 8px;
+    padding: 0.8rem;
+  }
+
+  // Same chip for the Community page logo strip.
+  .community-logo-cell {
+    padding: 0 1rem;
+    background: #fff;
+    border-radius: 8px;
+  }
+
+  // The Valkey mark in the catalog's Valkey chip is #123678 ink.
+  .catalog .chip-icon {
+    filter: invert(1) hue-rotate(180deg);
+  }
+
+  // White on the light #6983ff fill is 3.3:1; darken the fill so the label passes AA.
+  .catalog .submission-cta {
+    background: #4b5fd6;
+    border-color: #4b5fd6;
+
+    &:hover {
+      background: #3d4fb8;
+      border-color: #3d4fb8;
+    }
+  }
+
+  // A darker take on the #6983ff to #bcb5e7 band, so it does not glare.
+  .homepage-participants-section {
+    background: linear-gradient(180deg, #23338a 0%, #0a2f47 100%);
+  }
+
+  .header nav .github-button img {
+    filter: invert(1);
+  }
+
+  // nav.js sets these inline.
+  .header nav .github-button .star-count {
+    background: var(--surface-sunken) !important;
+    color: var(--text-muted) !important;
+    border-color: var(--border) !important;
+  }
+
+  pre mark {
+    background-color: rgba(105, 131, 255, 0.25);
+  }
+}
+
+html[data-theme="dark"] {
+  @include dark-rules;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme]) {
+    @include dark-rules;
+  }
+}
+
+// Toggle. Shown only once JS has set data-theme, since it needs JS to work.
+.theme-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 3.6rem;
+  height: 3.6rem;
+  margin-left: 2rem;
+  padding: 0;
+  border: 1px solid var(--border, #dfe1e4);
+  border-radius: 6px;
+  background: var(--surface-muted, #f8f9fa);
+  color: var(--text, #444);
+  cursor: pointer;
+
+  svg {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .theme-icon-sun { display: none; }
+
+  html[data-theme] & { display: flex; }
+  html[data-theme="dark"] & .theme-icon-sun { display: block; }
+  html[data-theme="dark"] & .theme-icon-moon { display: none; }
+
+  @media (max-width: 1024px) {
+    order: 1;
+    margin-left: auto;
+    margin-right: 1.5rem;
+  }
+}
+
+.header .logo .theme-logo-dark { display: none; }
+
+// Keep the nav on the right next to the toggle, and the toggle left of the
+// hamburger on narrow screens.
+.header nav {
+  margin-left: auto;
+}
+
+@media (max-width: 1024px) {
+  .header .btn-menu {
+    order: 2;
+  }
+}
