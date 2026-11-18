@@ -309,6 +309,21 @@
 {% endcomponent nav_command_reference %}
 
 {#-
+    The Clients and Integrations entries, for the pages built from
+    _data/libraries/. They're rendered after the topics of the section whose
+    id is extra.docs_menu_libraries_section in config.toml, or at the start of
+    the menu if there's none.
+      path: the current path on those pages, "" elsewhere.
+-#}
+{% component nav_libraries(path="") %}
+{%- for name in ["clients", "integrations"] %}
+{%- set library_section = get_section(path=name ~ "/_index.md") %}
+<li><a href="{{ library_section.path }}"
+    {%- if library_section.path == path %} class="docs-menu-current" aria-current="page"{% endif %}>{{ library_section.title }}</a></li>
+{%- endfor %}
+{% endcomponent nav_libraries %}
+
+{#-
     The menu.
       current: slug of the current topic.
       related: key of the menu entry the current command belongs to (on
@@ -322,10 +337,15 @@
       index:   from nav_command_index; used to list the command categories
                (groups) that have documented commands.
       on_command_reference: true on the command reference page.
+      libraries_path: see nav_libraries.
 -#}
-{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false) %}
+{% component nav_menu(nav, extra, current="", related="", open="", command_map={}, current_command="", index=[], on_command_reference=false, libraries_path="") %}
 <nav class="docs-menu" aria-label="Documentation">
+    {%- set libraries_section = extra.docs_menu_libraries_section | default(value="") %}
     <ul class="docs-menu-sections">
+        {%- if libraries_section not in [x.id for x in nav] %}
+        {{< nav_libraries path={libraries_path} />}}
+        {%- endif %}
     {%- for section in nav %}
         {%- if section.id == "command-reference" %}
         {{< nav_command_reference title={section.title} index={index} on_command_reference={on_command_reference} />}}
@@ -343,6 +363,9 @@
                     {%- set commands = command_map[entry.topic] if entry.topic in command_map else [] %}
                     {{< nav_menu_item slug={entry.topic} title={entry.title} source={"" if section_badge and entry.source == section.source else entry.source} current={current} related={related} extra={extra} commands={commands} current_command={current_command} />}}
                     {%- endfor %}
+                    {%- if section.id == libraries_section %}
+                    {{< nav_libraries path={libraries_path} />}}
+                    {%- endif %}
                     {%- set other_key = "section:" ~ section.id %}
                     {%- if other_key in command_map %}
                     <li>

@@ -39,10 +39,10 @@ $cat-radius-lg: 16px;
 // Layout wrapper
 // ---------------------------------------------------------------------------
 
+// The catalog sits in the docs content panel (templates/left-aside.html),
+// which has its own padding.
 .catalog {
-  max-width: var(--max-width);
-  margin: 0 auto;
-  padding: 10px 20px 0;
+  container-type: inline-size;
   @include sans-serif;
   color: $cat-fg;
   background: $cat-surface;
@@ -53,26 +53,23 @@ $cat-radius-lg: 16px;
   a:visited {
     color: $cat-fg;
   }
+
+  // The docs layout uppercases h2s (`.left-aside h2`); card names and the
+  // catalog's own headings keep their case.
+  h2 {
+    text-transform: none;
+  }
 }
 
 // ---------------------------------------------------------------------------
 // Compact header
 // ---------------------------------------------------------------------------
 //
-// A small heading, one lede line, and a link to the other catalog. Keeps the
-// top of the page tight so cards reach the fold.
+// The page title (.docs-page-title, as on topic pages), one lede line, and a
+// link to the other catalog.
 
 .catalog-header {
-  margin: 2.4rem 0;
-
-  .catalog-title {
-    margin: 0 0 0.6rem;
-    font-size: 3rem;             // compact vs. the site hero
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-    color: $cat-fg;
-  }
+  margin: 0 0 2.4rem;
 
   .catalog-lede {
     margin: 0;
@@ -103,8 +100,9 @@ $cat-radius-lg: 16px;
 // ---------------------------------------------------------------------------
 //
 // Three columns: the search field stretches; the toggle and sort take their
-// intrinsic/fixed width on the right. Collapses to a single column on narrow
-// viewports.
+// intrinsic/fixed width on the right. Collapses to a single column in a narrow
+// catalog. The breakpoints are on the catalog's width, not the viewport's,
+// since the docs menu takes part of the window on wide screens.
 
 .catalog .toolbar {
   display: grid;
@@ -113,11 +111,11 @@ $cat-radius-lg: 16px;
   align-items: end;
   margin: 0 0 3.2rem;
 
-  @media (max-width: 900px) {
+  @container (max-width: 860px) {
     grid-template-columns: minmax(0, 1fr) auto;
   }
 
-  @media (max-width: 620px) {
+  @container (max-width: 580px) {
     grid-template-columns: minmax(0, 1fr);
   }
 
@@ -887,7 +885,7 @@ $cat-radius-lg: 16px;
 
 .catalog .submission-heading {
   margin: 0 0 0.6rem;
-  font-size: 3rem;             // matches .catalog-title
+  font-size: 3rem;
   font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 1.2;
@@ -926,9 +924,7 @@ $cat-radius-lg: 16px;
 }
 
 .catalog-nojs-note {
-  margin: 2rem auto;
-  max-width: var(--max-width);
-  padding: 0 20px;
+  margin: 2rem 0;
   color: $cat-muted;
   font-size: 1.4rem;
 }

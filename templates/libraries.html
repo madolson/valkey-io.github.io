@@ -1,4 +1,4 @@
-{% extends "default.html" %}
+{% extends "left-aside.html" %}
 
 {# Libraries catalog page. Each URL renders one catalog:                    #}
 {#   content/clients/_index.md      → kind = "clients"                       #}
@@ -8,8 +8,49 @@
 {# Cards are rendered at build time from _data/libraries/ (no runtime fetch); #}
 {# libraries.js filters and sorts them. Without JS the JS-only controls are  #}
 {# hidden and every card shows.                                              #}
+{# The pages use the documentation layout. Their menu entries are in the     #}
+{# section extra.docs_menu_libraries_section (see nav_libraries).            #}
 
-{% block content %}
+{%- block head -%}
+{% set nav_json %}{{< nav_merged extra={config.extra} />}}{% endset %}
+{% set nav_data = load_data(literal=nav_json, format="json") %}
+{% set menu_section = [s for s in nav_data if s.id == config.extra.docs_menu_libraries_section] %}
+{%- endblock head -%}
+
+{% block breadcrumbs %}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+    <ul class="breadcrumb-list">
+        <li class="breadcrumb-item">
+            <a href="/topics/" class="breadcrumb-link">Topics</a>
+        </li>
+        {% for s in menu_section %}
+        <li class="breadcrumb-item">
+            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
+            {% if s.landing %}
+            <a href="/topics/{{ s.landing }}/" class="breadcrumb-link">{{ s.title }}</a>
+            {% else %}
+            {{ s.title }}
+            {% endif %}
+        </li>
+        {% endfor %}
+        <li class="breadcrumb-item breadcrumb-current" aria-current="page">
+            <img src="/img/caret-right.svg" alt="" width="8" height="10"/>
+            {{ section.title }}
+        </li>
+    </ul>
+</nav>
+{% endblock breadcrumbs %}
+
+{% block related_content %}
+{#- The same menu setup as docs.html, with this page's section open. #}
+{% set nav_index_json %}{{< nav_command_index extra={config.extra} />}}{% endset %}
+{% set nav_index = load_data(literal=nav_index_json, format="json") %}
+{% set nav_map_json %}{{< nav_command_map nav={nav_data} index={nav_index} />}}{% endset %}
+{% set nav_command_map = load_data(literal=nav_map_json, format="json") %}
+{{< nav_menu nav={nav_data} extra={config.extra} open={config.extra.docs_menu_libraries_section} command_map={nav_command_map} index={nav_index} libraries_path={current_path} />}}
+{% endblock related_content %}
+
+{% block main_content %}
   <script>document.documentElement.classList.add('js');</script>
 
   {%- set kind = section.extra.kind | default(value="clients") -%}
@@ -77,13 +118,13 @@
 
     {% if kind == "clients" %}
     <header class="catalog-header">
-      <h1 class="catalog-title">Clients</h1>
+      <h1 class="docs-page-title">Clients</h1>
       <p class="catalog-lede">Client libraries and tools used for connecting to Valkey. Anything that speaks the Redis 7.2 wire protocol works with Valkey 7.2 and later, so most existing clients need no changes to migrate.</p>
       <p class="catalog-crosslink">See also: <a href="/integrations/">Integrations</a></p>
     </header>
     {% else %}
     <header class="catalog-header">
-      <h1 class="catalog-title">Integrations</h1>
+      <h1 class="docs-page-title">Integrations</h1>
       <p class="catalog-lede">Frameworks, job queues, AI libraries, and operations tools that work with Valkey.</p>
       <p class="catalog-crosslink">See also: <a href="/clients/">Clients</a></p>
     </header>
@@ -279,4 +320,4 @@
     {{<catalog.footer_cta cta_text="Add your library" noscript_noun="library" />}}
 
   <script defer src="/assets/js/libraries.js"></script>
-{% endblock content %}
+{% endblock main_content %}
