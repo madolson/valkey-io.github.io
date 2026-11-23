@@ -77,29 +77,12 @@ a.community-home-kicker:hover {
   margin-bottom: 1.1rem;
 }
 
-// Visible pause/play control for the auto-scrolling marquee (WCAG 2.2.2:
-// moving content that lasts more than 5s needs a mechanism to pause it).
-.community-logo-pause {
-  flex: 0 0 auto;
-  padding: 0.4rem 1.1rem;
-  border: 1px solid #bfc6dd;
-  border-radius: 20px;
-  background: #fff;
-  color: #47506b;
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-
-  &:hover {
-    border-color: $community-purple-800;
-    color: $community-purple-800;
-  }
-}
-
+// The vertical padding leaves room for a hovered logo's scale and underline,
+// which overflow and the mask would otherwise clip.
 .community-logo-row {
   position: relative;
   overflow: hidden;
+  padding: 0.4rem 0;
   white-space: nowrap;
   mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 5%, #000 95%, transparent 100%);
@@ -113,10 +96,8 @@ a.community-home-kicker:hover {
   will-change: transform;
 }
 
-// Paused via the visible toggle button (see community.js), or while the
-// pointer is over the strip so a logo can be clicked. The logo links are out
-// of the tab order, so there is no focus-based pause.
-.community-logo-track.is-paused,
+// Paused while the pointer is over the strip, so a logo can be clicked. The
+// logo links are out of the tab order, so there is no focus-based pause.
 .community-logo-row:hover .community-logo-track {
   animation-play-state: paused;
 }
@@ -149,8 +130,13 @@ a.community-home-kicker:hover {
     object-fit: contain;
   }
 
+  img {
+    transition: transform 0.15s ease;
+  }
+
   &:hover img {
     box-shadow: 0 2px 0 0 $community-label-blue;
+    transform: scale(1.1);
   }
 }
 
