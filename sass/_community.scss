@@ -113,9 +113,11 @@ a.community-home-kicker:hover {
   will-change: transform;
 }
 
-// Paused via the visible toggle button (see community.js). The logos
-// themselves are non-interactive, so there is no focus-based pause.
-.community-logo-track.is-paused {
+// Paused via the visible toggle button (see community.js), or while the
+// pointer is over the strip so a logo can be clicked. The logo links are out
+// of the tab order, so there is no focus-based pause.
+.community-logo-track.is-paused,
+.community-logo-row:hover .community-logo-track {
   animation-play-state: paused;
 }
 
@@ -145,6 +147,10 @@ a.community-home-kicker:hover {
     max-width: 210px;
     max-height: var(--logo-height, 24px);
     object-fit: contain;
+  }
+
+  &:hover img {
+    box-shadow: 0 2px 0 0 $community-label-blue;
   }
 }
 

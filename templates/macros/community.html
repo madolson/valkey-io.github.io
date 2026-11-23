@@ -25,10 +25,11 @@
 {% endcomponent logo_height %}
 
 {# One full set of logos. The marquee renders it twice; the copy is hidden from
-   assistive tech. Logos are non-interactive: the "Valkey participants" kicker
-   already links to /participants/, where each logo is linked with a
-   description. Rendering them as links here added ~20 tab stops with no skip
-   link and let keyboard focus scroll the marquee off-track. #}
+   assistive tech. Each logo links to the participant's site for mouse users,
+   since hovering the strip pauses it. The links are kept out of the tab order:
+   ~20 tab stops with no skip link was too many, and keyboard focus scrolled
+   the marquee off-track. The "Valkey participants" kicker links to
+   /participants/, where each logo is linked with a description. #}
 {% component logo_set(participants, duplicate=false, loading="eager") %}
 <div class="community-logo-set"{% if duplicate %} aria-hidden="true"{% endif %}>
   {%- for participant in participants -%}
@@ -37,9 +38,9 @@
       {%- set height %}{{< logo_height src={src} />}}{% endset -%}
       {%- set height = height | trim -%}
       {%- set alt = participant.image.alt | default(value=participant.name ~ " logo") -%}
-      <span class="community-logo-cell" title="{{ participant.name }}" style="--logo-height: {{ height }}px">
+      <a class="community-logo-cell" href="{{ participant.link }}" tabindex="-1" title="{{ participant.name }}" style="--logo-height: {{ height }}px">
         <img src="{{ src }}" alt="{% if not duplicate %}{{ alt }}{% endif %}" loading="{{ loading }}" decoding="async">
-      </span>
+      </a>
     {%- endif -%}
   {%- endfor -%}
 </div>
