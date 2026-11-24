@@ -1,6 +1,8 @@
 // Why Valkey page (templates/why-valkey.html)
 // The site sets `html { font-size: 10px }`, so 1rem = 10px here.
-// Every rule is scoped under `.wv` or uses a `wv-` class name.
+// This file holds the design switcher and the "Midnight" design. The other
+// designs live in _why-valkey-editorial, _why-valkey-terminal and
+// _why-valkey-bento. Class prefixes: wv- (shared and Midnight), ed-, tm-, bt-.
 
 $wv-night: #0a0d2b;
 $wv-night-2: #10153a;
@@ -22,11 +24,79 @@ $wv-teal: #2cd5c4;
 
 // Layout -----------------------------------------------------------------------
 
-.body main.wv {
+.body main.wv-page {
   width: 100%;
   padding: 0;
   background: none;
   @include sans-serif;
+}
+
+// Design switcher ----------------------------------------------------------------
+
+.wv-switcher {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem 1.2rem;
+  padding: 0.9rem 1.6rem;
+  border-bottom: 1px solid #e3e6f2;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.wv-switcher-label {
+  color: $wv-ink-muted;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.wv-switcher-options {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #eef0f7;
+
+  a {
+    padding: 0.6rem 1.4rem;
+    border-radius: 999px;
+    color: $wv-ink;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-decoration: none;
+
+    &:hover {
+      background: #fff;
+      color: $wv-ink;
+    }
+
+    &[aria-current="true"] {
+      background: $wv-ink;
+      color: #fff;
+    }
+
+    &:focus-visible {
+      outline: 2px solid $wv-blue;
+      outline-offset: 2px;
+    }
+  }
+}
+
+.wv-variant[hidden] {
+  display: none;
+}
+
+// Keep in-page anchors clear of the sticky switcher.
+.wv-variant [id] {
+  scroll-margin-top: 7rem;
 }
 
 .wv-inner {

@@ -1,0 +1,658 @@
+// Why Valkey, "Bento" design (templates/why-valkey/bento.html)
+
+$bt-bg: #f3f1ff;
+$bt-tile: #ffffff;
+$bt-ink: #120f3a;
+$bt-muted: #55527a;
+$bt-line: #e4e0fb;
+$bt-violet: #5b4bff;
+$bt-pink: #ff5c8a;
+$bt-teal: #2cd5c4;
+// Chart bars, validated against $bt-tile with the dataviz palette checker.
+$bt-bar-accent: #5b4bff;
+$bt-bar-muted: #878da8;
+
+.bt {
+  padding-bottom: 8rem;
+  background:
+    radial-gradient(50% 30% at 90% 0%, rgba(255, 92, 138, 0.16), transparent 70%),
+    radial-gradient(50% 30% at 0% 10%, rgba(91, 75, 255, 0.16), transparent 70%),
+    $bt-bg;
+  color: $bt-ink;
+  @include sans-serif;
+
+  h1, h2, h3 {
+    color: $bt-ink;
+  }
+
+  a {
+    color: $bt-violet;
+  }
+}
+
+.bt-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+// Hero
+
+.bt-hero {
+  padding: 9rem 0 6rem;
+  text-align: center;
+
+  h1 {
+    max-width: 960px;
+    margin: 0 auto 2.4rem;
+    font-size: 4.4rem;
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.045em;
+
+    @include respond-min(768px) {
+      font-size: 8rem;
+    }
+  }
+}
+
+.bt-kicker {
+  display: inline-block;
+  margin: 0 0 2rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  background: rgba(91, 75, 255, 0.1);
+  color: $bt-violet;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.bt-subtitle {
+  max-width: 680px;
+  margin: 0 auto 3.6rem;
+  color: $bt-muted;
+  font-size: 1.9rem;
+  line-height: 1.6;
+}
+
+.bt-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.2rem;
+}
+
+.bt .bt-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem 1.8rem 0.8rem 0.8rem;
+  border: 1px solid $bt-line;
+  border-radius: 999px;
+  background: $bt-tile;
+  box-shadow: 0 8px 24px -16px rgba(18, 15, 58, 0.5);
+  color: $bt-ink;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: $bt-ink;
+    color: #fff;
+    font-size: 1.3rem;
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+// Groups
+
+.bt-group {
+  padding: 4rem 0;
+}
+
+.bt-group-title {
+  display: flex;
+  align-items: center;
+  gap: 1.4rem;
+  margin: 0 0 1rem;
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+
+  @include respond-min(768px) {
+    font-size: 4.2rem;
+  }
+
+  span {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, $bt-violet, $bt-pink);
+    color: #fff;
+    font-size: 2rem;
+  }
+}
+
+.bt-group-lead {
+  max-width: 760px;
+  margin: 0 0 3rem;
+  color: $bt-muted;
+  font-size: 1.7rem;
+  line-height: 1.6;
+}
+
+.bt-grid {
+  display: grid;
+  grid-auto-flow: dense;
+  gap: 1.6rem;
+
+  @include respond-min(700px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @include respond-min(1050px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.bt-span-2 {
+  @include respond-min(700px) {
+    grid-column: span 2;
+  }
+}
+
+.bt-span-3 {
+  @include respond-min(700px) {
+    grid-column: span 2;
+  }
+
+  @include respond-min(1050px) {
+    grid-column: span 3;
+  }
+}
+
+.bt-span-4 {
+  @include respond-min(700px) {
+    grid-column: 1 / -1;
+  }
+}
+
+.bt-rows-2 {
+  @include respond-min(1050px) {
+    grid-row: span 2;
+  }
+}
+
+// Tiles
+
+.bt-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 2.8rem;
+  border: 1px solid $bt-line;
+  border-radius: 28px;
+  background: $bt-tile;
+  box-shadow: 0 1px 2px rgba(18, 15, 58, 0.04);
+  color: $bt-ink;
+  text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  h3 {
+    margin: 0 0 0.8rem;
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+
+  .bt-tile-text {
+    margin: 0;
+    color: $bt-muted;
+    font-size: 1.5rem;
+    line-height: 1.55;
+  }
+}
+
+a.bt-tile,
+.bt-tile:hover {
+  &:hover {
+    box-shadow: 0 30px 60px -30px rgba(18, 15, 58, 0.35);
+    transform: translateY(-4px);
+    color: $bt-ink;
+    text-decoration: none;
+  }
+}
+
+.bt-tile-heading {
+  font-size: 2.6rem !important;
+}
+
+.bt-tile-label {
+  margin: 0 0 2rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.bt-tile-link {
+  margin-top: auto;
+  padding-top: 1.6rem;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.bt-tile-arrow {
+  position: absolute;
+  top: 2.4rem;
+  right: 2.6rem;
+  color: $bt-violet;
+  font-size: 2rem;
+  transition: transform 0.2s ease;
+
+  .bt-tile:hover & {
+    transform: translateX(4px);
+  }
+}
+
+.bt-badge {
+  align-self: flex-start;
+  margin-bottom: 1.6rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.bt-badge-soft {
+  background: rgba(91, 75, 255, 0.1);
+  color: $bt-violet;
+}
+
+.bt-mega {
+  margin: auto 0 1.2rem;
+  color: #fff;
+  font-size: 9rem;
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+
+  @include respond-min(1050px) {
+    font-size: 14rem;
+  }
+}
+
+.bt-mega-ink {
+  margin: 0 0 1.2rem;
+  background: linear-gradient(135deg, $bt-violet, $bt-pink);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 7.2rem;
+
+  @include respond-min(1050px) {
+    font-size: 7.2rem;
+  }
+}
+
+.bt-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 2rem;
+  border-radius: 16px;
+  background: rgba(91, 75, 255, 0.1);
+  color: $bt-violet;
+}
+
+// Feature tiles
+
+.bt-tile-feature {
+  min-height: 360px;
+  border: 0;
+  background:
+    radial-gradient(80% 60% at 100% 0%, rgba(255, 92, 138, 0.55), transparent 70%),
+    radial-gradient(70% 60% at 0% 100%, rgba(44, 213, 196, 0.45), transparent 70%),
+    linear-gradient(135deg, #3b2bd9, $bt-violet);
+  color: #fff;
+
+  .bt-tile-text {
+    max-width: 380px;
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 1.8rem;
+  }
+}
+
+.bt-tile-feature-alt {
+  border: 0;
+  background:
+    radial-gradient(70% 80% at 100% 100%, rgba(91, 75, 255, 0.6), transparent 70%),
+    $bt-ink;
+
+  h3 {
+    color: #fff;
+  }
+
+  .bt-tile-text {
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .bt-icon {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+}
+
+.bt-feature-word {
+  margin: auto 0 0;
+  padding-top: 3rem;
+  background: linear-gradient(90deg, #fff, #b9b0ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 4.8rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+
+  @include respond-min(1050px) {
+    font-size: 6.4rem;
+  }
+}
+
+.bt-tile-dark {
+  border: 0;
+  background: $bt-ink;
+  color: #fff;
+
+  h3 {
+    color: #fff;
+  }
+
+  .bt-tile-text {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .bt-icon {
+    background: rgba(255, 255, 255, 0.12);
+    color: $bt-teal;
+  }
+
+  .bt-tile-arrow {
+    color: $bt-teal;
+  }
+
+  &:hover {
+    color: #fff !important;
+  }
+}
+
+.bt-tile-release h3 {
+  padding-right: 2rem;
+}
+
+// Chart tile
+
+.bt-charts {
+  display: grid;
+  gap: 2.4rem;
+
+  @include respond-min(600px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.bt-chart {
+  width: 100%;
+  margin: 0;
+  border-collapse: separate;
+  border-spacing: 0 0.8rem;
+
+  caption {
+    margin-bottom: 0.4rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: left;
+
+    span {
+      display: block;
+      color: $bt-muted;
+      font-size: 1.25rem;
+      font-weight: 400;
+    }
+  }
+
+
+  th,
+  td {
+    padding: 0;
+    border: 0;
+    background: none;
+    vertical-align: middle;
+  }
+
+  th {
+    width: 3.6rem;
+    color: $bt-muted;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  tr.is-emphasis th {
+    color: $bt-ink;
+  }
+}
+
+// Outranks the sitewide `tr:nth-child(even)` zebra striping.
+.bt .bt-chart tr {
+  background: none;
+}
+
+.bt-bar-track {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding-right: 6.4rem;
+}
+
+// Square at the baseline, 4px rounded at the data end.
+.bt-bar {
+  flex: 0 0 auto;
+  width: calc(100% * var(--fraction, 1));
+  height: 18px;
+  border-radius: 0 4px 4px 0;
+  background: $bt-bar-muted;
+  transform-origin: left center;
+
+  .is-emphasis & {
+    background: $bt-bar-accent;
+  }
+}
+
+.bt-bar-value {
+  flex: 0 0 auto;
+  margin-right: -6.4rem;
+  color: $bt-muted;
+  font-size: 1.3rem;
+  font-weight: 700;
+  white-space: nowrap;
+
+  .is-emphasis & {
+    color: $bt-ink;
+  }
+}
+
+.wv-motion .bt-tile .bt-bar {
+  transform: scaleX(0);
+  transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s;
+}
+
+.wv-motion .bt-tile.is-visible .bt-bar {
+  transform: scaleX(1);
+}
+
+// Logo tile
+
+.bt-tile-logos {
+  gap: 2.4rem;
+
+  @include respond-min(1050px) {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.bt-logos-head {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2rem;
+
+  @include respond-min(1050px) {
+    width: 300px;
+  }
+
+  .bt-mega {
+    margin: 0;
+  }
+
+  h3 {
+    margin: 0 0 0.4rem;
+  }
+
+  .bt-tile-link {
+    padding-top: 0;
+  }
+}
+
+.bt-logo-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.6rem 3rem;
+}
+
+.bt-logo img {
+  display: block;
+  width: auto;
+  max-width: 170px;
+  height: calc(var(--logo-height, 24px) * 0.8);
+  object-fit: contain;
+}
+
+// Compatibility and CTA tiles
+
+.bt-checks {
+  display: grid;
+  gap: 1.2rem 2.4rem;
+  margin: 2.4rem 0 0;
+  padding: 0;
+  list-style: none;
+
+  @include respond-min(700px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  li {
+    position: relative;
+    padding-left: 3.4rem;
+    color: $bt-muted;
+    font-size: 1.45rem;
+    line-height: 1.5;
+  }
+
+  strong {
+    display: block;
+    color: $bt-ink;
+    font-size: 1.55rem;
+  }
+}
+
+.bt-check {
+  position: absolute;
+  top: 0.1rem;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(44, 213, 196, 0.2);
+  color: #138a7e;
+}
+
+.bt-tile-cta {
+  gap: 1rem;
+  justify-content: center;
+  border: 0;
+  background:
+    radial-gradient(90% 70% at 100% 0%, rgba(255, 92, 138, 0.5), transparent 70%),
+    linear-gradient(160deg, #3b2bd9, $bt-ink);
+
+  h3 {
+    margin-bottom: 1.4rem;
+    color: #fff;
+  }
+}
+
+.bt .bt-btn {
+  display: block;
+  padding: 1.2rem 1.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 14px;
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+}
+
+.bt .bt-btn-primary {
+  border-color: #fff;
+  background: #fff;
+  color: $bt-ink;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.85);
+    color: $bt-ink;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bt-tile,
+  .bt .bt-chip {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

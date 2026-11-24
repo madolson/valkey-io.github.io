@@ -1,0 +1,135 @@
+{# "Bento" design: bright tiles of different sizes, one grid per argument. #}
+{% set perf = extra.performance %}
+{% set neutral = extra.neutrality %}
+{% set compat = extra.compatibility %}
+{% set big_stat = extra.hero.stats[0] %}
+
+<div class="bt">
+  <section class="bt-hero">
+    <div class="bt-inner">
+      <p class="bt-kicker">{{ extra.hero.kicker }}</p>
+      <h1>Two reasons to choose&nbsp;Valkey.</h1>
+      <p class="bt-subtitle">{{ extra.hero.subtitle }}</p>
+      <div class="bt-chips">
+        <a class="bt-chip" href="#bento-performance"><span>1</span>{{ perf.kicker }}</a>
+        <a class="bt-chip" href="#bento-neutrality"><span>2</span>{{ neutral.kicker }}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bt-group" id="bento-performance">
+    <div class="bt-inner">
+      <h2 class="bt-group-title"><span>1</span>{{ perf.title }}</h2>
+      <p class="bt-group-lead">{{ perf.lead }}</p>
+      <div class="bt-grid bt-grid-performance">
+        <div class="bt-tile bt-tile-feature bt-span-2 bt-rows-2 wv-reveal">
+          <span class="bt-badge">Valkey 9.0</span>
+          <p class="bt-mega">{{ big_stat.value }}</p>
+          <p class="bt-tile-text">{{ big_stat.label }}</p>
+        </div>
+
+        <div class="bt-tile bt-span-2 wv-reveal">
+          <p class="bt-tile-label">{{ perf.chart_title }}</p>
+          <div class="bt-charts">
+            {% for metric in perf.metrics %}
+            {% set_global max_value = 0 %}
+            {% for row in metric.rows %}{% if row.value > max_value %}{% set_global max_value = row.value %}{% endif %}{% endfor %}
+            <table class="bt-chart">
+              <caption>{{ metric.title }} <span>{{ metric.unit }}</span></caption>
+              {% for row in metric.rows %}
+              <tr{% if row.emphasis %} class="is-emphasis"{% endif %}>
+                <th scope="row">{{ row.label | replace(from="Valkey ", to="") }}</th>
+                <td>
+                  <span class="bt-bar-track">
+                    <span class="bt-bar" style="--fraction: {{ row.value / max_value }}"></span>
+                    <span class="bt-bar-value">{{ row.display }}</span>
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            </table>
+            {% endfor %}
+          </div>
+          <a class="bt-tile-link" href="{{ get_url(path=perf.chart_source) }}">Benchmark details</a>
+        </div>
+
+        {% for release in perf.releases %}
+        <a class="bt-tile bt-tile-release wv-reveal" href="{{ get_url(path=release.post) }}">
+          <span class="bt-badge bt-badge-soft">Valkey {{ release.version }}</span>
+          <h3>{{ release.headline }}</h3>
+          <p class="bt-tile-text">{{ release.points | first }}</p>
+          <span class="bt-tile-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+        {% endfor %}
+
+        <a class="bt-tile bt-tile-dark wv-reveal" href="/performance/">
+          <span class="bt-icon">{{< wv_icon name="bolt" />}}</span>
+          <h3>Performance dashboards</h3>
+          <p class="bt-tile-text">Throughput across versions, tracked over time.</p>
+          <span class="bt-tile-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bt-group" id="bento-neutrality">
+    <div class="bt-inner">
+      <h2 class="bt-group-title"><span>2</span>{{ neutral.title }}</h2>
+      <p class="bt-group-lead">{{ neutral.lead }}</p>
+      <div class="bt-grid bt-grid-neutrality">
+        {% for pillar in neutral.pillars %}
+        <div class="bt-tile wv-reveal{% if loop.first %} bt-tile-feature-alt bt-span-2{% elif loop.last %} bt-span-2{% endif %}">
+          {% if pillar.figure %}
+          <p class="bt-mega bt-mega-ink">{{ pillar.figure }}</p>
+          {% else %}
+          <span class="bt-icon">{{< wv_icon name={pillar.icon} />}}</span>
+          {% endif %}
+          <h3>{{ pillar.title }}</h3>
+          <p class="bt-tile-text">{{ pillar.description }}</p>
+          {% if pillar.link %}<a class="bt-tile-link" href="{{ pillar.link }}" target="_blank" rel="noopener">{{ pillar.link_text }}</a>{% endif %}
+          {% if loop.first %}<p class="bt-feature-word" aria-hidden="true">{{ pillar.term_value }}</p>{% endif %}
+        </div>
+        {% endfor %}
+
+        {% if participants and participants | length > 0 %}
+        <div class="bt-tile bt-span-4 bt-tile-logos wv-reveal">
+          <div class="bt-logos-head">
+            <p class="bt-mega bt-mega-ink">{{ participants | length }}</p>
+            <div>
+              <h3>Organizations build Valkey together</h3>
+              <a class="bt-tile-link" href="/participants/">Meet the participants</a>
+            </div>
+          </div>
+          <div class="bt-logo-cloud">
+            {%- for participant in participants -%}
+              {%- if participant.image and participant.image.path -%}
+              {%- set src = participant.image.strip | default(value=participant.image.path) -%}
+              {%- set height %}{{< logo_height src={src} />}}{% endset -%}
+              <span class="bt-logo" style="--logo-height: {{ height | trim }}px"><img src="{{ src }}" alt="{{ participant.image.alt | default(value=participant.name ~ ' logo') }}" loading="lazy" decoding="async"></span>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="bt-tile bt-span-3 wv-reveal">
+          <h3 class="bt-tile-heading">{{ compat.title }}</h3>
+          <p class="bt-tile-text">{{ compat.lead }}</p>
+          <ul class="bt-checks">
+            {% for check in compat.checks %}
+            <li><span class="bt-check">{{< wv_icon name="check" size={14} />}}</span><strong>{{ check.title }}</strong> {{ check.description }}</li>
+            {% endfor %}
+          </ul>
+          <a class="bt-tile-link" href="{{ compat.button_url }}">{{ compat.button_text }}</a>
+        </div>
+
+        <div class="bt-tile bt-tile-cta wv-reveal">
+          <h3 class="bt-tile-heading">{{ extra.cta.title }}</h3>
+          {% for link in extra.cta.links %}
+          <a class="bt-btn{% if loop.first %} bt-btn-primary{% endif %}" href="{{ link.url }}">{{ link.text }}</a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

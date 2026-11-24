@@ -1,0 +1,174 @@
+{# "Midnight" design: dark gradient hero, glass stat tiles, release timeline. #}
+{# Hero #}
+<section class="wv-hero">
+  <div class="wv-hero-inner">
+    <p class="wv-kicker">{{ extra.hero.kicker }}</p>
+    <h1 class="wv-hero-title">
+      <span>{{ extra.hero.headline }}</span>
+      <span class="wv-gradient-text">{{ extra.hero.headline_accent }}</span>
+    </h1>
+    <p class="wv-hero-subtitle">{{ extra.hero.subtitle }}</p>
+    <div class="wv-actions">
+      <a class="wv-btn wv-btn-primary" href="/download/">Get Valkey</a>
+      <a class="wv-btn wv-btn-ghost" href="#midnight-performance">See the numbers</a>
+    </div>
+
+    <ul class="wv-stats">
+      {% for stat in extra.hero.stats %}
+      <li class="wv-stat">
+        <span class="wv-stat-value">{{ stat.value }}</span>
+        <span class="wv-stat-label">{{ stat.label }}</span>
+      </li>
+      {% endfor %}
+      <li class="wv-stat">
+        <span class="wv-stat-value">{{ participants | length }}</span>
+        <span class="wv-stat-label">participating organizations</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+{# Performance #}
+{% set perf = extra.performance %}
+<section class="wv-performance" id="midnight-performance">
+  <div class="wv-inner">
+    <header class="wv-section-head wv-reveal">
+      <p class="wv-kicker">{{ perf.kicker }}</p>
+      <h2>{{ perf.title }}</h2>
+      <p class="wv-lead">{{ perf.lead }}</p>
+    </header>
+
+    <div class="wv-chart-card wv-reveal">
+      <div class="wv-chart-card-head">
+        <h3>{{ perf.chart_title }}</h3>
+        <a href="{{ get_url(path=perf.chart_source) }}">Benchmark details</a>
+      </div>
+      <div class="wv-charts">
+        {% for metric in perf.metrics %}
+        {% set_global max_value = 0 %}
+        {% for row in metric.rows %}{% if row.value > max_value %}{% set_global max_value = row.value %}{% endif %}{% endfor %}
+        <figure class="wv-chart">
+          <figcaption>
+            <span class="wv-chart-title">{{ metric.title }}</span>
+            <span class="wv-chart-unit">{{ metric.unit }}</span>
+          </figcaption>
+          <table>
+            <caption class="wv-visually-hidden">{{ metric.title }}, {{ metric.unit }}</caption>
+            {% for row in metric.rows %}
+            <tr{% if row.emphasis %} class="is-emphasis"{% endif %}>
+              <th scope="row">{{ row.label }}</th>
+              <td>
+                <span class="wv-bar-track">
+                  <span class="wv-bar" style="--fraction: {{ row.value / max_value }}"></span>
+                  <span class="wv-bar-value">{{ row.display }}</span>
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+          </table>
+        </figure>
+        {% endfor %}
+      </div>
+    </div>
+
+    <ol class="wv-timeline">
+      {% for release in perf.releases %}
+      <li class="wv-release wv-reveal" style="--delay: {{ loop.index0 * 80 }}ms">
+        <span class="wv-release-dot" aria-hidden="true"></span>
+        <p class="wv-release-version">Valkey {{ release.version }}</p>
+        <h3>{{ release.headline }}</h3>
+        <ul>
+          {% for point in release.points %}
+          <li>{{ point }}</li>
+          {% endfor %}
+        </ul>
+        <a class="wv-release-link" href="{{ get_url(path=release.post) }}">Read the post<span class="wv-visually-hidden"> about Valkey {{ release.version }}</span></a>
+      </li>
+      {% endfor %}
+    </ol>
+
+    <p class="wv-performance-more wv-reveal">
+      <a href="/performance/">Explore the performance dashboards</a>
+    </p>
+  </div>
+</section>
+
+{# Vendor neutrality #}
+{% set neutral = extra.neutrality %}
+<section class="wv-neutrality">
+  <div class="wv-inner">
+    <header class="wv-section-head wv-reveal">
+      <p class="wv-kicker">{{ neutral.kicker }}</p>
+      <h2>{{ neutral.title }}</h2>
+      <p class="wv-lead">{{ neutral.lead }}</p>
+    </header>
+
+    <div class="wv-pillars">
+      {% for pillar in neutral.pillars %}
+      <article class="wv-pillar wv-reveal" style="--delay: {{ loop.index0 % 3 * 80 }}ms">
+        <span class="wv-pillar-icon">{{< wv_icon name={pillar.icon} />}}</span>
+        <h3>{{ pillar.title }}</h3>
+        <p>{{ pillar.description }}</p>
+        {% if pillar.link %}
+        <a class="wv-pillar-link" href="{{ pillar.link }}" target="_blank" rel="noopener">{{ pillar.link_text }}</a>
+        {% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# Participant logo strip; markup and styles shared with the community page #}
+  {% if participants and participants | length > 0 %}
+  <div class="wv-logos wv-reveal">
+    <div class="community-logo-band-inner">
+      <div class="community-logo-band-head">
+        <a class="community-home-kicker" href="/participants/">Built by {{ participants | length }} organizations</a>
+        <button class="community-logo-pause" type="button" id="communityLogoPause" aria-pressed="false" aria-label="Pause the scrolling participant logos">Pause</button>
+      </div>
+      <div class="community-logo-row" role="group" aria-label="Valkey participant organizations">
+        <div class="community-logo-track" id="communityLogoTrack">
+          {{< logo_set participants={participants} />}}
+          {{< logo_set participants={participants} duplicate={true} />}}
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</section>
+
+{# Compatibility #}
+{% set compat = extra.compatibility %}
+<section class="wv-compat">
+  <div class="wv-inner wv-compat-inner">
+    <div class="wv-compat-copy wv-reveal">
+      <h2>{{ compat.title }}</h2>
+      <p class="wv-lead">{{ compat.lead }}</p>
+      <a class="wv-btn wv-btn-dark" href="{{ compat.button_url }}">{{ compat.button_text }}</a>
+    </div>
+    <ul class="wv-checks wv-reveal">
+      {% for check in compat.checks %}
+      <li>
+        <span class="wv-check-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+        </span>
+        <div>
+          <h3>{{ check.title }}</h3>
+          <p>{{ check.description }}</p>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{# Call to action #}
+<section class="wv-cta">
+  <div class="wv-inner wv-reveal">
+    <h2>{{ extra.cta.title }}</h2>
+    <div class="wv-actions">
+      {% for link in extra.cta.links %}
+      <a class="wv-btn {% if loop.first %}wv-btn-primary{% else %}wv-btn-ghost{% endif %}" href="{{ link.url }}">{{ link.text }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>

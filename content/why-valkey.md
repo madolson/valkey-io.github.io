@@ -6,6 +6,9 @@ template = "why-valkey.html"
 [extra]
 body_class = "why-valkey-page"
 
+# Every design on the page reads the copy below. The pillar fields term_key,
+# term_value and figure are only used by some designs.
+
 [extra.hero]
 kicker = "Why Valkey"
 headline = "Fast by design."
@@ -101,16 +104,23 @@ lead = "Valkey belongs to the Linux Foundation and the people who build it. The 
 
 [[extra.neutrality.pillars]]
 icon = "foundation"
+term_key = "steward"
+term_value = "Linux Foundation"
 title = "Linux Foundation stewardship"
 description = "The Valkey name and logo are trademarks of LF Projects, not of any company that contributes code."
 
 [[extra.neutrality.pillars]]
 icon = "license"
+term_key = "license"
+term_value = "BSD-3-Clause"
 title = "BSD-3-Clause, forever"
 description = "Run it, embed it, or sell it as a managed service. There are no source-available terms and no field-of-use limits."
 
 [[extra.neutrality.pillars]]
 icon = "balance"
+term_key = "max-tsc-share"
+term_value = "1/3 per organization"
+figure = "1/3"
 title = "A one-third cap"
 description = "No organization may hold more than a third of the Technical Steering Committee seats. If a hire or an acquisition breaks the cap, the TSC must restore it."
 link = "https://github.com/valkey-io/valkey/blob/unstable/GOVERNANCE.md"
@@ -118,16 +128,22 @@ link_text = "Read the governance"
 
 [[extra.neutrality.pillars]]
 icon = "signature"
+term_key = "cla"
+term_value = "none"
 title = "No CLA"
 description = "Contributors keep their copyright and sign off each commit with the Developer Certificate of Origin. No company collects the rights to relicense."
 
 [[extra.neutrality.pillars]]
 icon = "vote"
+term_key = "major-decisions"
+term_value = "public TSC vote"
 title = "Decisions in the open"
 description = "New APIs, data structure changes, and compatibility breaks are major decisions, voted on by the TSC in public GitHub threads."
 
 [[extra.neutrality.pillars]]
 icon = "cloud"
+term_key = "runs-on"
+term_value = "anywhere"
 title = "Run it anywhere"
 description = "The same server runs on a laptop, in Kubernetes, or as a managed service from many providers. Moving between them doesn't mean rewriting your app."
 
