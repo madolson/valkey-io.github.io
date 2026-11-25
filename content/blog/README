@@ -44,16 +44,17 @@ featured_image = "/assets/media/featured/random-01.webp"
 The `blog_type` taxonomy is defined in `config.toml`. Current values:
 
 - `Technical Deep Dive` — In-depth technical content
-- `Announcements` — Releases, new features, project news
+- `Announcements` — Releases and project news
 - `Community Highlight` — Community stories, year-in-review, ecosystem
 - `How-to` — Tutorials and guides
 - `Events` — Event recaps and announcements
+- `Feature Spotlight` — What a feature does, when to use it, and how to get started
 
 To add a new type, add a post using it and update `sass/_valkey.scss` (badge color) and this README.
 
 ## Review process
 
-PRs that add a new blog post with `blog_type` of **Technical Deep Dive** or **Announcements** will automatically have the `@valkey-io/technical-blog-reviewers` team requested as an additional reviewer. All content changes are reviewed by `@valkey-io/content-creators` via CODEOWNERS.
+PRs that add a new blog post with `blog_type` of **Technical Deep Dive**, **Announcements**, or **Feature Spotlight** will automatically have the `@valkey-io/technical-blog-reviewers` team requested as an additional reviewer. All content changes are reviewed by `@valkey-io/content-creators` via CODEOWNERS.
 
 All commits must be signed off per the [DCO](https://developercertificate.org/) using `git commit --signoff`.
 

@@ -5,7 +5,7 @@ date = 2026-09-10
 authors = ["bblan0803", "nassery318"]
 
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["Feature Spotlight"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/key-size-distribution.webp"

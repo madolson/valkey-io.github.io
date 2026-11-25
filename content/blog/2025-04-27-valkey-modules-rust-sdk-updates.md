@@ -6,7 +6,7 @@ authors= ["dmitrypol"]
 categories= "modules"
 
 [taxonomies]
-blog_type = ["How-to"]
+blog_type = ["Feature Spotlight"]
 [extra]
 categories= "performance"
 featured = false

@@ -44,7 +44,7 @@ jobs:
               return;
             }
 
-            const technicalTypes = ['Technical Deep Dive', 'Announcements'];
+            const technicalTypes = ['Technical Deep Dive', 'Announcements', 'Feature Spotlight'];
             let needsTechnical = false;
 
             for (const file of newBlogFiles) {
