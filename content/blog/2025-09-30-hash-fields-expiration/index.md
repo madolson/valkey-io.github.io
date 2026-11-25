@@ -11,7 +11,7 @@ description= """
     """
 authors= ["ranshid"]
 [taxonomies]
-blog_type = ["Engineering"]
+blog_type = ["Under the Hood"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-08.webp"

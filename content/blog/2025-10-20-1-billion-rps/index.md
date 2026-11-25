@@ -4,7 +4,7 @@ date= 2025-10-20 00:00:00
 description= "Learn about the internal workings of cluster mode and the improvements which helped to scale to 1 Billion RPS with the latest Valkey 9.0 release"
 authors= ["hpatro", "maheshcherukumilli", "sarthakaggarwal97", "sungming2"]
 [taxonomies]
-blog_type = ["Engineering"]
+blog_type = ["Under the Hood"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"

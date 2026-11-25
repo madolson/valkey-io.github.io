@@ -4,7 +4,7 @@ date = 2026-11-16
 description = "How Valkey 9.2 replaces the skiplist used by large sorted sets with a cache-friendly B+ tree, reducing memory overhead while improving several ordered-set operations." 
 authors =  ["rainvalentine","dragosandriciuc"]
 [taxonomies]
-blog_type = ["Engineering"]
+blog_type = ["Under the Hood"]
 +++
 
 A [sorted set](https://valkey.io/topics/sorted-sets/) can spend more memory describing how its elements are ordered than storing the elements themselves.
