@@ -5,7 +5,7 @@ description = "Your GPUs spend part of every request re-reading context they alr
 authors = ["omerrubi", "cnuthalapati", "jaduffy"]
 
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["How-to"]
 
 [extra]
 featured = false

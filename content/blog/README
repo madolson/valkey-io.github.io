@@ -43,7 +43,7 @@ featured_image = "/assets/media/featured/random-01.webp"
 
 The `blog_type` taxonomy is defined in `config.toml`. Current values:
 
-- `Technical Deep Dive` — In-depth technical content
+- `Technical Deep Dive` — How Valkey works and why, with benchmarks, for contributors and engineers interested in system design
 - `Announcements` — Releases and project news
 - `Community Highlight` — Community stories, year-in-review, ecosystem
 - `How-to` — Tutorials and guides

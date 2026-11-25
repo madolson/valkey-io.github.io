@@ -5,7 +5,7 @@ date = 2026-09-17
 authors = ["madolson", "murphyjacob4", "hpatro"]
 
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["Community Highlight"]
 
 [extra]
 featured = true

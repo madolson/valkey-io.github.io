@@ -5,7 +5,7 @@ description = "A horizontal tour of the AI inference stack - semantic caching, K
 authors = ["kivanow"]
 
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["Feature Spotlight"]
 [extra]
 featured = false
 featured_image = "/assets/media/featured/random-02.webp"
