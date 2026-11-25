@@ -11,7 +11,7 @@ description= """
     """
 authors= ["ranshid"]
 [taxonomies]
-blog_type = ["System Engineering"]
+blog_type = ["Engineering"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-08.webp"

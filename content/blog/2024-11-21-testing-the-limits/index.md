@@ -4,7 +4,7 @@ description = "While most people won't go to production on a Raspberry Pi, we'll
 date= 2024-11-21 01:01:01
 authors= ["dtaivpp"]
 [taxonomies]
-blog_type = ["System Engineering"]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = false
 featured_image = "/assets/media/featured/random-07.webp"

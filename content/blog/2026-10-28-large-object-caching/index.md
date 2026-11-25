@@ -5,7 +5,7 @@ description = "A few 10MB requests per second wrecked the tail latency of a 100K
 authors = ["khawaja"]
 
 [taxonomies]
-blog_type = ["System Engineering"]
+blog_type = ["Engineering"]
 [extra]
 featured = false
 featured_image = "/assets/media/featured/random-05.webp"
