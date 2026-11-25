@@ -4,7 +4,7 @@ date = 2026-08-13
 description = "With Valkey 9.1, per-key memory overhead is cut by up to 44% for strings and up to 8.5 bytes per sorted set member, without changing a single command or configuration."
 authors = ["dragosandriciuc","rainvalentine"]
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["Under the Hood"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-07.webp"

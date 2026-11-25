@@ -5,7 +5,7 @@ date= 2025-09-25 00:00:00
 authors= [ "kyledvs"]
 
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["Feature Spotlight"]
 [extra]
 featured = true
 featured_image = "/blog/numbered-databases/images/move-db.drawio.png"

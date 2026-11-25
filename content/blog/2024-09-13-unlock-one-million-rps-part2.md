@@ -14,7 +14,7 @@ description= "Maximize the performance of your hardware with memory access amort
 # Each author corresponds to a biography file (more info later in this document)
 authors= [ "dantouitou", "uriyagelnik"]
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["Under the Hood"]
 [extra]
 featured = false
 featured_image = "/assets/media/featured/random-06.webp"

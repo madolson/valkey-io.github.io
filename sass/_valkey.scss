@@ -1181,6 +1181,8 @@ aside {
   &[data-type="How-to"] { background-color: $purple-200; }
   &[data-type="Announcements"] { background-color: $yellow-100; }
   &[data-type="Events"] { background-color: $red-100; }
+  &[data-type="Feature Spotlight"] { background-color: $blue-dk-300; }
+  &[data-type="Under the Hood"] { background-color: $blue-200; }
 }
 
 .blog-inner {

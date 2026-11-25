@@ -5,7 +5,7 @@ description= "Performance Optimization Methodology for Valkey"
 authors= ["zhulipeng", "guowangy"]
 
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["Under the Hood"]
 [extra]
 categories= "performance"
 featured = true
