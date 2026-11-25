@@ -4,7 +4,7 @@ date = 2026-04-28
 description = "A release candidate just came out for Valkey. You’ve likely heard of the term before but do you know what it really means?"
 authors = ["kyledvs"]
 [taxonomies]
-blog_type = ["Announcements"]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-05.webp"

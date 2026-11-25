@@ -4,7 +4,7 @@ description = "This blog dives into how agent memory works and details an implem
 date= 2026-05-05
 authors= ["cnuthalapati", "allenss", "mbhagdev"]
 [taxonomies]
-blog_type = ["How-to"]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-08.webp"

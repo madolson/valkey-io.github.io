@@ -6,7 +6,7 @@ The latest Valkey 8.1 release introduces a redesigned hash table and other opti
     """
 authors= ["khawaja"]
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["System Engineering"]
 [extra]
 featured = true
 featured_image = "/blog/50-million-zsets/hero-used-memory-vs-inserts-new.png"

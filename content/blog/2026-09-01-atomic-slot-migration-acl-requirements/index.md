@@ -5,7 +5,7 @@ description = "Explains the ACL permissions required by Atomic Slot Migration an
 authors = ["hieun"]
 
 [taxonomies]
-blog_type = ["How-to"]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
 featured_image = "/blog/atomic-slot-migration-acl-requirements/images/hero.png"

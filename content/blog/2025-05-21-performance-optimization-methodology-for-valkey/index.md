@@ -5,7 +5,7 @@ description= "Performance Optimization Methodology for Valkey"
 authors= ["zhulipeng", "guowangy"]
 
 [taxonomies]
-blog_type = ["Technical Deep Dive"]
+blog_type = ["System Engineering"]
 [extra]
 categories= "performance"
 featured = true

@@ -4,7 +4,7 @@ date = 2026-07-21
 description = "If you’ve used Valkey for very long you’re probably well aware of the different data types, however what lies under the surface of these types could be the missing piece of your cost optimization strategy."
 authors = ["kyledvs"]
 [taxonomies]
-blog_type = ["Feature Spotlight"]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-05.webp"

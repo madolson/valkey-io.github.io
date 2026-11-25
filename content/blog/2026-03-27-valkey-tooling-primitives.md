@@ -5,7 +5,7 @@ description = "Valkey ships powerful operational primitives like COMMANDLOG, SLO
 authors = ["kivanow"]
 
 [taxonomies]
-blog_type = ["Community Highlight"]
+blog_type = ["Technical Deep Dive"]
 [extra]
 featured = true
 featured_image = "/assets/media/featured/random-04.webp"
