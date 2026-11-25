@@ -8,7 +8,30 @@
 #
 # This works for any page, including docs topics and commands, whose content comes from other
 # repositories. If a page moves, update its url here.
+#
+# A keyword doesn't have to appear on the page, so a boost also works as an alias: other names for
+# the page's subject, such as Redis-era terms.
 
 [[boost]]
 url = "/topics/migration/"
 keywords = ["migration"]
+
+[[boost]]
+url = "/topics/replication/"
+keywords = ["master", "slave"]
+
+[[boost]]
+url = "/topics/sorted-sets/"
+keywords = ["zset"]
+
+[[boost]]
+url = "/topics/geospatial/"
+keywords = ["geo"]
+
+[[boost]]
+url = "/topics/valkey.conf/"
+keywords = ["redis.conf"]
+
+[[boost]]
+url = "/topics/cli/"
+keywords = ["redis-cli"]

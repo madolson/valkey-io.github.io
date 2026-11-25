@@ -124,3 +124,33 @@ top = 1
 query = "migration"
 url = "/topics/migration/"
 top = 1
+
+[[search]]
+query = "master"
+url = "/topics/replication/"
+top = 1
+
+[[search]]
+query = "slave"
+url = "/topics/replication/"
+top = 1
+
+[[search]]
+query = "zset"
+url = "/topics/sorted-sets/"
+top = 1
+
+[[search]]
+query = "geo"
+url = "/topics/geospatial/"
+top = 1
+
+[[search]]
+query = "redis.conf"
+url = "/topics/valkey.conf/"
+top = 1
+
+[[search]]
+query = "redis-cli"
+url = "/topics/cli/"
+top = 1
