@@ -1,0 +1,587 @@
+// Why Valkey, "Editorial" design (templates/why-valkey/editorial.html)
+
+$ed-paper: #faf8f4;
+$ed-ink: #16181d;
+$ed-muted: #5c5a55;
+$ed-rule: #d9d4c7;
+$ed-accent: #2546d0;
+// Chart dots, validated against $ed-paper with the dataviz palette checker.
+$ed-dot-muted: #858074;
+$ed-dot-accent: $ed-accent;
+
+.ed {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 2.4rem 4rem;
+  background: $ed-paper;
+  color: $ed-ink;
+  @include sans-serif;
+
+  h1, h2, h3 {
+    @include serif;
+    color: $ed-ink;
+    font-weight: 400;
+  }
+
+  a {
+    color: $ed-accent;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+
+    &:hover {
+      color: $ed-ink;
+    }
+  }
+}
+
+.wv-editorial {
+  background: $ed-paper;
+}
+
+// Masthead
+
+.ed-masthead {
+  padding: 7rem 0 5rem;
+  border-bottom: 3px double $ed-ink;
+
+  h1 {
+    max-width: 980px;
+    margin: 0 0 2.8rem;
+    font-size: 4.6rem;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+
+    @include respond-min(768px) {
+      font-size: 7.8rem;
+    }
+  }
+}
+
+.ed-eyebrow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.6rem;
+  margin: 0 0 3rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid $ed-ink;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+
+  span + span::before {
+    content: "/";
+    margin-right: 1.6rem;
+    color: $ed-rule;
+  }
+}
+
+.ed-dek {
+  max-width: 720px;
+  margin: 0 0 5rem;
+  color: $ed-muted;
+  font-size: 2rem;
+  line-height: 1.6;
+  @include serif;
+  font-style: italic;
+}
+
+.ed-figures {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid $ed-rule;
+
+  @include respond-min(900px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  > div {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    padding: 2.4rem 2rem 0 0;
+
+    @include respond-min(900px) {
+      & + div {
+        padding-left: 2.4rem;
+        border-left: 1px solid $ed-rule;
+      }
+    }
+  }
+
+  dd {
+    margin: 0 0 0.8rem;
+    @include serif;
+    font-size: 4.8rem;
+    line-height: 1;
+
+    @include respond-min(768px) {
+      font-size: 5.6rem;
+    }
+  }
+
+  dt {
+    color: $ed-muted;
+    font-size: 1.4rem;
+    line-height: 1.4;
+  }
+}
+
+// Parts
+
+.ed-part {
+  display: grid;
+  gap: 2rem;
+  padding: 7rem 0;
+  border-bottom: 1px solid $ed-rule;
+
+  @include respond-min(900px) {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 4rem;
+  }
+
+  h2 {
+    margin: 0 0 2rem;
+    font-size: 4rem;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+
+    @include respond-min(768px) {
+      font-size: 5.6rem;
+    }
+  }
+}
+
+.ed-part-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+
+  @include respond-min(900px) {
+    position: sticky;
+    top: 8rem;
+    align-self: start;
+  }
+}
+
+.ed-numeral {
+  @include serif;
+  color: $ed-accent;
+  font-size: 6.4rem;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.ed-lede {
+  max-width: 760px;
+  margin: 0 0 5rem;
+  font-size: 2rem;
+  line-height: 1.7;
+
+  &::first-letter {
+    float: left;
+    margin: 0.4rem 0.6rem 0 0;
+    @include serif;
+    color: $ed-accent;
+    font-size: 6.6rem;
+    line-height: 0.85;
+  }
+}
+
+// Dumbbell chart
+
+.ed-chart {
+  margin: 0 0 6rem;
+  padding: 3rem 0 1rem;
+  border-top: 1px solid $ed-ink;
+
+  figcaption {
+    margin-bottom: 3rem;
+    color: $ed-muted;
+    font-size: 1.4rem;
+  }
+}
+
+.ed-dumbbell {
+  margin-bottom: 4.4rem;
+}
+
+.ed-dumbbell-title {
+  margin: 0 0 4.4rem;
+  @include serif;
+  font-size: 2.2rem;
+
+  span {
+    margin-left: 0.8rem;
+    color: $ed-muted;
+    @include sans-serif;
+    font-size: 1.4rem;
+  }
+}
+
+.ed-dumbbell-track {
+  position: relative;
+  height: 12px;
+  margin: 0 1rem;
+  // Hairline axis from zero
+  background: linear-gradient($ed-rule, $ed-rule) left center / 100% 1px no-repeat;
+}
+
+.ed-dumbbell-line {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  height: 2px;
+  margin-top: -1px;
+  background: $ed-ink;
+}
+
+.ed-dot {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border: 2px solid $ed-paper;
+  border-radius: 50%;
+  background: $ed-dot-muted;
+
+  &.is-emphasis {
+    background: $ed-dot-accent;
+  }
+}
+
+.ed-dot-label {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: $ed-muted;
+  font-size: 1.3rem;
+  white-space: nowrap;
+
+  strong {
+    margin-left: 0.4rem;
+    color: $ed-ink;
+    font-weight: 700;
+  }
+
+  .is-end & {
+    right: -4px;
+    left: auto;
+    transform: none;
+  }
+}
+
+// Release ledger
+
+.ed-ledger {
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid $ed-ink;
+  list-style: none;
+
+  li {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    gap: 0.4rem 2rem;
+    align-items: baseline;
+    padding: 2.2rem 0;
+    border-bottom: 1px solid $ed-rule;
+
+    @include respond-min(900px) {
+      grid-template-columns: 8rem 22rem minmax(0, 1fr) auto;
+    }
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 2.2rem;
+  }
+
+  p {
+    grid-column: 2;
+    margin: 0;
+    color: $ed-muted;
+    font-size: 1.55rem;
+    line-height: 1.55;
+
+    @include respond-min(900px) {
+      grid-column: auto;
+    }
+  }
+
+  a {
+    grid-column: 2;
+    font-size: 1.4rem;
+    white-space: nowrap;
+
+    @include respond-min(900px) {
+      grid-column: auto;
+    }
+  }
+}
+
+.ed-ledger-version {
+  grid-row: span 3;
+  @include serif;
+  color: $ed-accent;
+  font-size: 3rem;
+  line-height: 1;
+
+  @include respond-min(900px) {
+    grid-row: auto;
+  }
+}
+
+.ed-more {
+  margin: 2.4rem 0 0;
+  font-size: 1.6rem;
+}
+
+// Pull quote
+
+.ed-pullquote {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 8rem 0;
+  border: 0;
+  text-align: center;
+
+  p {
+    margin: 0 0 2.4rem;
+    @include serif;
+    font-size: 2.8rem;
+    font-style: italic;
+    line-height: 1.4;
+
+    @include respond-min(768px) {
+      font-size: 3.6rem;
+    }
+  }
+
+  cite {
+    font-size: 1.2rem;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+
+    &::before {
+      content: "";
+      display: inline-block;
+      width: 3rem;
+      height: 1px;
+      margin-right: 1.2rem;
+      vertical-align: middle;
+      background: $ed-ink;
+    }
+  }
+}
+
+// Principles
+
+.ed-principles {
+  display: grid;
+  gap: 0 4rem;
+  margin: 0 0 6rem;
+  padding: 0;
+  border-top: 1px solid $ed-ink;
+  list-style: none;
+  counter-reset: ed-principle;
+
+  @include respond-min(768px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  li {
+    position: relative;
+    padding: 2.4rem 0 2.4rem 5rem;
+    border-bottom: 1px solid $ed-rule;
+    counter-increment: ed-principle;
+
+    &::before {
+      content: counter(ed-principle, decimal-leading-zero);
+      position: absolute;
+      top: 2.6rem;
+      left: 0;
+      color: $ed-accent;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+  }
+
+  h3 {
+    margin: 0 0 0.8rem;
+    font-size: 2.2rem;
+  }
+
+  p {
+    margin: 0;
+    color: $ed-muted;
+    font-size: 1.55rem;
+    line-height: 1.6;
+  }
+}
+
+// Logos, quiet until hovered
+
+.ed-logos {
+  margin: 0;
+
+  figcaption {
+    margin-top: 2rem;
+    color: $ed-muted;
+    font-size: 1.4rem;
+  }
+}
+
+.ed-logo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid $ed-rule;
+  border-left: 1px solid $ed-rule;
+
+  @include respond-min(600px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  @include respond-min(1000px) {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.ed-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 96px;
+  padding: 0 1.6rem;
+  border-right: 1px solid $ed-rule;
+  border-bottom: 1px solid $ed-rule;
+
+  img {
+    width: auto;
+    max-width: 100%;
+    height: var(--logo-height, 24px);
+    object-fit: contain;
+    filter: grayscale(1);
+    opacity: 0.7;
+    transition: filter 0.2s ease, opacity 0.2s ease;
+  }
+
+  &:hover img {
+    filter: none;
+    opacity: 1;
+  }
+}
+
+// Switching note
+
+.ed-note {
+  display: grid;
+  gap: 3rem;
+  margin: 7rem 0;
+  padding: 4rem;
+  border: 1px solid $ed-ink;
+  background: #fff;
+
+  @include respond-min(900px) {
+    grid-template-columns: 5fr 6fr;
+    gap: 6rem;
+    padding: 5rem;
+  }
+
+  h2 {
+    margin: 0 0 1.6rem;
+    font-size: 3.6rem;
+    line-height: 1.1;
+  }
+
+  p {
+    margin: 0 0 2rem;
+    color: $ed-muted;
+    font-size: 1.7rem;
+    line-height: 1.6;
+  }
+
+  a {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  dl {
+    margin: 0;
+  }
+
+  dl > div {
+    padding: 1.4rem 0;
+    border-bottom: 1px solid $ed-rule;
+
+    &:first-child {
+      padding-top: 0;
+    }
+  }
+
+  dt {
+    @include serif;
+    font-size: 1.9rem;
+  }
+
+  dd {
+    margin: 0.4rem 0 0;
+    color: $ed-muted;
+    font-size: 1.5rem;
+    line-height: 1.5;
+  }
+}
+
+.ed-note .ed-note-label {
+  margin: 0 0 1.2rem;
+  color: $ed-accent;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+// Closing
+
+.ed-cta {
+  padding: 4rem 0 3rem;
+  border-top: 3px double $ed-ink;
+  text-align: center;
+
+  h2 {
+    margin: 0 0 2.4rem;
+    font-size: 4.4rem;
+
+    @include respond-min(768px) {
+      font-size: 6.4rem;
+    }
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem 4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    @include serif;
+    font-size: 2.2rem;
+  }
+}

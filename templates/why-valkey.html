@@ -1,0 +1,95 @@
+{% extends "default.html" %}
+
+{% block content %}
+{% set extra = page.extra %}
+{# Same order as the Participants page #}
+{% set participants = load_data(path="_data/participants.yml") | sort(attribute="name") %}
+
+{#
+  Several alternative designs for review, all built from the same front matter.
+  The switcher shows one at a time and records it in the URL hash
+  (/why-valkey/#editorial). Without JavaScript every design is shown, stacked.
+#}
+<main class="wv-page">
+
+<nav class="wv-switcher" aria-label="Page design">
+  <span class="wv-switcher-label">Design</span>
+  <div class="wv-switcher-options">
+    <a href="#midnight" data-variant="midnight">Midnight</a>
+    <a href="#editorial" data-variant="editorial">Editorial</a>
+    <a href="#terminal" data-variant="terminal">Terminal</a>
+    <a href="#bento" data-variant="bento">Bento</a>
+  </div>
+</nav>
+
+<div class="wv-variant wv-midnight" data-design="midnight">
+  {% include "why-valkey/midnight.html" %}
+</div>
+
+<div class="wv-variant wv-editorial" data-design="editorial">
+  {% include "why-valkey/editorial.html" %}
+</div>
+
+<div class="wv-variant wv-terminal" data-design="terminal">
+  {% include "why-valkey/terminal.html" %}
+</div>
+
+<div class="wv-variant wv-bento" data-design="bento">
+  {% include "why-valkey/bento.html" %}
+</div>
+
+</main>
+
+<script src="/assets/js/community.js" defer></script>
+<script>
+// Design switcher: show the design named in the URL hash, or the first one.
+(function () {
+  var variants = Array.prototype.slice.call(document.querySelectorAll('.wv-variant'));
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.wv-switcher a'));
+  if (!variants.length) return;
+
+  // The hash names a design (#editorial) or an anchor inside one
+  // (#midnight-performance). Designs have no id, so naming one doesn't scroll.
+  function show(hash) {
+    var variant = variants.filter(function (v) { return v.getAttribute('data-design') === hash; })[0];
+    var anchor = hash ? document.getElementById(hash) : null;
+    if (!variant && anchor) variant = anchor.closest('.wv-variant');
+    variant = variant || variants[0];
+    variants.forEach(function (v) { v.hidden = v !== variant; });
+    tabs.forEach(function (t) {
+      t.setAttribute('aria-current', t.getAttribute('data-variant') === variant.getAttribute('data-design') ? 'true' : 'false');
+    });
+    if (anchor) anchor.scrollIntoView();
+  }
+
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function (event) {
+      event.preventDefault();
+      var id = tab.getAttribute('data-variant');
+      history.replaceState(null, '', '#' + id);
+      show(id);
+      window.scrollTo(0, 0);
+    });
+  });
+
+  window.addEventListener('hashchange', function () { show(location.hash.slice(1)); });
+  show(location.hash.slice(1));
+})();
+
+// Fade sections in as they scroll into view. Content stays visible without
+// JavaScript, without IntersectionObserver, and with reduced motion.
+(function () {
+  if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.documentElement.classList.add('wv-motion');
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.wv-reveal').forEach(function (el) { observer.observe(el); });
+})();
+</script>
+{% endblock content %}

@@ -1,0 +1,143 @@
+{# "Terminal" design: monospace, terminal windows, segmented bars, a changelog and a governance config block. #}
+{% set perf = extra.performance %}
+{% set neutral = extra.neutrality %}
+{% set compat = extra.compatibility %}
+
+<div class="tm">
+  <section class="tm-hero">
+    <div class="tm-inner">
+      <p class="tm-comment"># {{ extra.hero.kicker | lower }}</p>
+      <h1>Fast. Open source. Vendor neutral.<span class="tm-cursor" aria-hidden="true"></span></h1>
+      <p class="tm-subtitle">{{ extra.hero.subtitle }}</p>
+      <div class="tm-actions">
+        <a class="tm-btn tm-btn-primary" href="/download/">[ get valkey ]</a>
+        <a class="tm-btn" href="#terminal-performance">[ see the numbers ]</a>
+      </div>
+
+      <dl class="tm-stats">
+        {% for stat in extra.hero.stats %}
+        <div><dd>{{ stat.value }}</dd><dt>{{ stat.label }}</dt></div>
+        {% endfor %}
+        <div><dd>{{ participants | length }}</dd><dt>participating organizations</dt></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="tm-section" id="terminal-performance">
+    <div class="tm-inner">
+      <h2><span class="tm-hash">##</span> {{ perf.title | lower }}</h2>
+      <p class="tm-lead">{{ perf.lead }}</p>
+
+      <div class="tm-grid">
+        <div class="tm-window wv-reveal">
+          <div class="tm-window-bar" aria-hidden="true"><span></span><span></span><span></span><em>benchmark</em></div>
+          <div class="tm-window-body">
+            <p class="tm-muted"># {{ perf.chart_title }}</p>
+            {% for metric in perf.metrics %}
+            {% set_global max_value = 0 %}
+            {% for row in metric.rows %}{% if row.value > max_value %}{% set_global max_value = row.value %}{% endif %}{% endfor %}
+            <table class="tm-chart">
+              <caption>{{ metric.title | lower }} <span class="tm-muted">({{ metric.unit | lower }})</span></caption>
+              {% for row in metric.rows %}
+              <tr{% if row.emphasis %} class="is-emphasis"{% endif %}>
+                <th scope="row">{{ row.label | lower }}</th>
+                <td>
+                  <span class="tm-bar-track">
+                    <span class="tm-bar" style="--fraction: {{ row.value / max_value }}"></span>
+                    <span class="tm-bar-value">{{ row.display }}</span>
+                  </span>
+                </td>
+              </tr>
+              {% endfor %}
+            </table>
+            {% endfor %}
+            <p class="tm-muted"># source: <a href="{{ get_url(path=perf.chart_source) }}">benchmark details</a></p>
+          </div>
+        </div>
+
+        <div class="tm-window wv-reveal">
+          <div class="tm-window-bar" aria-hidden="true"><span></span><span></span><span></span><em>changelog</em></div>
+          <ol class="tm-window-body tm-changelog">
+            {% for release in perf.releases | reverse %}
+            <li>
+              <h3><span class="tm-hash">##</span> {{ release.version }} <span class="tm-muted">{{ release.headline | lower }}</span></h3>
+              <ul>
+                {% for point in release.points %}
+                <li>{{ point }}</li>
+                {% endfor %}
+              </ul>
+              <a href="{{ get_url(path=release.post) }}" aria-label="Read the post about Valkey {{ release.version }}">read the post</a>
+            </li>
+            {% endfor %}
+          </ol>
+        </div>
+      </div>
+      <p class="tm-more"><a href="/performance/">performance dashboards &rarr;</a></p>
+    </div>
+  </section>
+
+  <section class="tm-section tm-section-alt">
+    <div class="tm-inner">
+      <h2><span class="tm-hash">##</span> {{ neutral.title | lower }}</h2>
+      <p class="tm-lead">{{ neutral.lead }}</p>
+
+      <div class="tm-grid">
+        <div class="tm-window wv-reveal">
+          <div class="tm-window-bar" aria-hidden="true"><span></span><span></span><span></span><em>governance</em></div>
+          <dl class="tm-window-body tm-config">
+            {% for pillar in neutral.pillars %}
+            <div>
+              <dt>{{ pillar.term_key }}</dt>
+              <dd>
+                <span class="tm-value">{{ pillar.term_value }}</span>
+                <span class="tm-muted"># {{ pillar.description }}</span>
+                {% if pillar.link %}<a href="{{ pillar.link }}" target="_blank" rel="noopener">{{ pillar.link_text | lower }}</a>{% endif %}
+              </dd>
+            </div>
+            {% endfor %}
+          </dl>
+        </div>
+
+        <div class="tm-window wv-reveal">
+          <div class="tm-window-bar" aria-hidden="true"><span></span><span></span><span></span><em>participants ({{ participants | length }})</em></div>
+          <div class="tm-window-body">
+            <p class="tm-muted"># organizations that build Valkey, in alphabetical order</p>
+            <ul class="tm-names">
+              {% for participant in participants %}
+              <li>{{ participant.name }}</li>
+              {% endfor %}
+            </ul>
+            <p class="tm-muted"># <a href="/participants/">what each one offers</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="tm-section">
+    <div class="tm-inner">
+      <h2><span class="tm-hash">##</span> {{ compat.title | lower }}</h2>
+      <p class="tm-lead">{{ compat.lead }}</p>
+      <div class="tm-window wv-reveal">
+        <div class="tm-window-bar" aria-hidden="true"><span></span><span></span><span></span><em>compatibility</em></div>
+        <ul class="tm-window-body tm-checks">
+          {% for check in compat.checks %}
+          <li><span class="tm-ok">[ ok ]</span> <strong>{{ check.title | lower }}</strong> <span>{{ check.description }}</span></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <p class="tm-more"><a href="{{ compat.button_url }}">{{ compat.button_text | lower }} &rarr;</a></p>
+    </div>
+  </section>
+
+  <section class="tm-cta">
+    <div class="tm-inner">
+      <h2>{{ extra.cta.title | lower }}<span class="tm-cursor" aria-hidden="true"></span></h2>
+      <div class="tm-actions">
+        {% for link in extra.cta.links %}
+        <a class="tm-btn{% if loop.first %} tm-btn-primary{% endif %}" href="{{ link.url }}">[ {{ link.text | lower }} ]</a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+</div>
